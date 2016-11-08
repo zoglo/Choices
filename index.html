@@ -444,6 +444,10 @@
 
       var singleNoSorting = new Choices('#choices-single-no-sorting', {
         shouldSort: false,
+        addItems: true,
+        callbackOnChange: function(a, b) {
+          console.log(this.currentState);
+        }
       });
 
       var states = new Choices(document.getElementById('states'));
