@@ -66,7 +66,6 @@ Or include Choices directly:
     shouldSort: true,
     sortFilter: sortByAlpha,
     sortFields: ['label', 'value'],
-    placeholder: true,
     placeholderValue: null,
     prependValue: null,
     appendValue: null,
@@ -290,13 +289,6 @@ const example = new Choices(element, {
 **Input types affected:**`select-one`, `select-multiple`
 
 **Usage:** Specify which fields should be used for sorting when a user is searching. If a user is not searching and sorting is enabled, only the choice's label will be sorted.  
-
-### placeholder
-**Type:** `Boolean` **Default:** `true`
-
-**Input types affected:** `text`, `select-one`, `select-multiple`
-
-**Usage:** Whether the input should show a placeholder. Used in conjunction with `placeholderValue`. If `placeholder` is set to true and no value is passed to `placeholderValue`, the passed input's placeholder attribute will be used as the  placeholder value.
 
 ### placeholderValue
 **Type:** `String` **Default:** `null`

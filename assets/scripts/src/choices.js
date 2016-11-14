@@ -54,17 +54,16 @@ class Choices {
       removeItemButton: false,
       editItems: false,
       duplicateItems: true,
-      preselectItem: true,
       delimiter: ',',
       paste: true,
       search: true,
       searchFloor: 1,
+      searchPlaceholderValue: null,
       flip: true,
       regexFilter: null,
       shouldSort: true,
       sortFilter: sortByAlpha,
       sortFields: ['label', 'value'],
-      placeholder: true,
       placeholderValue: null,
       prependValue: null,
       appendValue: null,
@@ -132,18 +131,22 @@ class Choices {
     this.passedElement = isType('String', element) ? document.querySelector(element) : element;
     this.isSelectElement = this.passedElement.type === 'select-one' || this.passedElement.type === 'select-multiple';
     this.isTextElement = this.passedElement.type === 'text';
+    this.highlightPosition = 0;
+    this.canSearch = this.config.search;
+
+    // Placeholder
+    this.placeholder = (this.config.placeholderValue || this.passedElement.getAttribute('placeholder')) || false;
+
+    // Monitor touch taps/scrolls
+    this.wasTap = true;
 
     if (!this.passedElement) {
       console.error('Passed element not found');
       return;
     }
 
-    this.highlightPosition = 0;
-    this.canSearch = this.config.search;
-
     // Assing preset choices from passed object
     this.presetChoices = this.config.choices;
-
     // Assign preset items from passed object first
     this.presetItems = this.config.items;
 
@@ -170,13 +173,6 @@ class Choices {
     this._onMouseOver = this._onMouseOver.bind(this);
     this._onPaste = this._onPaste.bind(this);
     this._onInput = this._onInput.bind(this);
-
-    // Monitor touch taps/scrolls
-    this.wasTap = true;
-
-    // Cutting the mustard
-    const cuttingTheMustard = 'classList' in document.documentElement;
-    if (!cuttingTheMustard) console.error('Choices: Your browser doesn\'t support Choices');
 
     // Input type check
     const isValidType = ['select-one', 'select-multiple', 'text'].some(type => type === this.passedElement.type);
@@ -438,13 +434,9 @@ class Choices {
             // Update list
             this.itemList.appendChild(itemListFragment);
           }
-        } else if (this.passedElement.type === 'select-one') {
-          const placeholder = this.config.placeholder ? this.config.placeholderValue || this.passedElement.getAttribute('placeholder') :
-            false;
-          if (placeholder) {
-            const placeholderItem = this._getTemplate('placeholder', placeholder);
-            this.itemList.appendChild(placeholderItem);
-          }
+        } else if (this.passedElement.type === 'select-one' && this.placeholder) {
+          const placeholderItem = this._getTemplate('placeholder', this.placeholder);
+          this.itemList.appendChild(placeholderItem);
         }
       }
 
@@ -1098,11 +1090,10 @@ class Choices {
     } else {
       // Remove loading states/text
       this.containerOuter.classList.remove(this.config.classNames.loadingState);
-      const placeholder = this.config.placeholder ? this.config.placeholderValue || this.passedElement.getAttribute('placeholder') : false;
       if (this.passedElement.type === 'select-one') {
-        placeholderItem.innerHTML = placeholder || '';
+        placeholderItem.innerHTML = this.placeholder || '';
       } else {
-        this.input.placeholder = placeholder || '';
+        this.input.placeholder = this.placeholder || '';
       }
     }
   }
@@ -1253,12 +1244,10 @@ class Choices {
    * @return
    */
   _setInputWidth() {
-    if (this.config.placeholder && (this.config.placeholderValue || this.passedElement.getAttribute('placeholder'))) {
+    if (this.placeholder) {
       // If there is a placeholder, we only want to set the width of the input when it is a greater
       // length than 75% of the placeholder. This stops the input jumping around.
-      const placeholder = this.config.placeholder ? this.config.placeholderValue ||
-        this.passedElement.getAttribute('placeholder') : false;
-      if (this.input.value && this.input.value.length >= (placeholder.length / 1.25)) {
+      if (this.input.value && this.input.value.length >= (this.placeholder.length / 1.25)) {
         this.input.style.width = getWidthOfInput(this.input);
       }
     } else {
@@ -2114,7 +2103,6 @@ class Choices {
     const choiceList = this._getTemplate('choiceList');
     const input = this._getTemplate('input');
     const dropdown = this._getTemplate('dropdown');
-    const placeholder = this.config.placeholder ? this.config.placeholderValue || this.passedElement.getAttribute('placeholder') : false;
 
     this.containerOuter = containerOuter;
     this.containerInner = containerInner;
@@ -2124,7 +2112,10 @@ class Choices {
     this.dropdown = dropdown;
 
     // Hide passed input
-    this.passedElement.classList.add(this.config.classNames.input, this.config.classNames.hiddenState);
+    this.passedElement.classList.add(
+      this.config.classNames.input,
+      this.config.classNames.hiddenState
+    );
     this.passedElement.tabIndex = '-1';
     this.passedElement.setAttribute('style', 'display:none;');
     this.passedElement.setAttribute('aria-hidden', 'true');
@@ -2137,13 +2128,21 @@ class Choices {
     wrap(containerInner, containerOuter);
 
     // If placeholder has been enabled and we have a value
-    if (placeholder) {
-      if (this.passedElement.type !== 'select-one') {
-        input.placeholder = placeholder;
+    if (this.placeholder) {
+      if (this.passedElement.type !== 'select-one' && !this.config.searchPlaceholderValue) {
+        input.placeholder = this.placeholder;
         input.style.width = getWidthOfInput(input);
       } else {
-        const placeholderItem = this._getTemplate('placeholder', placeholder);
+        const placeholderItem = this._getTemplate('placeholder', this.placeholder);
         this.itemList.appendChild(placeholderItem);
+      }
+    }
+
+    if (this.config.searchPlaceholderValue) {
+      const searchPlaceholder = this.config.searchPlaceholderValue ? this.config.searchPlaceholderValue : this.config.placeholderValue;
+      if (searchPlaceholder) {
+        input.placeholder = searchPlaceholder;
+        input.style.width = getWidthOfInput(input);
       }
     }
 
@@ -2206,7 +2205,7 @@ class Choices {
           const isSelected = choice.selected ? choice.selected : false;
           // Pre-select first choice if it's a single select
           if (this.passedElement.type === 'select-one') {
-            if (this.config.preselectItem === false || hasSelectedChoice || (!hasSelectedChoice && index > 0)) {
+            if (hasSelectedChoice || (!hasSelectedChoice && index > 0)) {
               // If there is a selected choice already or the choice is not
               // the first in the array, add each choice normally
               this._addChoice(isSelected, isDisabled, choice.value, choice.label);
