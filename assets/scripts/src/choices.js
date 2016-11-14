@@ -54,6 +54,7 @@ class Choices {
       removeItemButton: false,
       editItems: false,
       duplicateItems: true,
+      preselectItem: true,
       delimiter: ',',
       paste: true,
       search: true,
@@ -385,8 +386,7 @@ class Choices {
       // Choices
       if (this.currentState.choices !== this.prevState.choices ||
         this.currentState.groups !== this.prevState.groups) {
-        if (this.passedElement.type === 'select-multiple' ||
-            this.passedElement.type === 'select-one') {
+        if (this.isSelectElement) {
           // Get active groups/choices
           const activeGroups = this.store.getGroupsFilteredByActive();
           const activeChoices = this.store.getChoicesFilteredByActive();
@@ -422,19 +422,28 @@ class Choices {
 
       // Items
       if (this.currentState.items !== this.prevState.items) {
+        // Get active items (items that can be selected)
         const activeItems = this.store.getItemsFilteredByActive();
-        if (activeItems) {
+
+        // Clear list
+        this.itemList.innerHTML = '';
+
+        if (activeItems.length) {
           // Create a fragment to store our list items
           // (so we don't have to update the DOM for each item)
           const itemListFragment = this.renderItems(activeItems);
-
-          // Clear list
-          this.itemList.innerHTML = '';
 
           // If we have items to add
           if (itemListFragment.childNodes) {
             // Update list
             this.itemList.appendChild(itemListFragment);
+          }
+        } else if (this.passedElement.type === 'select-one') {
+          const placeholder = this.config.placeholder ? this.config.placeholderValue || this.passedElement.getAttribute('placeholder') :
+            false;
+          if (placeholder) {
+            const placeholderItem = this._getTemplate('placeholder', placeholder);
+            this.itemList.appendChild(placeholderItem);
           }
         }
       }
@@ -739,7 +748,7 @@ class Choices {
    * @public
    */
   setValueByChoice(value) {
-    if (this.passedElement.type !== 'text') {
+    if (this.isSelectElement) {
       const choices = this.store.getChoices();
       // If only one value has been passed, convert to array
       const choiceValue = isType('Array', value) ? value : [value];
@@ -925,15 +934,6 @@ class Choices {
       // Remove item associated with button
       this._removeItem(itemToRemove);
       this._triggerChange(itemToRemove.value);
-
-      if (this.passedElement.type === 'select-one') {
-        const placeholder = this.config.placeholder ? this.config.placeholderValue || this.passedElement.getAttribute('placeholder') :
-          false;
-        if (placeholder) {
-          const placeholderItem = this._getTemplate('placeholder', placeholder);
-          this.itemList.appendChild(placeholderItem);
-        }
-      }
     }
   }
 
@@ -1938,7 +1938,7 @@ class Choices {
    * @private
    */
   _addChoice(isSelected, isDisabled, value, label, groupId = -1) {
-    if (!value) return;
+    if (typeof value === 'undefined' || value === null) return;
 
     // Generate unique id
     const choices = this.store.getChoices();
@@ -2138,19 +2138,24 @@ class Choices {
 
     // If placeholder has been enabled and we have a value
     if (placeholder) {
-      input.placeholder = placeholder;
       if (this.passedElement.type !== 'select-one') {
+        input.placeholder = placeholder;
         input.style.width = getWidthOfInput(input);
+      } else {
+        const placeholderItem = this._getTemplate('placeholder', placeholder);
+        this.itemList.appendChild(placeholderItem);
       }
     }
 
-    if (!this.config.addItems) this.disable();
+    if (!this.config.addItems) {
+      this.disable();
+    }
 
     containerOuter.appendChild(containerInner);
     containerOuter.appendChild(dropdown);
     containerInner.appendChild(itemList);
 
-    if (this.passedElement.type !== 'text') {
+    if (this.isSelectElement) {
       dropdown.appendChild(choiceList);
     }
 
@@ -2160,7 +2165,7 @@ class Choices {
       dropdown.insertBefore(input, dropdown.firstChild);
     }
 
-    if (this.passedElement.type === 'select-multiple' || this.passedElement.type === 'select-one') {
+    if (this.isSelectElement) {
       const passedGroups = Array.from(this.passedElement.getElementsByTagName('OPTGROUP'));
 
       this.highlightPosition = 0;
@@ -2201,7 +2206,7 @@ class Choices {
           const isSelected = choice.selected ? choice.selected : false;
           // Pre-select first choice if it's a single select
           if (this.passedElement.type === 'select-one') {
-            if (hasSelectedChoice || (!hasSelectedChoice && index > 0)) {
+            if (this.config.preselectItem === false || hasSelectedChoice || (!hasSelectedChoice && index > 0)) {
               // If there is a selected choice already or the choice is not
               // the first in the array, add each choice normally
               this._addChoice(isSelected, isDisabled, choice.value, choice.label);

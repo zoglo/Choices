@@ -431,6 +431,7 @@ describe('Choices', () => {
 
       this.choices = new Choices(this.input, {
         placeholderValue: 'Placeholder text',
+        preselectItem: true,
         choices: [{
           value: 'One',
           label: 'Label One',

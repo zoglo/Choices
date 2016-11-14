@@ -239,8 +239,8 @@
       </select>
 
       <p>Below is an example of how you could have two select inputs depend on eachother. 'Boroughs' will only be enabled if the value of 'States' is 'New York'</p>
-      <label for="states">States</label>
-      <select class="form-control" name="states" id="states" placeholder="Choose a state">
+      <label for="choices-states">States</label>
+      <select class="form-control" name="choices-states" id="choices-states" placeholder="Choose a state">
         <option value="Michigan">Michigan</option>
         <option value="Texas">Texas</option>
         <option value="Chicago">Chicago</option>
@@ -248,13 +248,21 @@
         <option value="Washington">Washington</option>
       </select>
 
-      <label for="boroughs">Boroughs</label>
-      <select class="form-control" name="boroughs" id="boroughs" placeholder="Choose a borough">
+      <label for="choices-boroughs">Boroughs</label>
+      <select class="form-control" name="choices-boroughs" id="choices-boroughs" placeholder="Choose a borough">
         <option value="The Bronx">The Bronx</option>
         <option value="Brooklyn">Brooklyn</option>
         <option value="Manhattan">Manhattan</option>
         <option value="Queens">Queens</option>
         <option value="Staten Island">Staten Island</option>
+      </select>
+
+      <label for="choices-placeholder-option">Placeholder option</label>
+      <select class="form-control" name="choices-placeholder-option" id="choices-placeholder-option">
+        <option selected>Press here</option>
+        <option value="one">One</option>
+        <option value="two">Two</option>
+        <option value="three">Three</option>
       </select>
     </div>
   </div>
@@ -434,17 +442,20 @@
         shouldSort: false,
       });
 
-      var states = new Choices(document.getElementById('states'), {
+      var singleStates = new Choices(document.getElementById('choices-states'), {
         callbackOnChange: function(value) {
           if(value === 'New York') {
-            boroughs.enable();
+            singleBoroughs.enable();
           } else {
-            boroughs.disable();
+            singleBoroughs.disable();
           }
         }
       });
 
-      var customTemplates = new Choices(document.getElementById('choices-custom-templates'), {
+      var singleBoroughs = new Choices(document.getElementById('choices-boroughs')).disable();
+
+      var singleCustomTemplates = new Choices(
+        document.getElementById('choices-custom-templates'), {
         callbackOnCreateTemplates: function (strToEl) {
           var classNames = this.config.classNames;
           return {
@@ -453,20 +464,26 @@
                 <div class="${classNames.item} ${data.highlighted ? classNames.highlightedState : classNames.itemSelectable}"  data-item data-id="${data.id}" data-value="${data.value}" ${data.active ? 'aria-selected="true"' : ''} ${data.disabled ? 'aria-disabled="true"' : ''}>
                   <span style="margin-right:10px;">🎉</span> ${data.label}
                 </div>
-                `);
+              `);
             },
             choice: (data) => {
               return strToEl(`
                 <div class="${classNames.item} ${classNames.itemChoice} ${data.disabled ? classNames.itemDisabled : classNames.itemSelectable}" data-select-text="${this.config.itemSelectText}" data-choice ${data.disabled ? 'data-choice-disabled aria-disabled="true"' : 'data-choice-selectable'} data-id="${data.id}" data-value="${data.value}" ${data.groupId > 0 ? 'role="treeitem"' : 'role="option"'}>
                     <span style="margin-right:10px;">👉🏽</span> ${data.label}
                   </div>
-                `);
+              `);
             },
           };
         }
       });
 
-      var boroughs = new Choices(document.getElementById('boroughs')).disable();
+      var singlePlaceholderOption = new Choices('#choices-placeholder-option', {
+        placeholder: true,
+        placeholderValue: 'Please Choose…',
+        removeItemButton: true,
+        preselectItem: false,
+      });
+
     });
   </script>
 
