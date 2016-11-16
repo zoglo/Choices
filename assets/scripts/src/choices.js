@@ -2142,7 +2142,6 @@ class Choices {
       const searchPlaceholder = this.config.searchPlaceholderValue ? this.config.searchPlaceholderValue : this.config.placeholderValue;
       if (searchPlaceholder) {
         input.placeholder = searchPlaceholder;
-        input.style.width = getWidthOfInput(input);
       }
     }
 
