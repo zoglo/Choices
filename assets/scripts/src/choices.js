@@ -1033,8 +1033,8 @@ class Choices {
         this._addItem(choice.value, choice.label, choice.id, choice.groupId);
       }
     }
-    this._triggerChange(choice.value);
 
+    this._triggerChange(choice.value);
     this.clearInput(this.passedElement);
 
     // We wont to close the dropdown if we are dealing with a single select box
@@ -1356,11 +1356,10 @@ class Choices {
     };
 
     const onEnterKey = () => {
-
       if (hasActiveDropdown) {
         const highlighted = this.dropdown.querySelector(`.${this.config.classNames.highlightedState}`);
 
-        // If we have a highlighted choice
+        // If we have a highlighted choice, select it
         if (highlighted) {
           this._handleChoiceAction(activeItems, highlighted);
         }
@@ -1387,7 +1386,7 @@ class Choices {
             this._addItem(value);
           } else {
             this._addChoice(true, false, value, value);
-            console.log(this.store.getState());
+            this.containerOuter.focus();
           }
 
           this._triggerChange(value);
