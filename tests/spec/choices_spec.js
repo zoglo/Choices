@@ -284,7 +284,7 @@ describe('Choices', () => {
       this.choices = new Choices(this.input);
       this.choices.input.focus();
 
-      for (var i = 0; i < 2; i++) {
+      for (var i = 0; i < 3; i++) {
         // Key down to third choice
         this.choices._onKeyDown({
           target: this.choices.input,
@@ -317,7 +317,7 @@ describe('Choices', () => {
         preventDefault: () => {}
       });
 
-      expect(this.choices.currentState.items.length).toBe(2);
+      expect(this.choices.currentState.items.length).toBe(1);
     });
 
     it('should trigger add/change event on selection', function() {
