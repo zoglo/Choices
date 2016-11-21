@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 /*! choices.js v2.7.8 | (c) 2017 Josh Johnson | https://github.com/jshjohnson/Choices#readme */ 
+=======
+/*! choices.js v2.5.0 | (c) 2016 Josh Johnson | https://github.com/jshjohnson/Choices#readme */ 
+>>>>>>> 291143b... Add dist files
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -475,7 +479,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (this.currentState !== this.prevState) {
 	        // Choices
 	        if (this.currentState.choices !== this.prevState.choices || this.currentState.groups !== this.prevState.groups) {
-	          if (this.passedElement.type === 'select-multiple' || this.passedElement.type === 'select-one') {
+	          if (!this.isTextElement) {
 	            // Get active groups/choices
 	            var activeGroups = this.store.getGroupsFilteredByActive();
 	            var activeChoices = this.store.getChoicesFilteredByActive();
@@ -501,8 +505,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	              // If we actually have anything to add to our dropdown
 	              // append it and highlight the first choice
 	              this.choiceList.appendChild(choiceListFragment);
-	              this._highlightChoice();
 	            } else {
+<<<<<<< HEAD
 	              // Otherwise show a notice
 	              var dropdownItem = void 0;
 	              var notice = void 0;
@@ -513,6 +517,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	              } else {
 	                notice = (0, _utils.isType)('Function', this.config.noChoicesText) ? this.config.noChoicesText() : this.config.noChoicesText;
 	                dropdownItem = this._getTemplate('notice', notice);
+=======
+	              var activeItems = this.store.getItemsFilteredByActive();
+	              var canAddItem = this._canAddItem(activeItems, this.input.value);
+	              var dropdownItem = this._getTemplate('notice', this.config.noChoicesText);
+
+	              if (canAddItem.notice) {
+	                dropdownItem = this._getTemplate('notice', canAddItem.notice);
+	              } else if (this.isSearching) {
+	                dropdownItem = this._getTemplate('notice', this.config.noResultsText);
+>>>>>>> 291143b... Add dist files
 	              }
 
 	              this.choiceList.appendChild(dropdownItem);
@@ -522,11 +536,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        // Items
 	        if (this.currentState.items !== this.prevState.items) {
-	          var activeItems = this.store.getItemsFilteredByActive();
-	          if (activeItems) {
+	          var _activeItems = this.store.getItemsFilteredByActive();
+	          if (_activeItems) {
 	            // Create a fragment to store our list items
 	            // (so we don't have to update the DOM for each item)
-	            var itemListFragment = this.renderItems(activeItems);
+	            var itemListFragment = this.renderItems(_activeItems);
 
 	            // Clear list
 	            this.itemList.innerHTML = '';
@@ -1222,9 +1236,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        if (canAddItem.response) {
 	          this._addItem(choice.value, choice.label, choice.id, choice.groupId);
-	          this._triggerChange(choice.value);
 	        }
 	      }
+	      this._triggerChange(choice.value);
 
 	      this.clearInput(this.passedElement);
 
@@ -1290,7 +1304,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	      }
 
-	      if (this.passedElement.type === 'text' && this.config.addItems) {
+	      if (this.config.addItems) {
 	        var isUnique = !activeItems.some(function (item) {
 	          return item.value === value.trim();
 	        });
@@ -1417,7 +1431,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.currentValue = newValue;
 	        this.highlightPosition = 0;
 	        this.isSearching = true;
-	        this.store.dispatch((0, _index3.filterChoices)(results));
+
+	        return results;
 	      }
 	    }
 
@@ -1441,10 +1456,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (this.input === document.activeElement) {
 	        // Check that we have a value to search and the input was an alphanumeric character
 	        if (value && value.length > this.config.searchFloor) {
+<<<<<<< HEAD
 	          // Check flag to filter search input
 	          if (this.config.searchChoices) {
 	            // Filter available choices
 	            this._searchChoices(value);
+=======
+	          // Filter available choices
+	          var results = this._searchChoices(value);
+	          if (results) {
+	            this.store.dispatch((0, _index3.filterChoices)(results));
+	          }
+
+	          // Run callback if it is a function
+	          if (callback) {
+	            if ((0, _utils.isType)('Function', callback)) {
+	              callback.call(this, value);
+	            } else {
+	              console.error('callbackOnSearch: Callback is not a function');
+	            }
+>>>>>>> 291143b... Add dist files
 	          }
 	          // Trigger search event
 	          (0, _utils.triggerEvent)(this.passedElement, 'search', {
@@ -1588,19 +1619,54 @@ return /******/ (function(modules) { // webpackBootstrap
 	      };
 
 	      var onEnterKey = function onEnterKey() {
+
+	        if (hasActiveDropdown) {
+	          var highlighted = _this17.dropdown.querySelector('.' + _this17.config.classNames.highlightedState);
+
+	          // If we have a highlighted choice
+	          if (highlighted) {
+	            _this17._handleChoiceAction(activeItems, highlighted);
+	          }
+	        } else if (passedElementType === 'select-one') {
+	          // Open single select dropdown if it's not active
+	          if (!hasActiveDropdown) {
+	            _this17.showDropdown(true);
+	            e.preventDefault();
+	          }
+	        }
+
 	        // If enter key is pressed and the input has a value
+<<<<<<< HEAD
 	        if (passedElementType === 'text' && target.value) {
 	          var value = _this16.input.value;
 	          var canAddItem = _this16._canAddItem(activeItems, value);
+=======
+	        if (target.value) {
+	          var value = _this17.input.value;
+	          var canAddItem = _this17._canAddItem(activeItems, value);
+>>>>>>> 291143b... Add dist files
 
 	          // All is good, add
 	          if (canAddItem.response) {
 	            if (hasActiveDropdown) {
 	              _this16.hideDropdown();
 	            }
+<<<<<<< HEAD
 	            _this16._addItem(value);
 	            _this16._triggerChange(value);
 	            _this16.clearInput(_this16.passedElement);
+=======
+
+	            if (_this17.isTextElement) {
+	              _this17._addItem(value);
+	            } else {
+	              _this17._addChoice(true, false, value, value);
+	              console.log(_this17.store.getState());
+	            }
+
+	            _this17._triggerChange(value);
+	            _this17.clearInput(_this17.passedElement);
+>>>>>>> 291143b... Add dist files
 	          }
 	        }
 
@@ -1608,6 +1674,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	          _this16._handleButtonAction(activeItems, target);
 	          e.preventDefault();
 	        }
+<<<<<<< HEAD
 
 	        if (hasActiveDropdown) {
 	          e.preventDefault();
@@ -1624,6 +1691,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            e.preventDefault();
 	          }
 	        }
+=======
+>>>>>>> 291143b... Add dist files
 	      };
 
 	      var onEscapeKey = function onEscapeKey() {
@@ -4064,7 +4133,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	  if (value == null) {
 	    return value === undefined ? undefinedTag : nullTag;
 	  }
+<<<<<<< HEAD
 	  return (symToStringTag && symToStringTag in Object(value))
+=======
+	  value = Object(value);
+	  return (symToStringTag && symToStringTag in value)
+>>>>>>> 291143b... Add dist files
 	    ? getRawTag(value)
 	    : objectToString(value);
 	}
