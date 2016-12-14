@@ -1682,6 +1682,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                  _this17._addItem(value);
 	                } else {
 	                  var isUnique = void 0;
+	                  var duplicateItems = _this17.config.duplicateItems;
 	                  if (!duplicateItems) {
 	                    existingChoice = !_this17.store.getItems().filter(function (item) {
 	                      return item.value === value.trim();
