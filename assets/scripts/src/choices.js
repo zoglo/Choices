@@ -1392,14 +1392,14 @@ class Choices {
             } else {
               let isUnique;
               if (!duplicateItems) {
-                isUnique = !this.store
+                existingChoice = !this.store
                     .getItems()
-                    .some((item) => item.value === value.trim());
+                    .filter((item) => item.value === value.trim());
               }
-              if (duplicateItems || isUnique) {
+              if (duplicateItems) {
                 this._addChoice(true, false, value, value);
               } else {
-                this._addItem(value);
+                this._addItem(existingChoice.value, existingChoice.label, existingChoice.id);
               }
               this.containerOuter.focus();
             }
