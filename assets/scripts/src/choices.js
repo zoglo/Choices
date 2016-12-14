@@ -1389,8 +1389,18 @@ class Choices {
 
             if (this.isTextElement) {
               this._addItem(value);
-            } else if(this.config.addItems) {
-              this._addChoice(true, false, value, value);
+            } else {
+              let isUnique;
+              if (!duplicateItems) {
+                isUnique = !this.store
+                    .getItems()
+                    .some((item) => item.value === value.trim());
+              }
+              if (duplicateItems || isUnique) {
+                this._addChoice(true, false, value, value);
+              } else {
+                this._addItem(value);
+              }
               this.containerOuter.focus();
             }
 
