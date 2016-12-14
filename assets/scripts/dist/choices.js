@@ -1300,7 +1300,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	      if (this.config.addItems) {
 	        var isUnique = !activeItems.some(function (item) {
-	          return item.value === value.trim();
+	          return item.value === value.trim() || item.label === value.trim();
 	        });
 
 	        if (this.passedElement.type === 'select-multiple' || this.passedElement.type === 'text') {
@@ -1681,17 +1681,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	                if (_this17.isTextElement) {
 	                  _this17._addItem(value);
 	                } else {
-	                  var existingChoice = void 0;
+	                  var matchingChoices = [];
+	                  var isUnique = void 0;
 	                  var duplicateItems = _this17.config.duplicateItems;
 	                  if (!duplicateItems) {
-	                    existingChoice = !_this17.store.getItems().filter(function (item) {
-	                      return item.value === value.trim();
+	                    matchingChoices = _this17.store.getChoices().filter(function (choice) {
+	                      return choice.label === value.trim();
+	                    });
+	                    isUnique = !_this17.store.getItemsFilteredByActive().some(function (item) {
+	                      return item.label === value.trim();
 	                    });
 	                  }
-	                  if (duplicateItems) {
+	                  if (duplicateItems || matchingChoices.length === 0 && isUnique) {
 	                    _this17._addChoice(true, false, value, value);
-	                  } else {
-	                    _this17._addItem(existingChoice.value, existingChoice.label, existingChoice.id);
+	                  }
+	                  if (duplicateItems || isUnique) {
+	                    if (matchingChoices[0]) {
+	                      _this17._addItem(matchingChoices[0].value, matchingChoices[0].label, matchingChoices[0].id);
+	                    }
 	                  }
 	                  _this17.containerOuter.focus();
 	                }

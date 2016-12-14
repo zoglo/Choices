@@ -1086,7 +1086,7 @@ class Choices {
     let notice = isType('Function', this.config.addItemText) ? this.config.addItemText(value) : this.config.addItemText;
 
     if (this.config.addItems) {
-      const isUnique = !activeItems.some((item) => item.value === value.trim());
+      const isUnique = !activeItems.some((item) => (item.value === value.trim()) || (item.label === value.trim()));
 
       if (this.passedElement.type === 'select-multiple' || this.passedElement.type === 'text') {
         if (this.config.maxItemCount > 0 && this.config.maxItemCount <= this.itemList.children.length) {
@@ -1390,17 +1390,28 @@ class Choices {
             if (this.isTextElement) {
               this._addItem(value);
             } else {
-              let existingChoice;
+              let matchingChoices = [];
+              let isUnique;
               const duplicateItems = this.config.duplicateItems;
               if (!duplicateItems) {
-                existingChoice = !this.store
-                    .getItems()
-                    .filter((item) => item.value === value.trim());
+                matchingChoices = this.store
+                    .getChoices()
+                    .filter((choice) => choice.label === value.trim());
+                isUnique = !this.store
+                    .getItemsFilteredByActive()
+                    .some((item) => item.label === value.trim());
               }
-              if (duplicateItems) {
+              if (duplicateItems || (matchingChoices.length === 0 && isUnique)) {
                 this._addChoice(true, false, value, value);
-              } else {
-                this._addItem(existingChoice.value, existingChoice.label, existingChoice.id);
+              }
+              if (duplicateItems || isUnique) {
+                if (matchingChoices[0]) {
+                  this._addItem(
+                      matchingChoices[0].value,
+                      matchingChoices[0].label,
+                      matchingChoices[0].id
+                    );
+                }
               }
               this.containerOuter.focus();
             }
