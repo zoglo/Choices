@@ -1391,6 +1391,7 @@ class Choices {
               this._addItem(value);
             } else {
               let isUnique;
+              const duplicateItems = this.config.duplicateItems;
               if (!duplicateItems) {
                 existingChoice = !this.store
                     .getItems()
