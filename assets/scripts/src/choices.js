@@ -1390,7 +1390,7 @@ class Choices {
             if (this.isTextElement) {
               this._addItem(value);
             } else {
-              let isUnique;
+              let existingChoice;
               const duplicateItems = this.config.duplicateItems;
               if (!duplicateItems) {
                 existingChoice = !this.store

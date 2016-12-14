@@ -1681,7 +1681,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                if (_this17.isTextElement) {
 	                  _this17._addItem(value);
 	                } else {
-	                  var isUnique = void 0;
+	                  var existingChoice = void 0;
 	                  var duplicateItems = _this17.config.duplicateItems;
 	                  if (!duplicateItems) {
 	                    existingChoice = !_this17.store.getItems().filter(function (item) {
