@@ -1642,6 +1642,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	          var canAddItem = _this16._canAddItem(activeItems, value);
 =======
 	        if (target.value) {
+<<<<<<< HEAD
 	          var value = _this17.input.value;
 	          var canAddItem = _this17._canAddItem(activeItems, value);
 >>>>>>> 291143b... Add dist files
@@ -1661,19 +1662,40 @@ return /******/ (function(modules) { // webpackBootstrap
 	            // Track whether we will end up adding an item
 	            var willAddItem = _this17.isTextElement || _this17.isSelectElement && _this17.config.addItems;
 >>>>>>> acb2451... Update dist files, after FF from main repo
+=======
+	          (function () {
+	            var value = _this17.input.value;
+	            var canAddItem = _this17._canAddItem(activeItems, value);
 
-	            if (willAddItem) {
-	              if (hasActiveDropdown) {
-	                _this17.hideDropdown();
-	              }
+	            // All is good, add
+	            if (canAddItem.response) {
+	              // Track whether we will end up adding an item
+	              var willAddItem = _this17.isTextElement || _this17.isSelectElement && _this17.config.addItems;
+>>>>>>> c4dd94f... Update dist files
 
-	              if (_this17.isTextElement) {
-	                _this17._addItem(value);
-	              } else if (_this17.config.addItems) {
-	                _this17._addChoice(true, false, value, value);
-	                _this17.containerOuter.focus();
-	              }
+	              if (willAddItem) {
+	                if (hasActiveDropdown) {
+	                  _this17.hideDropdown();
+	                }
 
+	                if (_this17.isTextElement) {
+	                  _this17._addItem(value);
+	                } else {
+	                  var isUnique = void 0;
+	                  if (!duplicateItems) {
+	                    existingChoice = !_this17.store.getItems().filter(function (item) {
+	                      return item.value === value.trim();
+	                    });
+	                  }
+	                  if (duplicateItems) {
+	                    _this17._addChoice(true, false, value, value);
+	                  } else {
+	                    _this17._addItem(existingChoice.value, existingChoice.label, existingChoice.id);
+	                  }
+	                  _this17.containerOuter.focus();
+	                }
+
+<<<<<<< HEAD
 <<<<<<< HEAD
 	            _this17._triggerChange(value);
 	            _this17.clearInput(_this17.passedElement);
@@ -1684,6 +1706,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 >>>>>>> acb2451... Update dist files, after FF from main repo
 	          }
+=======
+	                _this17._triggerChange(value);
+	                _this17.clearInput(_this17.passedElement);
+	              }
+	            }
+	          })();
+>>>>>>> c4dd94f... Update dist files
 	        }
 
 	        if (target.hasAttribute('data-button')) {
