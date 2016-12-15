@@ -242,6 +242,14 @@
         <option value="Vue">Vue</option>
       </select>
 
+      <label for="choices-single-add-items">Add items if they don't exist</label>
+      <select class="form-control" name="choices-single-add-items" id="choices-single-add-items" placeholder="This is a placeholder">
+        <option value="React">England</option>
+        <option value="React">Wales</option>
+        <option value="React">Scotland</option>
+        <option value="React">Northern Ireland</option>
+      </select>
+
       <p>Below is an example of how you could have two select inputs depend on eachother. 'Boroughs' will only be enabled if the value of 'States' is 'New York'</p>
       <label for="states">States</label>
       <select class="form-control" name="states" id="states" placeholder="Choose a state">
@@ -460,6 +468,11 @@
         }
       });
 
+      var singleAddItems = new Choices('#choices-single-add-items', {
+        addItems: true,
+        duplicateItems: false,
+      });
+
       var customTemplates = new Choices(document.getElementById('choices-single-custom-templates'), {
         callbackOnCreateTemplates: function (strToEl) {
           var classNames = this.config.classNames;
@@ -495,6 +508,16 @@
               ');
             },
           };
+        }
+      });
+
+      var states = new Choices(document.getElementById('states'), {
+        callbackOnChange: function(value) {
+          if(value === 'New York') {
+            boroughs.enable();
+          } else {
+            boroughs.disable();
+          }
         }
       });
 
