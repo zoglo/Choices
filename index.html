@@ -141,6 +141,14 @@
       <p id="message"></p>
       <select id="choices-multiple-labels" multiple></select>
 
+      <label for="choices-multiple-add-items">Add items if they don't exist</label>
+      <select class="form-control" name="choices-multiple-add-items" id="choices-multiple-add-items" placeholder="This is a placeholder" multiple>
+        <option value="React">England</option>
+        <option value="React">Wales</option>
+        <option value="React">Scotland</option>
+        <option value="React">Northern Ireland</option>
+      </select>
+
       <hr>
 
       <h2>Single select input</h2>
@@ -340,6 +348,7 @@
         removeItemButton: true,
       });
 
+<<<<<<< HEAD
       /* Use label on event */
       var choicesSelect = new Choices('#choices-multiple-labels', {
         search: false,
@@ -361,6 +370,11 @@
 
       choicesSelect.passedElement.addEventListener('removeItem', function(event) {
         document.getElementById('message').innerHTML = 'You just removed "' + event.detail.label + '"';
+=======
+      var multipleAddItems = new Choices('#choices-multiple-add-items', {
+        addItems: true,
+        duplicateItems: false,
+>>>>>>> c348050... Add multiple select example
       });
 
       var singleFetch = new Choices('#choices-single-remote-fetch', {
