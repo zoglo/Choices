@@ -15,16 +15,16 @@
   <meta name="theme-color" content="#ffffff">
 
   <!-- Ignore these -->
-  <link rel="stylesheet" href="assets/styles/css/base.min.css?version=2.5.0">
+  <link rel="stylesheet" href="assets/styles/css/base.min.css?version=2.6.1">
   <!-- End ignore these -->
 
   <!-- Optional includes -->
-  <script src="https://cdn.polyfill.io/v2/polyfill.js?features=es5,fetch,Element.prototype.classList,requestAnimationFrame,Node.insertBefore,Node.firstChild"></script>
+  <script src="https://cdn.polyfill.io/v2/polyfill.js?features=es5,fetch,Element.prototype.classList,requestAnimationFrame,Node.insertBefore,Node.firstChild,Object.assign"></script>
   <!-- End optional includes -->
 
   <!-- Choices includes -->
-  <link rel="stylesheet" href="assets/styles/css/choices.min.css?version=2.5.0">
-  <script src="assets/scripts/dist/choices.min.js?version=2.5.0"></script>
+  <link rel="stylesheet" href="assets/styles/css/choices.min.css?version=2.6.1">
+  <script src="assets/scripts/dist/choices.min.js?version=2.6.1"></script>
   <!-- End Choices includes -->
 
   <!--[if lt IE 9]>
@@ -230,6 +230,14 @@
         <option value="Michigan">Michigan</option>
       </select>
 
+      <label for="choices-placeholder-option">Placeholder option</label>
+      <select class="form-control" name="choices-placeholder-option" id="choices-placeholder-option">
+        <option selected placeholder>Press here</option>
+        <option value="one">One</option>
+        <option value="two">Two</option>
+        <option value="three">Three</option>
+      </select>
+
       <label for="choices-custom-templates">Custom templates</label>
       <select class="form-control" name="choices-custom-templates" id="choices-custom-templates">
         <option value="React">React</option>
@@ -256,14 +264,6 @@
         <option value="Queens">Queens</option>
         <option value="Staten Island">Staten Island</option>
       </select>
-
-      <label for="choices-placeholder-option">Placeholder option</label>
-      <select class="form-control" name="choices-placeholder-option" id="choices-placeholder-option">
-        <option selected placeholder>Press here</option>
-        <option value="one">One</option>
-        <option value="two">Two</option>
-        <option value="three">Three</option>
-      </select>
     </div>
   </div>
   <script>
@@ -273,12 +273,6 @@
         editItems: true,
         maxItemCount: 5,
         removeItemButton: true,
-        callbackOnHighlightItem: function(id, value) {
-          console.log(value);
-        },
-        callbackOnUnhighlightItem: function(id, value) {
-          console.log(value);
-        },
       });
 
       var textUniqueVals = new Choices('#choices-text-unique-values', {
@@ -319,21 +313,11 @@
         items: ['josh@joshuajohnson.co.uk', { value: 'joe@bloggs.co.uk', label: 'Joe Bloggs' } ],
       });
 
-      var multipleDefault = new Choices('#choices-multiple-groups', {
-        callbackOnAddItem: function(id, value, groupValue) {
-          console.log(arguments);
-        },
-        callbackOnRemoveItem: function(id, value, groupValue) {
-          console.log(arguments);
-        },
-      });
+      var multipleDefault = new Choices(document.getElementById('choices-multiple-groups'));
 
       var multipleFetch = new Choices('#choices-multiple-remote-fetch', {
         searchPlaceholderValue: 'Pick an Strokes record',
         maxItemCount: 5,
-        callbackOnChange: function(value) {
-          console.log(value)
-        }
       }).ajax(function(callback) {
         fetch('https://api.discogs.com/artists/55980/releases?token=QBRmstCkwXEvCjTclCpumbtNwvVkEzGAdELXyRyW')
         .then(function(response) {
@@ -342,7 +326,7 @@
           });
         })
         .catch(function(error) {
-          // console.error(error);
+          console.error(error);
         });
       });
 
@@ -361,7 +345,7 @@
           });
         })
         .catch(function(error) {
-          // console.error(error);
+          console.error(error);
         });
       });
 
@@ -381,7 +365,7 @@
               callback(data.releases, 'title', 'title');
               singleXhrRemove.setValueByChoice('How Soon Is Now?');
             } else {
-              // console.error(status);
+              console.error(status);
             }
           }
         }
@@ -441,17 +425,23 @@
         shouldSort: false,
       });
 
-      var singleStates = new Choices(document.getElementById('choices-states'), {
-        callbackOnChange: function(value) {
-          if(value === 'New York') {
-            singleBoroughs.enable();
-          } else {
-            singleBoroughs.disable();
-          }
-        }
+      var singlePlaceholderOption = new Choices('#choices-placeholder-option', {
+        placeholder: true,
+        placeholderValue: 'Please Choose…',
+        removeItemButton: false,
+        preselectItem: false,
       });
 
+      var singleStates = new Choices(document.getElementById('choices-states'));
       var singleBoroughs = new Choices(document.getElementById('choices-boroughs')).disable();
+
+      singleStates.passedElement.addEventListener('change', function(e) {
+        if(e.detail.value === 'New York') {
+          singleBoroughs.enable();
+        } else {
+          singleBoroughs.disable();
+        }
+      });
 
       var singleCustomTemplates = new Choices(
         document.getElementById('choices-custom-templates'), {
@@ -477,14 +467,6 @@
           }
         }
       );
-
-      var singlePlaceholderOption = new Choices('#choices-placeholder-option', {
-        placeholder: true,
-        placeholderValue: 'Please Choose…',
-        removeItemButton: true,
-        preselectItem: false,
-      });
-
     });
   </script>
 

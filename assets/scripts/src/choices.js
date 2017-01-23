@@ -23,6 +23,7 @@ import {
   getWidthOfInput,
   sortByAlpha,
   sortByScore,
+  triggerEvent,
 }
 from './lib/utils.js';
 import './lib/polyfills.js';
@@ -104,14 +105,11 @@ class Choices {
         flippedState: 'is-flipped',
         loadingState: 'is-loading',
       },
+      fuseOptions: {
+        include: 'score',
+      },
       callbackOnInit: null,
-      callbackOnAddItem: null,
-      callbackOnRemoveItem: null,
-      callbackOnHighlightItem: null,
-      callbackOnUnhighlightItem: null,
       callbackOnCreateTemplates: null,
-      callbackOnChange: null,
-      callbackOnSearch: null,
     };
 
     // Merge options with user options
@@ -133,9 +131,11 @@ class Choices {
     this.isTextElement = this.passedElement.type === 'text';
     this.highlightPosition = 0;
     this.canSearch = this.config.search;
+    this.placeholder = false;
 
-    // Placeholder
-    this.placeholder = (this.config.placeholderValue || this.passedElement.getAttribute('placeholder')) || false;
+    if (this.passedElement.type !== 'select-one') {
+      this.placeholder = (this.config.placeholderValue || this.passedElement.getAttribute('placeholder')) || false
+    }
 
     // Monitor touch taps/scrolls
     this.wasTap = true;
@@ -220,8 +220,6 @@ class Choices {
     if (callback) {
       if (isType('Function', callback)) {
         callback.call(this);
-      } else {
-        console.error('callbackOnInit: Callback is not a function');
       }
     }
   }
@@ -450,24 +448,26 @@ class Choices {
    * @return {Object} Class instance
    * @public
    */
-  highlightItem(item) {
+  highlightItem(item, runEvent = true) {
     if (!item) return;
     const id = item.id;
     const groupId = item.groupId;
-    const callback = this.config.callbackOnHighlightItem;
+    const group = groupId >= 0 ? this.store.getGroupById(groupId) : null;
+
     this.store.dispatch(highlightItem(id, true));
 
-    // Run callback if it is a function
-    if (callback) {
-      if (isType('Function', callback)) {
-        const group = groupId >= 0 ? this.store.getGroupById(groupId) : null;
-        if(group && group.value) {
-          callback.call(this, id, item.value, group.value);
-        } else {
-          callback.call(this, id, item.value)
-        }
+    if (runEvent) {
+      if(group && group.value) {
+        triggerEvent(this.passedElement, 'highlightItem', {
+          id,
+          value: item.value,
+          groupValue: group.value
+        });
       } else {
-        console.error('callbackOnHighlightItem: Callback is not a function');
+        triggerEvent(this.passedElement, 'highlightItem', {
+          id,
+          value: item.value,
+        });
       }
     }
 
@@ -484,22 +484,21 @@ class Choices {
     if (!item) return;
     const id = item.id;
     const groupId = item.groupId;
-    const callback = this.config.callbackOnUnhighlightItem;
+    const group = groupId >= 0 ? this.store.getGroupById(groupId) : null;
 
     this.store.dispatch(highlightItem(id, false));
 
-    // Run callback if it is a function
-    if (callback) {
-      if (isType('Function', callback)) {
-        const group = groupId >= 0 ? this.store.getGroupById(groupId) : null;
-        if(group && group.value) {
-          callback.call(this, id, item.value, group.value);
-        } else {
-          callback.call(this, id, item.value)
-        }
-      } else {
-        console.error('callbackOnUnhighlightItem: Callback is not a function');
-      }
+    if(group && group.value) {
+      triggerEvent(this.passedElement, 'unhighlightItem', {
+        id,
+        value: item.value,
+        groupValue: group.value
+      });
+    } else {
+      triggerEvent(this.passedElement, 'unhighlightItem', {
+        id,
+        value: item.value,
+      });
     }
 
     return this;
@@ -581,15 +580,15 @@ class Choices {
    * @return {Object} Class instance
    * @public
    */
-  removeHighlightedItems(runCallback = false) {
+  removeHighlightedItems(runEvent = false) {
     const items = this.store.getItemsFilteredByActive();
 
     items.forEach((item) => {
       if (item.highlighted && item.active) {
         this._removeItem(item);
         // If this action was performed by the user
-        // run the callback
-        if (runCallback) {
+        // trigger the event
+        if (runEvent) {
           this._triggerChange(item.value);
         }
       }
@@ -754,7 +753,7 @@ class Choices {
 
         if (foundChoice) {
           if (!foundChoice.selected) {
-            this._addItem(foundChoice.value, foundChoice.label, foundChoice.id, foundChoice.groupId);
+            this._addItem(foundChoice.value, foundChoice.label, foundChoice.id, foundChoice.groupId, foundChoice.placeholder);
           } else {
             console.warn('Attempting to select choice already selected');
           }
@@ -789,10 +788,12 @@ class Choices {
           choices.forEach((result, index) => {
             const isSelected = result.selected ? result.selected : false;
             const isDisabled = result.disabled ? result.disabled : false;
+            const isPlaceholder = result.placeholder ? result.placeholder : false;
+
             if (result.choices) {
               this._addGroup(result, index, value, label);
             } else {
-              this._addChoice(isSelected, isDisabled, result[value], result[label]);
+              this._addChoice(isSelected, isDisabled, result[value], result[label], -1, isPlaceholder);
             }
           });
         }
@@ -896,16 +897,10 @@ class Choices {
    */
   _triggerChange(value) {
     if (!value) return;
-    const callback = this.config.callbackOnChange;
 
-    // Run callback if it is a function
-    if (callback) {
-      if (isType('Function', callback)) {
-        callback.call(this, value);
-      } else {
-        console.error('callbackOnChange: Callback is not a function');
-      }
-    }
+    triggerEvent(this.passedElement, 'change', {
+      value
+    });
   }
 
   /**
@@ -981,7 +976,7 @@ class Choices {
       const canAddItem = this._canAddItem(activeItems, choice.value);
 
       if (canAddItem.response) {
-        this._addItem(choice.value, choice.label, choice.id, choice.groupId);
+        this._addItem(choice.value, choice.label, choice.id, choice.groupId, choice.placeholder);
         this._triggerChange(choice.value);
       }
     }
@@ -1015,7 +1010,7 @@ class Choices {
         this._triggerChange(lastItem.value);
       } else {
         if (!hasHighlightedItems) {
-          this.highlightItem(lastItem);
+          this.highlightItem(lastItem, false);
         }
         this.removeHighlightedItems(true);
       }
@@ -1115,10 +1110,11 @@ class Choices {
         parsedResults.forEach((result, index) => {
           const isSelected = result.selected ? result.selected : false;
           const isDisabled = result.disabled ? result.disabled : false;
+          const isPlaceholder = result.placeholder ? result.placeholder : false;
           if (result.choices) {
             this._addGroup(result, index, value, label);
           } else {
-            this._addChoice(isSelected, isDisabled, result[value], result[label]);
+            this._addChoice(isSelected, isDisabled, result[value], result[label], isPlaceholder);
           }
         });
       }
@@ -1141,12 +1137,10 @@ class Choices {
       const haystack = this.store.getChoicesFilteredBySelectable();
       const needle = newValue;
       const keys = isType('Array', this.config.sortFields) ? this.config.sortFields : [this.config.sortFields];
-      const fuse = new Fuse(haystack, {
-        keys,
-        shouldSort: true,
-        include: 'score',
-      });
+      const options = Object.assign(this.config.fuseOptions, { keys });
+      const fuse = new Fuse(haystack, options);
       const results = fuse.search(needle);
+
       this.currentValue = newValue;
       this.highlightPosition = 0;
       this.isSearching = true;
@@ -1164,7 +1158,6 @@ class Choices {
     if (!value) return;
     const choices = this.store.getChoices();
     const hasUnactiveChoices = choices.some((option) => option.active !== true);
-    const callback = this.config.callbackOnSearch;
 
     // Run callback if it is a function
     if (this.input === document.activeElement) {
@@ -1172,14 +1165,10 @@ class Choices {
       if (value && value.length > this.config.searchFloor) {
         // Filter available choices
         this._searchChoices(value);
-        // Run callback if it is a function
-        if (callback) {
-          if (isType('Function', callback)) {
-            callback.call(this, value);
-          } else {
-            console.error('callbackOnSearch: Callback is not a function');
-          }
-        }
+        // Trigger search event
+        triggerEvent(this.passedElement, 'search', {
+          value,
+        });
       } else if (hasUnactiveChoices) {
         // Otherwise reset choices to active
         this.isSearching = false;
@@ -1322,12 +1311,14 @@ class Choices {
       }
 
       if (hasActiveDropdown) {
+        e.preventDefault();
         const highlighted = this.dropdown.querySelector(`.${this.config.classNames.highlightedState}`);
 
         // If we have a highlighted choice
         if (highlighted) {
           this._handleChoiceAction(activeItems, highlighted);
         }
+
       } else if (passedElementType === 'select-one') {
         // Open single select dropdown if it's not active
         if (!hasActiveDropdown) {
@@ -1835,12 +1826,17 @@ class Choices {
    * @return {Object} Class instance
    * @public
    */
-  _addItem(value, label, choiceId = -1, groupId = -1) {
+  _addItem(value, label, choiceId = -1, groupId = -1, isPlaceholder = false) {
     let passedValue = isType('String', value) ? value.trim() : value;
     const items = this.store.getItems();
     const passedLabel = label || passedValue;
     const passedOptionId = parseInt(choiceId, 10) || -1;
-    const callback = this.config.callbackOnAddItem;
+
+    // Get group if group ID passed
+    const group = groupId >= 0 ? this.store.getGroupById(groupId) : null;
+
+    // Generate unique id
+    const id = items ? items.length + 1 : 1;
 
     // If a prepended value has been passed, prepend it
     if (this.config.prependValue) {
@@ -1852,27 +1848,24 @@ class Choices {
       passedValue += this.config.appendValue.toString();
     }
 
-    // Generate unique id
-    const id = items ? items.length + 1 : 1;
-
-    this.store.dispatch(addItem(passedValue, passedLabel, id, passedOptionId, groupId));
+    this.store.dispatch(addItem(passedValue, passedLabel, id, passedOptionId, groupId, isPlaceholder));
 
     if (this.passedElement.type === 'select-one') {
       this.removeActiveItems(id);
     }
 
-    // Run callback if it is a function
-    if (callback) {
-      const group = groupId >= 0 ? this.store.getGroupById(groupId) : null;
-      if (isType('Function', callback)) {
-        if(group && group.value) {
-          callback.call(this, id, passedValue, group.value);
-        } else {
-          callback.call(this, id, passedValue);
-        }
-      } else {
-        console.error('callbackOnAddItem: Callback is not a function');
-      }
+    // Trigger change event
+    if(group && group.value) {
+      triggerEvent(this.passedElement, 'addItem', {
+        id,
+        value: passedValue,
+        groupValue: group.value,
+      });
+    } else {
+      triggerEvent(this.passedElement, 'addItem', {
+        id,
+        value: passedValue,
+      });
     }
 
     return this;
@@ -1895,22 +1888,21 @@ class Choices {
     const value = item.value;
     const choiceId = item.choiceId;
     const groupId = item.groupId;
-    const callback = this.config.callbackOnRemoveItem;
+    const group = groupId >= 0 ? this.store.getGroupById(groupId) : null;
 
     this.store.dispatch(removeItem(id, choiceId));
 
-    // Run callback
-    if (callback) {
-      if (isType('Function', callback)) {
-        const group = groupId >= 0 ? this.store.getGroupById(groupId) : null;
-        if(group && group.value) {
-          callback.call(this, id, value, group.value);
-        } else {
-          callback.call(this, id, value);
-        }
-      } else {
-        console.error('callbackOnRemoveItem: Callback is not a function');
-      }
+    if(group && group.value) {
+      triggerEvent(this.passedElement, 'removeItem', {
+        id,
+        value,
+        groupValue: group.value,
+      });
+    } else {
+      triggerEvent(this.passedElement, 'removeItem', {
+        id,
+        value,
+      });
     }
 
     return this;
@@ -1926,7 +1918,7 @@ class Choices {
    * @return
    * @private
    */
-  _addChoice(isSelected, isDisabled, value, label, groupId = -1) {
+  _addChoice(isSelected, isDisabled, value, label, groupId = -1, isPlaceholder = false) {
     if (typeof value === 'undefined' || value === null) return;
 
     // Generate unique id
@@ -1934,10 +1926,10 @@ class Choices {
     const choiceLabel = label || value;
     const choiceId = choices ? choices.length + 1 : 1;
 
-    this.store.dispatch(addChoice(value, choiceLabel, choiceId, groupId, isDisabled));
+    this.store.dispatch(addChoice(value, choiceLabel, choiceId, groupId, isDisabled, isPlaceholder));
 
     if (isSelected) {
-      this._addItem(value, choiceLabel, choiceId);
+      this._addItem(value, choiceLabel, choiceId, groupId, isPlaceholder);
     }
   }
 
@@ -2008,76 +2000,154 @@ class Choices {
     const templates = {
       containerOuter: (direction) => {
         return strToEl(`
-            <div class="${classNames.containerOuter}" data-type="${this.passedElement.type}" ${this.passedElement.type === 'select-one' ? 'tabindex="0"' : ''} aria-haspopup="true" aria-expanded="false" dir="${direction}"></div>
-          `);
+          <div
+            class="${classNames.containerOuter}"
+            data-type="${this.passedElement.type}" ${this.passedElement.type === 'select-one' ? 'tabindex="0"' : ''}
+            aria-haspopup="true"
+            aria-expanded="false"
+            dir="${direction}"
+            >
+          </div>
+        `);
       },
       containerInner: () => {
         return strToEl(`
-            <div class="${classNames.containerInner}"></div>
-          `);
+          <div class="${classNames.containerInner}"></div>
+        `);
       },
       itemList: () => {
         return strToEl(`
-            <div class="${classNames.list} ${this.passedElement.type === 'select-one' ? classNames.listSingle : classNames.listItems}"></div>
-          `);
+          <div class="${classNames.list} ${this.passedElement.type === 'select-one' ? classNames.listSingle : classNames.listItems}"></div>
+        `);
       },
       placeholder: (value) => {
         return strToEl(`
-            <div class="${classNames.placeholder}">${value}</div>
-          `);
+          <div class="${classNames.placeholder}">${value}</div>
+        `);
       },
       item: (data) => {
         if (this.config.removeItemButton) {
           return strToEl(`
-              <div class="${classNames.item} ${data.highlighted ? classNames.highlightedState : ''} ${!data.disabled ? classNames.itemSelectable : ''}" data-item data-id="${data.id}" data-value="${data.value}" ${data.active ? 'aria-selected="true"' : ''} ${data.disabled ? 'aria-disabled="true"' : ''} data-deletable>
-              ${data.label}<button class="${classNames.button}" data-button>Remove item</button>
-              </div>
-            `);
+            <div
+              class="
+                ${classNames.item}
+                ${data.highlighted ? classNames.highlightedState : ''}
+                ${!data.disabled ? classNames.itemSelectable : ''}
+                ${data.placeholder ? classNames.placeholder : ''}
+              "
+              data-item
+              data-id="${data.id}"
+              data-value="${data.value}"
+              ${data.active ? 'aria-selected="true"' : ''}
+              ${data.disabled ? 'aria-disabled="true"' : ''}
+              data-deletable
+              >
+              ${data.label}
+              <button class="${classNames.button}" data-button>Remove item</button>
+            </div>
+          `);
         }
         return strToEl(`
-          <div class="${classNames.item} ${data.highlighted ? classNames.highlightedState : classNames.itemSelectable}"  data-item data-id="${data.id}" data-value="${data.value}" ${data.active ? 'aria-selected="true"' : ''} ${data.disabled ? 'aria-disabled="true"' : ''}>
+          <div
+            class="
+              ${classNames.item}
+              ${data.highlighted ? classNames.highlightedState : classNames.itemSelectable}
+              ${data.placeholder ? classNames.placeholder : ''}
+            "
+            data-item
+            data-id="${data.id}"
+            data-value="${data.value}"
+            ${data.active ? 'aria-selected="true"' : ''}
+            ${data.disabled ? 'aria-disabled="true"' : ''}
+            >
             ${data.label}
           </div>
-          `);
+        `);
       },
       choiceList: () => {
         return strToEl(`
-            <div class="${classNames.list}" dir="ltr" role="listbox" ${this.passedElement.type !== 'select-one' ? 'aria-multiselectable="true"' : ''}></div>
-          `);
+          <div
+            class="${classNames.list}"
+            dir="ltr"
+            role="listbox" ${this.passedElement.type !== 'select-one' ? 'aria-multiselectable="true"' : ''}
+            >
+          </div>
+        `);
       },
       choiceGroup: (data) => {
         return strToEl(`
-            <div class="${classNames.group} ${data.disabled ? classNames.itemDisabled : ''}" data-group data-id="${data.id}" data-value="${data.value}" role="group" ${data.disabled ? 'aria-disabled="true"' : ''}>
-              <div class="${classNames.groupHeading}">${data.value}</div>
-            </div>
-          `);
+          <div
+            class="
+              ${classNames.group}
+              ${data.disabled ? classNames.itemDisabled : ''}
+            "
+            data-group
+            data-id="${data.id}"
+            data-value="${data.value}"
+            role="group"
+            ${data.disabled ? 'aria-disabled="true"' : ''}
+            >
+            <div class="${classNames.groupHeading}">${data.value}</div>
+          </div>
+        `);
       },
       choice: (data) => {
         return strToEl(`
-          <div class="${classNames.item} ${classNames.itemChoice} ${data.disabled ? classNames.itemDisabled : classNames.itemSelectable}" data-select-text="${this.config.itemSelectText}" data-choice ${data.disabled ? 'data-choice-disabled aria-disabled="true"' : 'data-choice-selectable'} data-id="${data.id}" data-value="${data.value}" ${data.groupId > 0 ? 'role="treeitem"' : 'role="option"'}>
-              ${data.label}
-            </div>
-          `);
+          <div
+            class="
+              ${classNames.item}
+              ${classNames.itemChoice}
+              ${data.placeholder ? classNames.placeholder : ''}
+              ${data.disabled ? classNames.itemDisabled : classNames.itemSelectable}
+            "
+            data-select-text="${this.config.itemSelectText}"
+            data-choice
+            ${data.disabled ? 'data-choice-disabled aria-disabled="true"' : 'data-choice-selectable'}
+            data-id="${data.id}"
+            data-value="${data.value}"
+            ${data.groupId > 0 ? 'role="treeitem"' : 'role="option"'}
+            >
+            ${data.label}
+          </div>
+        `);
       },
       input: () => {
         return strToEl(`
-          <input type="text" class="${classNames.input} ${classNames.inputCloned}" autocomplete="off" autocapitalize="off" spellcheck="false" role="textbox" aria-autocomplete="list">
-          `);
+          <input
+            type="text"
+            class="
+              ${classNames.input}
+              ${classNames.inputCloned}
+            "
+            autocomplete="off"
+            autocapitalize="off"
+            spellcheck="false"
+            role="textbox"
+            aria-autocomplete="list"
+            >
+        `);
       },
       dropdown: () => {
         return strToEl(`
-            <div class="${classNames.list} ${classNames.listDropdown}" aria-expanded="false"></div>
-          `);
+          <div
+            class="
+              ${classNames.list}
+              ${classNames.listDropdown}
+            "
+            aria-expanded="false"
+            >
+          </div>
+        `);
       },
       notice: (label) => {
         return strToEl(`
-            <div class="${classNames.item} ${classNames.itemChoice}">${label}</div>
-          `);
+          <div class="${classNames.item} ${classNames.itemChoice}">${label}</div>
+        `);
       },
       option: (data) => {
         return strToEl(`
-            <option value="${data.value}" selected>${data.label}</option>
-          `);
+          <option value="${data.value}" selected>${data.label}</option>
+        `);
       },
     };
 
@@ -2087,6 +2157,7 @@ class Choices {
     if (callbackTemplate && isType('Function', callbackTemplate)) {
       userTemplates = callbackTemplate.call(this, strToEl);
     }
+
     this.config.templates = extend(templates, userTemplates);
   }
 
@@ -2185,6 +2256,7 @@ class Choices {
             label: o.innerHTML,
             selected: o.selected,
             disabled: o.disabled || o.parentNode.disabled,
+            placeholder: o.hasAttribute('placeholder')
           });
         });
 
@@ -2207,13 +2279,13 @@ class Choices {
             if (hasSelectedChoice || (!hasSelectedChoice && index > 0)) {
               // If there is a selected choice already or the choice is not
               // the first in the array, add each choice normally
-              this._addChoice(isSelected, isDisabled, choice.value, choice.label);
+              this._addChoice(isSelected, isDisabled, choice.value, choice.label, -1, choice.placeholder);
             } else {
               // Otherwise pre-select the first choice in the array
-              this._addChoice(true, false, choice.value, choice.label);
+              this._addChoice(true, false, choice.value, choice.label, -1, choice.placeholder);
             }
           } else {
-            this._addChoice(isSelected, isDisabled, choice.value, choice.label);
+            this._addChoice(isSelected, isDisabled, choice.value, choice.label, -1, choice.placeholder);
           }
         });
       }
