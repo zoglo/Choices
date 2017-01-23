@@ -390,9 +390,7 @@
         {value: 'Six', label: 'Label Six', selected: true},
       ], 'value', 'label', false);
 
-      var singlePresetOpts = new Choices('#choices-single-preset-options', {
-        placeholder: true,
-      }).setChoices([{
+      var singlePresetOpts = new Choices('#choices-single-preset-options').setChoices([{
         label: 'Group one',
         id: 1,
         disabled: false,
@@ -426,8 +424,6 @@
       });
 
       var singlePlaceholderOption = new Choices('#choices-placeholder-option', {
-        placeholder: true,
-        placeholderValue: 'Please Choose…',
         removeItemButton: false,
         preselectItem: false,
       });
