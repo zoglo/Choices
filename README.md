@@ -1,4 +1,4 @@
-# Choices.js [![Build Status](https://travis-ci.org/jshjohnson/Choices.svg?branch=master)](https://travis-ci.org/jshjohnson/Choices) 
+# Choices.js ![Build Status](https://travis-ci.org/jshjohnson/Choices.svg?branch=master)
 A vanilla, lightweight (~15kb gzipped 🎉), configurable select box/text input plugin. Similar to Select2 and Selectize but without the jQuery dependency.
 
 [Demo](https://joshuajohnson.co.uk/Choices/)
@@ -12,6 +12,10 @@ A vanilla, lightweight (~15kb gzipped 🎉), configurable select box/text input 
 * Clean API
 * Right-to-left support
 * Custom templates
+
+----
+### Interested in writing your own ES6 JavaScript plugins? Check out [ES6.io](https://ES6.io/friend/JOHNSON) for great tutorials! 💪🏼 
+----
 
 ## Installation
 With [NPM](https://www.npmjs.com/package/choices.js):
@@ -64,7 +68,8 @@ Or include Choices directly:
     paste: true,
     search: true,
     searchFloor: 1,
-    flip: true,
+    position: 'auto',
+    resetScrollPosition: true,
     regexFilter: null,
     shouldSort: true,
     sortFilter: () => {...},
@@ -246,12 +251,19 @@ Pass an array of objects:
 
 **Usage:** The minimum length a search value should be before choices are searched.
 
-### flip
-**Type:** `Boolean` **Default:** `true`
+### position
+**Type:** `String` **Default:** `auto`
 
 **Input types affected:** `select-one`, `select-multiple`
 
-**Usage:** Whether the dropdown should appear above the input (rather than beneath) if there is not enough space within the window. 
+**Usage:** Whether the dropdown should appear above (`top`) or below (`bottom`) the input. By default, if there is not enough space within the window the dropdown will appear above the input, otherwise below it. 
+
+### resetScrollPosition
+**Type:** `Boolean` **Default:** `true`
+
+**Input types affected:** `select-multiple`
+
+**Usage:** Whether the scroll position should reset after adding an item.
 
 ### regexFilter
 **Type:** `Regex` **Default:** `null`
@@ -332,18 +344,18 @@ const example = new Choices(element, {
 **Usage:** The text that is shown whilst choices are being populated via AJAX.
 
 ### noResultsText
-**Type:** `String` **Default:** `No results found`
+**Type:** `String/Function` **Default:** `No results found`
 
 **Input types affected:** `select-one`, `select-multiple`
 
-**Usage:** The text that is shown when a user's search has returned no results.
+**Usage:** The text that is shown when a user's search has returned no results. Optionally pass a function returning a string.
 
 ### noChoicesText
-**Type:** `String` **Default:** `No choices to choose from`
+**Type:** `String/Function` **Default:** `No choices to choose from`
 
 **Input types affected:** `select-multiple`
 
-**Usage:** The text that is shown when a user has selected all possible choices.
+**Usage:** The text that is shown when a user has selected all possible choices. Optionally pass a function returning a string.
 
 ### itemSelectText
 **Type:** `String` **Default:** `Press to select`
@@ -457,6 +469,7 @@ element.addEventListener('addItem', function(event) {
   // do something creative here...
   console.log(event.detail.id);
   console.log(event.detail.value);
+  console.log(event.detail.label);
   console.log(event.detail.groupValue);
 }, false);
 
@@ -467,38 +480,46 @@ example.passedElement.addEventListener('addItem', function(event) {
   // do something creative here...
   console.log(event.detail.id);
   console.log(event.detail.value);
+  console.log(event.detail.label);
   console.log(event.detail.groupValue);
 }, false);
 
 ```
 
 ### addItem
-**Arguments:** `id, value, groupValue`
+**Arguments:** `id, value, label, groupValue`
 
 **Input types affected:** `text`, `select-one`, `select-multiple`
 
 **Usage:** Triggered each time an item is added (programmatically or by the user).
 
 ### removeItem
-**Arguments:** `id, value, groupValue`
+**Arguments:** `id, value, label, groupValue`
 
 **Input types affected:** `text`, `select-one`, `select-multiple`
 
 **Usage:** Triggered each time an item is removed (programmatically or by the user).
 
 ### highlightItem
-**Arguments:** `id, value, groupValue`
+**Arguments:** `id, value, label, groupValue`
 
 **Input types affected:** `text`, `select-multiple`
 
 **Usage:** Triggered each time an item is highlighted.
 
 ### unhighlightItem
-**Arguments:** `id, value, groupValue`
+**Arguments:** `id, value, label, groupValue`
 
 **Input types affected:** `text`, `select-multiple`
 
 **Usage:** Triggered each time an item is unhighlighted.
+
+### choice
+**Arguments:** `value`
+
+**Input types affected:** `select-one`, `select-multiple`
+
+**Usage:** Triggered each time a choice is selected **by a user**, regardless if it changes the value of the input.
 
 ### change
 **Arguments:** `value`
@@ -511,6 +532,16 @@ example.passedElement.addEventListener('addItem', function(event) {
 **Arguments:** `value` **Input types affected:** `select-one`, `select-multiple`
 
 **Usage:** Triggered when a user types into an input to search choices.
+
+### showDropdown
+**Arguments:** - **Input types affected:** `select-one`, `select-multiple`
+
+**Usage:** Triggered when the dropdown is shown.
+
+### hideDropdown
+**Arguments:** - **Input types affected:** `select-one`, `select-multiple`
+
+**Usage:** Triggered when the dropdown is hidden.
 
 ## Methods
 Methods can be called either directly or by chaining:

@@ -16,8 +16,18 @@ export const capitalise = function(str) {
  * @param  {Object}  obj  Object to be tested
  * @return {Boolean}
  */
+export const getType = function(obj) {
+  return Object.prototype.toString.call(obj).slice(8, -1);
+};
+
+/**
+ * Tests the type of an object
+ * @param  {String}  type Type to test object against
+ * @param  {Object}  obj  Object to be tested
+ * @return {Boolean}
+ */
 export const isType = function(type, obj) {
-  var clas = Object.prototype.toString.call(obj).slice(8, -1);
+  var clas = getType(obj);
   return obj !== undefined && obj !== null && clas === type;
 };
 
@@ -30,7 +40,7 @@ export const isNode = (o) => {
   return (
     typeof Node === "object" ? o instanceof Node :
     o && typeof o === "object" && typeof o.nodeType === "number" && typeof o.nodeName === "string"
-    );
+  );
 };
 
 /**
@@ -42,7 +52,7 @@ export const isElement = (o) => {
   return (
     typeof HTMLElement === "object" ? o instanceof HTMLElement : //DOM2
     o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName === "string"
-    );
+  );
 };
 
 /**
@@ -246,6 +256,26 @@ export const getSiblings = function(elem) {
 export const findAncestor = function(el, cls) {
   while ((el = el.parentElement) && !el.classList.contains(cls));
   return el;
+};
+
+/**
+ * Find ancestor in DOM tree by attribute name
+ * @param  {NodeElement} el  Element to start search from
+ * @param  {string} attr Attribute name of parent
+ * @return {?NodeElement}     Found parent element or null
+ */
+export const findAncestorByAttrName = function(el, attr) {
+  let target = el;
+
+  while (target) {
+    if (target.hasAttribute(attr)) {
+      return target;
+    }
+
+    target = target.parentElement;
+  }
+
+  return null;
 };
 
 /**

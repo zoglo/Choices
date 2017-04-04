@@ -78,6 +78,7 @@ describe('Choices', () => {
       expect(this.choices.config.searchFloor).toEqual(jasmine.any(Number));
       expect(this.choices.config.searchPlaceholderValue).toEqual(null);
       expect(this.choices.config.flip).toEqual(jasmine.any(Boolean));
+      expect(this.choices.config.position).toEqual(jasmine.any(String));
       expect(this.choices.config.regexFilter).toEqual(null);
       expect(this.choices.config.sortFilter).toEqual(jasmine.any(Function));
       expect(this.choices.config.sortFields).toEqual(jasmine.any(Array) || jasmine.any(String));
@@ -368,13 +369,34 @@ describe('Choices', () => {
 
     it('should close the dropdown on double click', function() {
       this.choices = new Choices(this.input);
+      const container = this.choices.containerOuter,
+        openState = this.choices.config.classNames.openState;
+
+      this.choices._onClick({
+        target: container,
+        ctrlKey: false,
+        preventDefault: () => {}
+      });
+
+      this.choices._onClick({
+        target: container,
+        ctrlKey: false,
+        preventDefault: () => {}
+      });
+
+      expect(document.activeElement === this.choices.input && container.classList.contains(openState)).toBe(false);
+    });
+
+    it('should trigger showDropdown on dropdown opening', function() {
+      this.choices = new Choices(this.input);
       const container = this.choices.containerOuter;
 
-      this.choices._onClick({
-        target: container,
-        ctrlKey: false,
-        preventDefault: () => {}
-      });
+      const showDropdownSpy = jasmine.createSpy('showDropdownSpy');
+      const passedElement = this.choices.passedElement;
+
+      passedElement.addEventListener('showDropdown', showDropdownSpy);
+
+      this.choices.input.focus();
 
       this.choices._onClick({
         target: container,
@@ -382,7 +404,33 @@ describe('Choices', () => {
         preventDefault: () => {}
       });
 
-      expect(document.activeElement === this.choices.input && container.classList.contains('is-open')).toBe(false);
+      expect(showDropdownSpy).toHaveBeenCalled();
+    });
+
+it('should trigger hideDropdown on dropdown closing', function() {
+      this.choices = new Choices(this.input);
+      const container = this.choices.containerOuter;
+
+      const hideDropdownSpy = jasmine.createSpy('hideDropdownSpy');
+      const passedElement = this.choices.passedElement;
+
+      passedElement.addEventListener('hideDropdown', hideDropdownSpy);
+
+      this.choices.input.focus();
+
+      this.choices._onClick({
+        target: container,
+        ctrlKey: false,
+        preventDefault: () => {}
+      });
+
+      this.choices._onClick({
+        target: container,
+        ctrlKey: false,
+        preventDefault: () => {}
+      });
+
+      expect(hideDropdownSpy).toHaveBeenCalled();
     });
 
     it('should filter choices when searching', function() {
@@ -735,6 +783,42 @@ describe('Choices', () => {
     });
   });
 
+  describe('should handle public methods on select-one input types', function() {
+    beforeEach(function() {
+      this.input = document.createElement('select');
+      this.input.className = 'js-choices';
+      this.input.placeholder = 'Placeholder text';
+
+      for (let i = 1; i < 10; i++) {
+        const option = document.createElement('option');
+
+        option.value = `Value ${i}`;
+        option.innerHTML = `Value ${i}`;
+
+        if (i % 2) {
+          option.selected = true;
+        }
+
+        this.input.appendChild(option);
+      }
+
+      document.body.appendChild(this.input);
+      this.choices = new Choices(this.input);
+    });
+
+    it('should handle disable()', function() {
+      this.choices.disable();
+
+      expect(this.choices.containerOuter.getAttribute('tabindex')).toBe('-1');
+    });
+
+    it('should handle enable()', function() {
+      this.choices.enable();
+
+      expect(this.choices.containerOuter.getAttribute('tabindex')).toBe('0');
+    });
+  });
+
   describe('should handle public methods on text input types', function() {
     beforeEach(function() {
       this.input = document.createElement('input');
@@ -757,6 +841,49 @@ describe('Choices', () => {
 
       this.choices.removeItemsByValue(randomItem.value);
       expect(randomItem.active).toBe(false);
+    });
+  });
+
+  describe('should react to config options', function() {
+    beforeEach(function() {
+      this.input = document.createElement('select');
+      this.input.className = 'js-choices';
+      this.input.setAttribute('multiple', '');
+
+      for (let i = 1; i < 4; i++) {
+        const option = document.createElement('option');
+
+        option.value = `Value ${i}`;
+        option.innerHTML = `Value ${i}`;
+
+        if (i % 2) {
+          option.selected = true;
+        }
+
+        this.input.appendChild(option);
+      }
+
+      document.body.appendChild(this.input);
+    });
+
+    it('should flip the dropdown', function() {
+      this.choices = new Choices(this.input, {
+        position: 'top'
+      });
+
+      const container = this.choices.containerOuter;
+      this.choices.input.focus();
+      expect(container.classList.contains(this.choices.config.classNames.flippedState)).toBe(true);
+    });
+
+    it('shouldn\'t flip the dropdown', function() {
+      this.choices = new Choices(this.input, {
+        position: 'bottom'
+      });
+
+      const container = this.choices.containerOuter;
+      this.choices.input.focus();
+      expect(container.classList.contains(this.choices.config.classNames.flippedState)).toBe(false);
     });
   });
 });

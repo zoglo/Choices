@@ -1,6 +1,6 @@
 {
   "name": "choices.js",
-  "version": "2.6.1",
+  "version": "2.7.7",
   "description": "A vanilla JS customisable text input/select box plugin",
   "main": [
     "./assets/scripts/dist/choices.js",
@@ -16,7 +16,7 @@
     "node_modules",
     "bower_components",
     "test",
-    "tests",
+    "tests"
   ],
   "keywords": [
     "customisable",

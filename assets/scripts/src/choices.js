@@ -16,6 +16,7 @@ import {
   isScrolledIntoView,
   getAdjacentEl,
   wrap,
+  getType,
   isType,
   isElement,
   strToEl,
@@ -24,6 +25,7 @@ import {
   sortByAlpha,
   sortByScore,
   triggerEvent,
+  findAncestorByAttrName
 }
 from './lib/utils.js';
 import './lib/polyfills.js';
@@ -61,6 +63,8 @@ class Choices {
       searchFloor: 1,
       searchPlaceholderValue: null,
       flip: true,
+      position: 'auto',
+      resetScrollPosition: true,
       regexFilter: null,
       shouldSort: true,
       sortFilter: sortByAlpha,
@@ -389,8 +393,11 @@ class Choices {
 
           // Clear choices
           this.choiceList.innerHTML = '';
+
           // Scroll back to top of choices list
-          this.choiceList.scrollTop = 0;
+          if(this.config.resetScrollPosition){
+            this.choiceList.scrollTop = 0;
+          }
 
           // If we have grouped options
           if (activeGroups.length >= 1 && this.isSearching !== true) {
@@ -406,9 +413,17 @@ class Choices {
             this._highlightChoice();
           } else {
             // Otherwise show a notice
-            const dropdownItem = this.isSearching ?
-              this._getTemplate('notice', this.config.noResultsText) :
-              this._getTemplate('notice', this.config.noChoicesText);
+            let dropdownItem;
+            let notice;
+
+            if (this.isSearching) {
+              notice = isType('Function', this.config.noResultsText) ? this.config.noResultsText() : this.config.noResultsText;
+              dropdownItem = this._getTemplate('notice', notice);
+            } else {
+              notice = isType('Function', this.config.noChoicesText) ? this.config.noChoicesText() : this.config.noChoicesText;
+              dropdownItem = this._getTemplate('notice', notice);
+            }
+
             this.choiceList.appendChild(dropdownItem);
           }
         }
@@ -461,12 +476,14 @@ class Choices {
         triggerEvent(this.passedElement, 'highlightItem', {
           id,
           value: item.value,
+          label: item.label,
           groupValue: group.value
         });
       } else {
         triggerEvent(this.passedElement, 'highlightItem', {
           id,
           value: item.value,
+          label: item.label,
         });
       }
     }
@@ -492,12 +509,14 @@ class Choices {
       triggerEvent(this.passedElement, 'unhighlightItem', {
         id,
         value: item.value,
+        label: item.label,
         groupValue: group.value
       });
     } else {
       triggerEvent(this.passedElement, 'unhighlightItem', {
         id,
         value: item.value,
+        label: item.label,
       });
     }
 
@@ -605,17 +624,29 @@ class Choices {
   showDropdown(focusInput = false) {
     const body = document.body;
     const html = document.documentElement;
-    const winHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight,
-      html.scrollHeight, html.offsetHeight);
+    const winHeight = Math.max(
+      body.scrollHeight,
+      body.offsetHeight,
+      html.clientHeight,
+      html.scrollHeight,
+      html.offsetHeight
+    );
 
     this.containerOuter.classList.add(this.config.classNames.openState);
     this.containerOuter.setAttribute('aria-expanded', 'true');
     this.dropdown.classList.add(this.config.classNames.activeState);
+    this.dropdown.setAttribute('aria-expanded', 'true');
 
     const dimensions = this.dropdown.getBoundingClientRect();
     const dropdownPos = Math.ceil(dimensions.top + window.scrollY + dimensions.height);
+
     // If flip is enabled and the dropdown bottom position is greater than the window height flip the dropdown.
-    const shouldFlip = this.config.flip ? dropdownPos >= winHeight : false;
+    let shouldFlip = false;
+    if (this.config.position === 'auto') {
+      shouldFlip = dropdownPos >= winHeight;
+    } else if (this.config.position === 'top') {
+      shouldFlip = true;
+    }
 
     if (shouldFlip) {
       this.containerOuter.classList.add(this.config.classNames.flippedState);
@@ -627,6 +658,8 @@ class Choices {
     if (focusInput && this.canSearch && document.activeElement !== this.input) {
       this.input.focus();
     }
+
+    triggerEvent(this.passedElement, 'showDropdown', {});
 
     return this;
   }
@@ -643,6 +676,7 @@ class Choices {
     this.containerOuter.classList.remove(this.config.classNames.openState);
     this.containerOuter.setAttribute('aria-expanded', 'false');
     this.dropdown.classList.remove(this.config.classNames.activeState);
+    this.dropdown.setAttribute('aria-expanded', 'false');
 
     if (isFlipped) {
       this.containerOuter.classList.remove(this.config.classNames.flippedState);
@@ -652,6 +686,8 @@ class Choices {
     if (blurInput && this.canSearch && document.activeElement === this.input) {
       this.input.blur();
     }
+
+    triggerEvent(this.passedElement, 'hideDropdown', {});
 
     return this;
   }
@@ -700,34 +736,42 @@ class Choices {
   /**
    * Set value of input. If the input is a select box, a choice will be created and selected otherwise
    * an item will created directly.
-   * @param {Array} args Array of value objects or value strings
+   * @param  {Array}   args  Array of value objects or value strings
    * @return {Object} Class instance
    * @public
    */
   setValue(args) {
     if (this.initialised === true) {
-      // Convert args to an itterable array
+      // Convert args to an iterable array
       const values = [...args],
-        passedElementType = this.passedElement.type;
+        passedElementType = this.passedElement.type,
+        handleValue = (item) => {
+          const itemType = getType(item);
+          if (itemType === 'Object') {
+            if (!item.value) return;
+            // If we are dealing with a select input, we need to create an option first
+            // that is then selected. For text inputs we can just add items normally.
+            if (passedElementType !== 'text') {
+              this._addChoice(true, false, item.value, item.label, -1);
+            } else {
+              this._addItem(item.value, item.label, item.id);
+            }
+          } else if (itemType === 'String') {
+            if (passedElementType !== 'text') {
+              this._addChoice(true, false, item, item, -1);
+            } else {
+              this._addItem(item);
+            }
+          }
+        };
 
-      values.forEach((item) => {
-        if (isType('Object', item)) {
-          if (!item.value) return;
-          // If we are dealing with a select input, we need to create an option first
-          // that is then selected. For text inputs we can just add items normally.
-          if (passedElementType !== 'text') {
-            this._addChoice(true, false, item.value, item.label, -1);
-          } else {
-            this._addItem(item.value, item.label, item.id);
-          }
-        } else if (isType('String', item)) {
-          if (passedElementType !== 'text') {
-            this._addChoice(true, false, item, item, -1);
-          } else {
-            this._addItem(item);
-          }
-        }
-      });
+      if (values.length > 1) {
+        values.forEach((value) => {
+          handleValue(value);
+        });
+      } else {
+        handleValue(values[0]);
+      }
     }
     return this;
   }
@@ -791,7 +835,7 @@ class Choices {
             const isPlaceholder = result.placeholder ? result.placeholder : false;
 
             if (result.choices) {
-              this._addGroup(result, index, value, label);
+              this._addGroup(result, (result.id || null), value, label);
             } else {
               this._addChoice(isSelected, isDisabled, result[value], result[label], -1, isPlaceholder);
             }
@@ -843,6 +887,9 @@ class Choices {
       this.input.removeAttribute('disabled');
       this.containerOuter.classList.remove(this.config.classNames.disabledState);
       this.containerOuter.removeAttribute('aria-disabled');
+      if (this.passedElement.type === 'select-one') {
+        this.containerOuter.setAttribute('tabindex', '0');
+      }
     }
     return this;
   }
@@ -861,6 +908,9 @@ class Choices {
       this.input.setAttribute('disabled', '');
       this.containerOuter.classList.add(this.config.classNames.disabledState);
       this.containerOuter.setAttribute('aria-disabled', 'true');
+      if (this.passedElement.type === 'select-one') {
+        this.containerOuter.setAttribute('tabindex', '-1');
+      }
     }
     return this;
   }
@@ -971,6 +1021,10 @@ class Choices {
     const id = element.getAttribute('data-id');
     const choice = this.store.getChoiceById(id);
     const hasActiveDropdown = this.dropdown.classList.contains(this.config.classNames.activeState);
+
+    triggerEvent(this.passedElement, 'choice', {
+      choice,
+    });
 
     if (choice && !choice.selected && !choice.disabled) {
       const canAddItem = this._canAddItem(activeItems, choice.value);
@@ -1101,6 +1155,7 @@ class Choices {
   _ajaxCallback() {
     return (results, value, label) => {
       if (!results || !value) return;
+
       const parsedResults = isType('Object', results) ? [results] : results;
 
       if (parsedResults && isType('Array', parsedResults) && parsedResults.length) {
@@ -1112,12 +1167,16 @@ class Choices {
           const isDisabled = result.disabled ? result.disabled : false;
           const isPlaceholder = result.placeholder ? result.placeholder : false;
           if (result.choices) {
-            this._addGroup(result, index, value, label);
+            this._addGroup(result, (result.id || null), value, label);
           } else {
             this._addChoice(isSelected, isDisabled, result[value], result[label], isPlaceholder);
           }
         });
+      } else {
+        // No results, remove loading state
+        this._handleLoadingState(false);
       }
+
       this.containerOuter.removeAttribute('aria-busy');
     };
   }
@@ -1268,6 +1327,8 @@ class Choices {
     const escapeKey = 27;
     const upKey = 38;
     const downKey = 40;
+    const pageUpKey = 33;
+    const pageDownKey = 34;
     const ctrlDownKey = e.ctrlKey || e.metaKey;
 
     // If a user is typing and the dropdown is not active
@@ -1342,16 +1403,25 @@ class Choices {
           this.showDropdown(true);
         }
 
-        const currentEl = this.dropdown.querySelector(`.${this.config.classNames.highlightedState}`);
-        const directionInt = e.keyCode === downKey ? 1 : -1;
-        let nextEl;
-
         this.canSearch = false;
 
-        if (currentEl) {
-          nextEl = getAdjacentEl(currentEl, '[data-choice-selectable]', directionInt);
+        const directionInt = e.keyCode === downKey || e.keyCode === pageDownKey ? 1 : -1;
+        const skipKey = e.metaKey || e.keyCode === pageDownKey || e.keyCode === pageUpKey;
+
+        let nextEl;
+        if (skipKey) {
+          if (directionInt > 0) {
+            nextEl = Array.from(this.dropdown.querySelectorAll('[data-choice-selectable]')).pop();
+          } else {
+            nextEl = this.dropdown.querySelector('[data-choice-selectable]');
+          }
         } else {
-          nextEl = this.dropdown.querySelector('[data-choice-selectable]');
+          const currentEl = this.dropdown.querySelector(`.${this.config.classNames.highlightedState}`);
+          if (currentEl) {
+            nextEl = getAdjacentEl(currentEl, '[data-choice-selectable]', directionInt);
+          } else {
+            nextEl = this.dropdown.querySelector('[data-choice-selectable]');
+          }
         }
 
         if (nextEl) {
@@ -1383,7 +1453,9 @@ class Choices {
       [enterKey]: onEnterKey,
       [escapeKey]: onEscapeKey,
       [upKey]: onDirectionKey,
+      [pageUpKey]: onDirectionKey,
       [downKey]: onDirectionKey,
+      [pageDownKey]: onDirectionKey,
       [deleteKey]: onDeleteKey,
       [backKey]: onDeleteKey,
     };
@@ -1511,13 +1583,16 @@ class Choices {
   _onMouseDown(e) {
     const target = e.target;
     if (this.containerOuter.contains(target) && target !== this.input) {
+      let foundTarget;
       const activeItems = this.store.getItemsFilteredByActive();
       const hasShiftKey = e.shiftKey;
 
-      if (target.hasAttribute('data-item')) {
-        this._handleItemAction(activeItems, target, hasShiftKey);
-      } else if (target.hasAttribute('data-choice')) {
-        this._handleChoiceAction(activeItems, target);
+      if(foundTarget = findAncestorByAttrName(target, 'data-button')) {
+        this._handleButtonAction(activeItems, foundTarget);
+      } else if (foundTarget = findAncestorByAttrName(target, 'data-item')) {
+        this._handleItemAction(activeItems, foundTarget, hasShiftKey);
+      } else if (foundTarget = findAncestorByAttrName(target, 'data-choice')) {
+        this._handleChoiceAction(activeItems, foundTarget);
       }
 
       e.preventDefault();
@@ -1534,6 +1609,7 @@ class Choices {
     const target = e.target;
     const hasActiveDropdown = this.dropdown.classList.contains(this.config.classNames.activeState);
     const activeItems = this.store.getItemsFilteredByActive();
+
 
     // If target is something that concerns us
     if (this.containerOuter.contains(target)) {
@@ -1859,12 +1935,14 @@ class Choices {
       triggerEvent(this.passedElement, 'addItem', {
         id,
         value: passedValue,
+        label: passedLabel,
         groupValue: group.value,
       });
     } else {
       triggerEvent(this.passedElement, 'addItem', {
         id,
         value: passedValue,
+        label: passedLabel,
       });
     }
 
@@ -1886,6 +1964,7 @@ class Choices {
 
     const id = item.id;
     const value = item.value;
+    const label = item.label;
     const choiceId = item.choiceId;
     const groupId = item.groupId;
     const group = groupId >= 0 ? this.store.getGroupById(groupId) : null;
@@ -1896,12 +1975,14 @@ class Choices {
       triggerEvent(this.passedElement, 'removeItem', {
         id,
         value,
+        label,
         groupValue: group.value,
       });
     } else {
       triggerEvent(this.passedElement, 'removeItem', {
         id,
         value,
+        label,
       });
     }
 
@@ -1953,7 +2034,7 @@ class Choices {
    */
   _addGroup(group, id, valueKey = 'value', labelKey = 'label') {
     const groupChoices = isType('Object', group) ? group.choices : Array.from(group.getElementsByTagName('OPTION'));
-    const groupId = id;
+    const groupId = id ? id : Math.floor(new Date().valueOf() * Math.random());
     const isDisabled = group.disabled ? group.disabled : false;
 
     if (groupChoices) {
@@ -2241,8 +2322,8 @@ class Choices {
       this.isSearching = false;
 
       if (passedGroups && passedGroups.length) {
-        passedGroups.forEach((group, index) => {
-          this._addGroup(group, index);
+        passedGroups.forEach((group) => {
+          this._addGroup(group, (group.id || null));
         });
       } else {
         const passedOptions = Array.from(this.passedElement.options);
@@ -2292,10 +2373,11 @@ class Choices {
     } else if (this.isTextElement) {
       // Add any preset values seperated by delimiter
       this.presetItems.forEach((item) => {
-        if (isType('Object', item)) {
+        const itemType = getType(item);
+        if (itemType === 'Object') {
           if (!item.value) return;
           this._addItem(item.value, item.label, item.id);
-        } else if (isType('String', item)) {
+        } else if (itemType === 'String') {
           this._addItem(item);
         }
       });
