@@ -312,12 +312,26 @@ class Choices {
     const choicesFragment = fragment || document.createDocumentFragment();
     const filter = this.isSearching ? sortByScore : this.config.sortFilter;
 
+    // Split array into placeholedrs and "normal" choices
+    const { placeholderChoices, normalChoices } = choices.reduce((acc, choice) => {
+      if (choice.placeholder) {
+        acc.placeholderChoices.push(choice);
+      } else {
+        acc.normalChoices.push(choice);
+      }
+      return acc;
+    }, { placeholderChoices: [], normalChoices: [] });
+
     // If sorting is enabled or the user is searching, filter choices
+    // Do not sort placeholder
     if (this.config.shouldSort || this.isSearching) {
-      choices.sort(filter);
+      normalChoices.sort(filter);
     }
 
-    choices.forEach((choice) => {
+    // Prepend placeholedr
+    const sortedChoices = [...placeholderChoices, ...normalChoices];
+
+    sortedChoices.forEach((choice) => {
       const dropdownItem = this._getTemplate('choice', choice);
       const shouldRender = this.passedElement.type === 'select-one' || !choice.selected;
       if (shouldRender) {
@@ -2341,18 +2355,32 @@ class Choices {
           });
         });
 
+        // Split array into placeholedrs and "normal" choices
+        const { placeholderChoices, normalChoices } = allChoices.reduce((acc, choice) => {
+          if (choice.placeholder) {
+            acc.placeholderChoices.push(choice);
+          } else {
+            acc.normalChoices.push(choice);
+          }
+          return acc;
+        }, { placeholderChoices: [], normalChoices: [] });
+
         // If sorting is enabled or the user is searching, filter choices
+        // Do not sort placeholder
         if (this.config.shouldSort) {
-          allChoices.sort(filter);
+          normalChoices.sort(filter);
         }
 
+        // Prepend placeholder
+        const sortedChoices = [...placeholderChoices, ...normalChoices];
+
         // Determine whether there is a selected choice
-        const hasSelectedChoice = allChoices.some((choice) => {
+        const hasSelectedChoice = sortedChoices.some((choice) => {
           return choice.selected === true;
         });
 
         // Add each choice
-        allChoices.forEach((choice, index) => {
+        sortedChoices.forEach((choice, index) => {
           const isDisabled = choice.disabled ? choice.disabled : false;
           const isSelected = choice.selected ? choice.selected : false;
           // Pre-select first choice if it's a single select

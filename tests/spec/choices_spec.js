@@ -256,7 +256,6 @@ describe('Choices', () => {
     beforeEach(function() {
       this.input = document.createElement('select');
       this.input.className = 'js-choices';
-      this.input.placeholder = 'Placeholder text';
 
       for (let i = 1; i < 4; i++) {
         const option = document.createElement('option');
@@ -407,7 +406,7 @@ describe('Choices', () => {
       expect(showDropdownSpy).toHaveBeenCalled();
     });
 
-it('should trigger hideDropdown on dropdown closing', function() {
+    it('should trigger hideDropdown on dropdown closing', function() {
       this.choices = new Choices(this.input);
       const container = this.choices.containerOuter;
 
@@ -491,6 +490,18 @@ it('should trigger hideDropdown on dropdown closing', function() {
       });
 
       expect(this.choices.currentState.choices[0].value).toEqual('Value 1');
+    });
+
+    it('should set placeholder as first option if shouldSort true', function() {
+      const option = document.createElement('option');
+      option.setAttribute('selected', '');
+      option.setAttribute('placeholder', '');
+      option.setAttribute('disabled', '');
+      option.innerHTML = 'Placeholder';
+      this.input.appendChild(option);
+
+      this.choices = new Choices(this.input, { shouldSort: true });
+      expect(this.choices.currentState.choices[0].value).toEqual('Placeholder');
     });
   });
 
