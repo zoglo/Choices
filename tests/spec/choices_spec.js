@@ -503,6 +503,27 @@ describe('Choices', () => {
       this.choices = new Choices(this.input, { shouldSort: true });
       expect(this.choices.currentState.choices[0].value).toEqual('Placeholder');
     });
+
+    it('should set placeholder after click on remove item button', function() {
+      const option = document.createElement('option');
+      option.setAttribute('placeholder', '');
+      option.setAttribute('disabled', '');
+      option.innerHTML = 'Placeholder';
+      this.input.appendChild(option);
+
+      this.choices = new Choices(this.input, { removeItemButton: true });
+
+      const removeItemButton = this.choices.containerOuter.querySelector('[data-button]');
+
+      this.choices._onClick({
+        target: removeItemButton,
+        ctrlKey: false,
+        preventDefault: () => {}
+      });
+
+      expect(this.choices.currentState.items[1].value).toBe('Placeholder');
+      expect(this.choices.currentState.items[1].active).toBe(true);
+    });
   });
 
   describe('should accept multiple select inputs', function() {
