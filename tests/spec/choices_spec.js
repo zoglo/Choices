@@ -77,10 +77,10 @@ describe('Choices', () => {
       expect(this.choices.config.search).toEqual(jasmine.any(Boolean));
       expect(this.choices.config.searchFloor).toEqual(jasmine.any(Number));
       expect(this.choices.config.searchPlaceholderValue).toEqual(null);
-      expect(this.choices.config.flip).toEqual(jasmine.any(Boolean));
+      expect(this.choices.config.searchFields).toEqual(jasmine.any(Array) || jasmine.any(String));
+      expect(this.choices.config.position).toEqual(jasmine.any(String));
       expect(this.choices.config.regexFilter).toEqual(null);
       expect(this.choices.config.sortFilter).toEqual(jasmine.any(Function));
-      expect(this.choices.config.sortFields).toEqual(jasmine.any(Array) || jasmine.any(String));
       expect(this.choices.config.shouldSort).toEqual(jasmine.any(Boolean));
       expect(this.choices.config.placeholderValue).toEqual(null);
       expect(this.choices.config.prependValue).toEqual(null);
@@ -255,7 +255,6 @@ describe('Choices', () => {
     beforeEach(function() {
       this.input = document.createElement('select');
       this.input.className = 'js-choices';
-      this.input.placeholder = 'Placeholder text';
 
       for (let i = 1; i < 4; i++) {
         const option = document.createElement('option');
@@ -368,13 +367,34 @@ describe('Choices', () => {
 
     it('should close the dropdown on double click', function() {
       this.choices = new Choices(this.input);
+      const container = this.choices.containerOuter,
+        openState = this.choices.config.classNames.openState;
+
+      this.choices._onClick({
+        target: container,
+        ctrlKey: false,
+        preventDefault: () => {}
+      });
+
+      this.choices._onClick({
+        target: container,
+        ctrlKey: false,
+        preventDefault: () => {}
+      });
+
+      expect(document.activeElement === this.choices.input && container.classList.contains(openState)).toBe(false);
+    });
+
+    it('should trigger showDropdown on dropdown opening', function() {
+      this.choices = new Choices(this.input);
       const container = this.choices.containerOuter;
 
-      this.choices._onClick({
-        target: container,
-        ctrlKey: false,
-        preventDefault: () => {}
-      });
+      const showDropdownSpy = jasmine.createSpy('showDropdownSpy');
+      const passedElement = this.choices.passedElement;
+
+      passedElement.addEventListener('showDropdown', showDropdownSpy);
+
+      this.choices.input.focus();
 
       this.choices._onClick({
         target: container,
@@ -382,7 +402,33 @@ describe('Choices', () => {
         preventDefault: () => {}
       });
 
-      expect(document.activeElement === this.choices.input && container.classList.contains('is-open')).toBe(false);
+      expect(showDropdownSpy).toHaveBeenCalled();
+    });
+
+    it('should trigger hideDropdown on dropdown closing', function() {
+      this.choices = new Choices(this.input);
+      const container = this.choices.containerOuter;
+
+      const hideDropdownSpy = jasmine.createSpy('hideDropdownSpy');
+      const passedElement = this.choices.passedElement;
+
+      passedElement.addEventListener('hideDropdown', hideDropdownSpy);
+
+      this.choices.input.focus();
+
+      this.choices._onClick({
+        target: container,
+        ctrlKey: false,
+        preventDefault: () => {}
+      });
+
+      this.choices._onClick({
+        target: container,
+        ctrlKey: false,
+        preventDefault: () => {}
+      });
+
+      expect(hideDropdownSpy).toHaveBeenCalled();
     });
 
     it('should filter choices when searching', function() {
@@ -394,7 +440,7 @@ describe('Choices', () => {
       passedElement.addEventListener('search', searchSpy);
 
       this.choices.input.focus();
-      this.choices.input.value = 'Value 3';
+      this.choices.input.value = '3 ';
 
       // Key down to search
       this.choices._onKeyUp({
@@ -403,9 +449,41 @@ describe('Choices', () => {
         ctrlKey: false
       });
 
-      const mostAccurateResult = this.choices.currentState.choices[0];
+      const mostAccurateResult = this.choices.currentState.choices.filter(function (choice) {
+        return choice.active;
+      });
 
-      expect(this.choices.isSearching && mostAccurateResult.value === 'Value 3').toBeTruthy;
+      expect(this.choices.isSearching && mostAccurateResult[0].value === 'Value 3').toBe(true);
+      expect(searchSpy).toHaveBeenCalled();
+    });
+
+    it('shouldn\'t filter choices when searching', function() {
+      this.choices = new Choices(this.input, {
+        searchChoices: false
+      });
+
+      this.choices.setValue(['Javascript', 'HTML', 'Jasmine']);
+
+      const searchSpy = jasmine.createSpy('searchSpy');
+      const passedElement = this.choices.passedElement;
+
+      passedElement.addEventListener('search', searchSpy);
+
+      this.choices.input.focus();
+      this.choices.input.value = 'Javascript';
+
+      // Key down to search
+      this.choices._onKeyUp({
+        target: this.choices.input,
+        keyCode: 13,
+        ctrlKey: false
+      });
+
+      const activeOptions = this.choices.currentState.choices.filter(function (choice) {
+        return choice.active;
+      });
+
+      expect(activeOptions.length).toEqual(this.choices.currentState.choices.length);
       expect(searchSpy).toHaveBeenCalled();
     });
 
@@ -443,6 +521,39 @@ describe('Choices', () => {
       });
 
       expect(this.choices.currentState.choices[0].value).toEqual('Value 1');
+    });
+
+    it('should set placeholder as first option if shouldSort true', function() {
+      const option = document.createElement('option');
+      option.setAttribute('selected', '');
+      option.setAttribute('placeholder', '');
+      option.setAttribute('disabled', '');
+      option.innerHTML = 'Placeholder';
+      this.input.appendChild(option);
+
+      this.choices = new Choices(this.input, { shouldSort: true });
+      expect(this.choices.currentState.choices[0].value).toEqual('Placeholder');
+    });
+
+    it('should set placeholder after click on remove item button', function() {
+      const option = document.createElement('option');
+      option.setAttribute('placeholder', '');
+      option.setAttribute('disabled', '');
+      option.innerHTML = 'Placeholder';
+      this.input.appendChild(option);
+
+      this.choices = new Choices(this.input, { removeItemButton: true });
+
+      const removeItemButton = this.choices.containerOuter.querySelector('[data-button]');
+
+      this.choices._onClick({
+        target: removeItemButton,
+        ctrlKey: false,
+        preventDefault: () => {}
+      });
+
+      expect(this.choices.currentState.items[1].value).toBe('Placeholder');
+      expect(this.choices.currentState.items[1].active).toBe(true);
     });
   });
 
@@ -735,6 +846,42 @@ describe('Choices', () => {
     });
   });
 
+  describe('should handle public methods on select-one input types', function() {
+    beforeEach(function() {
+      this.input = document.createElement('select');
+      this.input.className = 'js-choices';
+      this.input.placeholder = 'Placeholder text';
+
+      for (let i = 1; i < 10; i++) {
+        const option = document.createElement('option');
+
+        option.value = `Value ${i}`;
+        option.innerHTML = `Value ${i}`;
+
+        if (i % 2) {
+          option.selected = true;
+        }
+
+        this.input.appendChild(option);
+      }
+
+      document.body.appendChild(this.input);
+      this.choices = new Choices(this.input);
+    });
+
+    it('should handle disable()', function() {
+      this.choices.disable();
+
+      expect(this.choices.containerOuter.getAttribute('tabindex')).toBe('-1');
+    });
+
+    it('should handle enable()', function() {
+      this.choices.enable();
+
+      expect(this.choices.containerOuter.getAttribute('tabindex')).toBe('0');
+    });
+  });
+
   describe('should handle public methods on text input types', function() {
     beforeEach(function() {
       this.input = document.createElement('input');
@@ -757,6 +904,49 @@ describe('Choices', () => {
 
       this.choices.removeItemsByValue(randomItem.value);
       expect(randomItem.active).toBe(false);
+    });
+  });
+
+  describe('should react to config options', function() {
+    beforeEach(function() {
+      this.input = document.createElement('select');
+      this.input.className = 'js-choices';
+      this.input.setAttribute('multiple', '');
+
+      for (let i = 1; i < 4; i++) {
+        const option = document.createElement('option');
+
+        option.value = `Value ${i}`;
+        option.innerHTML = `Value ${i}`;
+
+        if (i % 2) {
+          option.selected = true;
+        }
+
+        this.input.appendChild(option);
+      }
+
+      document.body.appendChild(this.input);
+    });
+
+    it('should flip the dropdown', function() {
+      this.choices = new Choices(this.input, {
+        position: 'top'
+      });
+
+      const container = this.choices.containerOuter;
+      this.choices.input.focus();
+      expect(container.classList.contains(this.choices.config.classNames.flippedState)).toBe(true);
+    });
+
+    it('shouldn\'t flip the dropdown', function() {
+      this.choices = new Choices(this.input, {
+        position: 'bottom'
+      });
+
+      const container = this.choices.containerOuter;
+      this.choices.input.focus();
+      expect(container.classList.contains(this.choices.config.classNames.flippedState)).toBe(false);
     });
   });
 });
