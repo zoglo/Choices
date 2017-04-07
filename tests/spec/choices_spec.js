@@ -77,11 +77,10 @@ describe('Choices', () => {
       expect(this.choices.config.search).toEqual(jasmine.any(Boolean));
       expect(this.choices.config.searchFloor).toEqual(jasmine.any(Number));
       expect(this.choices.config.searchPlaceholderValue).toEqual(null);
-      expect(this.choices.config.flip).toEqual(jasmine.any(Boolean));
+      expect(this.choices.config.searchFields).toEqual(jasmine.any(Array) || jasmine.any(String));
       expect(this.choices.config.position).toEqual(jasmine.any(String));
       expect(this.choices.config.regexFilter).toEqual(null);
       expect(this.choices.config.sortFilter).toEqual(jasmine.any(Function));
-      expect(this.choices.config.sortFields).toEqual(jasmine.any(Array) || jasmine.any(String));
       expect(this.choices.config.shouldSort).toEqual(jasmine.any(Boolean));
       expect(this.choices.config.placeholderValue).toEqual(null);
       expect(this.choices.config.prependValue).toEqual(null);
@@ -441,7 +440,7 @@ describe('Choices', () => {
       passedElement.addEventListener('search', searchSpy);
 
       this.choices.input.focus();
-      this.choices.input.value = 'Value 3';
+      this.choices.input.value = '3 ';
 
       // Key down to search
       this.choices._onKeyUp({
@@ -450,9 +449,41 @@ describe('Choices', () => {
         ctrlKey: false
       });
 
-      const mostAccurateResult = this.choices.currentState.choices[0];
+      const mostAccurateResult = this.choices.currentState.choices.filter(function (choice) {
+        return choice.active;
+      });
 
-      expect(this.choices.isSearching && mostAccurateResult.value === 'Value 3').toBeTruthy;
+      expect(this.choices.isSearching && mostAccurateResult[0].value === 'Value 3').toBe(true);
+      expect(searchSpy).toHaveBeenCalled();
+    });
+
+    it('shouldn\'t filter choices when searching', function() {
+      this.choices = new Choices(this.input, {
+        searchChoices: false
+      });
+
+      this.choices.setValue(['Javascript', 'HTML', 'Jasmine']);
+
+      const searchSpy = jasmine.createSpy('searchSpy');
+      const passedElement = this.choices.passedElement;
+
+      passedElement.addEventListener('search', searchSpy);
+
+      this.choices.input.focus();
+      this.choices.input.value = 'Javascript';
+
+      // Key down to search
+      this.choices._onKeyUp({
+        target: this.choices.input,
+        keyCode: 13,
+        ctrlKey: false
+      });
+
+      const activeOptions = this.choices.currentState.choices.filter(function (choice) {
+        return choice.active;
+      });
+
+      expect(activeOptions.length).toEqual(this.choices.currentState.choices.length);
       expect(searchSpy).toHaveBeenCalled();
     });
 
