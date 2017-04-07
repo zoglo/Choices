@@ -313,7 +313,7 @@ class Choices {
     const choicesFragment = fragment || document.createDocumentFragment();
     const filter = this.isSearching ? sortByScore : this.config.sortFilter;
 
-    // Split array into placeholedrs and "normal" choices
+    // Split array into placeholders and "normal" choices
     const { placeholderChoices, normalChoices } = choices.reduce((acc, choice) => {
       if (choice.placeholder) {
         acc.placeholderChoices.push(choice);
@@ -2374,7 +2374,7 @@ class Choices {
           });
         });
 
-        // Split array into placeholedrs and "normal" choices
+        // Split array into placeholders and "normal" choices
         const { placeholderChoices, normalChoices } = allChoices.reduce((acc, choice) => {
           if (choice.placeholder) {
             acc.placeholderChoices.push(choice);
