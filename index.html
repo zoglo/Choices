@@ -152,8 +152,8 @@
       <hr>
 
       <h2>Single select input</h2>
-      <label for="choices-single-default">Default</label>
-      <select class="form-control" data-trigger name="choices-single-default" id="choices-single-default" placeholder="This is a search placeholder">
+      <label for="choices-single-placeholder">Default</label>
+      <select class="form-control" data-trigger name="choices-single-placeholder" id="choices-single-placeholder" placeholder="This is a search placeholder">
         <option selected disabled>This is a placeholder</option>
         <option value="Dropdown item 1">Dropdown item 1</option>
         <option value="Dropdown item 2">Dropdown item 2</option>
@@ -348,7 +348,6 @@
         removeItemButton: true,
       });
 
-<<<<<<< HEAD
       /* Use label on event */
       var choicesSelect = new Choices('#choices-multiple-labels', {
         search: false,
@@ -370,12 +369,14 @@
 
       choicesSelect.passedElement.addEventListener('removeItem', function(event) {
         document.getElementById('message').innerHTML = 'You just removed "' + event.detail.label + '"';
-=======
+      });
+
       var multipleAddItems = new Choices('#choices-multiple-add-items', {
         addItems: true,
         duplicateItems: false,
->>>>>>> c348050... Add multiple select example
       });
+
+      var multipleAddItems = new Choices('#choices-single-placeholder');
 
       var singleFetch = new Choices('#choices-single-remote-fetch', {
         placeholder: true,

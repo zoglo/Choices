@@ -1229,7 +1229,10 @@ class Choices {
         // Check flag to filter search input
         if (this.config.searchChoices) {
           // Filter available choices
-          this._searchChoices(value);
+          const results = this._searchChoices(value);
+          if (results) {
+            this.store.dispatch(filterChoices(results));
+          }
         }
         // Trigger search event
         triggerEvent(this.passedElement, 'search', {
