@@ -333,12 +333,17 @@ describe('Choices', () => {
       this.choices.input.focus();
 
       // Key down to second choice
-      this.choices._onKeyDown({
-        target: this.choices.input,
-        keyCode: 40,
-        ctrlKey: false,
-        preventDefault: () => {}
-      });
+      let count = 0;
+      while (count < 2) {
+        console.log('keydown');
+        this.choices._onKeyDown({
+          target: this.choices.input,
+          keyCode: 40,
+          ctrlKey: false,
+          preventDefault: () => {}
+        });
+        count++;
+      }
 
       // Key down to select choice
       this.choices._onKeyDown({
