@@ -335,7 +335,6 @@ describe('Choices', () => {
       // Key down to second choice
       let count = 0;
       while (count < 2) {
-        console.log('keydown');
         this.choices._onKeyDown({
           target: this.choices.input,
           keyCode: 40,
