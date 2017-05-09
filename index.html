@@ -141,11 +141,19 @@
       <p id="message"></p>
       <select id="choices-multiple-labels" multiple></select>
 
+      <label for="choices-multiple-add-items">Add items if they don't exist</label>
+      <select class="form-control" name="choices-multiple-add-items" id="choices-multiple-add-items" placeholder="This is a placeholder" multiple>
+        <option value="React">England</option>
+        <option value="React">Wales</option>
+        <option value="React">Scotland</option>
+        <option value="React">Northern Ireland</option>
+      </select>
+
       <hr>
 
       <h2>Single select input</h2>
-      <label for="choices-single-default">Default</label>
-      <select class="form-control" data-trigger name="choices-single-default" id="choices-single-default" placeholder="This is a search placeholder">
+      <label for="choices-single-placeholder">Default</label>
+      <select class="form-control" data-trigger name="choices-single-placeholder" id="choices-single-placeholder" placeholder="This is a search placeholder">
         <option selected disabled>This is a placeholder</option>
         <option value="Dropdown item 1">Dropdown item 1</option>
         <option value="Dropdown item 2">Dropdown item 2</option>
@@ -240,6 +248,14 @@
         <option value="Angular">Angular</option>
         <option value="Ember">Ember</option>
         <option value="Vue">Vue</option>
+      </select>
+
+      <label for="choices-single-add-items">Add items if they don't exist</label>
+      <select class="form-control" name="choices-single-add-items" id="choices-single-add-items" placeholder="This is a placeholder">
+        <option value="React">England</option>
+        <option value="React">Wales</option>
+        <option value="React">Scotland</option>
+        <option value="React">Northern Ireland</option>
       </select>
 
       <p>Below is an example of how you could have two select inputs depend on eachother. 'Boroughs' will only be enabled if the value of 'States' is 'New York'</p>
@@ -355,6 +371,13 @@
         document.getElementById('message').innerHTML = 'You just removed "' + event.detail.label + '"';
       });
 
+      var multipleAddItems = new Choices('#choices-multiple-add-items', {
+        addItems: true,
+        duplicateItems: false,
+      });
+
+      var multipleAddItems = new Choices('#choices-single-placeholder');
+
       var singleFetch = new Choices('#choices-single-remote-fetch', {
         placeholder: true,
         placeholderValue: 'Pick an Arctic Monkeys record'
@@ -444,6 +467,10 @@
 
       var singleNoSorting = new Choices('#choices-single-no-sorting', {
         shouldSort: false,
+        addItems: true,
+        callbackOnChange: function(a, b) {
+          console.log(this.currentState);
+        }
       });
 
       var states = new Choices(document.getElementById('states'));
@@ -454,6 +481,11 @@
         } else {
           boroughs.disable();
         }
+      });
+
+      var singleAddItems = new Choices('#choices-single-add-items', {
+        addItems: true,
+        duplicateItems: false,
       });
 
       var customTemplates = new Choices(document.getElementById('choices-single-custom-templates'), {
@@ -491,6 +523,16 @@
               ');
             },
           };
+        }
+      });
+
+      var states = new Choices(document.getElementById('states'), {
+        callbackOnChange: function(value) {
+          if(value === 'New York') {
+            boroughs.enable();
+          } else {
+            boroughs.disable();
+          }
         }
       });
 

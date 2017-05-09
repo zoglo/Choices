@@ -116,18 +116,6 @@ class Choices {
       callbackOnCreateTemplates: null,
     };
 
-    // Merge options with user options
-    this.config = extend(defaultConfig, userConfig);
-
-    // Create data store
-    this.store = new Store(this.render);
-
-    // State tracking
-    this.initialised = false;
-    this.currentState = {};
-    this.prevState = {};
-    this.currentValue = '';
-
     // Retrieve triggering element (i.e. element with 'data-choice' trigger)
     this.element = element;
     this.passedElement = isType('String', element) ? document.querySelector(element) : element;
@@ -139,8 +127,14 @@ class Choices {
       return;
     }
 
-    this.highlightPosition = 0;
-    this.canSearch = this.config.search;
+    // It only makes sense for addItems to be true for
+    // text inputs by default
+    if (this.isSelectElement) {
+      defaultConfig.addItems = false;
+    }
+
+    // Merge options with user options
+    this.config = extend(defaultConfig, userConfig);
 
     // Assing preset choices from passed object
     this.presetChoices = this.config.choices;
@@ -172,7 +166,16 @@ class Choices {
     this._onPaste = this._onPaste.bind(this);
     this._onInput = this._onInput.bind(this);
 
-    // Monitor touch taps/scrolls
+    // Create data store
+    this.store = new Store(this.render);
+
+    // State tracking
+    this.initialised = false;
+    this.currentState = {};
+    this.prevState = {};
+    this.currentValue = '';
+    this.highlightPosition = 0;
+    this.canSearch = this.config.search;
     this.wasTap = true;
 
     // Cutting the mustard
@@ -385,8 +388,7 @@ class Choices {
       // Choices
       if (this.currentState.choices !== this.prevState.choices ||
         this.currentState.groups !== this.prevState.groups) {
-        if (this.passedElement.type === 'select-multiple' ||
-            this.passedElement.type === 'select-one') {
+        if (!this.isTextElement) {
           // Get active groups/choices
           const activeGroups = this.store.getGroupsFilteredByActive();
           const activeChoices = this.store.getChoicesFilteredByActive();
@@ -412,18 +414,15 @@ class Choices {
             // If we actually have anything to add to our dropdown
             // append it and highlight the first choice
             this.choiceList.appendChild(choiceListFragment);
-            this._highlightChoice();
           } else {
-            // Otherwise show a notice
-            let dropdownItem;
-            let notice;
+            const activeItems = this.store.getItemsFilteredByActive();
+            const canAddItem = this._canAddItem(activeItems, this.input.value);
+            let dropdownItem = this._getTemplate('notice', this.config.noChoicesText);
 
-            if (this.isSearching) {
-              notice = isType('Function', this.config.noResultsText) ? this.config.noResultsText() : this.config.noResultsText;
-              dropdownItem = this._getTemplate('notice', notice);
-            } else {
-              notice = isType('Function', this.config.noChoicesText) ? this.config.noChoicesText() : this.config.noChoicesText;
-              dropdownItem = this._getTemplate('notice', notice);
+            if (this.config.addItems && canAddItem.notice) {
+              dropdownItem = this._getTemplate('notice', canAddItem.notice);
+            } else if (this.isSearching) {
+              dropdownItem = this._getTemplate('notice', this.config.noResultsText);
             }
 
             this.choiceList.appendChild(dropdownItem);
@@ -1033,10 +1032,10 @@ class Choices {
 
       if (canAddItem.response) {
         this._addItem(choice.value, choice.label, choice.id, choice.groupId);
-        this._triggerChange(choice.value);
       }
     }
 
+    this._triggerChange(choice.value);
     this.clearInput(this.passedElement);
 
     // We wont to close the dropdown if we are dealing with a single select box
@@ -1084,17 +1083,17 @@ class Choices {
     let canAddItem = true;
     let notice = isType('Function', this.config.addItemText) ? this.config.addItemText(value) : this.config.addItemText;
 
-    if (this.passedElement.type === 'select-multiple' || this.passedElement.type === 'text') {
-      if (this.config.maxItemCount > 0 && this.config.maxItemCount <= this.itemList.children.length) {
-        // If there is a max entry limit and we have reached that limit
-        // don't update
-        canAddItem = false;
-        notice = isType('Function', this.config.maxItemText) ? this.config.maxItemText(this.config.maxItemCount) : this.config.maxItemText;
-      }
-    }
+    if (this.config.addItems) {
+      const isUnique = !activeItems.some((item) => (item.value === value.trim()) || (item.label === value.trim()));
 
-    if (this.passedElement.type === 'text' && this.config.addItems) {
-      const isUnique = !activeItems.some((item) => item.value === value.trim());
+      if (this.passedElement.type === 'select-multiple' || this.passedElement.type === 'text') {
+        if (this.config.maxItemCount > 0 && this.config.maxItemCount <= this.itemList.children.length) {
+          // If there is a max entry limit and we have reached that limit
+          // don't update
+          canAddItem = false;
+          notice = isType('Function', this.config.maxItemText) ? this.config.maxItemText(this.config.maxItemCount) : this.config.maxItemText;
+        }
+      }
 
       // If a user has supplied a regular expression filter
       if (this.config.regexFilter) {
@@ -1205,7 +1204,8 @@ class Choices {
       this.currentValue = newValue;
       this.highlightPosition = 0;
       this.isSearching = true;
-      this.store.dispatch(filterChoices(results));
+
+      return results;
     }
   }
 
@@ -1227,7 +1227,10 @@ class Choices {
         // Check flag to filter search input
         if (this.config.searchChoices) {
           // Filter available choices
-          this._searchChoices(value);
+          const results = this._searchChoices(value);
+          if (results) {
+            this.store.dispatch(filterChoices(results));
+          }
         }
         // Trigger search event
         triggerEvent(this.passedElement, 'search', {
@@ -1357,19 +1360,66 @@ class Choices {
     };
 
     const onEnterKey = () => {
+      const highlighted = this.dropdown.querySelector(`.${this.config.classNames.highlightedState}`);
+
+      if (hasActiveDropdown && highlighted) {
+        // If we have a highlighted choice, select it
+        this._handleChoiceAction(activeItems, highlighted);
+      } else if (passedElementType === 'select-one') {
+        // Open single select dropdown if it's not active
+        if (!hasActiveDropdown) {
+          this.showDropdown(true);
+          e.preventDefault();
+        }
+      }
+
       // If enter key is pressed and the input has a value
-      if (passedElementType === 'text' && target.value) {
+      if (target.value) {
         const value = this.input.value;
         const canAddItem = this._canAddItem(activeItems, value);
 
         // All is good, add
         if (canAddItem.response) {
-          if (hasActiveDropdown) {
-            this.hideDropdown();
+          // Track whether we will end up adding an item
+          const willAddItem = this.isTextElement || (this.isSelectElement && this.config.addItems);
+
+          if (willAddItem) {
+            if (hasActiveDropdown) {
+              this.hideDropdown();
+            }
+
+            if (this.isTextElement) {
+              this._addItem(value);
+            } else {
+              let matchingChoices = [];
+              let isUnique;
+              const duplicateItems = this.config.duplicateItems;
+              if (!duplicateItems) {
+                matchingChoices = this.store
+                    .getChoices()
+                    .filter((choice) => choice.label === value.trim());
+                isUnique = !this.store
+                    .getItemsFilteredByActive()
+                    .some((item) => item.label === value.trim());
+              }
+              if (duplicateItems || (matchingChoices.length === 0 && isUnique)) {
+                this._addChoice(true, false, value, value);
+              }
+              if (duplicateItems || isUnique) {
+                if (matchingChoices[0]) {
+                  this._addItem(
+                      matchingChoices[0].value,
+                      matchingChoices[0].label,
+                      matchingChoices[0].id
+                    );
+                }
+              }
+              this.containerOuter.focus();
+            }
+
+            this._triggerChange(value);
+            this.clearInput(this.passedElement);
           }
-          this._addItem(value);
-          this._triggerChange(value);
-          this.clearInput(this.passedElement);
         }
       }
 
@@ -2214,7 +2264,10 @@ class Choices {
       }
     }
 
-    if (!this.config.addItems) this.disable();
+    // Disable text input if no entry allowed
+    if (!this.config.addItems && this.isTextElement) {
+      this.disable();
+    }
 
     containerOuter.appendChild(containerInner);
     containerOuter.appendChild(dropdown);

@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 /*! choices.js v2.7.8 | (c) 2017 Josh Johnson | https://github.com/jshjohnson/Choices#readme */ 
+=======
+/*! choices.js v2.5.0 | (c) 2016 Josh Johnson | https://github.com/jshjohnson/Choices#readme */ 
+>>>>>>> 291143b... Add dist files
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -180,18 +184,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	      callbackOnCreateTemplates: null
 	    };
 
-	    // Merge options with user options
-	    this.config = (0, _utils.extend)(defaultConfig, userConfig);
-
-	    // Create data store
-	    this.store = new _index2.default(this.render);
-
-	    // State tracking
-	    this.initialised = false;
-	    this.currentState = {};
-	    this.prevState = {};
-	    this.currentValue = '';
-
 	    // Retrieve triggering element (i.e. element with 'data-choice' trigger)
 	    this.element = element;
 	    this.passedElement = (0, _utils.isType)('String', element) ? document.querySelector(element) : element;
@@ -203,8 +195,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return;
 	    }
 
-	    this.highlightPosition = 0;
-	    this.canSearch = this.config.search;
+	    // It only makes sense for addItems to be true for
+	    // text inputs by default
+	    if (this.isSelectElement) {
+	      defaultConfig.addItems = false;
+	    }
+
+	    // Merge options with user options
+	    this.config = (0, _utils.extend)(defaultConfig, userConfig);
 
 	    // Assing preset choices from passed object
 	    this.presetChoices = this.config.choices;
@@ -236,7 +234,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this._onPaste = this._onPaste.bind(this);
 	    this._onInput = this._onInput.bind(this);
 
-	    // Monitor touch taps/scrolls
+	    // Create data store
+	    this.store = new _index2.default(this.render);
+
+	    // State tracking
+	    this.initialised = false;
+	    this.currentState = {};
+	    this.prevState = {};
+	    this.currentValue = '';
+	    this.highlightPosition = 0;
+	    this.canSearch = this.config.search;
 	    this.wasTap = true;
 
 	    // Cutting the mustard
@@ -475,7 +482,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (this.currentState !== this.prevState) {
 	        // Choices
 	        if (this.currentState.choices !== this.prevState.choices || this.currentState.groups !== this.prevState.groups) {
-	          if (this.passedElement.type === 'select-multiple' || this.passedElement.type === 'select-one') {
+	          if (!this.isTextElement) {
 	            // Get active groups/choices
 	            var activeGroups = this.store.getGroupsFilteredByActive();
 	            var activeChoices = this.store.getChoicesFilteredByActive();
@@ -501,8 +508,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	              // If we actually have anything to add to our dropdown
 	              // append it and highlight the first choice
 	              this.choiceList.appendChild(choiceListFragment);
-	              this._highlightChoice();
 	            } else {
+<<<<<<< HEAD
 	              // Otherwise show a notice
 	              var dropdownItem = void 0;
 	              var notice = void 0;
@@ -513,6 +520,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	              } else {
 	                notice = (0, _utils.isType)('Function', this.config.noChoicesText) ? this.config.noChoicesText() : this.config.noChoicesText;
 	                dropdownItem = this._getTemplate('notice', notice);
+=======
+	              var activeItems = this.store.getItemsFilteredByActive();
+	              var canAddItem = this._canAddItem(activeItems, this.input.value);
+	              var dropdownItem = this._getTemplate('notice', this.config.noChoicesText);
+
+	              if (this.config.addItems && canAddItem.notice) {
+	                dropdownItem = this._getTemplate('notice', canAddItem.notice);
+	              } else if (this.isSearching) {
+	                dropdownItem = this._getTemplate('notice', this.config.noResultsText);
+>>>>>>> 291143b... Add dist files
 	              }
 
 	              this.choiceList.appendChild(dropdownItem);
@@ -522,11 +539,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        // Items
 	        if (this.currentState.items !== this.prevState.items) {
-	          var activeItems = this.store.getItemsFilteredByActive();
-	          if (activeItems) {
+	          var _activeItems = this.store.getItemsFilteredByActive();
+	          if (_activeItems) {
 	            // Create a fragment to store our list items
 	            // (so we don't have to update the DOM for each item)
-	            var itemListFragment = this.renderItems(activeItems);
+	            var itemListFragment = this.renderItems(_activeItems);
 
 	            // Clear list
 	            this.itemList.innerHTML = '';
@@ -1222,10 +1239,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        if (canAddItem.response) {
 	          this._addItem(choice.value, choice.label, choice.id, choice.groupId);
-	          this._triggerChange(choice.value);
 	        }
 	      }
 
+	      this._triggerChange(choice.value);
 	      this.clearInput(this.passedElement);
 
 	      // We wont to close the dropdown if we are dealing with a single select box
@@ -1281,19 +1298,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var canAddItem = true;
 	      var notice = (0, _utils.isType)('Function', this.config.addItemText) ? this.config.addItemText(value) : this.config.addItemText;
 
-	      if (this.passedElement.type === 'select-multiple' || this.passedElement.type === 'text') {
-	        if (this.config.maxItemCount > 0 && this.config.maxItemCount <= this.itemList.children.length) {
-	          // If there is a max entry limit and we have reached that limit
-	          // don't update
-	          canAddItem = false;
-	          notice = (0, _utils.isType)('Function', this.config.maxItemText) ? this.config.maxItemText(this.config.maxItemCount) : this.config.maxItemText;
-	        }
-	      }
-
-	      if (this.passedElement.type === 'text' && this.config.addItems) {
+	      if (this.config.addItems) {
 	        var isUnique = !activeItems.some(function (item) {
-	          return item.value === value.trim();
+	          return item.value === value.trim() || item.label === value.trim();
 	        });
+
+	        if (this.passedElement.type === 'select-multiple' || this.passedElement.type === 'text') {
+	          if (this.config.maxItemCount > 0 && this.config.maxItemCount <= this.itemList.children.length) {
+	            // If there is a max entry limit and we have reached that limit
+	            // don't update
+	            canAddItem = false;
+	            notice = (0, _utils.isType)('Function', this.config.maxItemText) ? this.config.maxItemText(this.config.maxItemCount) : this.config.maxItemText;
+	          }
+	        }
 
 	        // If a user has supplied a regular expression filter
 	        if (this.config.regexFilter) {
@@ -1417,7 +1434,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.currentValue = newValue;
 	        this.highlightPosition = 0;
 	        this.isSearching = true;
-	        this.store.dispatch((0, _index3.filterChoices)(results));
+
+	        return results;
 	      }
 	    }
 
@@ -1441,10 +1459,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (this.input === document.activeElement) {
 	        // Check that we have a value to search and the input was an alphanumeric character
 	        if (value && value.length > this.config.searchFloor) {
+<<<<<<< HEAD
 	          // Check flag to filter search input
 	          if (this.config.searchChoices) {
 	            // Filter available choices
 	            this._searchChoices(value);
+=======
+	          // Filter available choices
+	          var results = this._searchChoices(value);
+	          if (results) {
+	            this.store.dispatch((0, _index3.filterChoices)(results));
+	          }
+
+	          // Run callback if it is a function
+	          if (callback) {
+	            if ((0, _utils.isType)('Function', callback)) {
+	              callback.call(this, value);
+	            } else {
+	              console.error('callbackOnSearch: Callback is not a function');
+	            }
+>>>>>>> 291143b... Add dist files
 	          }
 	          // Trigger search event
 	          (0, _utils.triggerEvent)(this.passedElement, 'search', {
@@ -1588,26 +1622,112 @@ return /******/ (function(modules) { // webpackBootstrap
 	      };
 
 	      var onEnterKey = function onEnterKey() {
+	        var highlighted = _this17.dropdown.querySelector('.' + _this17.config.classNames.highlightedState);
+
+	        if (hasActiveDropdown && highlighted) {
+	          // If we have a highlighted choice, select it
+	          _this17._handleChoiceAction(activeItems, highlighted);
+	        } else if (passedElementType === 'select-one') {
+	          // Open single select dropdown if it's not active
+	          if (!hasActiveDropdown) {
+	            _this17.showDropdown(true);
+	            e.preventDefault();
+	          }
+	        }
+
 	        // If enter key is pressed and the input has a value
+<<<<<<< HEAD
 	        if (passedElementType === 'text' && target.value) {
 	          var value = _this16.input.value;
 	          var canAddItem = _this16._canAddItem(activeItems, value);
+=======
+	        if (target.value) {
+<<<<<<< HEAD
+	          var value = _this17.input.value;
+	          var canAddItem = _this17._canAddItem(activeItems, value);
+>>>>>>> 291143b... Add dist files
 
 	          // All is good, add
 	          if (canAddItem.response) {
+<<<<<<< HEAD
 	            if (hasActiveDropdown) {
 	              _this16.hideDropdown();
 	            }
+<<<<<<< HEAD
 	            _this16._addItem(value);
 	            _this16._triggerChange(value);
 	            _this16.clearInput(_this16.passedElement);
+=======
+=======
+	            // Track whether we will end up adding an item
+	            var willAddItem = _this17.isTextElement || _this17.isSelectElement && _this17.config.addItems;
+>>>>>>> acb2451... Update dist files, after FF from main repo
+=======
+	          (function () {
+	            var value = _this17.input.value;
+	            var canAddItem = _this17._canAddItem(activeItems, value);
+
+	            // All is good, add
+	            if (canAddItem.response) {
+	              // Track whether we will end up adding an item
+	              var willAddItem = _this17.isTextElement || _this17.isSelectElement && _this17.config.addItems;
+>>>>>>> c4dd94f... Update dist files
+
+	              if (willAddItem) {
+	                if (hasActiveDropdown) {
+	                  _this17.hideDropdown();
+	                }
+
+	                if (_this17.isTextElement) {
+	                  _this17._addItem(value);
+	                } else {
+	                  var matchingChoices = [];
+	                  var isUnique = void 0;
+	                  var duplicateItems = _this17.config.duplicateItems;
+	                  if (!duplicateItems) {
+	                    matchingChoices = _this17.store.getChoices().filter(function (choice) {
+	                      return choice.label === value.trim();
+	                    });
+	                    isUnique = !_this17.store.getItemsFilteredByActive().some(function (item) {
+	                      return item.label === value.trim();
+	                    });
+	                  }
+	                  if (duplicateItems || matchingChoices.length === 0 && isUnique) {
+	                    _this17._addChoice(true, false, value, value);
+	                  }
+	                  if (duplicateItems || isUnique) {
+	                    if (matchingChoices[0]) {
+	                      _this17._addItem(matchingChoices[0].value, matchingChoices[0].label, matchingChoices[0].id);
+	                    }
+	                  }
+	                  _this17.containerOuter.focus();
+	                }
+
+<<<<<<< HEAD
+<<<<<<< HEAD
+	            _this17._triggerChange(value);
+	            _this17.clearInput(_this17.passedElement);
+>>>>>>> 291143b... Add dist files
+=======
+	              _this17._triggerChange(value);
+	              _this17.clearInput(_this17.passedElement);
+	            }
+>>>>>>> acb2451... Update dist files, after FF from main repo
 	          }
+=======
+	                _this17._triggerChange(value);
+	                _this17.clearInput(_this17.passedElement);
+	              }
+	            }
+	          })();
+>>>>>>> c4dd94f... Update dist files
 	        }
 
 	        if (target.hasAttribute('data-button')) {
 	          _this16._handleButtonAction(activeItems, target);
 	          e.preventDefault();
 	        }
+<<<<<<< HEAD
 
 	        if (hasActiveDropdown) {
 	          e.preventDefault();
@@ -1624,6 +1744,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            e.preventDefault();
 	          }
 	        }
+=======
+>>>>>>> 291143b... Add dist files
 	      };
 
 	      var onEscapeKey = function onEscapeKey() {
@@ -2493,7 +2615,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	      }
 
-	      if (!this.config.addItems) this.disable();
+	      // Disable text input if no entry allowed
+	      if (!this.config.addItems && this.isTextElement) {
+	        this.disable();
+	      }
 
 	      containerOuter.appendChild(containerInner);
 	      containerOuter.appendChild(dropdown);
@@ -4064,7 +4189,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	  if (value == null) {
 	    return value === undefined ? undefinedTag : nullTag;
 	  }
+<<<<<<< HEAD
 	  return (symToStringTag && symToStringTag in Object(value))
+=======
+	  value = Object(value);
+	  return (symToStringTag && symToStringTag in value)
+>>>>>>> 291143b... Add dist files
 	    ? getRawTag(value)
 	    : objectToString(value);
 	}

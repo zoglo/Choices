@@ -191,11 +191,11 @@ Pass an array of objects:
 **Usage:** The amount of items a user can input/select ("-1" indicates no limit).
 
 ### addItems
-**Type:** `Boolean` **Default:** `true`
+**Type:** `Boolean` **Default:** `true` (for text inputs) `false` (for select elements)
 
-**Input types affected:** `text`
+**Input types affected:** `text`, `select-one`, `select-multiple`
 
-**Usage:** Whether a user can add items.
+**Usage:** Whether a user can add items. 
 
 ### removeItems
 **Type:** `Boolean` **Default:** `true`
