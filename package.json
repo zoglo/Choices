@@ -65,6 +65,7 @@
   "dependencies": {
     "classnames": "^2.2.5",
     "fuse.js": "^2.2.2",
+    "opn": "^5.1.0",
     "redux": "^3.3.1"
   },
   "npmName": "choices.js",
