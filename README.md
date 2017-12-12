@@ -4,7 +4,7 @@ A vanilla, lightweight (~15kb gzipped 🎉), configurable select box/text input 
 [Demo](https://joshuajohnson.co.uk/Choices/)
 
 ---
-### 👉 Please use [develop](https://github.com/jshjohnson/Choices/tree/develop) as the base branch for pull requests 👈
+### 👉 Please use [develop](https://github.com/jshjohnson/Choices/tree/develop) as the base branch for pull requests. This will be the next major release. Only minor fixes will be pushed into master 👈
 ---
 
 ## TL;DR
