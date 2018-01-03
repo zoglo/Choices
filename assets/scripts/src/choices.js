@@ -2,6 +2,7 @@ import Fuse from 'fuse.js';
 import classNames from 'classnames';
 import Store from './store/index.js';
 import {
+  setIsLoading,
   addItem,
   removeItem,
   highlightItem,
@@ -480,6 +481,9 @@ class Choices {
    * @private
    */
   render() {
+    if(this.store.isLoading())
+      return;
+
     this.currentState = this.store.getState();
 
     // Only render if our state has actually changed
@@ -982,10 +986,14 @@ class Choices {
         if (!isType('Array', choices) || !value) {
           return this;
         }
+
         // Clear choices if needed
         if (replaceChoices) {
           this._clearChoices();
         }
+
+        this._setLoading(true);
+
         // Add choices if passed
         if (choices && choices.length) {
           this.containerOuter.classList.remove(this.config.classNames.loadingState);
@@ -1010,6 +1018,9 @@ class Choices {
             }
           });
         }
+
+        this._setLoading(false);
+
       }
     }
     return this;
@@ -1360,13 +1371,13 @@ class Choices {
 
   /**
    * Apply or remove a loading state to the component.
-   * @param {Boolean} isLoading default value set to 'true'.
+   * @param {Boolean} setLoading default value set to 'true'.
    * @return
    * @private
    */
-  _handleLoadingState(isLoading = true) {
+  _handleLoadingState(setLoading = true) {
     let placeholderItem = this.itemList.querySelector(`.${this.config.classNames.placeholder}`);
-    if (isLoading) {
+    if (setLoading) {
       this.containerOuter.classList.add(this.config.classNames.loadingState);
       this.containerOuter.setAttribute('aria-busy', 'true');
       if (this.isSelectOneElement) {
@@ -1408,6 +1419,9 @@ class Choices {
         // Remove loading states/text
         this._handleLoadingState(false);
         // Add each result as a choice
+
+        this._setLoading(true);
+
         parsedResults.forEach((result) => {
           if (result.choices) {
             const groupId = (result.id || null);
@@ -1429,6 +1443,8 @@ class Choices {
             );
           }
         });
+
+        this._setLoading(false);
 
         if (this.isSelectOneElement) {
           this._selectPlaceholderChoice();
@@ -2689,6 +2705,12 @@ class Choices {
     this.config.templates = extend(templates, userTemplates);
   }
 
+  _setLoading(isLoading) {
+    this.store.dispatch(
+      setIsLoading(isLoading)
+    );
+  }
+
   /**
    * Create DOM structure around passed select element
    * @return
@@ -2767,6 +2789,8 @@ class Choices {
       this.highlightPosition = 0;
       this.isSearching = false;
 
+      this._setLoading(true);
+
       if (passedGroups && passedGroups.length) {
         passedGroups.forEach((group) => {
           this._addGroup(group, (group.id || null));
@@ -2825,6 +2849,9 @@ class Choices {
           }
         });
       }
+
+      this._setLoading(false);
+
     } else if (this.isTextElement) {
       // Add any preset values seperated by delimiter
       this.presetItems.forEach((item) => {
