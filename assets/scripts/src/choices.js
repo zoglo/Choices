@@ -481,8 +481,9 @@ class Choices {
    * @private
    */
   render() {
-    if(this.store.isLoading())
+    if(this.store.isLoading()) {
       return;
+    }
 
     this.currentState = this.store.getState();
 
