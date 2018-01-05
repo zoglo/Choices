@@ -1,5 +1,5 @@
 # Choices.js ![Build Status](https://travis-ci.org/jshjohnson/Choices.svg?branch=master)
-A vanilla, lightweight (~15kb gzipped 🎉), configurable select box/text input plugin. Similar to Select2 and Selectize but without the jQuery dependency.
+A vanilla, lightweight (~18kb gzipped 🎉), configurable select box/text input plugin. Similar to Select2 and Selectize but without the jQuery dependency.
 
 [Demo](https://joshuajohnson.co.uk/Choices/)
 
