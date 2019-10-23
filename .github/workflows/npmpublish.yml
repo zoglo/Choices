@@ -2,8 +2,8 @@ name: Publish Package
 
 on:
   push:
-    branches:
-      - master
+    branches-ignore:
+      - '!master'
     tags:
       - v*
 
@@ -65,19 +65,3 @@ jobs:
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-
-  publish-github:
-    needs: publish-npm
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-        with:
-          fetch-depth: 1
-      - run: echo ${{ github.sha }} > RELEASE.txt
-      - run: cat RELEASE.txt
-      - uses: softprops/action-gh-release@v1
-        with:
-          files: RELEASE.txt
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
