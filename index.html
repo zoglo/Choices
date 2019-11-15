@@ -214,6 +214,7 @@
           placeholder="This is a placeholder"
           multiple
         >
+          <option value="">Choose a city</option>
           <optgroup label="UK">
             <option value="London">London</option>
             <option value="Manchester">Manchester</option>
@@ -336,8 +337,8 @@
           data-trigger
           name="choices-single-groups"
           id="choices-single-groups"
-          placeholder="This is a placeholder"
         >
+          <option value="">Choose a city</option>
           <optgroup label="UK">
             <option value="London">London</option>
             <option value="Manchester">Manchester</option>
@@ -376,7 +377,6 @@
           data-trigger
           name="choices-single-rtl"
           id="choices-single-rtl"
-          placeholder="This is a placeholder"
           dir="rtl"
         >
           <option value="Choice 1">Choice 1</option>
@@ -402,7 +402,6 @@
           class="form-control"
           name="choices-single-preset-options"
           id="choices-single-preset-options"
-          placeholder="This is a placeholder"
         ></select>
 
         <label for="choices-single-selected-option"
@@ -415,7 +414,6 @@
           class="form-control"
           name="choices-single-selected-option"
           id="choices-single-selected-option"
-          placeholder="This is a placeholder"
         ></select>
 
         <label for="choices-with-custom-props-via-html"
@@ -440,7 +438,6 @@
           class="form-control"
           name="choices-single-no-sorting"
           id="choices-single-no-sorting"
-          placeholder="This is a placeholder"
         >
           <option value="Madrid">Madrid</option>
           <option value="Toronto">Toronto</option>
@@ -467,7 +464,6 @@
           class="form-control"
           name="choices-single-custom-templates"
           id="choices-single-custom-templates"
-          placeholder="This is a placeholder"
         >
           <option value="React">React</option>
           <option value="Angular">Angular</option>
@@ -481,12 +477,8 @@
           'Cities' is 'London'
         </p>
         <label for="cities">Cities</label>
-        <select
-          class="form-control"
-          name="cities"
-          id="cities"
-          placeholder="Choose a city"
-        >
+        <select class="form-control" name="cities" id="cities">
+          <option value="">Choose a city</option>
           <option value="Leeds">Leeds</option>
           <option value="Manchester">Manchester</option>
           <option value="London">London</option>
@@ -495,12 +487,8 @@
         </select>
 
         <label for="tube-stations">Tube stations</label>
-        <select
-          class="form-control"
-          name="tube-stations"
-          id="tube-stations"
-          placeholder="Choose a tube station"
-        >
+        <select class="form-control" name="tube-stations" id="tube-stations">
+          <option value="">Choose a tube station</option>
           <option value="Moorgate">Moorgate</option>
           <option value="St Pauls">St Pauls</option>
           <option value="Old Street">Old Street</option>
@@ -515,12 +503,7 @@
         <p>Change the values and press reset to restore to initial state.</p>
         <form>
           <label for="reset-simple">Change me!</label>
-          <select
-            class="form-control"
-            name="reset-simple"
-            id="reset-simple"
-            placeholder="Choose an option"
-          >
+          <select class="form-control" name="reset-simple" id="reset-simple">
             <option value="Option 1">Option 1</option>
             <option value="Option 2" selected>Option 2</option>
             <option value="Option 3">Option 3</option>
@@ -533,7 +516,6 @@
             class="form-control"
             name="reset-multiple"
             id="reset-multiple"
-            placeholder="This is a placeholder"
             multiple
           >
             <option value="Choice 1" selected>Choice 1</option>
@@ -564,7 +546,7 @@
             editItems: true,
             maxItemCount: 5,
             removeItemButton: true,
-          },
+          }
         );
 
         var textUniqueVals = new Choices('#choices-text-unique-values', {
@@ -612,7 +594,7 @@
           {
             prependValue: 'item-',
             appendValue: '-' + Date.now(),
-          },
+          }
         ).removeActiveItems();
 
         var textPresetVal = new Choices('#choices-text-preset-values', {
@@ -629,7 +611,7 @@
         });
 
         var multipleDefault = new Choices(
-          document.getElementById('choices-multiple-groups'),
+          document.getElementById('choices-multiple-groups')
         );
 
         var multipleFetch = new Choices('#choices-multiple-remote-fetch', {
@@ -638,7 +620,7 @@
           maxItemCount: 5,
         }).setChoices(function() {
           return fetch(
-            'https://api.discogs.com/artists/55980/releases?token=QBRmstCkwXEvCjTclCpumbtNwvVkEzGAdELXyRyW',
+            'https://api.discogs.com/artists/55980/releases?token=QBRmstCkwXEvCjTclCpumbtNwvVkEzGAdELXyRyW'
           )
             .then(function(response) {
               return response.json();
@@ -654,7 +636,7 @@
           '#choices-multiple-remove-button',
           {
             removeItemButton: true,
-          },
+          }
         );
 
         /* Use label on event */
@@ -673,7 +655,7 @@
           ],
           'value',
           'label',
-          false,
+          false
         );
 
         choicesSelect.passedElement.element.addEventListener(
@@ -681,7 +663,7 @@
           function(event) {
             document.getElementById('message').innerHTML =
               'You just added "' + event.detail.label + '"';
-          },
+          }
         );
 
         choicesSelect.passedElement.element.addEventListener(
@@ -689,7 +671,7 @@
           function(event) {
             document.getElementById('message').innerHTML =
               'You just removed "' + event.detail.label + '"';
-          },
+          }
         );
 
         var singleFetch = new Choices('#choices-single-remote-fetch', {
@@ -697,7 +679,7 @@
         })
           .setChoices(function() {
             return fetch(
-              'https://api.discogs.com/artists/391170/releases?token=QBRmstCkwXEvCjTclCpumbtNwvVkEzGAdELXyRyW',
+              'https://api.discogs.com/artists/391170/releases?token=QBRmstCkwXEvCjTclCpumbtNwvVkEzGAdELXyRyW'
             )
               .then(function(response) {
                 return response.json();
@@ -717,7 +699,7 @@
           searchPlaceholderValue: "Search for a Smiths' record",
         }).setChoices(function(callback) {
           return fetch(
-            'https://api.discogs.com/artists/83080/releases?token=QBRmstCkwXEvCjTclCpumbtNwvVkEzGAdELXyRyW',
+            'https://api.discogs.com/artists/83080/releases?token=QBRmstCkwXEvCjTclCpumbtNwvVkEzGAdELXyRyW'
           )
             .then(function(res) {
               return res.json();
@@ -750,7 +732,7 @@
           ],
           'value',
           'label',
-          false,
+          false
         );
 
         var singlePresetOpts = new Choices('#choices-single-preset-options', {
@@ -779,7 +761,7 @@
             },
           ],
           'value',
-          'label',
+          'label'
         );
 
         var singleSelectedOpt = new Choices('#choices-single-selected-option', {
@@ -801,7 +783,7 @@
           '#choices-with-custom-props-via-html',
           {
             searchFields: ['label', 'value', 'customProperties'],
-          },
+          }
         );
 
         var singleNoSorting = new Choices('#choices-single-no-sorting', {
@@ -810,7 +792,7 @@
 
         var cities = new Choices(document.getElementById('cities'));
         var tubeStations = new Choices(
-          document.getElementById('tube-stations'),
+          document.getElementById('tube-stations')
         ).disable();
 
         cities.passedElement.element.addEventListener('change', function(e) {
@@ -838,7 +820,7 @@
                       String(
                         data.highlighted
                           ? classNames.highlightedState
-                          : classNames.itemSelectable,
+                          : classNames.itemSelectable
                       ) +
                       '"\
                   data-item\
@@ -859,7 +841,7 @@
                       String(data.label) +
                       '\
                 </div>\
-              ',
+              '
                   );
                 },
                 choice: function(classNames, data) {
@@ -874,7 +856,7 @@
                       String(
                         data.disabled
                           ? classNames.itemDisabled
-                          : classNames.itemSelectable,
+                          : classNames.itemSelectable
                       ) +
                       '"\
                   data-select-text="' +
@@ -885,7 +867,7 @@
                       String(
                         data.disabled
                           ? 'data-choice-disabled aria-disabled="true"'
-                          : 'data-choice-selectable',
+                          : 'data-choice-selectable'
                       ) +
                       '\
                   data-id="' +
@@ -896,7 +878,7 @@
                       '"\
                   ' +
                       String(
-                        data.groupId > 0 ? 'role="treeitem"' : 'role="option"',
+                        data.groupId > 0 ? 'role="treeitem"' : 'role="option"'
                       ) +
                       '\
                   >\
@@ -904,12 +886,12 @@
                       String(data.label) +
                       '\
                 </div>\
-              ',
+              '
                   );
                 },
               };
             },
-          },
+          }
         );
 
         var resetSimple = new Choices(document.getElementById('reset-simple'));
