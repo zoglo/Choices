@@ -1,4 +1,4 @@
-/*! choices.js v9.0.0 | © 2019 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
+/*! choices.js v9.0.1 | © 2019 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -3455,7 +3455,9 @@ function () {
       itemChoice: 'item-choice'
     }; // Assign preset groups from passed element
 
-    this._presetGroups = this.passedElement.optionGroups; // Assign preset choices from passed object
+    this._presetGroups = this.passedElement.optionGroups; // Assign preset options from passed element
+
+    this._presetOptions = this.passedElement.options; // Assign preset choices from passed object
 
     this._presetChoices = this.config.choices; // Assign preset items from passed object first
 
@@ -3555,12 +3557,12 @@ function () {
 
     this.passedElement.reveal();
     this.containerOuter.unwrap(this.passedElement.element);
+    this.clearStore();
 
     if (this._isSelectElement) {
-      this.passedElement.options = this._presetChoices;
+      this.passedElement.options = this._presetOptions;
     }
 
-    this.clearStore();
     this._templates = null;
     this.initialised = false;
   };
