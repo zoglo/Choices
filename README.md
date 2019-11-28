@@ -966,13 +966,13 @@ example.setChoices(
 
 **Input types affected:** `select-one`, `select-multiple`
 
-**Usage:** Clear all choices from select
+**Usage:** Clear all choices
 
 ### clearItems();
 
-**Input types affected:** `select-one`, `select-multiple`
+**Input types affected:** `text`, `select-one`, `select-multiple`
 
-**Usage:** Clear all items from select
+**Usage:** Clear all items
 
 ### getValue(valueOnly)
 
