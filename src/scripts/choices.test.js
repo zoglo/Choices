@@ -1148,8 +1148,8 @@ describe('choices', () => {
           instance.initialised = false;
         });
 
-        it('should throw', () => {
-          expect(() => instance.setChoices(null)).Throw(ReferenceError);
+        it('throws a ReferenceError', () => {
+          expect(() => instance.setChoices(null)).to.throw(ReferenceError);
         });
       });
 
@@ -1158,8 +1158,8 @@ describe('choices', () => {
           instance._isSelectElement = false;
         });
 
-        it('should throw', () => {
-          expect(() => instance.setChoices(null)).Throw(TypeError);
+        it('throws a TypeError', () => {
+          expect(() => instance.setChoices([])).to.throw(TypeError);
         });
       });
 
@@ -1168,15 +1168,22 @@ describe('choices', () => {
           instance._isSelectElement = true;
         });
 
-        it('should throw on non function', () => {
-          expect(() => instance.setChoices(null)).Throw(TypeError, /Promise/i);
+        describe('passing a non-function', () => {
+          it('throws a TypeError', () => {
+            expect(() => instance.setChoices(null)).to.throw(
+              TypeError,
+              /Promise/i,
+            );
+          });
         });
 
-        it(`should throw on function that doesn't return promise`, () => {
-          expect(() => instance.setChoices(() => 'boo')).to.throw(
-            TypeError,
-            /promise/i,
-          );
+        describe('passing a function that does not return a promise', () => {
+          it('throws a TypeError', () => {
+            expect(() => instance.setChoices(() => 'boo')).to.throw(
+              TypeError,
+              /promise/i,
+            );
+          });
         });
       });
 
