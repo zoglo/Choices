@@ -1716,37 +1716,43 @@ describe('choices', () => {
         });
 
         describe('passing an empty array with a false replaceChoices flag', () => {
-          it('does not clear existing choices', () => {
-            instance._isSelectElement = true;
+          beforeEach(() => {
             instance.setChoices([], value, label, false);
+          });
+
+          it('does not clear existing choices', () => {
             expect(clearChoicesStub.called).to.equal(false);
+          });
+
+          it('does not clear existing items', () => {
+            expect(clearItemsStub.called).to.equal(false);
           });
         });
 
         describe('passing true replaceChoices flag', () => {
-          it('clears existing choices', () => {
+          beforeEach(() => {
             instance.setChoices(choices, value, label, true);
+          });
+
+          it('clears existing choices', () => {
             expect(clearChoicesStub.called).to.equal(true);
           });
-        });
 
-        describe('passing false replaceChoices flag', () => {
-          it('clears existing choices are not cleared', () => {
-            instance.setChoices(choices, value, label, false);
-            expect(clearChoicesStub.called).to.equal(false);
-          });
-        });
-
-        describe('passing true replaceItems flag', () => {
           it('clears existing items', () => {
-            instance.setChoices(choices, value, label, true, true);
             expect(clearItemsStub.called).to.equal(true);
           });
         });
 
-        describe('passing false replaceItems flag', () => {
-          it('does not clears existing items', () => {
-            instance.setChoices(choices, value, label, true, false);
+        describe('passing false replaceChoices flag', () => {
+          beforeEach(() => {
+            instance.setChoices(choices, value, label, false);
+          });
+
+          it('does not clear existing choices', () => {
+            expect(clearChoicesStub.called).to.equal(false);
+          });
+
+          it('does not clear existing items', () => {
             expect(clearItemsStub.called).to.equal(false);
           });
         });

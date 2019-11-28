@@ -880,7 +880,7 @@ choices.disable();
 
 **Usage:** Hide option list dropdown (only affects select inputs).
 
-### setChoices(choices[, value[, label[, replaceChoices[, replaceItems]]]]);
+### setChoices(choices[, value[, label[, replaceChoices]]]);
 
 **Input types affected:** `select-one`, `select-multiple`
 
@@ -902,7 +902,6 @@ example.setChoices(
   'value',
   'label',
   false,
-  true,
 );
 ```
 
@@ -960,7 +959,6 @@ example.setChoices(
   'value',
   'label',
   false,
-  true,
 );
 ```
 

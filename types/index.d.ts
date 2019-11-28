@@ -934,7 +934,6 @@ export default class Choices {
    * @param {string} [value = 'value'] - name of `value` field
    * @param {string} [label = 'label'] - name of 'label' field
    * @param {boolean} [replaceChoices = false] - whether to clear existing choices
-   * @param {boolean} [replaceItems = false] - whether to clear existing items
    *
    * @example
    * ```js
@@ -997,7 +996,6 @@ export default class Choices {
     value?: string,
     label?: string,
     replaceChoices?: boolean,
-    replaceItems?: boolean,
   ): T extends object[] ? this : Promise<this>;
 
   /**
