@@ -1055,6 +1055,31 @@ describe('choices', () => {
       });
     });
 
+    describe('clearItems', () => {
+      let storeDispatchStub;
+
+      beforeEach(() => {
+        storeDispatchStub = stub();
+        instance._store.dispatch = storeDispatchStub;
+
+        output = instance.clearItems();
+      });
+
+      afterEach(() => {
+        instance._store.dispatch.reset();
+      });
+
+      it('returns this', () => {
+        expect(output).to.eql(instance);
+      });
+
+      it('dispatches clearItems action', () => {
+        expect(storeDispatchStub.lastCall.args[0]).to.eql({
+          type: ACTION_TYPES.CLEAR_ITEMS,
+        });
+      });
+    });
+
     describe('clearStore', () => {
       let storeDispatchStub;
 
