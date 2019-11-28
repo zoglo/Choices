@@ -25,7 +25,12 @@ import {
   activateChoices,
   clearChoices,
 } from './actions/choices';
-import { addItem, removeItem, highlightItem } from './actions/items';
+import {
+  addItem,
+  removeItem,
+  highlightItem,
+  clearItems,
+} from './actions/items';
 import { addGroup } from './actions/groups';
 import { clearAll, resetTo, setIsLoading } from './actions/misc';
 import {
@@ -496,7 +501,8 @@ class Choices {
    * @param {T} [choicesArrayOrFetcher]
    * @param {string} [value = 'value'] - name of `value` field
    * @param {string} [label = 'label'] - name of 'label' field
-   * @param {boolean} [replaceChoices = false] - whether to replace of add choices
+   * @param {boolean} [replaceChoices = false] - whether to clear existing choices
+   * @param {boolean} [replaceItems = false] - whether to clear existing items
    * @returns {this | Promise<this>}
    *
    * @example
@@ -558,6 +564,7 @@ class Choices {
     value = 'value',
     label = 'label',
     replaceChoices = false,
+    replaceItems = false,
   ) {
     if (!this.initialised) {
       throw new ReferenceError(
@@ -574,9 +581,12 @@ class Choices {
       );
     }
 
-    // Clear choices if needed
     if (replaceChoices) {
       this.clearChoices();
+    }
+
+    if (replaceItems) {
+      this.clearItems();
     }
 
     if (typeof choicesArrayOrFetcher === 'function') {
@@ -589,7 +599,9 @@ class Choices {
         return new Promise(resolve => requestAnimationFrame(resolve))
           .then(() => this._handleLoadingState(true))
           .then(() => fetcher)
-          .then(data => this.setChoices(data, value, label, replaceChoices))
+          .then(data =>
+            this.setChoices(data, value, label, replaceChoices, replaceItems),
+          )
           .catch(err => {
             if (!this.config.silent) {
               console.error(err);
@@ -647,6 +659,12 @@ class Choices {
 
   clearChoices() {
     this._store.dispatch(clearChoices());
+
+    return this;
+  }
+
+  clearItems() {
+    this._store.dispatch(clearItems());
 
     return this;
   }

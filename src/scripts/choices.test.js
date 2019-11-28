@@ -28,12 +28,6 @@ describe('choices', () => {
     instance = null;
   });
 
-  const returnsInstance = () => {
-    it('returns this', () => {
-      expect(output).to.eql(instance);
-    });
-  };
-
   describe('constructor', () => {
     describe('config', () => {
       describe('not passing config options', () => {
@@ -88,6 +82,7 @@ describe('choices', () => {
             `;
 
             instance = new Choices('[data-choice]', {
+              // @ts-ignore
               renderSelectedChoices: 'test',
             });
 
@@ -423,7 +418,9 @@ describe('choices', () => {
           output = instance.enable();
         });
 
-        returnsInstance(output);
+        it('returns this', () => {
+          expect(output).to.eql(instance);
+        });
 
         it('returns early', () => {
           expect(passedElementEnableSpy.called).to.equal(false);
@@ -481,7 +478,9 @@ describe('choices', () => {
           output = instance.disable();
         });
 
-        returnsInstance(output);
+        it('returns this', () => {
+          expect(output).to.eql(instance);
+        });
 
         it('returns early', () => {
           expect(removeEventListenersSpy.called).to.equal(false);
@@ -638,7 +637,9 @@ describe('choices', () => {
           output = instance.hideDropdown();
         });
 
-        returnsInstance(output);
+        it('returns this', () => {
+          expect(output).to.eql(instance);
+        });
 
         it('returns early', () => {
           expect(containerOuterCloseSpy.called).to.equal(false);
@@ -735,7 +736,9 @@ describe('choices', () => {
           output = instance.highlightItem();
         });
 
-        returnsInstance(output);
+        it('returns this', () => {
+          expect(output).to.eql(instance);
+        });
 
         it('returns early', () => {
           expect(passedElementTriggerEventStub.called).to.equal(false);
@@ -756,7 +759,9 @@ describe('choices', () => {
             output = instance.highlightItem(item, true);
           });
 
-          returnsInstance(output);
+          it('returns this', () => {
+            expect(output).to.eql(instance);
+          });
 
           it('dispatches highlightItem action with correct arguments', () => {
             expect(storeDispatchSpy.called).to.equal(true);
@@ -817,7 +822,9 @@ describe('choices', () => {
             expect(passedElementTriggerEventStub.called).to.equal(false);
           });
 
-          returnsInstance(output);
+          it('returns this', () => {
+            expect(output).to.eql(instance);
+          });
         });
       });
     });
@@ -850,7 +857,9 @@ describe('choices', () => {
           output = instance.unhighlightItem();
         });
 
-        returnsInstance(output);
+        it('returns this', () => {
+          expect(output).to.eql(instance);
+        });
 
         it('returns early', () => {
           expect(passedElementTriggerEventStub.called).to.equal(false);
@@ -871,7 +880,9 @@ describe('choices', () => {
             output = instance.unhighlightItem(item, true);
           });
 
-          returnsInstance(output);
+          it('returns this', () => {
+            expect(output).to.eql(instance);
+          });
 
           it('dispatches highlightItem action with correct arguments', () => {
             expect(storeDispatchSpy.called).to.equal(true);
@@ -932,7 +943,9 @@ describe('choices', () => {
             expect(passedElementTriggerEventStub.called).to.equal(false);
           });
 
-          returnsInstance(output);
+          it('returns this', () => {
+            expect(output).to.eql(instance);
+          });
         });
       });
     });
@@ -966,7 +979,9 @@ describe('choices', () => {
         storeGetItemsStub.reset();
       });
 
-      returnsInstance(output);
+      it('returns this', () => {
+        expect(output).to.eql(instance);
+      });
 
       it('highlights each item in store', () => {
         expect(highlightItemStub.callCount).to.equal(items.length);
@@ -1004,7 +1019,9 @@ describe('choices', () => {
         storeGetItemsStub.reset();
       });
 
-      returnsInstance(output);
+      it('returns this', () => {
+        expect(output).to.eql(instance);
+      });
 
       it('unhighlights each item in store', () => {
         expect(unhighlightItemStub.callCount).to.equal(items.length);
@@ -1027,7 +1044,9 @@ describe('choices', () => {
         instance._store.dispatch.reset();
       });
 
-      returnsInstance(output);
+      it('returns this', () => {
+        expect(output).to.eql(instance);
+      });
 
       it('dispatches clearChoices action', () => {
         expect(storeDispatchStub.lastCall.args[0]).to.eql({
@@ -1050,7 +1069,9 @@ describe('choices', () => {
         instance._store.dispatch.reset();
       });
 
-      returnsInstance(output);
+      it('returns this', () => {
+        expect(output).to.eql(instance);
+      });
 
       it('dispatches clearAll action', () => {
         expect(storeDispatchStub.lastCall.args[0]).to.eql({
@@ -1075,7 +1096,9 @@ describe('choices', () => {
         instance._store.dispatch.reset();
       });
 
-      returnsInstance(output);
+      it('returns this', () => {
+        expect(output).to.eql(instance);
+      });
 
       describe('text element', () => {
         beforeEach(() => {
@@ -1211,7 +1234,9 @@ describe('choices', () => {
           output = instance.setValue(values);
         });
 
-        returnsInstance(output);
+        it('returns this', () => {
+          expect(output).to.eql(instance);
+        });
 
         it('returns early', () => {
           expect(setChoiceOrItemStub.called).to.equal(false);
@@ -1224,7 +1249,9 @@ describe('choices', () => {
           output = instance.setValue(values);
         });
 
-        returnsInstance(output);
+        it('returns this', () => {
+          expect(output).to.eql(instance);
+        });
 
         it('sets each value', () => {
           expect(setChoiceOrItemStub.callCount).to.equal(2);
@@ -1252,7 +1279,9 @@ describe('choices', () => {
           output = instance.setChoiceByValue([]);
         });
 
-        returnsInstance(output);
+        it('returns this', () => {
+          expect(output).to.eql(instance);
+        });
 
         it('returns early', () => {
           expect(findAndSelectChoiceByValueStub.called).to.equal(false);
@@ -1272,7 +1301,9 @@ describe('choices', () => {
             output = instance.setChoiceByValue(value);
           });
 
-          returnsInstance(output);
+          it('returns this', () => {
+            expect(output).to.eql(instance);
+          });
 
           it('sets each choice with same value', () => {
             expect(findAndSelectChoiceByValueStub.called).to.equal(true);
@@ -1289,7 +1320,9 @@ describe('choices', () => {
             output = instance.setChoiceByValue(values);
           });
 
-          returnsInstance(output);
+          it('returns this', () => {
+            expect(output).to.eql(instance);
+          });
 
           it('sets each choice with same value', () => {
             expect(findAndSelectChoiceByValueStub.callCount).to.equal(2);
@@ -1509,7 +1542,9 @@ describe('choices', () => {
           output = instance.removeHighlightedItems();
         });
 
-        returnsInstance(output);
+        it('returns this', () => {
+          expect(output).to.eql(instance);
+        });
 
         it('removes each highlighted item in store', () => {
           expect(removeItemStub.callCount).to.equal(2);
@@ -1521,7 +1556,9 @@ describe('choices', () => {
           output = instance.removeHighlightedItems(true);
         });
 
-        returnsInstance(output);
+        it('returns this', () => {
+          expect(output).to.eql(instance);
+        });
 
         it('triggers event with item value', () => {
           expect(triggerChangeStub.callCount).to.equal(2);
@@ -1533,6 +1570,7 @@ describe('choices', () => {
 
     describe('setChoices', () => {
       let clearChoicesStub;
+      let clearItemsStub;
       let addGroupStub;
       let addChoiceStub;
       let containerOuterRemoveLoadingStateStub;
@@ -1560,11 +1598,13 @@ describe('choices', () => {
 
       beforeEach(() => {
         clearChoicesStub = stub();
+        clearItemsStub = stub();
         addGroupStub = stub();
         addChoiceStub = stub();
         containerOuterRemoveLoadingStateStub = stub();
 
         instance.clearChoices = clearChoicesStub;
+        instance.clearItems = clearItemsStub;
         instance._addGroup = addGroupStub;
         instance._addChoice = addChoiceStub;
         instance.containerOuter.removeLoadingState = containerOuterRemoveLoadingStateStub;
@@ -1595,7 +1635,7 @@ describe('choices', () => {
             instance._isSelectElement = true;
           });
 
-          it('throws', () => {
+          it('throws a TypeError', () => {
             expect(() =>
               instance.setChoices(choices, null, 'label', false),
             ).to.throw(TypeError, /value/i);
@@ -1643,16 +1683,8 @@ describe('choices', () => {
           });
         });
 
-        describe('passing an empty array with a true replaceChoices flag', () => {
-          it('choices are cleared', () => {
-            instance._isSelectElement = true;
-            instance.setChoices([], value, label, true);
-            expect(clearChoicesStub.called).to.equal(true);
-          });
-        });
-
         describe('passing an empty array with a false replaceChoices flag', () => {
-          it('choices stay the same', () => {
+          it('does not clear existing choices', () => {
             instance._isSelectElement = true;
             instance.setChoices([], value, label, false);
             expect(clearChoicesStub.called).to.equal(false);
@@ -1660,16 +1692,30 @@ describe('choices', () => {
         });
 
         describe('passing true replaceChoices flag', () => {
-          it('choices are cleared', () => {
+          it('clears existing choices', () => {
             instance.setChoices(choices, value, label, true);
             expect(clearChoicesStub.called).to.equal(true);
           });
         });
 
         describe('passing false replaceChoices flag', () => {
-          it('choices are not cleared', () => {
+          it('clears existing choices are not cleared', () => {
             instance.setChoices(choices, value, label, false);
             expect(clearChoicesStub.called).to.equal(false);
+          });
+        });
+
+        describe('passing true replaceItems flag', () => {
+          it('clears existing items', () => {
+            instance.setChoices(choices, value, label, true, true);
+            expect(clearItemsStub.called).to.equal(true);
+          });
+        });
+
+        describe('passing false replaceItems flag', () => {
+          it('does not clears existing items', () => {
+            instance.setChoices(choices, value, label, true, false);
+            expect(clearItemsStub.called).to.equal(false);
           });
         });
       });
