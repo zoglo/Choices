@@ -128,3 +128,5 @@ export const SELECT_MULTIPLE_TYPE: HTMLSelectElement['type'] =
   'select-multiple';
 
 export const SCROLLING_SPEED = 4;
+
+export const DEFAULT_ID = -1;

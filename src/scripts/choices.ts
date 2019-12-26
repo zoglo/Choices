@@ -18,6 +18,7 @@ import {
   TEXT_TYPE,
   SELECT_ONE_TYPE,
   SELECT_MULTIPLE_TYPE,
+  DEFAULT_ID,
 } from './constants';
 import templates from './templates';
 import {
@@ -168,12 +169,12 @@ class Choices {
       userConfig.addItemFilter &&
       typeof userConfig.addItemFilter !== 'function'
     ) {
-      const re =
+      const exp =
         userConfig.addItemFilter instanceof RegExp
           ? userConfig.addItemFilter
           : new RegExp(userConfig.addItemFilter);
 
-      this.config.addItemFilter = re.test.bind(re);
+      this.config.addItemFilter = exp.test.bind(exp);
     }
 
     if (this._isTextElement) {
@@ -204,7 +205,9 @@ class Choices {
     this._wasTap = true;
     this._placeholderValue = this._generatePlaceholderValue();
     this._baseId = generateId(this.passedElement.element, 'choices-');
-
+    this._idNames = {
+      itemChoice: 'item-choice',
+    };
     /**
      * setting direction in cases where it's explicitly set on passedElement
      * or when calculated direction is different from the document
@@ -222,10 +225,6 @@ class Choices {
         this._direction = elementDirection;
       }
     }
-
-    this._idNames = {
-      itemChoice: 'item-choice',
-    };
 
     if (this._isSelectElement) {
       // Assign preset groups from passed element
@@ -378,7 +377,7 @@ class Choices {
       return this;
     }
 
-    const { id, groupId = -1, value = '', label = '' } = item;
+    const { id, groupId = DEFAULT_ID, value = '', label = '' } = item;
     const group = groupId >= 0 ? this._store.getGroupById(groupId) : null;
 
     this._store.dispatch(highlightItem(id, true));
@@ -400,7 +399,7 @@ class Choices {
       return this;
     }
 
-    const { id, groupId = -1, value = '', label = '' } = item;
+    const { id, groupId = DEFAULT_ID, value = '', label = '' } = item;
     const group = groupId >= 0 ? this._store.getGroupById(groupId) : null;
 
     this._store.dispatch(highlightItem(id, false));
@@ -767,7 +766,8 @@ class Choices {
       // If we have a placeholder choice along with groups
       const activePlaceholders = activeChoices.filter(
         activeChoice =>
-          activeChoice.placeholder === true && activeChoice.groupId === -1,
+          activeChoice.placeholder === true &&
+          activeChoice.groupId === DEFAULT_ID,
       );
       if (activePlaceholders.length >= 1) {
         choiceListFragment = this._createChoicesFragment(
@@ -1540,7 +1540,6 @@ class Choices {
       );
 
       if (highlightedChoice) {
-        // add enter keyCode value
         if (activeItems[0]) {
           activeItems[0].keyCode = enterKey; // eslint-disable-line no-param-reassign
         }
@@ -1899,8 +1898,8 @@ class Choices {
   _addItem({
     value,
     label = null,
-    choiceId = -1,
-    groupId = -1,
+    choiceId = DEFAULT_ID,
+    groupId = DEFAULT_ID,
     customProperties = {},
     placeholder = false,
     keyCode = -1,
@@ -1917,7 +1916,6 @@ class Choices {
 
     const { items } = this._store;
     const passedLabel = label || passedValue;
-    const passedOptionId = choiceId || -1;
     const group = groupId >= 0 ? this._store.getGroupById(groupId) : null;
     const id = items ? items.length + 1 : 1;
 
@@ -1936,7 +1934,7 @@ class Choices {
         value: passedValue,
         label: passedLabel,
         id,
-        choiceId: passedOptionId,
+        choiceId,
         groupId,
         customProperties,
         placeholder,
@@ -1983,7 +1981,7 @@ class Choices {
     label = null,
     isSelected = false,
     isDisabled = false,
-    groupId = -1,
+    groupId = DEFAULT_ID,
     customProperties = {},
     placeholder = false,
     keyCode = -1,
@@ -2001,7 +1999,6 @@ class Choices {
       return;
     }
 
-    // Generate unique id
     const { choices } = this._store;
     const choiceLabel = label || value;
     const choiceId = choices ? choices.length + 1 : 1;
@@ -2040,34 +2037,8 @@ class Choices {
     const groupId = id || Math.floor(new Date().valueOf() * Math.random());
     const isDisabled = group.disabled ? group.disabled : false;
 
-    if (groupChoices) {
-      this._store.dispatch(
-        addGroup({
-          value: group.label,
-          id: groupId,
-          active: true,
-          disabled: isDisabled,
-        }),
-      );
-
-      const addGroupChoices = (choice: any): void => {
-        const isOptDisabled =
-          choice.disabled || (choice.parentNode && choice.parentNode.disabled);
-
-        this._addChoice({
-          value: choice[valueKey],
-          label: isType('Object', choice) ? choice[labelKey] : choice.innerHTML,
-          isSelected: choice.selected,
-          isDisabled: isOptDisabled,
-          groupId,
-          customProperties: choice.customProperties,
-          placeholder: choice.placeholder,
-        });
-      };
-
-      groupChoices.forEach(addGroupChoices);
-    } else {
-      this._store.dispatch(
+    if (!groupChoices) {
+      return this._store.dispatch(
         addGroup({
           value: group.label,
           id: group.id,
@@ -2076,6 +2047,32 @@ class Choices {
         }),
       );
     }
+
+    this._store.dispatch(
+      addGroup({
+        value: group.label,
+        id: groupId,
+        active: true,
+        disabled: isDisabled,
+      }),
+    );
+
+    const addGroupChoices = (choice: any): void => {
+      const isOptDisabled =
+        choice.disabled || (choice.parentNode && choice.parentNode.disabled);
+
+      this._addChoice({
+        value: choice[valueKey],
+        label: isType('Object', choice) ? choice[labelKey] : choice.innerHTML,
+        isSelected: choice.selected,
+        isDisabled: isOptDisabled,
+        groupId,
+        customProperties: choice.customProperties,
+        placeholder: choice.placeholder,
+      });
+    };
+
+    groupChoices.forEach(addGroupChoices);
   }
 
   _getTemplate(template: string, ...args: any): any {
@@ -2236,39 +2233,8 @@ class Choices {
     choices.forEach((choice, index) => {
       const { value = '', label, customProperties, placeholder } = choice;
 
-      if (this._isSelectElement) {
-        // If the choice is actually a group
-        if (choice.choices) {
-          this._addGroup({
-            group: choice,
-            id: choice.id || null,
-          });
-        } else {
-          /**
-           * If there is a selected choice already or the choice is not the first in
-           * the array, add each choice normally.
-           *
-           * Otherwise we pre-select the first enabled choice in the array ("select-one" only)
-           */
-          const shouldPreselect =
-            this._isSelectOneElement &&
-            !hasSelectedChoice &&
-            index === firstEnabledChoiceIndex;
-
-          const isSelected = shouldPreselect ? true : choice.selected;
-          const isDisabled = choice.disabled;
-
-          this._addChoice({
-            value,
-            label,
-            isSelected: !!isSelected,
-            isDisabled: !!isDisabled,
-            placeholder: !!placeholder,
-            customProperties,
-          });
-        }
-      } else {
-        this._addChoice({
+      if (!this._isSelectElement) {
+        return this._addChoice({
           value,
           label,
           isSelected: !!choice.selected,
@@ -2277,6 +2243,37 @@ class Choices {
           customProperties,
         });
       }
+
+      // If the choice is actually a group
+      if (choice.choices) {
+        return this._addGroup({
+          group: choice,
+          id: choice.id || null,
+        });
+      }
+
+      /**
+       * If there is a selected choice already or the choice is not the first in
+       * the array, add each choice normally.
+       *
+       * Otherwise we pre-select the first enabled choice in the array ("select-one" only)
+       */
+      const shouldPreselect =
+        this._isSelectOneElement &&
+        !hasSelectedChoice &&
+        index === firstEnabledChoiceIndex;
+
+      const isSelected = shouldPreselect ? true : choice.selected;
+      const isDisabled = choice.disabled;
+
+      this._addChoice({
+        value,
+        label,
+        isSelected: !!isSelected,
+        isDisabled: !!isDisabled,
+        placeholder: !!placeholder,
+        customProperties,
+      });
     });
   }
 
@@ -2311,7 +2308,7 @@ class Choices {
         // If we are dealing with a select input, we need to create an option first
         // that is then selected. For text inputs we can just add items normally.
         if (!this._isTextElement) {
-          this._addChoice({
+          return this._addChoice({
             value: item.value,
             label: item.label,
             isSelected: true,
@@ -2319,29 +2316,29 @@ class Choices {
             customProperties: item.customProperties,
             placeholder: item.placeholder,
           });
-        } else {
-          this._addItem({
-            value: item.value,
-            label: item.label,
-            choiceId: item.id,
-            customProperties: item.customProperties,
-            placeholder: item.placeholder,
-          });
         }
+
+        this._addItem({
+          value: item.value,
+          label: item.label,
+          choiceId: item.id,
+          customProperties: item.customProperties,
+          placeholder: item.placeholder,
+        });
       },
       string: (): void => {
         if (!this._isTextElement) {
-          this._addChoice({
+          return this._addChoice({
             value: item,
             label: item,
             isSelected: true,
             isDisabled: false,
           });
-        } else {
-          this._addItem({
-            value: item,
-          });
         }
+
+        this._addItem({
+          value: item,
+        });
       },
     };
 
