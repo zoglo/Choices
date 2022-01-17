@@ -399,7 +399,7 @@ function () {
           selected: !!option.selected,
           disabled: option.disabled || option.parentNode.disabled,
           placeholder: option.value === '' || option.hasAttribute('placeholder'),
-          customProperties: option.dataset['custom-properties']
+          customProperties: _this._parseCustomProperties(option.dataset['customProperties'])
         });
       });
     }
@@ -2501,6 +2501,18 @@ function () {
     }
 
     return null;
+  };
+
+  Choices.prototype._parseCustomProperties = function (customProperties) {
+    if (typeof customProperties !== 'undefined') {
+      try {
+        return JSON.parse(customProperties);
+      } catch (e) {
+        return customProperties;
+      }
+    }
+
+    return {};
   };
 
   return Choices;
