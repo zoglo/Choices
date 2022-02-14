@@ -211,7 +211,7 @@
   word-break: break-all;
   will-change: visibility;
 }
-.choices__list--dropdown.is-active, .is-active.choices__list[aria-expanded] {
+.is-active.choices__list--dropdown, .is-active.choices__list[aria-expanded] {
   visibility: visible;
 }
 .is-open .choices__list--dropdown, .is-open .choices__list[aria-expanded] {
