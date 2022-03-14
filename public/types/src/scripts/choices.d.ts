@@ -213,7 +213,6 @@ declare class Choices implements Choices {
     _setChoiceOrItem(item: any): void;
     _findAndSelectChoiceByValue(value: string): void;
     _generatePlaceholderValue(): string | null;
-    _parseCustomProperties(customProperties: any): any;
 }
 export default Choices;
 //# sourceMappingURL=choices.d.ts.map

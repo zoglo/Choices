@@ -399,7 +399,7 @@ function () {
           selected: !!option.selected,
           disabled: option.disabled || option.parentNode.disabled,
           placeholder: option.value === '' || option.hasAttribute('placeholder'),
-          customProperties: _this._parseCustomProperties(option.dataset['customProperties'])
+          customProperties: (0, utils_1.parseCustomProperties)(option.dataset.customProperties)
         });
       });
     }
@@ -2503,18 +2503,6 @@ function () {
     return null;
   };
 
-  Choices.prototype._parseCustomProperties = function (customProperties) {
-    if (typeof customProperties !== 'undefined') {
-      try {
-        return JSON.parse(customProperties);
-      } catch (e) {
-        return customProperties;
-      }
-    }
-
-    return {};
-  };
-
   return Choices;
 }();
 
@@ -3768,7 +3756,7 @@ Object.defineProperty(exports, "__esModule", ({
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.diff = exports.cloneObject = exports.existsInArray = exports.dispatchEvent = exports.sortByScore = exports.sortByAlpha = exports.strToEl = exports.sanitise = exports.isScrolledIntoView = exports.getAdjacentEl = exports.wrap = exports.isType = exports.getType = exports.generateId = exports.generateChars = exports.getRandomNumber = void 0;
+exports.parseCustomProperties = exports.diff = exports.cloneObject = exports.existsInArray = exports.dispatchEvent = exports.sortByScore = exports.sortByAlpha = exports.strToEl = exports.sanitise = exports.isScrolledIntoView = exports.getAdjacentEl = exports.wrap = exports.isType = exports.getType = exports.generateId = exports.generateChars = exports.getRandomNumber = void 0;
 
 var getRandomNumber = function (min, max) {
   return Math.floor(Math.random() * (max - min) + min);
@@ -3970,6 +3958,20 @@ var diff = function (a, b) {
 };
 
 exports.diff = diff;
+
+var parseCustomProperties = function (customProperties) {
+  if (typeof customProperties !== 'undefined') {
+    try {
+      return JSON.parse(customProperties);
+    } catch (e) {
+      return customProperties;
+    }
+  }
+
+  return {};
+};
+
+exports.parseCustomProperties = parseCustomProperties;
 
 /***/ }),
 
