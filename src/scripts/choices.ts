@@ -46,6 +46,7 @@ import {
   isType,
   sortByScore,
   strToEl,
+  parseCustomProperties,
 } from './lib/utils';
 import { defaultState } from './reducers';
 import Store from './store/store';
@@ -290,7 +291,9 @@ class Choices implements Choices {
           disabled: option.disabled || option.parentNode.disabled,
           placeholder:
             option.value === '' || option.hasAttribute('placeholder'),
-          customProperties: this._parseCustomProperties(option.dataset['customProperties']),
+          customProperties: parseCustomProperties(
+            option.dataset.customProperties,
+          ),
         });
       });
     }
@@ -2428,17 +2431,6 @@ class Choices implements Choices {
     }
 
     return null;
-  }
-
-  _parseCustomProperties(customProperties): any {
-    if(typeof customProperties !== 'undefined') {
-      try {
-          return JSON.parse(customProperties)
-      } catch(e) {
-          return customProperties
-      }
-    }
-    return {}
   }
 }
 
