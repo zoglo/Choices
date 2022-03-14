@@ -1,4 +1,4 @@
-/*! choices.js v10.0.0 | © 2022 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
+/*! choices.js v10.1.0 | © 2022 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -2222,7 +2222,7 @@ function () {
 
   Choices.prototype._createElements = function () {
     this.containerOuter = new components_1.Container({
-      element: this._getTemplate('containerOuter', this._direction, this._isSelectElement, this._isSelectOneElement, this.config.searchEnabled, this.passedElement.element.type),
+      element: this._getTemplate('containerOuter', this._direction, this._isSelectElement, this._isSelectOneElement, this.config.searchEnabled, this.passedElement.element.type, this.config.labelId),
       classNames: this.config.classNames,
       type: this.passedElement.element.type,
       position: this.config.position
@@ -3526,6 +3526,7 @@ exports.DEFAULT_CONFIG = {
   fuseOptions: {
     includeScore: true
   },
+  labelId: '',
   callbackOnInit: null,
   callbackOnCreateTemplates: null,
   classNames: exports.DEFAULT_CLASSNAMES
@@ -4598,7 +4599,7 @@ Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 var templates = {
-  containerOuter: function (_a, dir, isSelectElement, isSelectOneElement, searchEnabled, passedElementType) {
+  containerOuter: function (_a, dir, isSelectElement, isSelectOneElement, searchEnabled, passedElementType, labelId) {
     var containerOuter = _a.classNames.containerOuter;
     var div = Object.assign(document.createElement('div'), {
       className: containerOuter
@@ -4623,6 +4624,11 @@ var templates = {
 
     div.setAttribute('aria-haspopup', 'true');
     div.setAttribute('aria-expanded', 'false');
+
+    if (labelId) {
+      div.setAttribute('aria-labeledby', labelId);
+    }
+
     return div;
   },
   containerInner: function (_a) {

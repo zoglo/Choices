@@ -553,7 +553,7 @@ class Choices implements Choices {
     return this;
   }
 
-  setChoiceByValue(value: string): this {
+  setChoiceByValue(value: string | string[]): this {
     if (!this.initialised || this._isTextElement) {
       return this;
     }
@@ -2140,6 +2140,7 @@ class Choices implements Choices {
         this._isSelectOneElement,
         this.config.searchEnabled,
         this.passedElement.element.type,
+        this.config.labelId,
       ),
       classNames: this.config.classNames,
       type: this.passedElement.element.type as PassedElement['type'],
