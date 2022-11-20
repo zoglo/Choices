@@ -3894,7 +3894,7 @@ var templates = {
   containerOuter: function (_a, dir, isSelectElement, isSelectOneElement, searchEnabled, passedElementType, labelId) {
     var containerOuter = _a.classNames.containerOuter;
     var div = Object.assign(document.createElement('div'), {
-      className: containerOuter
+      className: (0, utils_1.getClassNames)(containerOuter).join(' ')
     });
     div.dataset.type = passedElementType;
     if (dir) {
@@ -3919,7 +3919,7 @@ var templates = {
   containerInner: function (_a) {
     var containerInner = _a.classNames.containerInner;
     return Object.assign(document.createElement('div'), {
-      className: containerInner
+      className: (0, utils_1.getClassNames)(containerInner).join(' ')
     });
   },
   itemList: function (_a, isSelectOneElement) {
@@ -3928,7 +3928,7 @@ var templates = {
       listSingle = _b.listSingle,
       listItems = _b.listItems;
     return Object.assign(document.createElement('div'), {
-      className: "".concat(list, " ").concat(isSelectOneElement ? listSingle : listItems)
+      className: "".concat((0, utils_1.getClassNames)(list).join(' '), " ").concat(isSelectOneElement ? (0, utils_1.getClassNames)(listSingle).join(' ') : (0, utils_1.getClassNames)(listItems).join(' '))
     });
   },
   placeholder: function (_a, value) {
@@ -3936,7 +3936,7 @@ var templates = {
     var allowHTML = _a.allowHTML,
       placeholder = _a.classNames.placeholder;
     return Object.assign(document.createElement('div'), (_b = {
-      className: placeholder
+      className: (0, utils_1.getClassNames)(placeholder).join(' ')
     }, _b[allowHTML ? 'innerHTML' : 'innerText'] = value, _b));
   },
   item: function (_a, _b, removeItemButton) {
@@ -3957,7 +3957,7 @@ var templates = {
       highlighted = _b.highlighted,
       isPlaceholder = _b.placeholder;
     var div = Object.assign(document.createElement('div'), (_c = {
-      className: item
+      className: (0, utils_1.getClassNames)(item).join(' ')
     }, _c[allowHTML ? 'innerHTML' : 'innerText'] = label, _c));
     Object.assign(div.dataset, {
       item: '',
@@ -3984,7 +3984,7 @@ var templates = {
       var REMOVE_ITEM_TEXT = 'Remove item';
       var removeButton = Object.assign(document.createElement('button'), (_g = {
         type: 'button',
-        className: button
+        className: (0, utils_1.getClassNames)(button).join(' ')
       }, _g[allowHTML ? 'innerHTML' : 'innerText'] = REMOVE_ITEM_TEXT, _g));
       removeButton.setAttribute('aria-label', "".concat(REMOVE_ITEM_TEXT, ": '").concat(value, "'"));
       removeButton.dataset.button = '';
@@ -3995,7 +3995,7 @@ var templates = {
   choiceList: function (_a, isSelectOneElement) {
     var list = _a.classNames.list;
     var div = Object.assign(document.createElement('div'), {
-      className: list
+      className: (0, utils_1.getClassNames)(list).join(' ')
     });
     if (!isSelectOneElement) {
       div.setAttribute('aria-multiselectable', 'true');
@@ -4014,7 +4014,7 @@ var templates = {
       value = _b.value,
       disabled = _b.disabled;
     var div = Object.assign(document.createElement('div'), {
-      className: "".concat(group, " ").concat(disabled ? itemDisabled : '')
+      className: "".concat((0, utils_1.getClassNames)(group).join(' '), " ").concat(disabled ? (0, utils_1.getClassNames)(itemDisabled).join(' ') : '')
     });
     div.setAttribute('role', 'group');
     Object.assign(div.dataset, {
@@ -4026,7 +4026,7 @@ var templates = {
       div.setAttribute('aria-disabled', 'true');
     }
     div.appendChild(Object.assign(document.createElement('div'), (_c = {
-      className: groupHeading
+      className: (0, utils_1.getClassNames)(groupHeading).join(' ')
     }, _c[allowHTML ? 'innerHTML' : 'innerText'] = value, _c)));
     return div;
   },
@@ -4050,7 +4050,7 @@ var templates = {
       isPlaceholder = _b.placeholder;
     var div = Object.assign(document.createElement('div'), (_c = {
       id: elementId
-    }, _c[allowHTML ? 'innerHTML' : 'innerText'] = label, _c.className = "".concat(item, " ").concat(itemChoice), _c));
+    }, _c[allowHTML ? 'innerHTML' : 'innerText'] = label, _c.className = "".concat((0, utils_1.getClassNames)(item).join(' '), " ").concat((0, utils_1.getClassNames)(itemChoice).join(' ')), _c));
     if (isSelected) {
       (_d = div.classList).add.apply(_d, (0, utils_1.getClassNames)(selectedState));
     }
@@ -4081,7 +4081,7 @@ var templates = {
     var inp = Object.assign(document.createElement('input'), {
       type: 'search',
       name: 'search_terms',
-      className: "".concat(input, " ").concat(inputCloned),
+      className: "".concat((0, utils_1.getClassNames)(input).join(' '), " ").concat((0, utils_1.getClassNames)(inputCloned).join(' ')),
       autocomplete: 'off',
       autocapitalize: 'off',
       spellcheck: false
@@ -4112,7 +4112,7 @@ var templates = {
     if (type === void 0) {
       type = '';
     }
-    var classes = [item, itemChoice];
+    var classes = __spreadArray(__spreadArray([], (0, utils_1.getClassNames)(item), true), (0, utils_1.getClassNames)(itemChoice), true);
     if (type === 'no-choices') {
       classes.push(noChoices);
     } else if (type === 'no-results') {
