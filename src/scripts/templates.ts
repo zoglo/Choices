@@ -7,6 +7,7 @@ import { Choice } from './interfaces/choice';
 import { Group } from './interfaces/group';
 import { Item } from './interfaces/item';
 import { PassedElementType } from './interfaces/passed-element-type';
+import { getClassNames } from './lib/utils';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type TemplateOptions = Record<'classNames' | 'allowHTML', any>;
@@ -122,14 +123,18 @@ const templates = {
     }
 
     if (isPlaceholder) {
-      div.classList.add(placeholder);
+      div.classList.add(...getClassNames(placeholder));
     }
 
-    div.classList.add(highlighted ? highlightedState : itemSelectable);
+    div.classList.add(
+      ...(highlighted
+        ? getClassNames(highlightedState)
+        : getClassNames(itemSelectable)),
+    );
 
     if (removeItemButton) {
       if (disabled) {
-        div.classList.remove(itemSelectable);
+        div.classList.remove(...getClassNames(itemSelectable));
       }
       div.dataset.deletable = '';
       /** @todo This MUST be localizable, not hardcoded! */
@@ -230,11 +235,11 @@ const templates = {
     });
 
     if (isSelected) {
-      div.classList.add(selectedState);
+      div.classList.add(...getClassNames(selectedState));
     }
 
     if (isPlaceholder) {
-      div.classList.add(placeholder);
+      div.classList.add(...getClassNames(placeholder));
     }
 
     div.setAttribute('role', groupId && groupId > 0 ? 'treeitem' : 'option');
@@ -247,11 +252,11 @@ const templates = {
     });
 
     if (isDisabled) {
-      div.classList.add(itemDisabled);
+      div.classList.add(...getClassNames(itemDisabled));
       div.dataset.choiceDisabled = '';
       div.setAttribute('aria-disabled', 'true');
     } else {
-      div.classList.add(itemSelectable);
+      div.classList.add(...getClassNames(itemSelectable));
       div.dataset.choiceSelectable = '';
     }
 
@@ -283,7 +288,7 @@ const templates = {
   }: TemplateOptions): HTMLDivElement {
     const div = document.createElement('div');
 
-    div.classList.add(list, listDropdown);
+    div.classList.add(...getClassNames(list), ...getClassNames(listDropdown));
     div.setAttribute('aria-expanded', 'false');
 
     return div;

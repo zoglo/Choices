@@ -41,6 +41,8 @@ import {
   existsInArray,
   generateId,
   getAdjacentEl,
+  getClassNames,
+  getClassNamesSelector,
   getType,
   isScrolledIntoView,
   isType,
@@ -1192,7 +1194,7 @@ class Choices implements Choices {
 
   _handleLoadingState(setLoading = true): void {
     let placeholderItem = this.itemList.getChild(
-      `.${this.config.classNames.placeholder}`,
+      getClassNamesSelector(this.config.classNames.placeholder),
     );
 
     if (setLoading) {
@@ -1571,7 +1573,7 @@ class Choices implements Choices {
 
     if (hasActiveDropdown) {
       const highlightedChoice = this.dropdown.getChild(
-        `.${this.config.classNames.highlightedState}`,
+        getClassNamesSelector(this.config.classNames.highlightedState),
       );
 
       if (highlightedChoice) {
@@ -1628,7 +1630,7 @@ class Choices implements Choices {
         }
       } else {
         const currentEl = this.dropdown.element.querySelector(
-          `.${this.config.classNames.highlightedState}`,
+          getClassNamesSelector(this.config.classNames.highlightedState),
         );
         if (currentEl) {
           nextEl = getAdjacentEl(
@@ -1892,13 +1894,15 @@ class Choices implements Choices {
     let passedEl = el;
     const highlightedChoices = Array.from(
       this.dropdown.element.querySelectorAll(
-        `.${this.config.classNames.highlightedState}`,
+        getClassNamesSelector(this.config.classNames.highlightedState),
       ),
     );
 
     // Remove any highlighted choices
     highlightedChoices.forEach((choice) => {
-      choice.classList.remove(this.config.classNames.highlightedState);
+      choice.classList.remove(
+        ...getClassNames(this.config.classNames.highlightedState),
+      );
       choice.setAttribute('aria-selected', 'false');
     });
 
@@ -1919,7 +1923,9 @@ class Choices implements Choices {
       }
     }
 
-    passedEl.classList.add(this.config.classNames.highlightedState);
+    passedEl.classList.add(
+      ...getClassNames(this.config.classNames.highlightedState),
+    );
     passedEl.setAttribute('aria-selected', 'true');
     this.passedElement.triggerEvent(EVENTS.highlightChoice, { el: passedEl });
 
