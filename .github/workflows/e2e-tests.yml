@@ -60,7 +60,7 @@ jobs:
 
       - name: run Cypress (with or without recording)
         # if we have ran out of free Cypress recordings, run Cypress with recording switched off
-        run: npx run-p --race start cypress:ci || npx run-p --race start cypress:run
+        run: npm exec -- run-p --race start cypress:ci || npm exec -- run-p --race start cypress:run
         env:
           NODE_ENV: production # prevent watching
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
