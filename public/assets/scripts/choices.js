@@ -1264,7 +1264,8 @@ var Choices = /** @class */function () {
     var hasActiveDropdown = this.dropdown.isActive;
     var hasItems = this.itemList.hasChildren();
     var keyString = String.fromCharCode(keyCode);
-    var wasAlphaNumericChar = /[a-zA-Z0-9-_ ]/.test(keyString);
+    // eslint-disable-next-line no-control-regex
+    var wasPrintableChar = /[^\x00-\x1F]/.test(keyString);
     var BACK_KEY = constants_1.KEY_CODES.BACK_KEY,
       DELETE_KEY = constants_1.KEY_CODES.DELETE_KEY,
       ENTER_KEY = constants_1.KEY_CODES.ENTER_KEY,
@@ -1274,7 +1275,7 @@ var Choices = /** @class */function () {
       DOWN_KEY = constants_1.KEY_CODES.DOWN_KEY,
       PAGE_UP_KEY = constants_1.KEY_CODES.PAGE_UP_KEY,
       PAGE_DOWN_KEY = constants_1.KEY_CODES.PAGE_DOWN_KEY;
-    if (!this._isTextElement && !hasActiveDropdown && wasAlphaNumericChar) {
+    if (!this._isTextElement && !hasActiveDropdown && wasPrintableChar) {
       this.showDropdown();
       if (!this.input.isFocussed) {
         /*
@@ -1282,7 +1283,7 @@ var Choices = /** @class */function () {
           the input was not focussed at the time of key press
           therefore does not have the value of the key.
         */
-        this.input.value += keyString.toLowerCase();
+        this.input.value += event.key.toLowerCase();
       }
     }
     switch (keyCode) {
