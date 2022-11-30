@@ -25,5 +25,6 @@ export declare const cloneObject: (obj: object) => object;
 export declare const diff: (a: Record<string, any>, b: Record<string, any>) => string[];
 export declare const getClassNames: (ClassNames: Array<string> | string) => Array<string>;
 export declare const getClassNamesSelector: (option: string | Array<string> | null) => string;
+export declare const parseCustomProperties: (customProperties: any) => any;
 export {};
 //# sourceMappingURL=utils.d.ts.map
