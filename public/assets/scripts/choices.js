@@ -4092,12 +4092,13 @@ var templates = {
     return inp;
   },
   dropdown: function (_a) {
-    var _b;
-    var _c = _a.classNames,
-      list = _c.list,
-      listDropdown = _c.listDropdown;
+    var _b, _c;
+    var _d = _a.classNames,
+      list = _d.list,
+      listDropdown = _d.listDropdown;
     var div = document.createElement('div');
-    (_b = div.classList).add.apply(_b, __spreadArray(__spreadArray([], (0, utils_1.getClassNames)(list), false), (0, utils_1.getClassNames)(listDropdown), false));
+    (_b = div.classList).add.apply(_b, (0, utils_1.getClassNames)(list));
+    (_c = div.classList).add.apply(_c, (0, utils_1.getClassNames)(listDropdown));
     div.setAttribute('aria-expanded', 'false');
     return div;
   },
@@ -4113,6 +4114,7 @@ var templates = {
       type = '';
     }
     var classes = __spreadArray(__spreadArray([], (0, utils_1.getClassNames)(item), true), (0, utils_1.getClassNames)(itemChoice), true);
+    console.log(classes);
     if (type === 'no-choices') {
       classes.push(noChoices);
     } else if (type === 'no-results') {

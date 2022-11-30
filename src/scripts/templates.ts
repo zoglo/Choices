@@ -298,7 +298,8 @@ const templates = {
   }: TemplateOptions): HTMLDivElement {
     const div = document.createElement('div');
 
-    div.classList.add(...getClassNames(list), ...getClassNames(listDropdown));
+    div.classList.add(...getClassNames(list));
+    div.classList.add(...getClassNames(listDropdown));
     div.setAttribute('aria-expanded', 'false');
 
     return div;
