@@ -194,6 +194,9 @@ class Choices implements Choices {
 
     this.config.searchEnabled =
       this._isSelectMultipleElement || this.config.searchEnabled;
+    if (this._isSelectMultipleElement && this.config.maxItemCount === 1 && userConfig.pseudoMultiSelectForSingle === undefined) {
+      this.config.pseudoMultiSelectForSingle = true;
+    }
 
     if (!['auto', 'always'].includes(`${this.config.renderSelectedChoices}`)) {
       this.config.renderSelectedChoices = 'auto';
@@ -1139,6 +1142,12 @@ class Choices implements Choices {
       const canAddItem = this._canAddItem(activeItems, choice.value);
 
       if (canAddItem.response) {
+        if (this.config.pseudoMultiSelectForSingle) {
+          const lastItem = activeItems[activeItems.length - 1];
+          if (lastItem) {
+            this._removeItem(lastItem);
+          }
+        }
         this._addItem({
           value: choice.value,
           label: choice.label,
@@ -1156,7 +1165,7 @@ class Choices implements Choices {
     this.clearInput();
 
     // We want to close the dropdown if we are dealing with a single select box
-    if (hasActiveDropdown && this._isSelectOneElement) {
+    if (hasActiveDropdown && (this.config.pseudoMultiSelectForSingle || this._isSelectOneElement)) {
       this.hideDropdown(true);
       this.containerOuter.focus();
     }
@@ -1277,11 +1286,13 @@ class Choices implements Choices {
       ) {
         // If there is a max entry limit and we have reached that limit
         // don't update
+        if (!this.config.pseudoMultiSelectForSingle) {
         canAddItem = false;
         notice =
           typeof this.config.maxItemText === 'function'
             ? this.config.maxItemText(this.config.maxItemCount)
             : this.config.maxItemText;
+        }
       }
 
       if (
