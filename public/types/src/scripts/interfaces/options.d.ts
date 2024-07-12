@@ -97,6 +97,12 @@ export interface Options {
      */
     maxItemCount: number;
     /**
+     * Make multi-select with a max of 1 work how single select does (ie replace the selected item and close the down-drop)
+     *
+     * @default false
+     */
+    pseudoMultiSelectForSingle: boolean;
+    /**
      * Whether a user can add items.
      *
      * **Input types affected:** text

@@ -229,6 +229,7 @@ var USER_DEFAULTS = {};
  */
 var Choices = /** @class */function () {
   function Choices(element, userConfig) {
+    var _a;
     if (element === void 0) {
       element = '[data-choice]';
     }
@@ -260,6 +261,9 @@ var Choices = /** @class */function () {
     this._isSelectMultipleElement = passedElement.type === constants_1.SELECT_MULTIPLE_TYPE;
     this._isSelectElement = this._isSelectOneElement || this._isSelectMultipleElement;
     this.config.searchEnabled = this._isSelectMultipleElement || this.config.searchEnabled;
+    if (this._isSelectMultipleElement && this.config.maxItemCount === 1 && userConfig.pseudoMultiSelectForSingle === undefined) {
+      this.config.pseudoMultiSelectForSingle = true;
+    }
     if (!['auto', 'always'].includes("".concat(this.config.renderSelectedChoices))) {
       this.config.renderSelectedChoices = 'auto';
     }
@@ -326,16 +330,8 @@ var Choices = /** @class */function () {
     }
     // Create array of choices from option elements
     if (this.passedElement.options) {
-      this.passedElement.options.forEach(function (option) {
-        _this._presetChoices.push({
-          value: option.value,
-          label: option.innerHTML,
-          selected: !!option.selected,
-          disabled: option.disabled || option.parentNode.disabled,
-          placeholder: option.value === '' || option.hasAttribute('placeholder'),
-          customProperties: (0, utils_1.parseCustomProperties)(option.dataset.customProperties)
-        });
-      });
+      var choicesFromOptions = this.passedElement.optionsAsChoices();
+      (_a = this._presetChoices).push.apply(_a, choicesFromOptions);
     }
     this._render = this._render.bind(this);
     this._onFocus = this._onFocus.bind(this);
@@ -862,6 +858,14 @@ var Choices = /** @class */function () {
     if (this.config.shouldSort) {
       groups.sort(this.config.sorter);
     }
+    // Add Choices without group first, regardless of sort, otherwise they won't be distinguishable
+    // from the last group
+    var choicesWithoutGroup = choices.filter(function (c) {
+      return c.groupId == -1;
+    });
+    if (choicesWithoutGroup.length > 0) {
+      this._createChoicesFragment(choicesWithoutGroup, fragment, false);
+    }
     groups.forEach(function (group) {
       var groupChoices = getGroupChoices(group);
       if (groupChoices.length >= 1) {
@@ -1054,6 +1058,12 @@ var Choices = /** @class */function () {
     if (!choice.selected && !choice.disabled) {
       var canAddItem = this._canAddItem(activeItems, choice.value);
       if (canAddItem.response) {
+        if (this.config.pseudoMultiSelectForSingle) {
+          var lastItem = activeItems[activeItems.length - 1];
+          if (lastItem) {
+            this._removeItem(lastItem);
+          }
+        }
         this._addItem({
           value: choice.value,
           label: choice.label,
@@ -1068,7 +1078,7 @@ var Choices = /** @class */function () {
     }
     this.clearInput();
     // We want to close the dropdown if we are dealing with a single select box
-    if (hasActiveDropdown && this._isSelectOneElement) {
+    if (hasActiveDropdown && (this.config.pseudoMultiSelectForSingle || this._isSelectOneElement)) {
       this.hideDropdown(true);
       this.containerOuter.focus();
     }
@@ -1167,8 +1177,10 @@ var Choices = /** @class */function () {
       if (this.config.maxItemCount > 0 && this.config.maxItemCount <= activeItems.length) {
         // If there is a max entry limit and we have reached that limit
         // don't update
-        canAddItem = false;
-        notice = typeof this.config.maxItemText === 'function' ? this.config.maxItemText(this.config.maxItemCount) : this.config.maxItemText;
+        if (!this.config.pseudoMultiSelectForSingle) {
+          canAddItem = false;
+          notice = typeof this.config.maxItemText === 'function' ? this.config.maxItemText(this.config.maxItemCount) : this.config.maxItemText;
+        }
       }
       if (!this.config.duplicateItemsAllowed && isDuplicateValue && canAddItem) {
         canAddItem = false;
@@ -1885,11 +1897,7 @@ var Choices = /** @class */function () {
       this._highlightPosition = 0;
       this._isSearching = false;
       this._startLoading();
-      if (this._presetGroups.length) {
-        this._addPredefinedGroups(this._presetGroups);
-      } else {
-        this._addPredefinedChoices(this._presetChoices);
-      }
+      this._addPredefinedChoices(this._presetChoices);
       this._stopLoading();
     }
     if (this._isTextElement) {
@@ -2724,7 +2732,10 @@ var __importDefault = this && this.__importDefault || function (mod) {
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
+var utils_1 = __webpack_require__(799);
 var wrapped_element_1 = __importDefault(__webpack_require__(730));
+var htmlElementGuards_1 = __webpack_require__(858);
+var htmlElementGuards_2 = __webpack_require__(858);
 var WrappedSelect = /** @class */function (_super) {
   __extends(WrappedSelect, _super);
   function WrappedSelect(_a) {
@@ -2776,6 +2787,40 @@ var WrappedSelect = /** @class */function (_super) {
     enumerable: false,
     configurable: true
   });
+  WrappedSelect.prototype.optionsAsChoices = function () {
+    var choices = [];
+    for (var _i = 0, _a = Array.from(this.element.querySelectorAll(':scope > *')); _i < _a.length; _i++) {
+      var e = _a[_i];
+      if ((0, htmlElementGuards_2.isHTMLOption)(e)) {
+        choices.push(this._optionToChoice(e));
+      } else if ((0, htmlElementGuards_1.isHTMLOptgroup)(e)) {
+        choices.push(this._optgroupToChoice(e));
+      }
+      // There should only be those two in a <select> and we wouldn't care about others anyways
+    }
+
+    return choices;
+  };
+  WrappedSelect.prototype._optionToChoice = function (option) {
+    return {
+      value: option.value,
+      label: option.innerHTML,
+      selected: !!option.selected,
+      disabled: option.disabled || this.element.disabled,
+      placeholder: option.value === '' || option.hasAttribute('placeholder'),
+      customProperties: (0, utils_1.parseCustomProperties)(option.dataset.customProperties)
+    };
+  };
+  WrappedSelect.prototype._optgroupToChoice = function (optgroup) {
+    var _this = this;
+    return {
+      label: optgroup.label || '',
+      disabled: !!optgroup.disabled,
+      choices: Array.from(optgroup.querySelectorAll('option')).map(function (option) {
+        return _this._optionToChoice(option);
+      })
+    };
+  };
   WrappedSelect.prototype.appendDocFragment = function (fragment) {
     this.element.innerHTML = '';
     this.element.appendChild(fragment);
@@ -2882,6 +2927,7 @@ exports.DEFAULT_CONFIG = {
   silent: false,
   renderChoiceLimit: -1,
   maxItemCount: -1,
+  pseudoMultiSelectForSingle: false,
   addItems: true,
   addItemFilter: null,
   removeItems: true,
@@ -3143,6 +3189,26 @@ Object.defineProperty(exports, "__esModule", ({
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
+
+/***/ }),
+
+/***/ 858:
+/***/ (function(__unused_webpack_module, exports) {
+
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.isHTMLOptgroup = exports.isHTMLOption = void 0;
+var isHTMLOption = function (e) {
+  return e.tagName === 'OPTION';
+};
+exports.isHTMLOption = isHTMLOption;
+var isHTMLOptgroup = function (e) {
+  return e.tagName === 'OPTGROUP';
+};
+exports.isHTMLOptgroup = isHTMLOptgroup;
 
 /***/ }),
 
