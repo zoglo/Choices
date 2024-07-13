@@ -2202,8 +2202,10 @@ class Choices implements Choices {
 
     if (this._isSelectOneElement) {
       this.input.placeholder = this.config.searchPlaceholderValue || '';
-    } else if (this._placeholderValue) {
-      this.input.placeholder = this._placeholderValue;
+    } else {
+      if (this._placeholderValue) {
+        this.input.placeholder = this._placeholderValue;
+      }
       this.input.setWidth();
     }
 
