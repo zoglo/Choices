@@ -148,7 +148,7 @@ const templates = {
       });
       removeButton.setAttribute(
         'aria-label',
-        `${REMOVE_ITEM_LABEL}: '${value}'`,
+        REMOVE_ITEM_LABEL,
       );
       removeButton.dataset.button = '';
       div.appendChild(removeButton);

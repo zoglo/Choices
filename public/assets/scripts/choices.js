@@ -4043,7 +4043,7 @@ var templates = {
         type: 'button',
         className: button
       }, _d[allowHTML ? 'innerHTML' : 'innerText'] = REMOVE_ITEM_ICON, _d));
-      removeButton.setAttribute('aria-label', "".concat(REMOVE_ITEM_LABEL, ": '").concat(value, "'"));
+      removeButton.setAttribute('aria-label', REMOVE_ITEM_LABEL);
       removeButton.dataset.button = '';
       div.appendChild(removeButton);
     }
