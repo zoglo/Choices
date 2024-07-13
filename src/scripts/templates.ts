@@ -328,7 +328,12 @@ const templates = {
     const opt = new Option(label, value, false, active);
 
     if (customProperties) {
-      opt.dataset.customProperties = `${customProperties}`;
+      for (var prop in customProperties) {
+        if (Object.prototype.hasOwnProperty.call(customProperties, prop)) {
+          opt.dataset.customProperties = JSON.stringify(customProperties);
+          break;
+        }
+      }
     }
 
     opt.disabled = !!disabled;
