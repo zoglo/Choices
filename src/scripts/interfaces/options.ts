@@ -140,6 +140,30 @@ export interface Options {
   addItemText: string | Types.NoticeStringFunction;
 
   /**
+   * The text/icon for the remove button. To access the item's value, pass a function with a `value` argument (see the **default config** [https://github.com/jshjohnson/Choices#setup] for an example), otherwise pass a string.
+   *
+   * **Input types affected:** text
+   *
+   * @default
+   * ```
+   * (value) => `Remove item`;
+   * ```
+   */
+  removeItemIconText: string | Types.NoticeStringFunction;
+
+  /**
+   * The text for the remove button's aria label. To access the item's value, pass a function with a `value` argument (see the **default config** [https://github.com/jshjohnson/Choices#setup] for an example), otherwise pass a string.
+   *
+   * **Input types affected:** text
+   *
+   * @default
+   * ```
+   * (value) => `Remove item: ${value}`;
+   * ```
+   */
+  removeItemLabelText: string | Types.NoticeStringFunction;
+
+  /**
    * Whether a user can remove items.
    *
    * **Input types affected:** text, select-multiple

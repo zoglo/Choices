@@ -70,6 +70,8 @@ export const DEFAULT_CONFIG: Options = {
   uniqueItemText: 'Only unique values can be added',
   customAddItemText: 'Only values matching specific conditions can be added',
   addItemText: (value) => `Press Enter to add <b>"${sanitise(value)}"</b>`,
+  removeItemIconText: (value) => `Remove item`,
+  removeItemLabelText: (value) => `Remove item: ${sanitise(value)}`,
   maxItemText: (maxItemCount) => `Only ${maxItemCount} values can be added`,
   valueComparer: (value1, value2) => value1 === value2,
   fuseOptions: {

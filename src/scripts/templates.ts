@@ -132,16 +132,23 @@ const templates = {
         div.classList.remove(itemSelectable);
       }
       div.dataset.deletable = '';
-      /** @todo This MUST be localizable, not hardcoded! */
-      const REMOVE_ITEM_TEXT = 'Remove item';
+
+      let REMOVE_ITEM_ICON =
+        typeof this.config.removeItemIconText === 'function'
+          ? this.config.removeItemIconText(value)
+          : this.config.removeItemIconText;
+      let REMOVE_ITEM_LABEL =
+        typeof this.config.removeItemLabelText === 'function'
+          ? this.config.removeItemLabelText(value)
+          : this.config.removeItemLabelText;
       const removeButton = Object.assign(document.createElement('button'), {
         type: 'button',
         className: button,
-        [allowHTML ? 'innerHTML' : 'innerText']: REMOVE_ITEM_TEXT,
+        [allowHTML ? 'innerHTML' : 'innerText']: REMOVE_ITEM_ICON,
       });
       removeButton.setAttribute(
         'aria-label',
-        `${REMOVE_ITEM_TEXT}: '${value}'`,
+        `${REMOVE_ITEM_LABEL}: '${value}'`,
       );
       removeButton.dataset.button = '';
       div.appendChild(removeButton);
