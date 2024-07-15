@@ -35,6 +35,8 @@ export default function choices(
         selected: false,
         active: true,
         score: 9999,
+        labelClass: addChoiceAction.labelClass,
+        labelDescription: addChoiceAction.labelDescription,
         customProperties: addChoiceAction.customProperties,
         placeholder: addChoiceAction.placeholder || false,
       };

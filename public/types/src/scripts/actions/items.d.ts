@@ -6,6 +6,8 @@ export interface AddItemAction {
     label: string;
     choiceId: number;
     groupId: number;
+    labelClass?: string | null;
+    labelDescription?: string | null;
     customProperties: object;
     placeholder: boolean;
     keyCode: number;
@@ -20,12 +22,14 @@ export interface HighlightItemAction {
     id: number;
     highlighted: boolean;
 }
-export declare const addItem: ({ value, label, id, choiceId, groupId, customProperties, placeholder, keyCode, }: {
+export declare const addItem: ({ value, label, id, choiceId, groupId, labelClass, labelDescription, customProperties, placeholder, keyCode, }: {
     id: number;
     value: string;
     label: string;
     choiceId: number;
     groupId: number;
+    labelClass?: string | null | undefined;
+    labelDescription?: string | null | undefined;
     customProperties: object;
     placeholder: boolean;
     keyCode: number;

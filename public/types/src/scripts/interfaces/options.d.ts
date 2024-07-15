@@ -98,6 +98,8 @@ export interface Options {
     maxItemCount: number;
     /**
      * Make multi-select with a max of 1 work how single select does (ie replace the selected item and close the down-drop)
+     * Only applies if maxItemCount === 1
+     * searchEnabled is forced enabled
      *
      * @default false
      */

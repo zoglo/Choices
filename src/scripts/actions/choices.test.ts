@@ -10,6 +10,8 @@ describe('actions/choices', () => {
       const groupId = 1;
       const disabled = false;
       const elementId = 1;
+      const labelClass = 'test';
+      const labelDescription = 'test';
       const customProperties = { test: true };
       const placeholder = true;
       const keyCode = 10;
@@ -22,6 +24,8 @@ describe('actions/choices', () => {
         groupId,
         disabled,
         elementId,
+        labelClass,
+        labelDescription,
         customProperties,
         placeholder,
         keyCode,
@@ -35,6 +39,8 @@ describe('actions/choices', () => {
           groupId,
           disabled,
           elementId,
+          labelClass,
+          labelDescription,
           customProperties,
           placeholder,
           keyCode,

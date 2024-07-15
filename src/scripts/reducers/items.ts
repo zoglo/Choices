@@ -32,6 +32,8 @@ export default function items(
           label: addItemAction.label,
           active: true,
           highlighted: false,
+          labelClass: addItemAction.labelClass,
+          labelDescription: addItemAction.labelDescription,
           customProperties: addItemAction.customProperties,
           placeholder: addItemAction.placeholder || false,
           keyCode: null,
