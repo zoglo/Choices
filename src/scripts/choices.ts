@@ -1479,7 +1479,7 @@ class Choices implements Choices {
 
     > ...The Unicode Standard sets aside 66 noncharacter code points. The last two code points
     > of each plane are noncharacters: U+FFFE and U+FFFF on the BMP...
-    */    
+    */
     const wasPrintableChar = (
       event.key.length === 1
       || (event.key.length === 2 && event.key.charCodeAt(0) >= 0xD800)
@@ -1517,7 +1517,7 @@ class Choices implements Choices {
       case ENTER_KEY:
         return this._onEnterKey(event, activeItems, hasActiveDropdown);
       case ESC_KEY:
-        return this._onEscapeKey(hasActiveDropdown);
+        return this._onEscapeKey(event, hasActiveDropdown);
       case UP_KEY:
       case PAGE_UP_KEY:
       case DOWN_KEY:
@@ -1635,8 +1635,9 @@ class Choices implements Choices {
     }
   }
 
-  _onEscapeKey(hasActiveDropdown: boolean): void {
+  _onEscapeKey(event: KeyboardEvent, hasActiveDropdown: boolean): void {
     if (hasActiveDropdown) {
+      event.stopPropagation();
       this.hideDropdown(true);
       this.containerOuter.focus();
     }
