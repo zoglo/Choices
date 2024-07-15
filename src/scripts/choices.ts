@@ -191,12 +191,15 @@ class Choices implements Choices {
     this._isSelectMultipleElement = passedElement.type === SELECT_MULTIPLE_TYPE;
     this._isSelectElement =
       this._isSelectOneElement || this._isSelectMultipleElement;
-
+    if (this.config.maxItemCount !== 1) {
+      this.config.pseudoMultiSelectForSingle = false;
+    }
+    if (this.config.pseudoMultiSelectForSingle) {
+      this._isSelectOneElement = false;
+      this._isSelectMultipleElement = true;
+    }
     this.config.searchEnabled =
       this._isSelectMultipleElement || this.config.searchEnabled;
-    if (this._isSelectMultipleElement && this.config.maxItemCount === 1 && userConfig.pseudoMultiSelectForSingle === undefined) {
-      this.config.pseudoMultiSelectForSingle = true;
-    }
 
     if (!['auto', 'always'].includes(`${this.config.renderSelectedChoices}`)) {
       this.config.renderSelectedChoices = 'auto';
