@@ -28,7 +28,7 @@ export declare const addItem: ({ value, label, id, choiceId, groupId, labelClass
     label: string;
     choiceId: number;
     groupId: number;
-    labelClass?: string | null | undefined;
+    labelClass?: string | string[] | null | undefined;
     labelDescription?: string | null | undefined;
     customProperties: object;
     placeholder: boolean;
