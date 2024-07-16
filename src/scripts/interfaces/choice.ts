@@ -2,6 +2,8 @@
 
 export interface Choice {
   id?: number;
+  labelClass?: string | Array<string>;
+  labelDescription?: string;
   customProperties?: Record<string, any>;
   disabled?: boolean;
   active?: boolean;

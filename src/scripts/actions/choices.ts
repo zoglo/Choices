@@ -9,6 +9,8 @@ export interface AddChoiceAction {
   groupId: number;
   disabled: boolean;
   elementId: number;
+  labelClass: string | Array<string>;
+  labelDescription: string;
   customProperties: object;
   placeholder: boolean;
   keyCode: number;
@@ -40,6 +42,8 @@ export const addChoice = ({
   groupId,
   disabled,
   elementId,
+  labelClass,
+  labelDescription,
   customProperties,
   placeholder,
   keyCode,
@@ -51,6 +55,8 @@ export const addChoice = ({
   groupId,
   disabled,
   elementId,
+  labelClass,
+  labelDescription,
   customProperties,
   placeholder,
   keyCode,

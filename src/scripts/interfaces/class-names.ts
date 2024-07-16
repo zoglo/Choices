@@ -24,6 +24,8 @@ export interface ClassNames {
   itemDisabled: string | Array<string>;
   /** @default 'choices__item--choice' */
   itemChoice: string | Array<string>;
+  /** @default 'choices__description' */
+  description: string | Array<string>;
   /** @default 'choices__placeholder' */
   placeholder: string | Array<string>;
   /** @default 'choices__group' */

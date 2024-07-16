@@ -98,6 +98,8 @@ const templates = {
       id,
       value,
       label,
+      labelClass,
+      labelDescription,
       customProperties,
       active,
       disabled,
@@ -108,13 +110,26 @@ const templates = {
   ): HTMLDivElement {
     const div = Object.assign(document.createElement('div'), {
       className: getClassNames(item).join(' '),
-      [allowHTML ? 'innerHTML' : 'innerText']: label,
     });
+
+    if (typeof labelClass === 'string' || Array.isArray(labelClass)) {
+      const spanLabel = Object.assign(document.createElement('span'), {
+        [allowHTML ? 'innerHTML' : 'innerText']: label,
+        className: getClassNames(labelClass).join(' '),
+      });
+      div.appendChild(spanLabel);
+    } else if (allowHTML) {
+      div.innerHTML = label;
+    } else {
+      div.innerText = label;
+    }
 
     Object.assign(div.dataset, {
       item: '',
       id,
       value,
+      labelClass,
+      labelDescription,
       customProperties,
     });
 
@@ -226,6 +241,7 @@ const templates = {
         itemSelectable,
         selectedState,
         itemDisabled,
+        description,
         placeholder,
       },
     }: TemplateOptions,
@@ -235,6 +251,8 @@ const templates = {
       label,
       groupId,
       elementId,
+      labelClass,
+      labelDescription,
       disabled: isDisabled,
       selected: isSelected,
       placeholder: isPlaceholder,
@@ -243,11 +261,36 @@ const templates = {
   ): HTMLDivElement {
     const div = Object.assign(document.createElement('div'), {
       id: elementId,
-      [allowHTML ? 'innerHTML' : 'innerText']: label,
       className: `${getClassNames(item).join(' ')} ${getClassNames(
         itemChoice,
       ).join(' ')}`,
     });
+
+    const descId = `${elementId}-description`;
+
+    if (typeof labelClass === 'string' || Array.isArray(labelClass)) {
+      const spanLabel = Object.assign(document.createElement('span'), {
+        [allowHTML ? 'innerHTML' : 'innerText']: label,
+        className: getClassNames(labelClass).join(' '),
+      });
+      spanLabel.setAttribute('aria-describedby', descId);
+      div.appendChild(spanLabel);
+    } else if (allowHTML) {
+      div.innerHTML = label;
+      div.setAttribute('aria-describedby', descId);
+    } else {
+      div.innerText = label;
+      div.setAttribute('aria-describedby', descId);
+    }
+
+    if (typeof labelDescription === 'string') {
+      const spanDesc = Object.assign(document.createElement('span'), {
+        [allowHTML ? 'innerHTML' : 'innerText']: labelDescription,
+        id: descId,
+      });
+      spanDesc.classList.add(...getClassNames(description));
+      div.appendChild(spanDesc);
+    }
 
     if (isSelected) {
       div.classList.add(...getClassNames(selectedState));
@@ -263,6 +306,8 @@ const templates = {
       choice: '',
       id,
       value,
+      labelClass,
+      labelDescription,
       selectText,
     });
 
@@ -337,11 +382,19 @@ const templates = {
   option({
     label,
     value,
+    labelClass,
+    labelDescription,
     customProperties,
     active,
     disabled,
   }: Item): HTMLOptionElement {
     const opt = new Option(label, value, false, active);
+    if (typeof labelClass !== 'undefined') {
+      opt.dataset.labelClass = getClassNames(labelClass).join(' ');
+    }
+    if (typeof labelClass !== 'undefined') {
+      opt.dataset.labelDescription = labelDescription;
+    }
 
     if (customProperties) {
       for (var prop in customProperties) {

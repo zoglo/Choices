@@ -79,6 +79,14 @@ export default class WrappedSelect extends WrappedElement {
       selected: !!option.selected,
       disabled: option.disabled || this.element.disabled,
       placeholder: option.value === '' || option.hasAttribute('placeholder'),
+      labelClass:
+        typeof option.dataset.labelClass !== 'undefined'
+          ? option.dataset.labelClass.split(' ')
+          : undefined,
+      labelDescription:
+        typeof option.dataset.labelDescription !== 'undefined'
+          ? option.dataset.labelDescription
+          : undefined,
       customProperties: parseCustomProperties(option.dataset.customProperties),
     };
   }

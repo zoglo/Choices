@@ -7,6 +7,8 @@ export interface AddItemAction {
   label: string;
   choiceId: number;
   groupId: number;
+  labelClass?: string | Array<string> | null;
+  labelDescription?: string | null;
   customProperties: object;
   placeholder: boolean;
   keyCode: number;
@@ -30,6 +32,8 @@ export const addItem = ({
   id,
   choiceId,
   groupId,
+  labelClass,
+  labelDescription,
   customProperties,
   placeholder,
   keyCode,
@@ -39,6 +43,8 @@ export const addItem = ({
   label: string;
   choiceId: number;
   groupId: number;
+  labelClass?: string | Array<string> | null;
+  labelDescription?: string | null;
   customProperties: object;
   placeholder: boolean;
   keyCode: number;
@@ -49,6 +55,8 @@ export const addItem = ({
   id,
   choiceId,
   groupId,
+  labelClass,
+  labelDescription,
   customProperties,
   placeholder,
   keyCode,

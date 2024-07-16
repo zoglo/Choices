@@ -724,6 +724,8 @@ class Choices implements Choices {
           isSelected: !!choice.selected,
           isDisabled: !!choice.disabled,
           placeholder: !!choice.placeholder,
+          labelClass: choice.labelClass,
+          labelDescription: choice.labelDescription,
           customProperties: choice.customProperties,
         });
       }
@@ -926,12 +928,18 @@ class Choices implements Choices {
     withinGroup = false,
   ): DocumentFragment {
     // Create a fragment to store our list items (so we don't have to update the DOM for each item)
-    const { renderSelectedChoices, searchResultLimit, renderChoiceLimit, appendGroupInSearch } =
-      this.config;
+    const {
+      renderSelectedChoices,
+      searchResultLimit,
+      renderChoiceLimit,
+      appendGroupInSearch,
+    } = this.config;
     const filter = this._isSearching ? sortByScore : this.config.sorter;
     const appendChoice = (choice: Choice): void => {
       let groupName;
-      this._store.groups.forEach((group) => group.id === choice.groupId ? groupName = group.value : false);
+      this._store.groups.forEach((group) =>
+        group.id === choice.groupId ? (groupName = group.value) : false,
+      );
       const shouldRender =
         renderSelectedChoices === 'auto'
           ? this._isSelectOneElement || !choice.selected
@@ -1158,6 +1166,8 @@ class Choices implements Choices {
           label: choice.label,
           choiceId: choice.id,
           groupId: choice.groupId,
+          labelClass: choice.labelClass,
+          labelDescription: choice.labelDescription,
           customProperties: choice.customProperties,
           placeholder: choice.placeholder,
           keyCode: choice.keyCode,
@@ -1170,7 +1180,10 @@ class Choices implements Choices {
     this.clearInput();
 
     // We want to close the dropdown if we are dealing with a single select box
-    if (hasActiveDropdown && (this.config.pseudoMultiSelectForSingle || this._isSelectOneElement)) {
+    if (
+      hasActiveDropdown &&
+      (this.config.pseudoMultiSelectForSingle || this._isSelectOneElement)
+    ) {
       this.hideDropdown(true);
       this.containerOuter.focus();
     }
@@ -1992,6 +2005,8 @@ class Choices implements Choices {
     label = null,
     choiceId = -1,
     groupId = -1,
+    labelClass = null,
+    labelDescription = null,
     customProperties = {},
     placeholder = false,
     keyCode = -1,
@@ -2000,6 +2015,8 @@ class Choices implements Choices {
     label?: string | null;
     choiceId?: number;
     groupId?: number;
+    labelClass?: string | Array<string> | null;
+    labelDescription?: string | null;
     customProperties?: object;
     placeholder?: boolean;
     keyCode?: number;
@@ -2029,6 +2046,8 @@ class Choices implements Choices {
         id,
         choiceId: passedOptionId,
         groupId,
+        labelClass,
+        labelDescription,
         customProperties,
         placeholder,
         keyCode,
@@ -2044,6 +2063,8 @@ class Choices implements Choices {
       id,
       value: passedValue,
       label: passedLabel,
+      labelClass,
+      labelDescription,
       customProperties,
       groupValue: group && group.value ? group.value : null,
       keyCode,
@@ -2051,7 +2072,16 @@ class Choices implements Choices {
   }
 
   _removeItem(item: Item): void {
-    const { id, value, label, customProperties, choiceId, groupId } = item;
+    const {
+      id,
+      value,
+      label,
+      labelClass,
+      labelDescription,
+      customProperties,
+      choiceId,
+      groupId,
+    } = item;
     const group =
       groupId && groupId >= 0 ? this._store.getGroupById(groupId) : null;
 
@@ -2064,6 +2094,8 @@ class Choices implements Choices {
       id,
       value,
       label,
+      labelClass,
+      labelDescription,
       customProperties,
       groupValue: group && group.value ? group.value : null,
     });
@@ -2075,6 +2107,8 @@ class Choices implements Choices {
     isSelected = false,
     isDisabled = false,
     groupId = -1,
+    labelClass = null,
+    labelDescription = null,
     customProperties = {},
     placeholder = false,
     keyCode = -1,
@@ -2084,6 +2118,8 @@ class Choices implements Choices {
     isSelected?: boolean;
     isDisabled?: boolean;
     groupId?: number;
+    labelClass?: string | Array<string> | null;
+    labelDescription?: string | null;
     customProperties?: Record<string, any>;
     placeholder?: boolean;
     keyCode?: number;
@@ -2106,6 +2142,8 @@ class Choices implements Choices {
         value,
         label: choiceLabel,
         disabled: isDisabled,
+        labelClass,
+        labelDescription,
         customProperties,
         placeholder,
         keyCode,
@@ -2117,6 +2155,8 @@ class Choices implements Choices {
         value,
         label: choiceLabel,
         choiceId,
+        labelClass,
+        labelDescription,
         customProperties,
         placeholder,
         keyCode,
@@ -2151,6 +2191,8 @@ class Choices implements Choices {
           isSelected: choice.selected,
           isDisabled: isOptDisabled,
           groupId,
+          labelClass: choice.labelClass,
+          labelDescription: choice.labelDescription,
           customProperties: choice.customProperties,
           placeholder: choice.placeholder,
         });
@@ -2321,7 +2363,14 @@ class Choices implements Choices {
     );
 
     choices.forEach((choice, index) => {
-      const { value = '', label, customProperties, placeholder } = choice;
+      const {
+        value = '',
+        label,
+        labelClass,
+        labelDescription,
+        customProperties,
+        placeholder,
+      } = choice;
 
       if (this._isSelectElement) {
         // If the choice is actually a group
@@ -2351,6 +2400,8 @@ class Choices implements Choices {
             isSelected: !!isSelected,
             isDisabled: !!isDisabled,
             placeholder: !!placeholder,
+            labelClass,
+            labelDescription,
             customProperties,
           });
         }
@@ -2361,6 +2412,8 @@ class Choices implements Choices {
           isSelected: !!choice.selected,
           isDisabled: !!choice.disabled,
           placeholder: !!choice.placeholder,
+          labelClass,
+          labelDescription,
           customProperties,
         });
       }
@@ -2375,6 +2428,8 @@ class Choices implements Choices {
           label: item.label,
           choiceId: item.id,
           customProperties: item.customProperties,
+          labelClass: item.labelClass,
+          labelDescription: item.labelDescription,
           placeholder: item.placeholder,
         });
       }
@@ -2403,6 +2458,8 @@ class Choices implements Choices {
             label: item.label,
             isSelected: true,
             isDisabled: false,
+            labelClass: item.labelClass,
+            labelDescription: item.labelDescription,
             customProperties: item.customProperties,
             placeholder: item.placeholder,
           });
@@ -2411,6 +2468,8 @@ class Choices implements Choices {
             value: item.value,
             label: item.label,
             choiceId: item.id,
+            labelClass: item.labelClass,
+            labelDescription: item.labelDescription,
             customProperties: item.customProperties,
             placeholder: item.placeholder,
           });
@@ -2448,6 +2507,8 @@ class Choices implements Choices {
         label: foundChoice.label,
         choiceId: foundChoice.id,
         groupId: foundChoice.groupId,
+        labelClass: foundChoice.labelClass,
+        labelDescription: foundChoice.labelDescription,
         customProperties: foundChoice.customProperties,
         placeholder: foundChoice.placeholder,
         keyCode: foundChoice.keyCode,
