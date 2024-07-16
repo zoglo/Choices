@@ -182,7 +182,7 @@ declare class Choices implements Choices {
         label?: string | null;
         choiceId?: number;
         groupId?: number;
-        labelClass?: string | null;
+        labelClass?: string | Array<string> | null;
         labelDescription?: string | null;
         customProperties?: object;
         placeholder?: boolean;
@@ -195,7 +195,7 @@ declare class Choices implements Choices {
         isSelected?: boolean;
         isDisabled?: boolean;
         groupId?: number;
-        labelClass?: string | null;
+        labelClass?: string | Array<string> | null;
         labelDescription?: string | null;
         customProperties?: Record<string, any>;
         placeholder?: boolean;

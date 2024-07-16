@@ -2006,7 +2006,7 @@ class Choices implements Choices {
     choiceId = -1,
     groupId = -1,
     labelClass = null,
-             labelDescription = null,
+    labelDescription = null,
     customProperties = {},
     placeholder = false,
     keyCode = -1,
@@ -2015,7 +2015,7 @@ class Choices implements Choices {
     label?: string | null;
     choiceId?: number;
     groupId?: number;
-    labelClass?: string | null;
+    labelClass?: string | Array<string> | null;
     labelDescription?: string | null;
     customProperties?: object;
     placeholder?: boolean;
@@ -2118,7 +2118,7 @@ class Choices implements Choices {
     isSelected?: boolean;
     isDisabled?: boolean;
     groupId?: number;
-    labelClass?: string | null;
+    labelClass?: string | Array<string> | null;
     labelDescription?: string | null;
     customProperties?: Record<string, any>;
     placeholder?: boolean;

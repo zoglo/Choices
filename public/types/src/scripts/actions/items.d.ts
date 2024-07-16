@@ -6,7 +6,7 @@ export interface AddItemAction {
     label: string;
     choiceId: number;
     groupId: number;
-    labelClass?: string | null;
+    labelClass?: string | Array<string> | null;
     labelDescription?: string | null;
     customProperties: object;
     placeholder: boolean;

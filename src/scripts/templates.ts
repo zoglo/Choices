@@ -112,7 +112,7 @@ const templates = {
       className: getClassNames(item).join(' '),
     });
 
-    if (typeof labelClass === 'string') {
+    if (typeof labelClass === 'string' || Array.isArray(labelClass)) {
       const spanLabel = Object.assign(document.createElement('span'), {
         [allowHTML ? 'innerHTML' : 'innerText']: label,
         className: getClassNames(labelClass).join(' '),
@@ -268,7 +268,7 @@ const templates = {
 
     const descId = `${elementId}-description`;
 
-    if (typeof labelClass === 'string') {
+    if (typeof labelClass === 'string' || Array.isArray(labelClass)) {
       const spanLabel = Object.assign(document.createElement('span'), {
         [allowHTML ? 'innerHTML' : 'innerText']: label,
         className: getClassNames(labelClass).join(' '),
@@ -389,7 +389,7 @@ const templates = {
     disabled,
   }: Item): HTMLOptionElement {
     const opt = new Option(label, value, false, active);
-    opt.dataset.labelClass = labelClass;
+    opt.dataset.labelClass = getClassNames(labelClass).join(' ');
     opt.dataset.labelDescription = labelDescription;
 
     if (customProperties) {
