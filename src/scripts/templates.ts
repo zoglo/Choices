@@ -389,8 +389,12 @@ const templates = {
     disabled,
   }: Item): HTMLOptionElement {
     const opt = new Option(label, value, false, active);
-    opt.dataset.labelClass = getClassNames(labelClass).join(' ');
-    opt.dataset.labelDescription = labelDescription;
+    if (typeof labelClass !== 'undefined') {
+      opt.dataset.labelClass = getClassNames(labelClass).join(' ');
+    }
+    if (typeof labelClass !== 'undefined') {
+      opt.dataset.labelDescription = labelDescription;
+    }
 
     if (customProperties) {
       for (var prop in customProperties) {

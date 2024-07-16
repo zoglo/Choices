@@ -81,7 +81,7 @@ export default class WrappedSelect extends WrappedElement {
       placeholder: option.value === '' || option.hasAttribute('placeholder'),
       labelClass:
         typeof option.dataset.labelClass !== 'undefined'
-          ? option.dataset.labelClass
+          ? option.dataset.labelClass.split(' ')
           : undefined,
       labelDescription:
         typeof option.dataset.labelDescription !== 'undefined'
