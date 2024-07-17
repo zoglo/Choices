@@ -77,7 +77,7 @@ export default class WrappedSelect extends WrappedElement {
       value: option.value,
       label: option.innerHTML,
       selected: !!option.selected,
-      disabled: option.disabled || this.element.disabled,
+      disabled: option.disabled,
       placeholder: option.value === '' || option.hasAttribute('placeholder'),
       labelClass:
         typeof option.dataset.labelClass !== 'undefined'
