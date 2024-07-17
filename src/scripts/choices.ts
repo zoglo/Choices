@@ -2517,6 +2517,11 @@ class Choices implements Choices {
   }
 
   _generatePlaceholderValue(): string | null {
+    const { placeholder, placeholderValue } = this.config;
+    if (!placeholder) {
+      return null;
+    }
+
     if (
       this._isSelectElement &&
       (this.passedElement as WrappedSelect).placeholderOption
@@ -2526,19 +2531,16 @@ class Choices implements Choices {
       return placeholderOption ? placeholderOption.text : null;
     }
 
-    const { placeholder, placeholderValue } = this.config;
     const {
       element: { dataset },
     } = this.passedElement;
 
-    if (placeholder) {
-      if (placeholderValue) {
-        return placeholderValue;
-      }
+    if (placeholderValue) {
+      return placeholderValue;
+    }
 
-      if (dataset.placeholder) {
-        return dataset.placeholder;
-      }
+    if (dataset.placeholder) {
+      return dataset.placeholder;
     }
 
     return null;
