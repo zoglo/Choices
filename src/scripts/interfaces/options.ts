@@ -107,6 +107,8 @@ export interface Options {
    * Only applies if maxItemCount === 1
    * searchEnabled is forced enabled
    *
+   * **Input types affected:** select-one, select-multiple
+   *
    * @default false
    */
   pseudoMultiSelectForSingle: boolean

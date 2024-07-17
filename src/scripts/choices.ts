@@ -189,17 +189,16 @@ class Choices implements Choices {
     }
 
     this._isTextElement = passedElement.type === TEXT_TYPE;
+    if (this._isTextElement || this.config.maxItemCount !== 1) {
+      this.config.pseudoMultiSelectForSingle = false;
+    }
+    if (this.config.pseudoMultiSelectForSingle) {
+      passedElement.setAttribute('multiple', 'multiple');
+    }
     this._isSelectOneElement = passedElement.type === SELECT_ONE_TYPE;
     this._isSelectMultipleElement = passedElement.type === SELECT_MULTIPLE_TYPE;
     this._isSelectElement =
       this._isSelectOneElement || this._isSelectMultipleElement;
-    if (this.config.maxItemCount !== 1) {
-      this.config.pseudoMultiSelectForSingle = false;
-    }
-    if (this.config.pseudoMultiSelectForSingle) {
-      this._isSelectOneElement = false;
-      this._isSelectMultipleElement = true;
-    }
     this.config.searchEnabled =
       this._isSelectMultipleElement || this.config.searchEnabled;
 
