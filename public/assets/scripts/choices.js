@@ -265,16 +265,15 @@ var Choices = /** @class */function () {
       throw TypeError('Expected one of the following types text|select-one|select-multiple');
     }
     this._isTextElement = passedElement.type === constants_1.TEXT_TYPE;
-    this._isSelectOneElement = passedElement.type === constants_1.SELECT_ONE_TYPE;
-    this._isSelectMultipleElement = passedElement.type === constants_1.SELECT_MULTIPLE_TYPE;
-    this._isSelectElement = this._isSelectOneElement || this._isSelectMultipleElement;
-    if (this.config.maxItemCount !== 1) {
+    if (this._isTextElement || this.config.maxItemCount !== 1) {
       this.config.pseudoMultiSelectForSingle = false;
     }
     if (this.config.pseudoMultiSelectForSingle) {
-      this._isSelectOneElement = false;
-      this._isSelectMultipleElement = true;
+      passedElement.setAttribute('multiple', 'multiple');
     }
+    this._isSelectOneElement = passedElement.type === constants_1.SELECT_ONE_TYPE;
+    this._isSelectMultipleElement = passedElement.type === constants_1.SELECT_MULTIPLE_TYPE;
+    this._isSelectElement = this._isSelectOneElement || this._isSelectMultipleElement;
     this.config.searchEnabled = this._isSelectMultipleElement || this.config.searchEnabled;
     if (!['auto', 'always'].includes("".concat(this.config.renderSelectedChoices))) {
       this.config.renderSelectedChoices = 'auto';
@@ -373,6 +372,8 @@ var Choices = /** @class */function () {
     }
     // Let's go
     this.init();
+    // preserve the state after setup for form reset
+    this._initialState = this._currentState;
   }
   Object.defineProperty(Choices, "defaults", {
     get: function () {
@@ -1659,6 +1660,8 @@ var Choices = /** @class */function () {
   };
   Choices.prototype._onFormReset = function () {
     this._store.dispatch((0, misc_1.resetTo)(this._initialState));
+    this.clearInput();
+    this.hideDropdown();
   };
   Choices.prototype._highlightChoice = function (el) {
     var _a;
@@ -2898,7 +2901,7 @@ var WrappedSelect = /** @class */function (_super) {
       value: option.value,
       label: option.innerHTML,
       selected: !!option.selected,
-      disabled: option.disabled || this.element.disabled,
+      disabled: option.disabled,
       placeholder: option.value === '' || option.hasAttribute('placeholder'),
       labelClass: typeof option.dataset.labelClass !== 'undefined' ? option.dataset.labelClass.split(' ') : undefined,
       labelDescription: typeof option.dataset.labelDescription !== 'undefined' ? option.dataset.labelDescription : undefined,
