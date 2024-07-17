@@ -328,6 +328,8 @@ class Choices implements Choices {
 
     // Let's go
     this.init();
+    // preserve the state after setup for form reset
+    this._initialState = this._currentState;
   }
 
   init(): void {
@@ -1942,6 +1944,8 @@ class Choices implements Choices {
 
   _onFormReset(): void {
     this._store.dispatch(resetTo(this._initialState));
+    this.clearInput();
+    this.hideDropdown();
   }
 
   _highlightChoice(el: HTMLElement | null = null): void {
