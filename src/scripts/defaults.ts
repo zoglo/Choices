@@ -43,6 +43,7 @@ export const DEFAULT_CONFIG: Options = {
   addItemFilter: null,
   removeItems: true,
   removeItemButton: false,
+  removeItemButtonAlignLeft: false,
   editItems: false,
   allowHTML: true,
   duplicateItemsAllowed: true,

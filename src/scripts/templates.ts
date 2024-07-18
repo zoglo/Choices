@@ -86,6 +86,7 @@ const templates = {
   item(
     {
       allowHTML,
+      removeItemButtonAlignLeft,
       classNames: {
         item,
         button,
@@ -175,7 +176,11 @@ const templates = {
         REMOVE_ITEM_LABEL,
       );
       removeButton.dataset.button = '';
-      div.appendChild(removeButton);
+      if (removeItemButtonAlignLeft) {
+        div.insertAdjacentElement('afterbegin', removeButton);
+      } else {
+        div.appendChild(removeButton);
+      }
     }
 
     return div;

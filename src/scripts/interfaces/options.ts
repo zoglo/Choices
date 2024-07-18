@@ -184,7 +184,14 @@ export interface Options {
    * @default false
    */
   removeItemButton: boolean;
-
+  /**
+   * Align item remove button left vs right
+   *
+   * **Input types affected:** text, select-one, select-multiple
+   *
+   * @default false
+   */
+  removeItemButtonAlignLeft: boolean;
   /**
    * Whether a user can edit items. An item's value can be edited by pressing the backspace.
    *
