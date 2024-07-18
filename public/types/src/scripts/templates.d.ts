@@ -6,13 +6,13 @@ import { Choice } from './interfaces/choice';
 import { Group } from './interfaces/group';
 import { Item } from './interfaces/item';
 import { PassedElementType } from './interfaces/passed-element-type';
-type TemplateOptions = Record<'classNames' | 'allowHTML', any>;
+type TemplateOptions = Record<'classNames' | 'allowHTML' | 'removeItemButtonAlignLeft', any>;
 declare const templates: {
     containerOuter({ classNames: { containerOuter } }: TemplateOptions, dir: HTMLElement['dir'], isSelectElement: boolean, isSelectOneElement: boolean, searchEnabled: boolean, passedElementType: PassedElementType, labelId: string): HTMLDivElement;
     containerInner({ classNames: { containerInner }, }: TemplateOptions): HTMLDivElement;
     itemList({ classNames: { list, listSingle, listItems } }: TemplateOptions, isSelectOneElement: boolean): HTMLDivElement;
     placeholder({ allowHTML, classNames: { placeholder } }: TemplateOptions, value: string): HTMLDivElement;
-    item({ allowHTML, classNames: { item, button, highlightedState, itemSelectable, placeholder, }, }: TemplateOptions, { id, value, label, labelClass, labelDescription, customProperties, active, disabled, highlighted, placeholder: isPlaceholder, }: Item, removeItemButton: boolean): HTMLDivElement;
+    item({ allowHTML, removeItemButtonAlignLeft, classNames: { item, button, highlightedState, itemSelectable, placeholder, }, }: TemplateOptions, { id, value, label, labelClass, labelDescription, customProperties, active, disabled, highlighted, placeholder: isPlaceholder, }: Item, removeItemButton: boolean): HTMLDivElement;
     choiceList({ classNames: { list } }: TemplateOptions, isSelectOneElement: boolean): HTMLDivElement;
     choiceGroup({ allowHTML, classNames: { group, groupHeading, itemDisabled }, }: TemplateOptions, { id, value, disabled }: Group): HTMLDivElement;
     choice({ allowHTML, classNames: { item, itemChoice, itemSelectable, selectedState, itemDisabled, description, placeholder, }, }: TemplateOptions, { id, value, label, groupId, elementId, labelClass, labelDescription, disabled: isDisabled, selected: isSelected, placeholder: isPlaceholder, }: Choice, selectText: string): HTMLDivElement;

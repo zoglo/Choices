@@ -3030,6 +3030,7 @@ exports.DEFAULT_CONFIG = {
   addItemFilter: null,
   removeItems: true,
   removeItemButton: false,
+  removeItemButtonAlignLeft: false,
   editItems: false,
   allowHTML: true,
   duplicateItemsAllowed: true,
@@ -4122,6 +4123,7 @@ var templates = {
   item: function (_a, _b, removeItemButton) {
     var _c, _d, _e, _f, _g;
     var allowHTML = _a.allowHTML,
+      removeItemButtonAlignLeft = _a.removeItemButtonAlignLeft,
       _h = _a.classNames,
       item = _h.item,
       button = _h.button,
@@ -4152,11 +4154,22 @@ var templates = {
     Object.assign(div.dataset, {
       item: '',
       id: id,
-      value: value,
-      labelClass: labelClass,
-      labelDescription: labelDescription,
-      customProperties: customProperties
+      value: value
     });
+    if (typeof labelClass !== 'undefined' && labelClass) {
+      div.dataset.labelClass = (0, utils_1.getClassNames)(labelClass).join(' ');
+    }
+    if (typeof labelDescription !== 'undefined' && labelDescription) {
+      div.dataset.labelDescription = labelDescription;
+    }
+    if (typeof customProperties !== 'undefined' && customProperties) {
+      for (var prop in customProperties) {
+        if (Object.prototype.hasOwnProperty.call(customProperties, prop)) {
+          div.dataset.customProperties = JSON.stringify(customProperties);
+          break;
+        }
+      }
+    }
     if (active) {
       div.setAttribute('aria-selected', 'true');
     }
@@ -4180,7 +4193,11 @@ var templates = {
       }, _g[allowHTML ? 'innerHTML' : 'innerText'] = REMOVE_ITEM_ICON, _g));
       removeButton.setAttribute('aria-label', REMOVE_ITEM_LABEL);
       removeButton.dataset.button = '';
-      div.appendChild(removeButton);
+      if (removeItemButtonAlignLeft) {
+        div.insertAdjacentElement('afterbegin', removeButton);
+      } else {
+        div.appendChild(removeButton);
+      }
     }
     return div;
   },
@@ -4275,10 +4292,14 @@ var templates = {
       choice: '',
       id: id,
       value: value,
-      labelClass: labelClass,
-      labelDescription: labelDescription,
       selectText: selectText
     });
+    if (typeof labelClass !== 'undefined' && labelClass) {
+      div.dataset.labelClass = (0, utils_1.getClassNames)(labelClass).join(' ');
+    }
+    if (typeof labelDescription !== 'undefined' && labelDescription) {
+      div.dataset.labelDescription = labelDescription;
+    }
     if (isDisabled) {
       (_h = div.classList).add.apply(_h, (0, utils_1.getClassNames)(itemDisabled));
       div.dataset.choiceDisabled = '';
@@ -4345,10 +4366,10 @@ var templates = {
       active = _a.active,
       disabled = _a.disabled;
     var opt = new Option(label, value, false, active);
-    if (typeof labelClass !== 'undefined') {
+    if (typeof labelClass !== 'undefined' && labelClass) {
       opt.dataset.labelClass = (0, utils_1.getClassNames)(labelClass).join(' ');
     }
-    if (typeof labelClass !== 'undefined') {
+    if (typeof labelDescription !== 'undefined' && labelDescription) {
       opt.dataset.labelDescription = labelDescription;
     }
     if (customProperties) {
