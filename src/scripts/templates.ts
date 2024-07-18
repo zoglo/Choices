@@ -129,11 +129,21 @@ const templates = {
       item: '',
       id,
       value,
-      labelClass,
-      labelDescription,
-      customProperties,
     });
-
+    if (typeof labelClass !== 'undefined' && labelClass) {
+      div.dataset.labelClass = getClassNames(labelClass).join(' ');
+    }
+    if (typeof labelDescription !== 'undefined' && labelDescription) {
+      div.dataset.labelDescription = labelDescription;
+    }
+    if (typeof customProperties !== 'undefined' && customProperties) {
+      for (var prop in customProperties) {
+        if (Object.prototype.hasOwnProperty.call(customProperties, prop)) {
+          div.dataset.customProperties = JSON.stringify(customProperties);
+          break;
+        }
+      }
+    }
     if (active) {
       div.setAttribute('aria-selected', 'true');
     }
@@ -311,10 +321,14 @@ const templates = {
       choice: '',
       id,
       value,
-      labelClass,
-      labelDescription,
       selectText,
     });
+    if (typeof labelClass !== 'undefined' && labelClass) {
+      div.dataset.labelClass = getClassNames(labelClass).join(' ');
+    }
+    if (typeof labelDescription !== 'undefined' && labelDescription) {
+      div.dataset.labelDescription = labelDescription;
+    }
 
     if (isDisabled) {
       div.classList.add(...getClassNames(itemDisabled));
@@ -394,10 +408,10 @@ const templates = {
     disabled,
   }: Item): HTMLOptionElement {
     const opt = new Option(label, value, false, active);
-    if (typeof labelClass !== 'undefined') {
+    if (typeof labelClass !== 'undefined' && labelClass) {
       opt.dataset.labelClass = getClassNames(labelClass).join(' ');
     }
-    if (typeof labelClass !== 'undefined') {
+    if (typeof labelDescription !== 'undefined' && labelDescription) {
       opt.dataset.labelDescription = labelDescription;
     }
 
