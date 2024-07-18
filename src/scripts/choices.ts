@@ -37,6 +37,7 @@ import { PassedElement } from './interfaces/passed-element';
 import { State } from './interfaces/state';
 
 import {
+  cloneObject,
   diff,
   existsInArray,
   generateId,
@@ -329,7 +330,7 @@ class Choices implements Choices {
     // Let's go
     this.init();
     // preserve the state after setup for form reset
-    this._initialState = this._currentState;
+    this._initialState = <State>cloneObject(this._currentState);
   }
 
   init(): void {
