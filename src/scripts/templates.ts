@@ -10,7 +10,7 @@ import { PassedElementType } from './interfaces/passed-element-type';
 import { getClassNames } from './lib/utils';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type TemplateOptions = Record<'classNames' | 'allowHTML', any>;
+type TemplateOptions = Record<'classNames' | 'allowHTML' | 'removeItemButtonAlignLeft', any>;
 
 const templates = {
   containerOuter(
