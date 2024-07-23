@@ -107,6 +107,14 @@ export interface Options {
      */
     pseudoMultiSelectForSingle: boolean;
     /**
+     * Whether a user can add choices dynamically.
+     *
+     * **Input types affected:** select-one, select-multiple
+     *
+     * @default false
+     */
+    addChoices: boolean;
+    /**
      * Whether a user can add items.
      *
      * **Input types affected:** text
