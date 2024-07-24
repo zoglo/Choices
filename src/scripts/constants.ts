@@ -17,6 +17,7 @@ export const EVENTS: Record<EventType, EventType> = {
 
 export const ACTION_TYPES: Record<ActionType, ActionType> = {
   ADD_CHOICE: 'ADD_CHOICE',
+  REMOVE_CHOICE: 'REMOVE_CHOICE',
   FILTER_CHOICES: 'FILTER_CHOICES',
   ACTIVATE_CHOICES: 'ACTIVATE_CHOICES',
   CLEAR_CHOICES: 'CLEAR_CHOICES',
