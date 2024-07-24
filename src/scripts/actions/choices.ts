@@ -16,6 +16,11 @@ export interface AddChoiceAction {
   keyCode: number;
 }
 
+export interface RemoveChoiceAction {
+  type: typeof ACTION_TYPES.REMOVE_CHOICE;
+  value: string;
+}
+
 export interface Result<T> {
   item: T;
   score: number;
@@ -60,6 +65,11 @@ export const addChoice = ({
   customProperties,
   placeholder,
   keyCode,
+});
+
+export const removeChoice = (value ): RemoveChoiceAction => ({
+  type: ACTION_TYPES.REMOVE_CHOICE,
+  value
 });
 
 export const filterChoices = (

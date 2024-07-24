@@ -14,6 +14,10 @@ export interface AddChoiceAction {
     placeholder: boolean;
     keyCode: number;
 }
+export interface RemoveChoiceAction {
+  type: typeof ACTION_TYPES.REMOVE_CHOICE;
+  value: string;
+}
 export interface Result<T> {
     item: T;
     score: number;
@@ -42,6 +46,7 @@ export declare const addChoice: ({ value, label, id, groupId, disabled, elementI
     placeholder: any;
     keyCode: any;
 }) => AddChoiceAction;
+export declare const removeChoice: (value: string) => RemoveChoiceAction;
 export declare const filterChoices: (results: Result<Choice>[]) => FilterChoicesAction;
 export declare const activateChoices: (active?: boolean) => ActivateChoicesAction;
 export declare const clearChoices: () => ClearChoicesAction;

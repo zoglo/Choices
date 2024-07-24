@@ -1,5 +1,6 @@
 import {
   AddChoiceAction,
+  RemoveChoiceAction,
   FilterChoicesAction,
   ActivateChoicesAction,
   ClearChoicesAction,
@@ -11,6 +12,7 @@ export const defaultState = [];
 
 type ActionTypes =
   | AddChoiceAction
+  | RemoveChoiceAction
   | FilterChoicesAction
   | ActivateChoicesAction
   | ClearChoicesAction
@@ -47,6 +49,17 @@ export default function choices(
         An active choice appears within the choice dropdown
       */
       return [...state, choice as Choice];
+    }
+
+    case "REMOVE_CHOICE": {
+      const removeChoiceAction = action as RemoveChoiceAction,
+        choiceValue = removeChoiceAction.value,
+        choiceIndex = state.findIndex(choice => choice.value === choiceValue);
+      if (choiceIndex !== -1) {
+        state = state.splice(choiceIndex, 1);
+      }
+
+      return state;
     }
 
     case 'ADD_ITEM': {

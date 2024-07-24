@@ -1,5 +1,6 @@
 export type ActionType =
   | 'ADD_CHOICE'
+  | 'REMOVE_CHOICE'
   | 'FILTER_CHOICES'
   | 'ACTIVATE_CHOICES'
   | 'CLEAR_CHOICES'

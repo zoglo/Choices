@@ -5,6 +5,7 @@ import Fuse from 'fuse.js';
 import {
   activateChoices,
   addChoice,
+  removeChoice,
   clearChoices,
   filterChoices,
   Result,
@@ -734,6 +735,12 @@ class Choices implements Choices {
     });
 
     this._stopLoading();
+
+    return this;
+  }
+
+  removeChoice(value: string): this {
+    this._store.dispatch(removeChoice(value));
 
     return this;
   }
