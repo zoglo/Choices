@@ -131,7 +131,7 @@ declare class Choices implements Choices {
      * ```
      */
     setChoices(choicesArrayOrFetcher?: Choice[] | Group[] | ((instance: Choices) => Choice[] | Promise<Choice[]>), value?: string, label?: string, replaceChoices?: boolean): this | Promise<this>;
-    removeChoice(value: boolean): this;
+    removeChoice(value: string): this;
     clearChoices(): this;
     clearStore(): this;
     clearInput(): this;
