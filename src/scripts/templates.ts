@@ -7,7 +7,7 @@ import { Choice } from './interfaces/choice';
 import { Group } from './interfaces/group';
 import { Item } from './interfaces/item';
 import { PassedElementType } from './interfaces/passed-element-type';
-import { getClassNames } from './lib/utils';
+import { isEmptyObject, getClassNames } from './lib/utils';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type TemplateOptions = Record<'classNames' | 'allowHTML' | 'removeItemButtonAlignLeft', any>;
@@ -136,13 +136,8 @@ const templates = {
     if (typeof labelDescription !== 'undefined' && labelDescription) {
       div.dataset.labelDescription = labelDescription;
     }
-    if (typeof customProperties !== 'undefined' && customProperties) {
-      for (var prop in customProperties) {
-        if (Object.prototype.hasOwnProperty.call(customProperties, prop)) {
-          div.dataset.customProperties = JSON.stringify(customProperties);
-          break;
-        }
-      }
+    if (!isEmptyObject(customProperties)) {
+      div.dataset.customProperties = JSON.stringify(customProperties);
     }
     if (active) {
       div.setAttribute('aria-selected', 'true');

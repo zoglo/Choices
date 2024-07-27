@@ -169,6 +169,20 @@ export const existsInArray = (
 export const cloneObject = (obj: object): object =>
   JSON.parse(JSON.stringify(obj));
 
+export const isEmptyObject = (obj: object | undefined): boolean => {
+  if (typeof obj !== 'object') {
+    return true;
+  }
+
+  for (const prop in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
 /**
  * Returns an array of keys present on the first but missing on the second object
  */
