@@ -1,4 +1,3 @@
-import { Options } from 'deepmerge';
 import { Store } from 'redux';
 import {
   WrappedInput,
@@ -13,6 +12,8 @@ import { Group } from './group';
 import { Item } from './item';
 import { State } from './state';
 import templates from '../templates';
+// eslint-disable-next-line import/no-cycle
+import { Options } from './options';
 
 export interface Choices {
   initialised: boolean;

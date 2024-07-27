@@ -1,9 +1,9 @@
 const path = require('path');
 const { HotModuleReplacementPlugin } = require('webpack');
-const deepMerge = require('deepmerge');
+const { merge } = require('webpack-merge');
 const baseConfig = require('./webpack.config.base');
 
-module.exports = deepMerge(
+module.exports = merge(
   baseConfig,
   /** @type {import('webpack').Configuration} */ ({
     mode: 'development',
@@ -15,10 +15,5 @@ module.exports = deepMerge(
     devtool: 'source-map',
     entry: ['webpack/hot/dev-server', 'webpack-hot-middleware/client'],
     plugins: [new HotModuleReplacementPlugin()],
-  }),
-  {
-    arrayMerge(target, source) {
-      return [...source, ...target];
-    },
-  },
+  })
 );

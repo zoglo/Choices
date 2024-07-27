@@ -1,4 +1,3 @@
-import merge from 'deepmerge';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Fuse from 'fuse.js';
 
@@ -41,6 +40,7 @@ import {
   cloneObject,
   diff,
   existsInArray,
+  extend,
   generateId,
   getAdjacentEl,
   getClassNames,
@@ -161,12 +161,7 @@ class Choices implements Choices {
       );
     }
 
-    this.config = merge.all<Options>(
-      [DEFAULT_CONFIG, Choices.defaults.options, userConfig],
-      // When merging array configs, replace with a copy of the userConfig array,
-      // instead of concatenating with the default array
-      { arrayMerge: (_, sourceArray) => [...sourceArray] },
-    );
+    this.config = extend(true, DEFAULT_CONFIG, Choices.defaults.options, userConfig) as Options;
 
     const invalidConfigOptions = diff(this.config, DEFAULT_CONFIG);
     if (invalidConfigOptions.length) {
@@ -2258,7 +2253,7 @@ class Choices implements Choices {
       userTemplates = callbackOnCreateTemplates.call(this, strToEl);
     }
 
-    this._templates = merge(templates, userTemplates);
+    this._templates = extend(true, templates, userTemplates) as typeof templates;
   }
 
   _createElements(): void {

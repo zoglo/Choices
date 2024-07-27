@@ -1,4 +1,3 @@
-import { Options } from 'deepmerge';
 import { Store } from 'redux';
 import { WrappedInput, WrappedSelect, Container, List, Input, Dropdown } from '../components';
 import { Choice } from './choice';
@@ -6,6 +5,7 @@ import { Group } from './group';
 import { Item } from './item';
 import { State } from './state';
 import templates from '../templates';
+import { Options } from './options';
 export interface Choices {
     initialised: boolean;
     config: Options;

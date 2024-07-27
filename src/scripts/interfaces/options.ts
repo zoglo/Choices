@@ -1,4 +1,5 @@
 import Fuse from 'fuse.js';
+// eslint-disable-next-line import/no-cycle
 import { Choices } from './choices';
 import { Choice } from './choice';
 import { ClassNames } from './class-names';

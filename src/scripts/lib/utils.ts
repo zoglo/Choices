@@ -118,6 +118,7 @@ interface RecordToCompare {
   value: string;
   label?: string;
 }
+
 export const sortByAlpha = (
   { value, label = value }: RecordToCompare,
   { value: value2, label: label2 = value2 }: RecordToCompare,
@@ -179,6 +180,43 @@ export const diff = (
   const bKeys = Object.keys(b).sort();
 
   return aKeys.filter((i) => bKeys.indexOf(i) < 0);
+};
+
+export const extend = (...args: (boolean | object)[]) => {
+  // Variables
+  let deep = false;
+  let target = args[0] || {};
+  let i = 1;
+
+  if (typeof target === 'boolean') {
+    deep = target;
+    target = args[i] || {};
+    i++;
+  }
+
+  for (; i < args.length; i++) {
+    const source = args[i];
+
+    Object.keys(source).forEach((key) => {
+      const srcValue = target[key];
+      const copyValue = source[key];
+
+      if (deep && copyValue && typeof copyValue === 'object') {
+        if (Array.isArray(copyValue)) {
+          target[key] = srcValue && Array.isArray(srcValue) ? srcValue : [];
+        } else {
+          target[key] =
+            srcValue && typeof srcValue === 'object' ? srcValue : {};
+        }
+
+        target[key] = extend(deep, target[key], copyValue);
+      } else if (copyValue !== undefined) {
+        target[key] = copyValue;
+      }
+    });
+  }
+
+  return target;
 };
 
 export const getClassNames = (
