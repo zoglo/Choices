@@ -16,8 +16,8 @@ export default class WrappedSelect extends WrappedElement {
     get options(): Item[] | HTMLOptionElement[];
     set options(options: Item[] | HTMLOptionElement[]);
     optionsAsChoices(): Partial<Choice>[];
+    appendDocFragment(fragment: DocumentFragment): void;
     _optionToChoice(option: HTMLOptionElement): Choice;
     _optgroupToChoice(optgroup: HTMLOptGroupElement): Partial<Choice>;
-    appendDocFragment(fragment: DocumentFragment): void;
 }
 //# sourceMappingURL=wrapped-select.d.ts.map
