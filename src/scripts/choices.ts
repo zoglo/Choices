@@ -943,10 +943,6 @@ class Choices implements Choices {
     } = this.config;
     const filter = this._isSearching ? sortByScore : this.config.sorter;
     const appendChoice = (choice: Choice): void => {
-      let groupName;
-      this._store.groups.forEach((group) =>
-        group.id === choice.groupId ? (groupName = group.value) : false,
-      );
       const shouldRender =
         renderSelectedChoices === 'auto'
           ? this._isSelectOneElement || !choice.selected
@@ -958,8 +954,20 @@ class Choices implements Choices {
           choice,
           this.config.itemSelectText,
         );
-        if (appendGroupInSearch && groupName && this._isSearching) {
-          dropdownItem.innerHTML += ` (${groupName})`;
+        if (appendGroupInSearch) {
+          let groupName: string = '';
+          this._store.groups.every((group) => {
+            if (group.id === choice.groupId) {
+              groupName = group.value;
+
+              return false;
+            }
+
+            return true;
+          });
+          if (groupName && this._isSearching) {
+            dropdownItem.innerHTML += ` (${groupName})`;
+          }
         }
         fragment.appendChild(dropdownItem);
       }
