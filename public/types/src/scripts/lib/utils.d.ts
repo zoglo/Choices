@@ -19,6 +19,7 @@ export declare const sortByScore: (a: Pick<Choice, "score">, b: Pick<Choice, "sc
 export declare const dispatchEvent: (element: HTMLElement, type: EventType, customArgs?: object | null) => boolean;
 export declare const existsInArray: (array: any[], value: string, key?: string) => boolean;
 export declare const cloneObject: (obj: object) => object;
+export declare const isEmptyObject: (obj: object | undefined) => boolean;
 /**
  * Returns an array of keys present on the first but missing on the second object
  */

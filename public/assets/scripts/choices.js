@@ -221,7 +221,6 @@ var __importDefault = this && this.__importDefault || function (mod) {
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-var deepmerge_1 = __importDefault(__webpack_require__(744));
 /* eslint-disable @typescript-eslint/no-explicit-any */
 var fuse_js_1 = __importDefault(__webpack_require__(120));
 var choices_1 = __webpack_require__(808);
@@ -255,14 +254,7 @@ var Choices = /** @class */function () {
     if (userConfig.allowHTML === undefined) {
       console.warn('Deprecation warning: allowHTML will default to false in a future release. To render HTML in Choices, you will need to set it to true. Setting allowHTML will suppress this message.');
     }
-    this.config = deepmerge_1.default.all([defaults_1.DEFAULT_CONFIG, Choices.defaults.options, userConfig],
-    // When merging array configs, replace with a copy of the userConfig array,
-    // instead of concatenating with the default array
-    {
-      arrayMerge: function (_, sourceArray) {
-        return __spreadArray([], sourceArray, true);
-      }
-    });
+    this.config = (0, utils_1.extend)(true, defaults_1.DEFAULT_CONFIG, Choices.defaults.options, userConfig);
     var invalidConfigOptions = (0, utils_1.diff)(this.config, defaults_1.DEFAULT_CONFIG);
     if (invalidConfigOptions.length) {
       console.warn('Unknown config option(s) passed', invalidConfigOptions.join(', '));
@@ -888,7 +880,7 @@ var Choices = /** @class */function () {
     // Add Choices without group first, regardless of sort, otherwise they won't be distinguishable
     // from the last group
     var choicesWithoutGroup = choices.filter(function (c) {
-      return c.groupId == -1;
+      return c.groupId === -1;
     });
     if (choicesWithoutGroup.length > 0) {
       this._createChoicesFragment(choicesWithoutGroup, fragment, false);
@@ -919,15 +911,21 @@ var Choices = /** @class */function () {
       appendGroupInSearch = _a.appendGroupInSearch;
     var filter = this._isSearching ? utils_1.sortByScore : this.config.sorter;
     var appendChoice = function (choice) {
-      var groupName;
-      _this._store.groups.forEach(function (group) {
-        return group.id === choice.groupId ? groupName = group.value : false;
-      });
       var shouldRender = renderSelectedChoices === 'auto' ? _this._isSelectOneElement || !choice.selected : true;
       if (shouldRender) {
         var dropdownItem = _this._getTemplate('choice', choice, _this.config.itemSelectText);
-        if (appendGroupInSearch && groupName && _this._isSearching) {
-          dropdownItem.innerHTML += " (".concat(groupName, ")");
+        if (appendGroupInSearch) {
+          var groupName_1 = '';
+          _this._store.groups.every(function (group) {
+            if (group.id === choice.groupId) {
+              groupName_1 = group.value;
+              return false;
+            }
+            return true;
+          });
+          if (groupName_1 && _this._isSearching) {
+            dropdownItem.innerHTML += " (".concat(groupName_1, ")");
+          }
         }
         fragment.appendChild(dropdownItem);
       }
@@ -1340,7 +1338,7 @@ var Choices = /** @class */function () {
          > ...The Unicode Standard sets aside 66 noncharacter code points. The last two code points
     > of each plane are noncharacters: U+FFFE and U+FFFF on the BMP...
     */
-    var wasPrintableChar = event.key.length === 1 || event.key.length === 2 && event.key.charCodeAt(0) >= 0xD800 || event.key === 'Unidentified';
+    var wasPrintableChar = event.key.length === 1 || event.key.length === 2 && event.key.charCodeAt(0) >= 0xd800 || event.key === 'Unidentified';
     var BACK_KEY = constants_1.KEY_CODES.BACK_KEY,
       DELETE_KEY = constants_1.KEY_CODES.DELETE_KEY,
       ENTER_KEY = constants_1.KEY_CODES.ENTER_KEY,
@@ -1924,7 +1922,7 @@ var Choices = /** @class */function () {
     if (callbackOnCreateTemplates && typeof callbackOnCreateTemplates === 'function') {
       userTemplates = callbackOnCreateTemplates.call(this, utils_1.strToEl);
     }
-    this._templates = (0, deepmerge_1.default)(templates_1.default, userTemplates);
+    this._templates = (0, utils_1.extend)(true, templates_1.default, userTemplates);
   };
   Choices.prototype._createElements = function () {
     this.containerOuter = new components_1.Container({
@@ -3349,7 +3347,7 @@ exports.isHTMLOptgroup = isHTMLOptgroup;
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.parseCustomProperties = exports.getClassNamesSelector = exports.getClassNames = exports.diff = exports.cloneObject = exports.existsInArray = exports.dispatchEvent = exports.sortByScore = exports.sortByAlpha = exports.strToEl = exports.sanitise = exports.isScrolledIntoView = exports.getAdjacentEl = exports.wrap = exports.isType = exports.getType = exports.generateId = exports.generateChars = exports.getRandomNumber = void 0;
+exports.parseCustomProperties = exports.getClassNamesSelector = exports.getClassNames = exports.extend = exports.diff = exports.isEmptyObject = exports.cloneObject = exports.existsInArray = exports.dispatchEvent = exports.sortByScore = exports.sortByAlpha = exports.strToEl = exports.sanitise = exports.isScrolledIntoView = exports.getAdjacentEl = exports.wrap = exports.isType = exports.getType = exports.generateId = exports.generateChars = exports.getRandomNumber = void 0;
 var getRandomNumber = function (min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 };
@@ -3493,6 +3491,19 @@ var cloneObject = function (obj) {
   return JSON.parse(JSON.stringify(obj));
 };
 exports.cloneObject = cloneObject;
+var isEmptyObject = function (obj) {
+  if (typeof obj !== 'object') {
+    return true;
+  }
+  // eslint-disable-next-line no-restricted-syntax
+  for (var prop in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+      return false;
+    }
+  }
+  return true;
+};
+exports.isEmptyObject = isEmptyObject;
 /**
  * Returns an array of keys present on the first but missing on the second object
  */
@@ -3504,6 +3515,43 @@ var diff = function (a, b) {
   });
 };
 exports.diff = diff;
+var extend = function () {
+  var args = [];
+  for (var _i = 0; _i < arguments.length; _i++) {
+    args[_i] = arguments[_i];
+  }
+  // Variables
+  var deep = false;
+  var target = args[0] || {};
+  var i = 1;
+  if (typeof target === 'boolean') {
+    deep = target;
+    target = args[i] || {};
+    i++;
+  }
+  var _loop_1 = function () {
+    var source = args[i];
+    Object.keys(source).forEach(function (key) {
+      var srcValue = target[key];
+      var copyValue = source[key];
+      if (deep && copyValue && typeof copyValue === 'object') {
+        if (Array.isArray(copyValue)) {
+          target[key] = srcValue && Array.isArray(srcValue) ? srcValue : [];
+        } else {
+          target[key] = srcValue && typeof srcValue === 'object' ? srcValue : {};
+        }
+        target[key] = (0, exports.extend)(deep, target[key], copyValue);
+      } else if (copyValue !== undefined) {
+        target[key] = copyValue;
+      }
+    });
+  };
+  for (; i < args.length; i++) {
+    _loop_1();
+  }
+  return target;
+};
+exports.extend = extend;
 var getClassNames = function (ClassNames) {
   return Array.isArray(ClassNames) ? ClassNames : [ClassNames];
 };
@@ -4197,13 +4245,8 @@ var templates = {
     if (typeof labelDescription !== 'undefined' && labelDescription) {
       div.dataset.labelDescription = labelDescription;
     }
-    if (typeof customProperties !== 'undefined' && customProperties) {
-      for (var prop in customProperties) {
-        if (Object.prototype.hasOwnProperty.call(customProperties, prop)) {
-          div.dataset.customProperties = JSON.stringify(customProperties);
-          break;
-        }
-      }
+    if (!(0, utils_1.isEmptyObject)(customProperties)) {
+      div.dataset.customProperties = JSON.stringify(customProperties);
     }
     if (active) {
       div.setAttribute('aria-selected', 'true');
@@ -4407,159 +4450,14 @@ var templates = {
     if (typeof labelDescription !== 'undefined' && labelDescription) {
       opt.dataset.labelDescription = labelDescription;
     }
-    if (customProperties) {
-      for (var prop in customProperties) {
-        if (Object.prototype.hasOwnProperty.call(customProperties, prop)) {
-          opt.dataset.customProperties = JSON.stringify(customProperties);
-          break;
-        }
-      }
+    if (!(0, utils_1.isEmptyObject)(customProperties)) {
+      opt.dataset.customProperties = JSON.stringify(customProperties);
     }
     opt.disabled = !!disabled;
     return opt;
   }
 };
 exports["default"] = templates;
-
-/***/ }),
-
-/***/ 744:
-/***/ ((module) => {
-
-
-
-var isMergeableObject = function isMergeableObject(value) {
-	return isNonNullObject(value)
-		&& !isSpecial(value)
-};
-
-function isNonNullObject(value) {
-	return !!value && typeof value === 'object'
-}
-
-function isSpecial(value) {
-	var stringValue = Object.prototype.toString.call(value);
-
-	return stringValue === '[object RegExp]'
-		|| stringValue === '[object Date]'
-		|| isReactElement(value)
-}
-
-// see https://github.com/facebook/react/blob/b5ac963fb791d1298e7f396236383bc955f916c1/src/isomorphic/classic/element/ReactElement.js#L21-L25
-var canUseSymbol = typeof Symbol === 'function' && Symbol.for;
-var REACT_ELEMENT_TYPE = canUseSymbol ? Symbol.for('react.element') : 0xeac7;
-
-function isReactElement(value) {
-	return value.$$typeof === REACT_ELEMENT_TYPE
-}
-
-function emptyTarget(val) {
-	return Array.isArray(val) ? [] : {}
-}
-
-function cloneUnlessOtherwiseSpecified(value, options) {
-	return (options.clone !== false && options.isMergeableObject(value))
-		? deepmerge(emptyTarget(value), value, options)
-		: value
-}
-
-function defaultArrayMerge(target, source, options) {
-	return target.concat(source).map(function(element) {
-		return cloneUnlessOtherwiseSpecified(element, options)
-	})
-}
-
-function getMergeFunction(key, options) {
-	if (!options.customMerge) {
-		return deepmerge
-	}
-	var customMerge = options.customMerge(key);
-	return typeof customMerge === 'function' ? customMerge : deepmerge
-}
-
-function getEnumerableOwnPropertySymbols(target) {
-	return Object.getOwnPropertySymbols
-		? Object.getOwnPropertySymbols(target).filter(function(symbol) {
-			return Object.propertyIsEnumerable.call(target, symbol)
-		})
-		: []
-}
-
-function getKeys(target) {
-	return Object.keys(target).concat(getEnumerableOwnPropertySymbols(target))
-}
-
-function propertyIsOnObject(object, property) {
-	try {
-		return property in object
-	} catch(_) {
-		return false
-	}
-}
-
-// Protects from prototype poisoning and unexpected merging up the prototype chain.
-function propertyIsUnsafe(target, key) {
-	return propertyIsOnObject(target, key) // Properties are safe to merge if they don't exist in the target yet,
-		&& !(Object.hasOwnProperty.call(target, key) // unsafe if they exist up the prototype chain,
-			&& Object.propertyIsEnumerable.call(target, key)) // and also unsafe if they're nonenumerable.
-}
-
-function mergeObject(target, source, options) {
-	var destination = {};
-	if (options.isMergeableObject(target)) {
-		getKeys(target).forEach(function(key) {
-			destination[key] = cloneUnlessOtherwiseSpecified(target[key], options);
-		});
-	}
-	getKeys(source).forEach(function(key) {
-		if (propertyIsUnsafe(target, key)) {
-			return
-		}
-
-		if (propertyIsOnObject(target, key) && options.isMergeableObject(source[key])) {
-			destination[key] = getMergeFunction(key, options)(target[key], source[key], options);
-		} else {
-			destination[key] = cloneUnlessOtherwiseSpecified(source[key], options);
-		}
-	});
-	return destination
-}
-
-function deepmerge(target, source, options) {
-	options = options || {};
-	options.arrayMerge = options.arrayMerge || defaultArrayMerge;
-	options.isMergeableObject = options.isMergeableObject || isMergeableObject;
-	// cloneUnlessOtherwiseSpecified is added to `options` so that custom arrayMerge()
-	// implementations can use it. The caller may not replace it.
-	options.cloneUnlessOtherwiseSpecified = cloneUnlessOtherwiseSpecified;
-
-	var sourceIsArray = Array.isArray(source);
-	var targetIsArray = Array.isArray(target);
-	var sourceAndTargetTypesMatch = sourceIsArray === targetIsArray;
-
-	if (!sourceAndTargetTypesMatch) {
-		return cloneUnlessOtherwiseSpecified(source, options)
-	} else if (sourceIsArray) {
-		return options.arrayMerge(target, source, options)
-	} else {
-		return mergeObject(target, source, options)
-	}
-}
-
-deepmerge.all = function deepmergeAll(array, options) {
-	if (!Array.isArray(array)) {
-		throw new Error('first argument should be an array')
-	}
-
-	return array.reduce(function(prev, next) {
-		return deepmerge(prev, next, options)
-	}, {})
-};
-
-var deepmerge_1 = deepmerge;
-
-module.exports = deepmerge_1;
-
 
 /***/ }),
 
