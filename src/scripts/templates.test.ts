@@ -436,8 +436,8 @@ describe('templates', () => {
             class="${getClassNames(choiceOptions.classNames.item).join(
               ' ',
             )} ${getClassNames(choiceOptions.classNames.itemChoice).join(
-          ' ',
-        )} ${getClassNames(choiceOptions.classNames.itemSelectable).join(' ')}"
+              ' ',
+            )} ${getClassNames(choiceOptions.classNames.itemSelectable).join(' ')}"
             data-select-text="${itemSelectText}"
             data-choice
             data-id="${data.id}"
@@ -473,8 +473,8 @@ describe('templates', () => {
             class="${getClassNames(choiceOptions.classNames.item).join(
               ' ',
             )} ${getClassNames(choiceOptions.classNames.itemChoice).join(
-          ' ',
-        )} ${getClassNames(choiceOptions.classNames.itemDisabled).join(' ')}"
+              ' ',
+            )} ${getClassNames(choiceOptions.classNames.itemDisabled).join(' ')}"
             data-select-text="${itemSelectText}"
             data-choice
             data-id="${data.id}"
@@ -511,10 +511,10 @@ describe('templates', () => {
             class="${getClassNames(choiceOptions.classNames.item).join(
               ' ',
             )} ${getClassNames(choiceOptions.classNames.itemChoice).join(
-          ' ',
-        )} ${choiceOptions.classNames.selectedState} ${getClassNames(
-          choiceOptions.classNames.itemSelectable,
-        ).join(' ')}"
+              ' ',
+            )} ${choiceOptions.classNames.selectedState} ${getClassNames(
+              choiceOptions.classNames.itemSelectable,
+            ).join(' ')}"
             data-select-text="${itemSelectText}"
             data-choice
             data-id="${data.id}"
@@ -550,10 +550,10 @@ describe('templates', () => {
             class="${getClassNames(choiceOptions.classNames.item).join(
               ' ',
             )} ${getClassNames(choiceOptions.classNames.itemChoice).join(
-          ' ',
-        )} ${choiceOptions.classNames.placeholder} ${getClassNames(
-          choiceOptions.classNames.itemSelectable,
-        ).join(' ')}"
+              ' ',
+            )} ${choiceOptions.classNames.placeholder} ${getClassNames(
+              choiceOptions.classNames.itemSelectable,
+            ).join(' ')}"
             data-select-text="${itemSelectText}"
             data-choice
             data-id="${data.id}"
@@ -589,8 +589,8 @@ describe('templates', () => {
             class="${getClassNames(choiceOptions.classNames.item).join(
               ' ',
             )} ${getClassNames(choiceOptions.classNames.itemChoice).join(
-          ' ',
-        )} ${getClassNames(choiceOptions.classNames.itemSelectable).join(' ')}"
+              ' ',
+            )} ${getClassNames(choiceOptions.classNames.itemSelectable).join(' ')}"
             data-select-text="${itemSelectText}"
             data-choice
             data-id="${data.id}"
@@ -694,8 +694,8 @@ describe('templates', () => {
             <div class="${getClassNames(noticeOptions.classNames.item).join(
               ' ',
             )} ${getClassNames(noticeOptions.classNames.itemChoice).join(
-            ' ',
-          )} ${getClassNames(noticeOptions.classNames.noResults).join(' ')}">
+              ' ',
+            )} ${getClassNames(noticeOptions.classNames.noResults).join(' ')}">
               ${label}
             </div>
           `);
@@ -715,8 +715,8 @@ describe('templates', () => {
             <div class="${getClassNames(noticeOptions.classNames.item).join(
               ' ',
             )} ${getClassNames(noticeOptions.classNames.itemChoice).join(
-            ' ',
-          )} ${getClassNames(noticeOptions.classNames.noChoices).join(' ')}">
+              ' ',
+            )} ${getClassNames(noticeOptions.classNames.noChoices).join(' ')}">
               ${label}
             </div>
           `);

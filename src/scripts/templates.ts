@@ -9,8 +9,11 @@ import { Item } from './interfaces/item';
 import { PassedElementType } from './interfaces/passed-element-type';
 import { isEmptyObject, getClassNames } from './lib/utils';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type TemplateOptions = Record<'classNames' | 'allowHTML' | 'removeItemButtonAlignLeft', any>;
+type TemplateOptions = Record<
+  'classNames' | 'allowHTML' | 'removeItemButtonAlignLeft',
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  any
+>;
 
 const templates = {
   containerOuter(
@@ -163,11 +166,11 @@ const templates = {
       }
       div.dataset.deletable = '';
 
-      let REMOVE_ITEM_ICON =
+      const REMOVE_ITEM_ICON =
         typeof this.config.removeItemIconText === 'function'
           ? this.config.removeItemIconText(value)
           : this.config.removeItemIconText;
-      let REMOVE_ITEM_LABEL =
+      const REMOVE_ITEM_LABEL =
         typeof this.config.removeItemLabelText === 'function'
           ? this.config.removeItemLabelText(value)
           : this.config.removeItemLabelText;
@@ -176,10 +179,7 @@ const templates = {
         className: getClassNames(button).join(' '),
         [allowHTML ? 'innerHTML' : 'innerText']: REMOVE_ITEM_ICON,
       });
-      removeButton.setAttribute(
-        'aria-label',
-        REMOVE_ITEM_LABEL,
-      );
+      removeButton.setAttribute('aria-label', REMOVE_ITEM_LABEL);
       removeButton.dataset.button = '';
       if (removeItemButtonAlignLeft) {
         div.insertAdjacentElement('afterbegin', removeButton);
@@ -410,13 +410,8 @@ const templates = {
       opt.dataset.labelDescription = labelDescription;
     }
 
-    if (customProperties) {
-      for (var prop in customProperties) {
-        if (Object.prototype.hasOwnProperty.call(customProperties, prop)) {
-          opt.dataset.customProperties = JSON.stringify(customProperties);
-          break;
-        }
-      }
+    if (!isEmptyObject(customProperties)) {
+      opt.dataset.customProperties = JSON.stringify(customProperties);
     }
 
     opt.disabled = !!disabled;

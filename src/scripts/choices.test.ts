@@ -2266,7 +2266,7 @@ describe('choices', () => {
           it(`calls _onDeleteKey with the expected arguments`, () => {
             const event = {
               keyCode,
-              key
+              key,
             };
 
             instance._onKeyDown(event);

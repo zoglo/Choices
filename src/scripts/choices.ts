@@ -161,7 +161,12 @@ class Choices implements Choices {
       );
     }
 
-    this.config = extend(true, DEFAULT_CONFIG, Choices.defaults.options, userConfig) as Options;
+    this.config = extend(
+      true,
+      DEFAULT_CONFIG,
+      Choices.defaults.options,
+      userConfig,
+    ) as Options;
 
     const invalidConfigOptions = diff(this.config, DEFAULT_CONFIG);
     if (invalidConfigOptions.length) {
@@ -912,7 +917,7 @@ class Choices implements Choices {
 
     // Add Choices without group first, regardless of sort, otherwise they won't be distinguishable
     // from the last group
-    const choicesWithoutGroup = choices.filter((c) => c.groupId == -1);
+    const choicesWithoutGroup = choices.filter((c) => c.groupId === -1);
     if (choicesWithoutGroup.length > 0) {
       this._createChoicesFragment(choicesWithoutGroup, fragment, false);
     }
@@ -1328,11 +1333,11 @@ class Choices implements Choices {
         // If there is a max entry limit and we have reached that limit
         // don't update
         if (!this.config.pseudoMultiSelectForSingle) {
-        canAddItem = false;
-        notice =
-          typeof this.config.maxItemText === 'function'
-            ? this.config.maxItemText(this.config.maxItemCount)
-            : this.config.maxItemText;
+          canAddItem = false;
+          notice =
+            typeof this.config.maxItemText === 'function'
+              ? this.config.maxItemText(this.config.maxItemCount)
+              : this.config.maxItemText;
         }
       }
 
@@ -1521,11 +1526,10 @@ class Choices implements Choices {
     > ...The Unicode Standard sets aside 66 noncharacter code points. The last two code points
     > of each plane are noncharacters: U+FFFE and U+FFFF on the BMP...
     */
-    const wasPrintableChar = (
-      event.key.length === 1
-      || (event.key.length === 2 && event.key.charCodeAt(0) >= 0xD800)
-      || event.key === 'Unidentified'
-    );
+    const wasPrintableChar =
+      event.key.length === 1 ||
+      (event.key.length === 2 && event.key.charCodeAt(0) >= 0xd800) ||
+      event.key === 'Unidentified';
 
     const {
       BACK_KEY,
@@ -2261,7 +2265,11 @@ class Choices implements Choices {
       userTemplates = callbackOnCreateTemplates.call(this, strToEl);
     }
 
-    this._templates = extend(true, templates, userTemplates) as typeof templates;
+    this._templates = extend(
+      true,
+      templates,
+      userTemplates,
+    ) as typeof templates;
   }
 
   _createElements(): void {

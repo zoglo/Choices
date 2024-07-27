@@ -174,6 +174,7 @@ export const isEmptyObject = (obj: object | undefined): boolean => {
     return true;
   }
 
+  // eslint-disable-next-line no-restricted-syntax
   for (const prop in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, prop)) {
       return false;
