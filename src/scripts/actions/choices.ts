@@ -67,9 +67,9 @@ export const addChoice = ({
   keyCode,
 });
 
-export const removeChoice = (value ): RemoveChoiceAction => ({
+export const removeChoice = (value): RemoveChoiceAction => ({
   type: ACTION_TYPES.REMOVE_CHOICE,
-  value
+  value,
 });
 
 export const filterChoices = (

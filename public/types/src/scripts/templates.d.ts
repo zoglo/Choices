@@ -8,7 +8,7 @@ import { Item } from './interfaces/item';
 import { PassedElementType } from './interfaces/passed-element-type';
 type TemplateOptions = Record<'classNames' | 'allowHTML' | 'removeItemButtonAlignLeft', any>;
 declare const templates: {
-    containerOuter({ classNames: { containerOuter } }: TemplateOptions, dir: HTMLElement['dir'], isSelectElement: boolean, isSelectOneElement: boolean, searchEnabled: boolean, passedElementType: PassedElementType, labelId: string): HTMLDivElement;
+    containerOuter({ classNames: { containerOuter } }: TemplateOptions, dir: HTMLElement["dir"], isSelectElement: boolean, isSelectOneElement: boolean, searchEnabled: boolean, passedElementType: PassedElementType, labelId: string): HTMLDivElement;
     containerInner({ classNames: { containerInner }, }: TemplateOptions): HTMLDivElement;
     itemList({ classNames: { list, listSingle, listItems } }: TemplateOptions, isSelectOneElement: boolean): HTMLDivElement;
     placeholder({ allowHTML, classNames: { placeholder } }: TemplateOptions, value: string): HTMLDivElement;
@@ -18,7 +18,7 @@ declare const templates: {
     choice({ allowHTML, classNames: { item, itemChoice, itemSelectable, selectedState, itemDisabled, description, placeholder, }, }: TemplateOptions, { id, value, label, groupId, elementId, labelClass, labelDescription, disabled: isDisabled, selected: isSelected, placeholder: isPlaceholder, }: Choice, selectText: string): HTMLDivElement;
     input({ classNames: { input, inputCloned } }: TemplateOptions, placeholderValue: string): HTMLInputElement;
     dropdown({ classNames: { list, listDropdown }, }: TemplateOptions): HTMLDivElement;
-    notice({ allowHTML, classNames: { item, itemChoice, noResults, noChoices }, }: TemplateOptions, innerText: string, type?: 'no-choices' | 'no-results' | ''): HTMLDivElement;
+    notice({ allowHTML, classNames: { item, itemChoice, noResults, noChoices }, }: TemplateOptions, innerText: string, type?: "no-choices" | "no-results" | ""): HTMLDivElement;
     option({ label, value, labelClass, labelDescription, customProperties, active, disabled, }: Item): HTMLOptionElement;
 };
 export default templates;

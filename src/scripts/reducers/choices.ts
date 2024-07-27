@@ -51,12 +51,14 @@ export default function choices(
       return [...state, choice as Choice];
     }
 
-    case "REMOVE_CHOICE": {
-      const removeChoiceAction = action as RemoveChoiceAction,
-        choiceValue = removeChoiceAction.value,
-        choiceIndex = state.findIndex(choice => choice.value === choiceValue);
+    case 'REMOVE_CHOICE': {
+      const removeChoiceAction = action as RemoveChoiceAction;
+      const choiceValue = removeChoiceAction.value;
+      const choiceIndex = state.findIndex(
+        (choice) => choice.value === choiceValue,
+      );
       if (choiceIndex !== -1) {
-        state = state.splice(choiceIndex, 1);
+        return state.splice(choiceIndex, 1);
       }
 
       return state;

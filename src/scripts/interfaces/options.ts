@@ -111,7 +111,7 @@ export interface Options {
    *
    * @default false
    */
-  pseudoMultiSelectForSingle: boolean
+  pseudoMultiSelectForSingle: boolean;
 
   /**
    * Whether a user can add choices dynamically.

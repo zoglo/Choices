@@ -28,8 +28,8 @@ export declare const addItem: ({ value, label, id, choiceId, groupId, labelClass
     label: string;
     choiceId: number;
     groupId: number;
-    labelClass?: string | string[] | null | undefined;
-    labelDescription?: string | null | undefined;
+    labelClass?: string | Array<string> | null;
+    labelDescription?: string | null;
     customProperties: object;
     placeholder: boolean;
     keyCode: number;
