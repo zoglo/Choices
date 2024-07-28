@@ -343,7 +343,6 @@ const templates = {
   ): HTMLInputElement {
     const inp = Object.assign(document.createElement('input'), {
       type: 'search',
-      name: 'search_terms',
       className: `${getClassNames(input).join(' ')} ${getClassNames(
         inputCloned,
       ).join(' ')}`,

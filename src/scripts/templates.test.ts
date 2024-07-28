@@ -628,7 +628,6 @@ describe('templates', () => {
       const expectedOutput = strToEl(`
         <input
           type="search"
-          name="search_terms"
           class="${getClassNames(inputOptions.classNames.input).join(
             ' ',
           )} ${getClassNames(inputOptions.classNames.inputCloned).join(' ')}"

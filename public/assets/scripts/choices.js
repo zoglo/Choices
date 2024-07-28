@@ -4394,7 +4394,6 @@ var templates = {
       inputCloned = _b.inputCloned;
     var inp = Object.assign(document.createElement('input'), {
       type: 'search',
-      name: 'search_terms',
       className: "".concat((0, utils_1.getClassNames)(input).join(' '), " ").concat((0, utils_1.getClassNames)(inputCloned).join(' ')),
       autocomplete: 'off',
       autocapitalize: 'off',
