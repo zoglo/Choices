@@ -5,6 +5,7 @@ import { Choice } from './choice';
 import { ClassNames } from './class-names';
 import { PositionOptionsType } from './position-options-type';
 import { Types } from './types';
+import Templates from '../templates';
 
 /**
  * Choices options interface
@@ -531,7 +532,7 @@ export interface Options {
    * @example
    * ```
    * const example = new Choices(element, {
-   *   callbackOnCreateTemplates: function (template) {
+   *   callbackOnCreateTemplates: function (template, originalTemplates) {
    *     var classNames = this.config.classNames;
    *     return {
    *       item: (data) => {
@@ -555,7 +556,7 @@ export interface Options {
    *
    * @default null
    */
-  callbackOnCreateTemplates: ((template: Types.StrToEl) => void) | null;
+  callbackOnCreateTemplates: ((template: Types.StrToEl, defaultTemplates: typeof Templates) => void) | null;
 
   appendGroupInSearch: false;
 }

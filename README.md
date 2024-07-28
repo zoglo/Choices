@@ -679,7 +679,7 @@ classNames: {
 
 ### callbackOnCreateTemplates
 
-**Type:** `Function` **Default:** `null` **Arguments:** `template`
+**Type:** `Function` **Default:** `null` **Arguments:** `template`, `defaultTemplates`
 
 **Input types affected:** `text`, `select-one`, `select-multiple`
 

@@ -2268,18 +2268,19 @@ class Choices implements Choices {
 
   _createTemplates(): void {
     const { callbackOnCreateTemplates } = this.config;
+    const defaultTemplates = templates;
     let userTemplates = {};
 
     if (
       callbackOnCreateTemplates &&
       typeof callbackOnCreateTemplates === 'function'
     ) {
-      userTemplates = callbackOnCreateTemplates.call(this, strToEl);
+      userTemplates = callbackOnCreateTemplates.call(this, strToEl, defaultTemplates);
     }
 
     this._templates = extend(
       true,
-      templates,
+      defaultTemplates,
       userTemplates,
     ) as typeof templates;
   }

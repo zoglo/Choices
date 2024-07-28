@@ -1927,11 +1927,12 @@ var Choices = /** @class */function () {
   };
   Choices.prototype._createTemplates = function () {
     var callbackOnCreateTemplates = this.config.callbackOnCreateTemplates;
+    var defaultTemplates = templates_1.default;
     var userTemplates = {};
     if (callbackOnCreateTemplates && typeof callbackOnCreateTemplates === 'function') {
-      userTemplates = callbackOnCreateTemplates.call(this, utils_1.strToEl);
+      userTemplates = callbackOnCreateTemplates.call(this, utils_1.strToEl, defaultTemplates);
     }
-    this._templates = (0, utils_1.extend)(true, templates_1.default, userTemplates);
+    this._templates = (0, utils_1.extend)(true, defaultTemplates, userTemplates);
   };
   Choices.prototype._createElements = function () {
     this.containerOuter = new components_1.Container({
