@@ -11,7 +11,7 @@ import {
 } from './actions/choices';
 import { addGroup } from './actions/groups';
 import { addItem, highlightItem, removeItem } from './actions/items';
-import { clearAll, resetTo, setIsLoading } from './actions/misc';
+import { clearAll, resetTo } from './actions/misc';
 import {
   Container,
   Dropdown,
@@ -727,37 +727,35 @@ class Choices implements Choices {
 
     this.containerOuter.removeLoadingState();
 
-    this._startLoading();
+    this._store.withDeferRendering(() => {
+      type ChoiceGroup = {
+        id: string;
+        choices: Choice[];
+      };
 
-    type ChoiceGroup = {
-      id: string;
-      choices: Choice[];
-    };
-
-    choicesArrayOrFetcher.forEach((groupOrChoice: ChoiceGroup | Choice) => {
-      if ((groupOrChoice as ChoiceGroup).choices) {
-        this._addGroup({
-          id: groupOrChoice.id ? parseInt(`${groupOrChoice.id}`, 10) : null,
-          group: groupOrChoice,
-          valueKey: value,
-          labelKey: label,
-        });
-      } else {
-        const choice = groupOrChoice as Choice;
-        this._addChoice({
-          value: choice[value],
-          label: choice[label],
-          isSelected: !!choice.selected,
-          isDisabled: !!choice.disabled,
-          placeholder: !!choice.placeholder,
-          labelClass: choice.labelClass,
-          labelDescription: choice.labelDescription,
-          customProperties: choice.customProperties,
-        });
-      }
+      choicesArrayOrFetcher.forEach((groupOrChoice: ChoiceGroup | Choice) => {
+        if ((groupOrChoice as ChoiceGroup).choices) {
+          this._addGroup({
+            id: groupOrChoice.id ? parseInt(`${groupOrChoice.id}`, 10) : null,
+            group: groupOrChoice,
+            valueKey: value,
+            labelKey: label,
+          });
+        } else {
+          const choice = groupOrChoice as Choice;
+          this._addChoice({
+            value: choice[value],
+            label: choice[label],
+            isSelected: !!choice.selected,
+            isDisabled: !!choice.disabled,
+            placeholder: !!choice.placeholder,
+            labelClass: choice.labelClass,
+            labelDescription: choice.labelDescription,
+            customProperties: choice.customProperties,
+          });
+        }
+      });
     });
-
-    this._stopLoading();
 
     return this;
   }
@@ -1196,8 +1194,7 @@ class Choices implements Choices {
     });
 
     let triggerChange = false;
-    this._startLoading();
-    try {
+    this._store.withDeferRendering(() => {
       if (!choice.selected && !choice.disabled) {
         const canAddItem = this._canAddItem(activeItems, choice.value);
 
@@ -1225,9 +1222,7 @@ class Choices implements Choices {
       }
 
       this.clearInput();
-    } finally {
-      this._stopLoading();
-    }
+    });
     if (triggerChange) {
       this._triggerChange(choice.value);
     }
@@ -1267,11 +1262,11 @@ class Choices implements Choices {
   }
 
   _startLoading(): void {
-    this._store.dispatch(setIsLoading(true));
+    this._store.startDeferRendering();
   }
 
   _stopLoading(): void {
-    this._store.dispatch(setIsLoading(false));
+    this._store.stopDeferRendering();
   }
 
   _handleLoadingState(setLoading = true): void {
@@ -2396,18 +2391,15 @@ class Choices implements Choices {
       );
     }
 
-    if (this._isSelectElement) {
-      this._highlightPosition = 0;
-      this._isSearching = false;
-      this._startLoading();
-      this._addPredefinedChoices(this._presetChoices);
-
-      this._stopLoading();
-    }
-
-    if (this._isTextElement) {
-      this._addPredefinedItems(this._presetItems);
-    }
+    this._highlightPosition = 0;
+    this._isSearching = false;
+    this._store.withDeferRendering(() => {
+      if (this._isSelectElement) {
+        this._addPredefinedChoices(this._presetChoices);
+      } else if (this._isTextElement) {
+        this._addPredefinedItems(this._presetItems);
+      }
+    });
   }
 
   _addPredefinedGroups(

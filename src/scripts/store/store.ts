@@ -5,6 +5,7 @@ import { Group } from '../interfaces/group';
 import { Item } from '../interfaces/item';
 import { State } from '../interfaces/state';
 import rootReducer from '../reducers/index';
+import { setIsLoading } from '../actions/misc';
 
 export default class Store {
   _store: IStore;
@@ -29,6 +30,23 @@ export default class Store {
    */
   dispatch(action: AnyAction): void {
     this._store.dispatch(action);
+  }
+
+  startDeferRendering(): void {
+    this._store.dispatch(setIsLoading(true));
+  }
+
+  stopDeferRendering(): void {
+    this._store.dispatch(setIsLoading(false));
+  }
+
+  withDeferRendering(func: () => void): void {
+    this.startDeferRendering();
+    try {
+      func();
+    } finally {
+      this.stopDeferRendering();
+    }
   }
 
   /**
