@@ -1171,33 +1171,45 @@ class Choices implements Choices {
       choice,
     });
 
-    if (!choice.selected && !choice.disabled) {
-      const canAddItem = this._canAddItem(activeItems, choice.value);
+    let triggerChange = false;
+    this._startLoading();
+    try
+    {
+      if (!choice.selected && !choice.disabled) {
+        const canAddItem = this._canAddItem(activeItems, choice.value);
 
-      if (canAddItem.response) {
-        if (this.config.pseudoMultiSelectForSingle) {
-          const lastItem = activeItems[activeItems.length - 1];
-          if (lastItem) {
-            this._removeItem(lastItem);
+        if (canAddItem.response) {
+          if (this.config.pseudoMultiSelectForSingle) {
+            const lastItem = activeItems[activeItems.length - 1];
+            if (lastItem) {
+              this._removeItem(lastItem);
+            }
           }
+          this._addItem({
+            value: choice.value,
+            label: choice.label,
+            choiceId: choice.id,
+            groupId: choice.groupId,
+            labelClass: choice.labelClass,
+            labelDescription: choice.labelDescription,
+            customProperties: choice.customProperties,
+            placeholder: choice.placeholder,
+            keyCode: choice.keyCode,
+          });
+
+          triggerChange = true;
         }
-        this._addItem({
-          value: choice.value,
-          label: choice.label,
-          choiceId: choice.id,
-          groupId: choice.groupId,
-          labelClass: choice.labelClass,
-          labelDescription: choice.labelDescription,
-          customProperties: choice.customProperties,
-          placeholder: choice.placeholder,
-          keyCode: choice.keyCode,
-        });
-
-        this._triggerChange(choice.value);
       }
-    }
 
-    this.clearInput();
+      this.clearInput();
+    }
+    finally
+    {
+      this._stopLoading();
+    }
+    if (triggerChange) {
+      this._triggerChange(choice.value);
+    }
 
     // We want to close the dropdown if we are dealing with a single select box
     if (
