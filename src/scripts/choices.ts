@@ -99,6 +99,8 @@ class Choices implements Choices {
 
   dropdown: Dropdown;
 
+  _elementType: string;
+
   _isTextElement: boolean;
 
   _isSelectOneElement: boolean;
@@ -190,15 +192,16 @@ class Choices implements Choices {
       );
     }
 
-    this._isTextElement = passedElement.type === TEXT_TYPE;
+    this._elementType = passedElement.type;
+    this._isTextElement = this._elementType === TEXT_TYPE;
     if (this._isTextElement || this.config.maxItemCount !== 1) {
       this.config.pseudoMultiSelectForSingle = false;
     }
     if (this.config.pseudoMultiSelectForSingle) {
-      passedElement.setAttribute('multiple', 'multiple');
+      this._elementType = SELECT_MULTIPLE_TYPE;
     }
-    this._isSelectOneElement = passedElement.type === SELECT_ONE_TYPE;
-    this._isSelectMultipleElement = passedElement.type === SELECT_MULTIPLE_TYPE;
+    this._isSelectOneElement = this._elementType === SELECT_ONE_TYPE;
+    this._isSelectMultipleElement = this._elementType === SELECT_MULTIPLE_TYPE;
     this._isSelectElement =
       this._isSelectOneElement || this._isSelectMultipleElement;
     this.config.searchEnabled =
@@ -1942,7 +1945,7 @@ class Choices implements Choices {
       },
     };
 
-    focusActions[this.passedElement.element.type]();
+    focusActions[this._elementType]();
   }
 
   _onBlur({ target }: Pick<FocusEvent, 'target'>): void {
@@ -1982,7 +1985,7 @@ class Choices implements Choices {
         },
       };
 
-      blurActions[this.passedElement.element.type]();
+      blurActions[this._elementType]();
     } else {
       // On IE11, clicking the scollbar blurs our input and thus
       // closes the dropdown. To stop this, we refocus our input
@@ -2295,25 +2298,25 @@ class Choices implements Choices {
         this._isSelectElement,
         this._isSelectOneElement,
         this.config.searchEnabled,
-        this.passedElement.element.type,
+        this._elementType,
         this.config.labelId,
       ),
       classNames: this.config.classNames,
-      type: this.passedElement.element.type as PassedElement['type'],
+      type: this._elementType as PassedElement['type'],
       position: this.config.position,
     });
 
     this.containerInner = new Container({
       element: this._getTemplate('containerInner'),
       classNames: this.config.classNames,
-      type: this.passedElement.element.type as PassedElement['type'],
+      type: this._elementType as PassedElement['type'],
       position: this.config.position,
     });
 
     this.input = new Input({
       element: this._getTemplate('input', this._placeholderValue),
       classNames: this.config.classNames,
-      type: this.passedElement.element.type as PassedElement['type'],
+      type: this._elementType as PassedElement['type'],
       preventPaste: !this.config.paste,
     });
 
@@ -2328,7 +2331,7 @@ class Choices implements Choices {
     this.dropdown = new Dropdown({
       element: this._getTemplate('dropdown'),
       classNames: this.config.classNames,
-      type: this.passedElement.element.type as PassedElement['type'],
+      type: this._elementType as PassedElement['type'],
     });
   }
 

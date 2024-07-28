@@ -25,6 +25,7 @@ declare class Choices implements Choices {
     itemList: List;
     input: Input;
     dropdown: Dropdown;
+    _elementType: string;
     _isTextElement: boolean;
     _isSelectOneElement: boolean;
     _isSelectMultipleElement: boolean;
