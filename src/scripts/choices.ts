@@ -1179,8 +1179,7 @@ class Choices implements Choices {
 
     let triggerChange = false;
     this._startLoading();
-    try
-    {
+    try {
       if (!choice.selected && !choice.disabled) {
         const canAddItem = this._canAddItem(activeItems, choice.value);
 
@@ -1208,9 +1207,7 @@ class Choices implements Choices {
       }
 
       this.clearInput();
-    }
-    finally
-    {
+    } finally {
       this._stopLoading();
     }
     if (triggerChange) {
@@ -2281,7 +2278,11 @@ class Choices implements Choices {
       callbackOnCreateTemplates &&
       typeof callbackOnCreateTemplates === 'function'
     ) {
-      userTemplates = callbackOnCreateTemplates.call(this, strToEl, defaultTemplates);
+      userTemplates = callbackOnCreateTemplates.call(
+        this,
+        strToEl,
+        defaultTemplates,
+      );
     }
 
     this._templates = extend(

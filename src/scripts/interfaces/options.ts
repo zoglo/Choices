@@ -556,7 +556,9 @@ export interface Options {
    *
    * @default null
    */
-  callbackOnCreateTemplates: ((template: Types.StrToEl, defaultTemplates: typeof Templates) => void) | null;
+  callbackOnCreateTemplates:
+    | ((template: Types.StrToEl, defaultTemplates: typeof Templates) => void)
+    | null;
 
   appendGroupInSearch: false;
 }
