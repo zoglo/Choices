@@ -1083,7 +1083,9 @@ class Choices implements Choices {
       placeholder: placeholderChoice.placeholder,
     });
 
-    this._triggerChange(placeholderChoice.value);
+    if (placeholderChoice.value) {
+      this._triggerChange(placeholderChoice.value);
+    }
   }
 
   _handleButtonAction(activeItems?: Item[], element?: HTMLElement): void {

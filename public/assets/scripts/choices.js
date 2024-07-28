@@ -1020,7 +1020,9 @@ var Choices = /** @class */function () {
       groupId: placeholderChoice.groupId,
       placeholder: placeholderChoice.placeholder
     });
-    this._triggerChange(placeholderChoice.value);
+    if (placeholderChoice.value) {
+      this._triggerChange(placeholderChoice.value);
+    }
   };
   Choices.prototype._handleButtonAction = function (activeItems, element) {
     if (!activeItems || !element || !this.config.removeItems || !this.config.removeItemButton) {
