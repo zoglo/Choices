@@ -254,7 +254,7 @@ var Choices = /** @class */function () {
     if (userConfig.allowHTML === undefined) {
       console.warn('Deprecation warning: allowHTML will default to false in a future release. To render HTML in Choices, you will need to set it to true. Setting allowHTML will suppress this message.');
     }
-    this.config = (0, utils_1.extend)(true, defaults_1.DEFAULT_CONFIG, Choices.defaults.options, userConfig);
+    this.config = (0, utils_1.extend)(true, {}, defaults_1.DEFAULT_CONFIG, Choices.defaults.options, userConfig);
     var invalidConfigOptions = (0, utils_1.diff)(this.config, defaults_1.DEFAULT_CONFIG);
     if (invalidConfigOptions.length) {
       console.warn('Unknown config option(s) passed', invalidConfigOptions.join(', '));
@@ -1935,7 +1935,7 @@ var Choices = /** @class */function () {
     if (callbackOnCreateTemplates && typeof callbackOnCreateTemplates === 'function') {
       userTemplates = callbackOnCreateTemplates.call(this, utils_1.strToEl, defaultTemplates);
     }
-    this._templates = (0, utils_1.extend)(true, defaultTemplates, userTemplates);
+    this._templates = (0, utils_1.extend)(true, {}, defaultTemplates, userTemplates);
   };
   Choices.prototype._createElements = function () {
     this.containerOuter = new components_1.Container({

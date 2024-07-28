@@ -165,6 +165,7 @@ class Choices implements Choices {
 
     this.config = extend(
       true,
+      {},
       DEFAULT_CONFIG,
       Choices.defaults.options,
       userConfig,
@@ -2285,6 +2286,7 @@ class Choices implements Choices {
 
     this._templates = extend(
       true,
+      {},
       defaultTemplates,
       userTemplates,
     ) as typeof templates;
