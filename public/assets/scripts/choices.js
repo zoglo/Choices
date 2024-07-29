@@ -3649,13 +3649,9 @@ function choices(state, action) {
       {
         var removeChoiceAction = action;
         var choiceValue_1 = removeChoiceAction.value;
-        var choiceIndex = state.findIndex(function (choice) {
-          return choice.value === choiceValue_1;
+        return state.filter(function (choice) {
+          return choice.value !== choiceValue_1;
         });
-        if (choiceIndex !== -1) {
-          return state.splice(choiceIndex, 1);
-        }
-        return state;
       }
     case 'ADD_ITEM':
       {
@@ -3884,13 +3880,22 @@ function items(state, action) {
       }
     case 'REMOVE_ITEM':
       {
+        var removeItemAction_1 = action;
         // Set item to inactive
         return state.map(function (obj) {
           var item = obj;
-          if (item.id === action.id) {
+          if (item.id === removeItemAction_1.id) {
             item.active = false;
           }
           return item;
+        });
+      }
+    case 'REMOVE_CHOICE':
+      {
+        var removeChoiceAction = action;
+        var choiceValue_1 = removeChoiceAction.value;
+        return state.filter(function (choice) {
+          return choice.value !== choiceValue_1;
         });
       }
     case 'HIGHLIGHT_ITEM':

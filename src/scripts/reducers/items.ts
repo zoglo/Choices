@@ -5,12 +5,14 @@ import {
 } from '../actions/items';
 import { Item } from '../interfaces/item';
 import { State } from '../interfaces/state';
+import { RemoveChoiceAction } from '../actions/choices';
 
 export const defaultState = [];
 
 type ActionTypes =
   | AddItemAction
   | RemoveItemAction
+  | RemoveChoiceAction
   | HighlightItemAction
   | Record<string, never>;
 
@@ -49,15 +51,24 @@ export default function items(
     }
 
     case 'REMOVE_ITEM': {
+      const removeItemAction = action as RemoveItemAction;
+
       // Set item to inactive
       return state.map((obj) => {
         const item = obj;
-        if (item.id === action.id) {
+        if (item.id === removeItemAction.id) {
           item.active = false;
         }
 
         return item;
       });
+    }
+
+    case 'REMOVE_CHOICE': {
+      const removeChoiceAction = action as RemoveChoiceAction;
+      const choiceValue = removeChoiceAction.value;
+
+      return state.filter((choice) => choice.value !== choiceValue);
     }
 
     case 'HIGHLIGHT_ITEM': {

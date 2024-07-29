@@ -54,14 +54,8 @@ export default function choices(
     case 'REMOVE_CHOICE': {
       const removeChoiceAction = action as RemoveChoiceAction;
       const choiceValue = removeChoiceAction.value;
-      const choiceIndex = state.findIndex(
-        (choice) => choice.value === choiceValue,
-      );
-      if (choiceIndex !== -1) {
-        return state.splice(choiceIndex, 1);
-      }
 
-      return state;
+      return state.filter((choice) => choice.value !== choiceValue);
     }
 
     case 'ADD_ITEM': {
