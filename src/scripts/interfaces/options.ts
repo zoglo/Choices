@@ -144,36 +144,45 @@ export interface Options {
 
   /**
    * The text that is shown when a user has inputted a new item but has not pressed the enter key. To access the current input value, pass a function with a `value` argument (see the **default config** [https://github.com/jshjohnson/Choices#setup] for an example), otherwise pass a string.
+   * The raw non-sanitised value is passed as a 2nd argument.
+   *
+   * Return type must be safe to insert into HTML (ie use the 1st argument which is sanitised)
    *
    * **Input types affected:** text, one-select, select-one, select-multiple
    *
    * @default
    * ```
-   * (value) => `Press Enter to add <b>"${sanitise(value)}"</b>`;
+   * (value, valueRaw) => `Press Enter to add <b>"${value}"</b>`;
    * ```
    */
   addItemText: string | Types.NoticeStringFunction;
 
   /**
    * The text/icon for the remove button. To access the item's value, pass a function with a `value` argument (see the **default config** [https://github.com/jshjohnson/Choices#setup] for an example), otherwise pass a string.
+   * The raw non-sanitised value is passed as a 2nd argument.
+   *
+   * Return type must be safe to insert into HTML (ie use the 1st argument which is sanitised)
    *
    * **Input types affected:** text, select-one, select-multiple
    *
    * @default
    * ```
-   * (value) => `Remove item`;
+   * (value, valueRaw) => `Remove item`;
    * ```
    */
   removeItemIconText: string | Types.NoticeStringFunction;
 
   /**
    * The text for the remove button's aria label. To access the item's value, pass a function with a `value` argument (see the **default config** [https://github.com/jshjohnson/Choices#setup] for an example), otherwise pass a string.
+   * The raw non-sanitised value is passed as a 2nd argument.
+   *
+   * Return type must be safe to insert into HTML (ie use the 1st argument which is sanitised)
    *
    * **Input types affected:** text, select-one, select-multiple
    *
    * @default
    * ```
-   * (value) => `Remove item: ${value}`;
+   * (value, valueRaw) => `Remove item: ${value}`;
    * ```
    */
   removeItemLabelText: string | Types.NoticeStringFunction;
@@ -224,6 +233,17 @@ export interface Options {
    * @default true
    */
   allowHTML: boolean;
+
+  /**
+   * Whether HTML should be escaped on input when `addItems` or `addChoices` is true.
+   * If `false`, user input will be treated as plain text.
+   * If `true`, this can be used to perform XSS scripting attacks if you load previously submitted choices from a remote source.
+   *
+   * **Input types affected:** text, select-one, select-multiple
+   *
+   * @default false
+   */
+  allowHtmlUserInput: boolean;
 
   /**
    * Whether each inputted/chosen item should be unique.
@@ -469,12 +489,16 @@ export interface Options {
   /**
    * If no duplicates are allowed, and the value already exists in the array.
    *
+   * Return type must be safe to insert into HTML (ie use the 1st argument which is sanitised)
+   *
    * @default 'Only unique values can be added'
    */
   uniqueItemText: string | Types.NoticeStringFunction;
 
   /**
    * The text that is shown when addItemFilter is passed and it returns false
+   *
+   * Return type must be safe to insert into HTML (ie use the 1st argument which is sanitised)
    *
    * **Input types affected:** text
    *

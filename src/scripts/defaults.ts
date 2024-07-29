@@ -1,6 +1,6 @@
 import { ClassNames } from './interfaces/class-names';
 import { Options } from './interfaces/options';
-import { sortByAlpha, sanitise } from './lib/utils';
+import { sortByAlpha } from './lib/utils';
 
 export const DEFAULT_CLASSNAMES: ClassNames = {
   containerOuter: 'choices',
@@ -47,6 +47,7 @@ export const DEFAULT_CONFIG: Options = {
   removeItemButtonAlignLeft: false,
   editItems: false,
   allowHTML: true,
+  allowHtmlUserInput: false,
   duplicateItemsAllowed: true,
   delimiter: ',',
   paste: true,
@@ -72,9 +73,9 @@ export const DEFAULT_CONFIG: Options = {
   itemSelectText: 'Press to select',
   uniqueItemText: 'Only unique values can be added',
   customAddItemText: 'Only values matching specific conditions can be added',
-  addItemText: (value) => `Press Enter to add <b>"${sanitise(value)}"</b>`,
+  addItemText: (value) => `Press Enter to add <b>"${value}"</b>`,
   removeItemIconText: () => `Remove item`,
-  removeItemLabelText: (value) => `Remove item: ${sanitise(value)}`,
+  removeItemLabelText: (value) => `Remove item: ${value}`,
   maxItemText: (maxItemCount) => `Only ${maxItemCount} values can be added`,
   valueComparer: (value1, value2) => value1 === value2,
   fuseOptions: {

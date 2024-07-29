@@ -367,6 +367,14 @@ Pass an array of objects:
 
 **Deprecation Warning:** This will default to `false` in a future release.
 
+### allowHtmlUserInput
+
+**Type:** `Boolean` **Default:** `false`
+
+**Input types affected:** `text`, `select-one`, `select-multiple`
+
+**Usage:** Whether HTML should be escaped on input when `addItems` or `addChoices` is true. If `false`, user input will be treated as plain text. If `true`, this can be used to perform XSS scripting attacks if you load choices from a remote source.
+
 ### duplicateItemsAllowed
 
 **Type:** `Boolean` **Default:** `true`
@@ -602,11 +610,13 @@ For backward compatibility, `<option placeholder>This is a placeholder</option>`
 
 ### addItemText
 
-**Type:** `String/Function` **Default:** `Press Enter to add "${sanitise(value)}"`
+**Type:** `String/Function` **Default:** `Press Enter to add "${value}"`
 
 **Input types affected:** `text`, `select-one`, `select-multiple`
 
 **Usage:** The text that is shown when a user has inputted a new item but has not pressed the enter key. To access the current input value, pass a function with a `value` argument (see the [default config](https://github.com/jshjohnson/Choices#setup) for an example), otherwise pass a string.
+
+Return type must be safe to insert into HTML (ie use the 1st argument which is sanitised)
 
 ### removeItemIconText
 
@@ -616,13 +626,17 @@ For backward compatibility, `<option placeholder>This is a placeholder</option>`
 
 **Usage:** The text/icon for the remove button. To access the item's value, pass a function with a `value` argument (see the **default config** [https://github.com/jshjohnson/Choices#setup] for an example), otherwise pass a string.
 
+Return type must be safe to insert into HTML (ie use the 1st argument which is sanitised)
+
 ### removeItemLabelText
 
-**Type:** `String/Function` **Default:** `Remove item: ${sanitise(value)}"`
+**Type:** `String/Function` **Default:** `Remove item: ${value}"`
 
 **Input types affected:** `text`, `select-one`, `select-multiple`
 
 **Usage:** The text for the remove button's aria label. To access the item's value, pass a function with a `value` argument (see the **default config** [https://github.com/jshjohnson/Choices#setup] for an example), otherwise pass a string.
+
+Return type must be safe to insert into HTML (ie use the 1st argument which is sanitised)
 
 ### maxItemText
 

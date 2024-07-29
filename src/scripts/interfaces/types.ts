@@ -3,7 +3,10 @@ export namespace Types {
     str: string,
   ) => HTMLElement | HTMLInputElement | HTMLOptionElement;
   export type StringFunction = () => string;
-  export type NoticeStringFunction = (value: string) => string;
+  export type NoticeStringFunction = (
+    value: string,
+    valueRaw: string,
+  ) => string;
   export type NoticeLimitFunction = (maxItemCount: number) => string;
   export type FilterFunction = (value: string) => boolean;
   export type ValueCompareFunction = (

@@ -7,11 +7,9 @@ import { Choice } from './interfaces/choice';
 import { Group } from './interfaces/group';
 import { Item } from './interfaces/item';
 import { PassedElementType } from './interfaces/passed-element-type';
-import {
-  isEmptyObject,
-  getClassNames,
-  sanitise,
-} from './lib/utils';
+import { isEmptyObject, getClassNames, sanitise, isType } from './lib/utils';
+import { PreEscapedString } from './lib/PreEscapedString';
+import { UntrustedString } from './lib/UntrustedString';
 
 type TemplateOptions = Record<
   'classNames' | 'allowHTML' | 'removeItemButtonAlignLeft',
@@ -170,16 +168,16 @@ const templates = {
 
       const REMOVE_ITEM_ICON =
         typeof this.config.removeItemIconText === 'function'
-          ? this.config.removeItemIconText(value)
+          ? this.config.removeItemIconText(sanitise(value), value)
           : this.config.removeItemIconText;
       const REMOVE_ITEM_LABEL =
         typeof this.config.removeItemLabelText === 'function'
-          ? this.config.removeItemLabelText(value)
+          ? this.config.removeItemLabelText(sanitise(value), value)
           : this.config.removeItemLabelText;
       const removeButton = Object.assign(document.createElement('button'), {
         type: 'button',
         className: getClassNames(button).join(' '),
-        innerHTML: allowHTML ? REMOVE_ITEM_ICON : sanitise(REMOVE_ITEM_ICON),
+        innerHTML: REMOVE_ITEM_ICON,
       });
       removeButton.setAttribute('aria-label', REMOVE_ITEM_LABEL);
       removeButton.dataset.button = '';
@@ -374,7 +372,7 @@ const templates = {
       allowHTML,
       classNames: { item, itemChoice, noResults, noChoices },
     }: TemplateOptions,
-    innerText: string,
+    innerText: UntrustedString | PreEscapedString | string,
     type: 'no-choices' | 'no-results' | '' = '',
   ): HTMLDivElement {
     const classes = [...getClassNames(item), ...getClassNames(itemChoice)];
@@ -400,7 +398,13 @@ const templates = {
     active,
     disabled,
   }: Item): HTMLOptionElement {
-    const opt = new Option(label, value, false, active);
+    let labelValue = label;
+    if (typeof label === 'object' && isType('UntrustedString', label)) {
+      // HtmlOptionElement's label value does not support HTML, so the avoid double escaping unwrap the untrusted string.
+      labelValue = (label as UntrustedString).raw;
+    }
+
+    const opt = new Option(labelValue, value, false, active);
     if (typeof labelClass !== 'undefined' && labelClass) {
       opt.dataset.labelClass = getClassNames(labelClass).join(' ');
     }

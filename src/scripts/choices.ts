@@ -49,12 +49,15 @@ import {
   isScrolledIntoView,
   isType,
   parseDataSetId,
+  sanitise,
   sortByScore,
   strToEl,
 } from './lib/utils';
 import { defaultState } from './reducers';
 import Store from './store/store';
 import templates from './templates';
+import { PreEscapedString } from './lib/PreEscapedString';
+import { UntrustedString } from './lib/UntrustedString';
 
 /** @see {@link http://browserhacks.com/#hack-acea075d0ac6954f275a70023906050c} */
 const IS_IE11 =
@@ -178,6 +181,23 @@ class Choices implements Choices {
         'Unknown config option(s) passed',
         invalidConfigOptions.join(', '),
       );
+    }
+
+    if (
+      !this.config.silent &&
+      this.config.allowHTML &&
+      this.config.allowHtmlUserInput
+    ) {
+      if (this.config.addItems) {
+        console.warn(
+          'Deprecation warning: allowHTML/allowHtmlUserInput/addItems all being true is strongly not recommended and may lead to XSS attacks',
+        );
+      }
+      if (this.config.addChoices) {
+        console.warn(
+          'Deprecation warning: allowHTML/allowHtmlUserInput/addChoices all being true is strongly not recommended and may lead to XSS attacks',
+        );
+      }
     }
 
     const passedElement =
@@ -861,7 +881,7 @@ class Choices implements Choices {
       // Otherwise show a notice
       const canAddChoice = this._canAddChoice(activeItems, this.input.value);
 
-      let dropdownItem;
+      let dropdownItem: Element | DocumentFragment;
 
       if (canAddChoice.response) {
         dropdownItem = this._getTemplate('notice', canAddChoice.notice);
@@ -1335,7 +1355,7 @@ class Choices implements Choices {
     let canAddItem = true;
     let notice =
       typeof this.config.addItemText === 'function'
-        ? this.config.addItemText(value)
+        ? this.config.addItemText(sanitise(value), value)
         : this.config.addItemText;
 
     if (!this._isSelectOneElement) {
@@ -1364,7 +1384,7 @@ class Choices implements Choices {
         canAddItem = false;
         notice =
           typeof this.config.uniqueItemText === 'function'
-            ? this.config.uniqueItemText(value)
+            ? this.config.uniqueItemText(sanitise(value), value)
             : this.config.uniqueItemText;
       }
 
@@ -1378,14 +1398,14 @@ class Choices implements Choices {
         canAddItem = false;
         notice =
           typeof this.config.customAddItemText === 'function'
-            ? this.config.customAddItemText(value)
+            ? this.config.customAddItemText(sanitise(value), value)
             : this.config.customAddItemText;
       }
     }
 
     return {
       response: canAddItem,
-      notice,
+      notice: new PreEscapedString(notice),
     };
   }
 
@@ -1667,7 +1687,10 @@ class Choices implements Choices {
 
       if (canAdd.response) {
         this.hideDropdown(true);
-        this._addItem({ value });
+        this._addItem({
+          value: this.config.allowHtmlUserInput ? value : sanitise(value),
+          label: new UntrustedString(value),
+        });
         this._triggerChange(value);
         this.clearInput();
         addedItem = true;
@@ -2064,7 +2087,7 @@ class Choices implements Choices {
     keyCode = -1,
   }: {
     value: string;
-    label?: string | null;
+    label?: UntrustedString | string | null;
     choiceId?: number;
     groupId?: number;
     labelClass?: string | Array<string> | null;

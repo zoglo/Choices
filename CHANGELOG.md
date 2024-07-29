@@ -4,22 +4,25 @@
 
 ### ⚠ BREAKING CHANGES
 
-* Templates/text functions now escape `'` for display, as this might escape custom templates.
+* HTML escaping of choice/item labels should no longer double escape depending on allowHTML mode.
+* Templates/text functions now escape `'` characters for display
+* `addItemText`/`uniqueItemText`/`customAddItemText` are now called with the `value` argument already escaped
+
 
 ### Features
 
 * Remove `deepMerge` dependency for a custom extend, reduces minified javascript by ~2kb.
 * `Remove item text` can be localized.
 * Allow user-created choices for selects. #1117
+    * User input is escaped by default. At the risk of XSS attacks this can be disabled by `allowHtmlUserInput`.
 * Render options without a group even if groups are present.
 * Read `data-labelclass`/`data-label-description` from `<option>` HTML to drive adding a per-choice CSS label and description text when `allowHtml: false`.
 * Add `removeItemButtonAlignLeft` option, to control if the remove item button is at the start or the end of the item.
 * Add `removeChoice` method.
 * Improve rendering performance by batching changes.
 * Provide original templates via a new argument to the `callbackOnCreateTemplates` callback. #1149
-* Templates now render escaped html to innerHtml instead of switching to innerText when allowHtml config is false.
-  This provides consistent rendering performance as innerText is quirky and slower than just inserting pure text into HTML.
-* Add ``
+* When `allowHtml` is false, default templates now render escaped html to `innerHtml` writing to `innerText`.
+    * This provides consistent rendering performance as `innerText` is quirky and slower than escaped html into `innerHtml`
 
 ### Bug Fixes
 
@@ -34,5 +37,6 @@
 * Fix placeholder config option would be ignored for select boxes which have blank entries.
 * Fix `data-custom-properties` attribute did not serialize to created elements as a json blob as expected.
 * Fix multi-select not resizing correctly when an select option is selected on choices.js initialization.
-* Fix clearInput function did not clear the last search
-* Fix `addItemFilter` would allow empty strings as input to be added for items
+* Fix clearInput function did not clear the last search.
+* Fix `addItemFilter` would allow empty strings as input to be added for items.
+* Fix various issues with double escaping when displaying items/choices depending on allowHTML mode.
