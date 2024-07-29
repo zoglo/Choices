@@ -1650,7 +1650,7 @@ class Choices implements Choices {
 
       if (canAdd.response) {
         this.hideDropdown(true);
-        this._addItem(
+        this._addChoice(
           mapInputToChoice(
             {
               value: this.config.allowHtmlUserInput ? value : sanitise(value),

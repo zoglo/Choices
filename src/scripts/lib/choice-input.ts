@@ -17,6 +17,7 @@ export const mapInputToChoice = (
       {
         value,
         label: value,
+        selected: true,
       } as Choice,
       false,
     );
