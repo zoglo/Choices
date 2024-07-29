@@ -469,41 +469,51 @@ class Choices implements Choices {
   }
 
   highlightAll(): this {
-    this._store.items.forEach((item) => this.highlightItem(item));
+    this._store.withDeferRendering(() => {
+      this._store.items.forEach((item) => this.highlightItem(item));
+    });
 
     return this;
   }
 
   unhighlightAll(): this {
-    this._store.items.forEach((item) => this.unhighlightItem(item));
+    this._store.withDeferRendering(() => {
+      this._store.items.forEach((item) => this.unhighlightItem(item));
+    });
 
     return this;
   }
 
   removeActiveItemsByValue(value: string): this {
-    this._store.activeItems
-      .filter((item) => item.value === value)
-      .forEach((item) => this._removeItem(item));
+    this._store.withDeferRendering(() => {
+      this._store.activeItems
+        .filter((item) => item.value === value)
+        .forEach((item) => this._removeItem(item));
+    });
 
     return this;
   }
 
   removeActiveItems(excludedId: number): this {
-    this._store.activeItems
-      .filter(({ id }) => id !== excludedId)
-      .forEach((item) => this._removeItem(item));
+    this._store.withDeferRendering(() => {
+      this._store.activeItems
+        .filter(({ id }) => id !== excludedId)
+        .forEach((item) => this._removeItem(item));
+    });
 
     return this;
   }
 
   removeHighlightedItems(runEvent = false): this {
-    this._store.highlightedActiveItems.forEach((item) => {
-      this._removeItem(item);
-      // If this action was performed by the user
-      // trigger the event
-      if (runEvent) {
-        this._triggerChange(item.value);
-      }
+    this._store.withDeferRendering(() => {
+      this._store.highlightedActiveItems.forEach((item) => {
+        this._removeItem(item);
+        // If this action was performed by the user
+        // trigger the event
+        if (runEvent) {
+          this._triggerChange(item.value);
+        }
+      });
     });
 
     return this;
@@ -567,8 +577,10 @@ class Choices implements Choices {
       return this;
     }
 
-    items.forEach((value: string | Choice) => {
-      this._addChoice(mapInputToChoice(value, false) as Choice);
+    this._store.withDeferRendering(() => {
+      items.forEach((value: string | Choice) => {
+        this._addChoice(mapInputToChoice(value, false) as Choice);
+      });
     });
 
     return this;
@@ -578,12 +590,13 @@ class Choices implements Choices {
     if (!this.initialised || this._isTextElement) {
       return this;
     }
+    this._store.withDeferRendering(() => {
+      // If only one value has been passed, convert to array
+      const choiceValue = Array.isArray(value) ? value : [value];
 
-    // If only one value has been passed, convert to array
-    const choiceValue = Array.isArray(value) ? value : [value];
-
-    // Loop through each value and
-    choiceValue.forEach((val) => this._findAndSelectChoiceByValue(val));
+      // Loop through each value and
+      choiceValue.forEach((val) => this._findAndSelectChoiceByValue(val));
+    });
 
     return this;
   }

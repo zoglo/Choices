@@ -9,7 +9,7 @@ export const defaultState = {
   groups: [],
   items: [],
   choices: [],
-  loading: false,
+  loading: 0,
 };
 
 const appReducer = combineReducers({

@@ -19,7 +19,7 @@ describe('actions/misc', () => {
         choices: [],
         items: [],
         groups: [],
-        loading: false,
+        loading: 0,
       };
       const expectedAction: actions.ResetToAction = {
         type: 'RESET_TO',

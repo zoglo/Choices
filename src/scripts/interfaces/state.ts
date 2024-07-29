@@ -5,5 +5,5 @@ export interface State {
   choices: Choice[];
   groups: Group[];
   items: Choice[];
-  loading: boolean;
+  loading: number;
 }

@@ -142,7 +142,7 @@ export default class Store {
    * Get loading state from store
    */
   isLoading(): boolean {
-    return this.state.loading;
+    return this.state.loading > 0;
   }
 
   /**
