@@ -34,3 +34,4 @@
 * Fix placeholder config option would be ignored for select boxes which have blank entries.
 * Fix `data-custom-properties` attribute did not serialize to created elements as a json blob as expected.
 * Fix multi-select not resizing correctly when an select option is selected on choices.js initialization.
+* Fix clearInput function did not clear the last search

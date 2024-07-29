@@ -767,6 +767,7 @@ class Choices implements Choices {
 
     if (!this._isTextElement && this._canSearch) {
       this._isSearching = false;
+      this._currentValue = '';
       this._store.dispatch(activateChoices(true));
     }
 
@@ -1390,11 +1391,8 @@ class Choices implements Choices {
   }
 
   _searchChoices(value: string): number {
-    const newValue = typeof value === 'string' ? value.trim() : value;
-    const currentValue =
-      typeof this._currentValue === 'string'
-        ? this._currentValue.trim()
-        : this._currentValue;
+    const newValue = value.trim();
+    const currentValue = this._currentValue.trim();
 
     if (newValue.length < 1 && newValue === `${currentValue} `) {
       return 0;
