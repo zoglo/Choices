@@ -95,6 +95,7 @@ export const sanitise = <T>(value: T | string): T | string => {
     .replace(/&/g, '&amp;')
     .replace(/>/g, '&gt;')
     .replace(/</g, '&lt;')
+    .replace(/'/g, '&#039;')
     .replace(/"/g, '&quot;');
 };
 
