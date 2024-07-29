@@ -430,20 +430,13 @@ class Choices implements Choices {
       return this;
     }
 
-    const { id, groupId = -1 } = item;
-    const group = groupId >= 0 ? this._store.getGroupById(groupId) : null;
-
-    this._store.dispatch(highlightItem(id, true));
+    this._store.dispatch(highlightItem(item.id, true));
 
     if (runEvent) {
-      const { value = '', label = '' } = item;
-
-      this.passedElement.triggerEvent(EVENTS.highlightItem, {
-        id,
-        value,
-        label,
-        groupValue: group && group.value ? group.value : null,
-      });
+      this.passedElement.triggerEvent(
+        EVENTS.highlightItem,
+        this._getChoiceForEvent(item),
+      );
     }
 
     return this;
@@ -454,16 +447,12 @@ class Choices implements Choices {
       return this;
     }
 
-    const { id, groupId = -1, value = '', label = '' } = item;
-    const group = groupId >= 0 ? this._store.getGroupById(groupId) : null;
+    this._store.dispatch(highlightItem(item.id, false));
 
-    this._store.dispatch(highlightItem(id, false));
-    this.passedElement.triggerEvent(EVENTS.highlightItem, {
-      id,
-      value,
-      label,
-      groupValue: group && group.value ? group.value : null,
-    });
+    this.passedElement.triggerEvent(
+      EVENTS.highlightItem,
+      this._getChoiceForEvent(item),
+    );
 
     return this;
   }
@@ -1085,6 +1074,33 @@ class Choices implements Choices {
     items.forEach(addItemToFragment);
 
     return fragment;
+  }
+
+  _getChoiceForEvent(choice: Choice) {
+    const {
+      id,
+      value = '',
+      groupId = -1,
+      label = '',
+      labelClass,
+      labelDescription,
+      customProperties,
+      keyCode,
+      element,
+    } = choice;
+    const group = groupId >= 0 ? this._store.getGroupById(groupId) : null;
+
+    return {
+      id,
+      value,
+      label,
+      labelClass,
+      labelDescription,
+      customProperties,
+      groupValue: group && group.value ? group.value : null,
+      element,
+      keyCode,
+    };
   }
 
   _triggerChange(value): void {
@@ -2068,26 +2084,16 @@ class Choices implements Choices {
       );
     }
 
-    const groupId = item.groupId || -1;
-    const group = groupId >= 0 ? this._store.getGroupById(groupId) : null;
-
     this._store.dispatch(addItem(item));
 
     if (this._isSelectOneElement) {
       this.removeActiveItems(id);
     }
 
-    // Trigger change event
-    this.passedElement.triggerEvent(EVENTS.addItem, {
-      id,
-      value: item.value,
-      label: item.label,
-      labelClass: item.labelClass,
-      labelDescription: item.labelDescription,
-      customProperties: item.customProperties,
-      groupValue: group && group.value ? group.value : null,
-      keyCode: item.keyCode,
-    });
+    this.passedElement.triggerEvent(
+      EVENTS.addItem,
+      this._getChoiceForEvent(item),
+    );
   }
 
   _removeItem(item: Choice): void {
@@ -2096,21 +2102,12 @@ class Choices implements Choices {
       return;
     }
 
-    const { value, label, labelClass, labelDescription, customProperties } =
-      item;
-    const groupId = item.groupId || -1;
-    const group = groupId >= 0 ? this._store.getGroupById(groupId) : null;
     this._store.dispatch(removeItem(item));
 
-    this.passedElement.triggerEvent(EVENTS.removeItem, {
-      id,
-      value,
-      label,
-      labelClass,
-      labelDescription,
-      customProperties,
-      groupValue: group && group.value ? group.value : null,
-    });
+    this.passedElement.triggerEvent(
+      EVENTS.removeItem,
+      this._getChoiceForEvent(item),
+    );
   }
 
   _addChoice(choice: Choice): void {
