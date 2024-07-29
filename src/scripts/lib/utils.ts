@@ -266,3 +266,16 @@ export const parseCustomProperties = (customProperties): any => {
 
   return {};
 };
+
+export const parseDataSetId = (element?: HTMLElement): number | undefined => {
+  if (!element) {
+    return undefined;
+  }
+
+  const { id } = element.dataset;
+  if (!id) {
+    return undefined;
+  }
+
+  return parseInt(id, 10);
+};

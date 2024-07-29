@@ -131,8 +131,8 @@ export default class Store {
   /**
    * Get single choice by it's ID
    */
-  getChoiceById(id: string): Choice | undefined {
-    return this.activeChoices.find((choice) => choice.id === parseInt(id, 10));
+  getChoiceById(id: number): Choice | undefined {
+    return this.activeChoices.find((choice) => choice.id === id);
   }
 
   /**

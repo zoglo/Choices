@@ -48,6 +48,7 @@ import {
   getType,
   isScrolledIntoView,
   isType,
+  parseDataSetId,
   sortByScore,
   strToEl,
 } from './lib/utils';
@@ -1096,18 +1097,14 @@ class Choices implements Choices {
   _handleButtonAction(activeItems?: Item[], element?: HTMLElement): void {
     if (
       !activeItems ||
-      !element ||
       !this.config.removeItems ||
       !this.config.removeItemButton
     ) {
       return;
     }
 
-    const itemId =
-      element.parentNode && (element.parentNode as HTMLElement).dataset.id;
-    const itemToRemove =
-      itemId && activeItems.find((item) => item.id === parseInt(itemId, 10));
-
+    const id = element && parseDataSetId(element.parentNode as HTMLElement);
+    const itemToRemove = id && activeItems.find((item) => item.id === id);
     if (!itemToRemove) {
       return;
     }
@@ -1128,20 +1125,22 @@ class Choices implements Choices {
   ): void {
     if (
       !activeItems ||
-      !element ||
       !this.config.removeItems ||
       this._isSelectOneElement
     ) {
       return;
     }
 
-    const passedId = element.dataset.id;
+    const id = parseDataSetId(element);
+    if (!id) {
+      return;
+    }
 
     // We only want to select one item with a click
     // so we deselect any items that aren't the target
     // unless shift is being pressed
     activeItems.forEach((item) => {
-      if (item.id === parseInt(`${passedId}`, 10) && !item.highlighted) {
+      if (item.id === id && !item.highlighted) {
         this.highlightItem(item);
       } else if (!hasShiftKey && item.highlighted) {
         this.unhighlightItem(item);
@@ -1154,12 +1153,12 @@ class Choices implements Choices {
   }
 
   _handleChoiceAction(activeItems?: Item[], element?: HTMLElement): void {
-    if (!activeItems || !element) {
+    if (!activeItems) {
       return;
     }
 
     // If we are clicking on an option
-    const { id } = element.dataset;
+    const id = parseDataSetId(element);
     const choice = id && this._store.getChoiceById(id);
     if (!choice) {
       return;
