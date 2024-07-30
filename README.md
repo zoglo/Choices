@@ -127,6 +127,7 @@ Or include Choices directly:
     addItemFilter: null,
     removeItems: true,
     removeItemButton: false,
+    removeItemButtonAlignLeft: false,
     editItems: false,
     allowHTML: true,
     duplicateItemsAllowed: true,
@@ -155,8 +156,10 @@ Or include Choices directly:
     uniqueItemText: 'Only unique values can be added',
     customAddItemText: 'Only values matching specific conditions can be added',
     addItemText: (value) => {
-      return `Press Enter to add <b>"${value}"</b>`;
+      return `Press Enter to add <b>"${sanitise(value)}"</b>`;
     },
+    removeItemIconText: () => `Remove item`,
+    removeItemLabelText: (value) => `Remove item: ${sanitise(value)}`,
     maxItemText: (maxItemCount) => {
       return `Only ${maxItemCount} values can be added`;
     },
@@ -164,32 +167,32 @@ Or include Choices directly:
       return value1 === value2;
     },
     classNames: {
-      containerOuter: 'choices',
-      containerInner: 'choices__inner',
-      input: 'choices__input',
-      inputCloned: 'choices__input--cloned',
-      list: 'choices__list',
-      listItems: 'choices__list--multiple',
-      listSingle: 'choices__list--single',
-      listDropdown: 'choices__list--dropdown',
-      item: 'choices__item',
-      itemSelectable: 'choices__item--selectable',
-      itemDisabled: 'choices__item--disabled',
-      itemChoice: 'choices__item--choice',
-      placeholder: 'choices__placeholder',
-      group: 'choices__group',
-      groupHeading: 'choices__heading',
-      button: 'choices__button',
-      activeState: 'is-active',
-      focusState: 'is-focused',
-      openState: 'is-open',
-      disabledState: 'is-disabled',
-      highlightedState: 'is-highlighted',
-      selectedState: 'is-selected',
-      flippedState: 'is-flipped',
-      loadingState: 'is-loading',
-      noResults: 'has-no-results',
-      noChoices: 'has-no-choices'
+      containerOuter: ['choices'],
+      containerInner: ['choices__inner'],
+      input: ['choices__input'],
+      inputCloned: ['choices__input--cloned'],
+      list: ['choices__list'],
+      listItems: ['choices__list--multiple'],
+      listSingle: ['choices__list--single'],
+      listDropdown: ['choices__list--dropdown'],
+      item: ['choices__item'],
+      itemSelectable: ['choices__item--selectable'],
+      itemDisabled: ['choices__item--disabled'],
+      itemChoice: ['choices__item--choice'],
+      placeholder: ['choices__placeholder'],
+      group: ['choices__group'],
+      groupHeading: ['choices__heading'],
+      button: ['choices__button'],
+      activeState: ['is-active'],
+      focusState: ['is-focused'],
+      openState: ['is-open'],
+      disabledState: ['is-disabled'],
+      highlightedState: ['is-highlighted'],
+      selectedState: ['is-selected'],
+      flippedState: ['is-flipped'],
+      loadingState: ['is-loading'],
+      noResults: ['has-no-results'],
+      noChoices: ['has-no-choices']
     },
     // Choices uses the great Fuse library for searching. You
     // can find more options here: https://fusejs.io/api/options.html
@@ -337,6 +340,14 @@ Pass an array of objects:
 **Input types affected:** `text`, `select-one`, `select-multiple`
 
 **Usage:** Whether each item should have a remove button.
+
+### removeItemButtonAlignLeft
+
+**Type:** `Boolean` **Default:** `false`
+
+**Input types affected:** `text`, `select-one`, `select-multiple`
+
+**Usage:** Align item remove button left vs right
 
 ### editItems
 
@@ -591,11 +602,27 @@ For backward compatibility, `<option placeholder>This is a placeholder</option>`
 
 ### addItemText
 
-**Type:** `String/Function` **Default:** `Press Enter to add "${value}"`
+**Type:** `String/Function` **Default:** `Press Enter to add "${sanitise(value)}"`
 
-**Input types affected:** `text`
+**Input types affected:** `text`, `select-one`, `select-multiple`
 
 **Usage:** The text that is shown when a user has inputted a new item but has not pressed the enter key. To access the current input value, pass a function with a `value` argument (see the [default config](https://github.com/jshjohnson/Choices#setup) for an example), otherwise pass a string.
+
+### removeItemIconText
+
+**Type:** `String/Function` **Default:** `Remove item"`
+
+**Input types affected:** `text`, `select-one`, `select-multiple`
+
+**Usage:** The text/icon for the remove button. To access the item's value, pass a function with a `value` argument (see the **default config** [https://github.com/jshjohnson/Choices#setup] for an example), otherwise pass a string.
+
+### removeItemLabelText
+
+**Type:** `String/Function` **Default:** `Remove item: ${sanitise(value)}"`
+
+**Input types affected:** `text`, `select-one`, `select-multiple`
+
+**Usage:** The text for the remove button's aria label. To access the item's value, pass a function with a `value` argument (see the **default config** [https://github.com/jshjohnson/Choices#setup] for an example), otherwise pass a string.
 
 ### maxItemText
 

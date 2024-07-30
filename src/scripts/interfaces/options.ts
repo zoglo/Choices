@@ -136,7 +136,7 @@ export interface Options {
   /**
    * A filter that will need to pass for a user to successfully add an item.
    *
-   * **Input types affected:** text
+   * **Input types affected:** text, select-one, select-multiple
    *
    * @default null
    */
@@ -145,11 +145,11 @@ export interface Options {
   /**
    * The text that is shown when a user has inputted a new item but has not pressed the enter key. To access the current input value, pass a function with a `value` argument (see the **default config** [https://github.com/jshjohnson/Choices#setup] for an example), otherwise pass a string.
    *
-   * **Input types affected:** text
+   * **Input types affected:** text, one-select, select-one, select-multiple
    *
    * @default
    * ```
-   * (value) => `Press Enter to add <b>"${value}"</b>`;
+   * (value) => `Press Enter to add <b>"${sanitise(value)}"</b>`;
    * ```
    */
   addItemText: string | Types.NoticeStringFunction;
@@ -157,7 +157,7 @@ export interface Options {
   /**
    * The text/icon for the remove button. To access the item's value, pass a function with a `value` argument (see the **default config** [https://github.com/jshjohnson/Choices#setup] for an example), otherwise pass a string.
    *
-   * **Input types affected:** text
+   * **Input types affected:** text, select-one, select-multiple
    *
    * @default
    * ```
@@ -169,7 +169,7 @@ export interface Options {
   /**
    * The text for the remove button's aria label. To access the item's value, pass a function with a `value` argument (see the **default config** [https://github.com/jshjohnson/Choices#setup] for an example), otherwise pass a string.
    *
-   * **Input types affected:** text
+   * **Input types affected:** text, select-one, select-multiple
    *
    * @default
    * ```
@@ -196,7 +196,7 @@ export interface Options {
    */
   removeItemButton: boolean;
   /**
-   * Align item remove button left vs right
+   * Align item remove button left vs right.
    *
    * **Input types affected:** text, select-one, select-multiple
    *
