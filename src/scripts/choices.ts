@@ -1059,6 +1059,13 @@ class Choices implements Choices {
       rendererableChoices = choices.filter((choice) => !choice.selected);
     }
 
+    if (this._isSelectElement) {
+      const backingOptions = choices.filter((choice) => !choice.element);
+      if (backingOptions.length !== 0) {
+        (this.passedElement as WrappedSelect).addOptions(backingOptions);
+      }
+    }
+
     // Split array into placeholders and "normal" choices
     const { placeholderChoices, normalChoices } = rendererableChoices.reduce(
       (acc, choice: ChoiceFull) => {

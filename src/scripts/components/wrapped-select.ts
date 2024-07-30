@@ -51,11 +51,22 @@ export default class WrappedSelect extends WrappedElement {
     };
 
     // Add each list item to list
-    options.forEach((optionData: ChoiceFull) =>
-      addOptionToFragment(optionData),
-    );
+    options.forEach((optionData) => addOptionToFragment(optionData));
 
     this.appendDocFragment(fragment);
+  }
+
+  addOptions(choices: ChoiceFull[]) {
+    choices.forEach((obj) => {
+      const choice = obj;
+      if (choice.element) {
+        return;
+      }
+
+      const option = this.template(choice);
+      this.element.appendChild(option);
+      choice.element = option;
+    });
   }
 
   optionsAsChoices(): (ChoiceFull | GroupFull)[] {
@@ -102,7 +113,7 @@ export default class WrappedSelect extends WrappedElement {
         typeof option.dataset.labelDescription !== 'undefined'
           ? option.dataset.labelDescription
           : undefined,
-      customProperties: parseCustomProperties(option.dataset.customProperties)
+      customProperties: parseCustomProperties(option.dataset.customProperties),
     };
 
     return result as ChoiceFull;
