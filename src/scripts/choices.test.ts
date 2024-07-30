@@ -2190,7 +2190,10 @@ describe('choices', () => {
             [templateKey]: stub().returns(element),
           };
 
-          output = instance._getTemplate(templateKey, customArg);
+          output = instance._templates[templateKey].call(
+            instance.config,
+            customArg,
+          );
           expect(output).to.deep.equal(element);
           expect(instance._templates[templateKey]).to.have.been.calledOnceWith(
             instance.config,

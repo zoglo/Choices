@@ -347,7 +347,7 @@ const templates = {
 
   input(
     { classNames: { input, inputCloned } }: TemplateOptions,
-    placeholderValue: string,
+    placeholderValue: string | null,
   ): HTMLInputElement {
     const inp = Object.assign(document.createElement('input'), {
       type: 'search',

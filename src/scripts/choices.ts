@@ -55,6 +55,7 @@ import templates, { escapeForTemplate } from './templates';
 import { mapInputToChoice } from './lib/choice-input';
 import { ChoiceFull } from './interfaces/choice-full';
 import { GroupFull } from './interfaces/group-full';
+import { PassedElementType } from './interfaces';
 
 /** @see {@link http://browserhacks.com/#hack-acea075d0ac6954f275a70023906050c} */
 const IS_IE11 =
@@ -100,7 +101,7 @@ class Choices implements Choices {
 
   dropdown: Dropdown;
 
-  _elementType: string;
+  _elementType: PassedElementType;
 
   _isTextElement: boolean;
 
@@ -211,7 +212,7 @@ class Choices implements Choices {
       );
     }
 
-    this._elementType = passedElement.type;
+    this._elementType = passedElement.type as PassedElementType;
     this._isTextElement = this._elementType === TEXT_TYPE;
     if (this._isTextElement || this.config.maxItemCount !== 1) {
       this.config.pseudoMultiSelectForSingle = false;
@@ -923,7 +924,7 @@ class Choices implements Choices {
         this.choiceList.append(choiceListFragment);
         this._highlightChoice();
       } else {
-        const notice = this._getTemplate('notice', canAddItem.notice);
+        const notice = this._templates.notice(this.config, canAddItem.notice);
         this.choiceList.append(notice);
       }
     } else {
@@ -933,21 +934,29 @@ class Choices implements Choices {
       let dropdownItem: Element | DocumentFragment;
 
       if (canAddChoice.response) {
-        dropdownItem = this._getTemplate('notice', canAddChoice.notice);
+        dropdownItem = this._templates.notice(this.config, canAddChoice.notice);
       } else if (this._isSearching) {
         const notice =
           typeof this.config.noResultsText === 'function'
             ? this.config.noResultsText()
             : this.config.noResultsText;
 
-        dropdownItem = this._getTemplate('notice', notice, 'no-results');
+        dropdownItem = this._templates.notice(
+          this.config,
+          notice,
+          'no-results',
+        );
       } else {
         const notice =
           typeof this.config.noChoicesText === 'function'
             ? this.config.noChoicesText()
             : this.config.noChoicesText;
 
-        dropdownItem = this._getTemplate('notice', notice, 'no-choices');
+        dropdownItem = this._templates.notice(
+          this.config,
+          notice,
+          'no-choices',
+        );
       }
 
       this.choiceList.append(dropdownItem);
@@ -1000,7 +1009,7 @@ class Choices implements Choices {
     groups.forEach((group) => {
       const groupChoices = getGroupChoices(group);
       if (groupChoices.length >= 1) {
-        const dropdownGroup = this._getTemplate('choiceGroup', group);
+        const dropdownGroup = this._templates.choiceGroup(this.config, group);
         fragment.appendChild(dropdownGroup);
         this._createChoicesFragment(groupChoices, fragment, true);
       }
@@ -1029,8 +1038,8 @@ class Choices implements Choices {
           : true;
 
       if (shouldRender) {
-        const dropdownItem = this._getTemplate(
-          'choice',
+        const dropdownItem = this._templates.choice(
+          this.config,
           choice,
           this.config.itemSelectText,
         );
@@ -1130,9 +1139,13 @@ class Choices implements Choices {
         .join(this.config.delimiter);
     }
 
-    const addItemToFragment = (item: InputChoice): void => {
+    const addItemToFragment = (item: ChoiceFull): void => {
       // Create new list element
-      const listItem = this._getTemplate('item', item, removeItemButton);
+      const listItem = this._templates.item(
+        this.config,
+        item,
+        removeItemButton,
+      );
       // Append it to list
       fragment.appendChild(listItem);
     };
@@ -1345,8 +1358,8 @@ class Choices implements Choices {
 
       if (this._isSelectOneElement) {
         if (!placeholderItem) {
-          placeholderItem = this._getTemplate(
-            'placeholder',
+          placeholderItem = this._templates.placeholder(
+            this.config,
             this.config.loadingText,
           );
 
@@ -1682,7 +1695,10 @@ class Choices implements Choices {
       const canShowDropdownNotice = canAddItem.notice && value;
 
       if (canShowDropdownNotice) {
-        const dropdownItem = this._getTemplate('notice', canAddItem.notice);
+        const dropdownItem = this._templates.notice(
+          this.config,
+          canAddItem.notice,
+        );
         this.dropdown.element.innerHTML = dropdownItem.outerHTML;
         this.showDropdown(true);
       } else {
@@ -2229,6 +2245,11 @@ class Choices implements Choices {
     });
   }
 
+  /**
+   * @deprecated call this._templates.{template}(this.config, ...) instead
+   * @param template
+   * @param args
+   */
   _getTemplate(template: string, ...args: any): any {
     return this._templates[template].call(this, this.config, ...args);
   }
@@ -2255,12 +2276,16 @@ class Choices implements Choices {
       defaultTemplates,
       userTemplates,
     ) as typeof templates;
+
+    Object.keys(this._templates).forEach((name) => {
+      this._templates[name] = this._templates[name].bind(this);
+    });
   }
 
   _createElements(): void {
     this.containerOuter = new Container({
-      element: this._getTemplate(
-        'containerOuter',
+      element: this._templates.containerOuter(
+        this.config,
         this._direction,
         this._isSelectElement,
         this._isSelectOneElement,
@@ -2274,29 +2299,32 @@ class Choices implements Choices {
     });
 
     this.containerInner = new Container({
-      element: this._getTemplate('containerInner'),
+      element: this._templates.containerInner(this.config),
       classNames: this.config.classNames,
       type: this._elementType as PassedElement['type'],
       position: this.config.position,
     });
 
     this.input = new Input({
-      element: this._getTemplate('input', this._placeholderValue),
+      element: this._templates.input(this.config, this._placeholderValue),
       classNames: this.config.classNames,
       type: this._elementType as PassedElement['type'],
       preventPaste: !this.config.paste,
     });
 
     this.choiceList = new List({
-      element: this._getTemplate('choiceList', this._isSelectOneElement),
+      element: this._templates.choiceList(
+        this.config,
+        this._isSelectOneElement,
+      ),
     });
 
     this.itemList = new List({
-      element: this._getTemplate('itemList', this._isSelectOneElement),
+      element: this._templates.itemList(this.config, this._isSelectOneElement),
     });
 
     this.dropdown = new Dropdown({
-      element: this._getTemplate('dropdown'),
+      element: this._templates.dropdown(this.config),
       classNames: this.config.classNames,
       type: this._elementType as PassedElement['type'],
     });
