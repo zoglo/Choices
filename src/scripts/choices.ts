@@ -1658,13 +1658,14 @@ class Choices implements Choices {
 
     if (target && (target as HTMLInputElement).value) {
       const { value } = this.input;
-      const canAddItem = this._canAddItem(activeItems, value);
-      const canAddChoice = this._canAddChoice(activeItems, value);
+      let canAdd: Notice;
+      if (this._isTextElement) {
+        canAdd = this._canAddItem(activeItems, value);
+      } else {
+        canAdd = this._canAddChoice(activeItems, value);
+      }
 
-      if (
-        (this._isTextElement && canAddItem.response) ||
-        (!this._isTextElement && canAddChoice.response)
-      ) {
+      if (canAdd.response) {
         this.hideDropdown(true);
         this._addItem({ value });
         this._triggerChange(value);
