@@ -1,7 +1,14 @@
+import { StringUntrusted } from './string-untrusted';
+import { StringPreEscaped } from './string-pre-escaped';
+
 export namespace Types {
   export type StrToEl = (
     str: string,
   ) => HTMLElement | HTMLInputElement | HTMLOptionElement;
+  export type EscapeForTemplateFn = (
+    allowHTML: boolean,
+    s: StringUntrusted | StringPreEscaped | string,
+  ) => string;
   export type StringFunction = () => string;
   export type NoticeStringFunction = (
     value: string,

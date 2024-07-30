@@ -51,7 +51,7 @@ import {
 } from './lib/utils';
 import { defaultState } from './reducers';
 import Store from './store/store';
-import templates from './templates';
+import templates, { escapeForTemplate } from './templates';
 import { mapInputToChoice } from './lib/choice-input';
 import { ChoiceFull } from './interfaces/choice-full';
 import { GroupFull } from './interfaces/group-full';
@@ -2245,7 +2245,7 @@ class Choices implements Choices {
       userTemplates = callbackOnCreateTemplates.call(
         this,
         strToEl,
-        defaultTemplates,
+        escapeForTemplate,
       );
     }
 

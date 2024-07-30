@@ -4,7 +4,6 @@ import { InputChoice } from './input-choice';
 import { ClassNames } from './class-names';
 import { PositionOptionsType } from './position-options-type';
 import { Types } from './types';
-import Templates from '../templates';
 import { RecordToCompare } from '../lib/utils';
 
 /**
@@ -601,7 +600,10 @@ export interface Options {
    * @default null
    */
   callbackOnCreateTemplates:
-    | ((template: Types.StrToEl, defaultTemplates: typeof Templates) => void)
+    | ((
+        template: Types.StrToEl,
+        escapeForTemplate: Types.EscapeForTemplateFn,
+      ) => void)
     | null;
 
   appendGroupInSearch: false;

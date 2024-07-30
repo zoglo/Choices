@@ -21,7 +21,7 @@
 * Add `removeItemButtonAlignLeft` option, to control if the remove item button is at the start or the end of the item.
 * Add `removeChoice` method.
 * Improve rendering performance by batching changes.
-* Provide original templates via a new argument to the `callbackOnCreateTemplates` callback. #1149
+* `escapeForTemplate` function is passed to the 2nd method of the `callbackOnCreateTemplates` callback.
 * When `allowHtml` is false, default templates now render escaped html to `innerHtml` writing to `innerText`.
     * This provides consistent rendering performance as `innerText` is quirky and slower than escaped html into `innerHtml`
 
@@ -42,3 +42,4 @@
 * Fix clearInput function did not clear the last search.
 * Fix `addItemFilter` would allow empty strings as input to be added for items.
 * Fix various issues with double escaping when displaying items/choices depending on allowHTML mode.
+* Fix `aria-label` for placeholders was set to the string `null`

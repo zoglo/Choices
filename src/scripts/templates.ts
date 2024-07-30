@@ -1,6 +1,7 @@
 /**
  * Helpers to create HTML elements used by Choices
- * Can be overridden by providing `callbackOnCreateTemplates` option
+ * Can be overridden by providing `callbackOnCreateTemplates` option.
+ * `Choices.defaults.templates` allows access to the default template methods from `callbackOnCreateTemplates`
  */
 
 import { ChoiceFull } from './interfaces/choice-full';
@@ -22,7 +23,7 @@ type TemplateOptions = Record<
   any
 >;
 
-const unwrapForTemplate = (
+export const escapeForTemplate = (
   allowHTML: boolean,
   s: StringUntrusted | StringPreEscaped | string,
 ): string => (allowHTML ? unwrapStringForEscaped(s) : (sanitise(s) as string));
@@ -94,7 +95,7 @@ const templates = {
   ): HTMLDivElement {
     return Object.assign(document.createElement('div'), {
       className: getClassNames(placeholder).join(' '),
-      innerHTML: unwrapForTemplate(allowHTML, value),
+      innerHTML: escapeForTemplate(allowHTML, value),
     });
   },
 
@@ -130,12 +131,12 @@ const templates = {
 
     if (typeof labelClass === 'string' || Array.isArray(labelClass)) {
       const spanLabel = Object.assign(document.createElement('span'), {
-        innerHTML: unwrapForTemplate(allowHTML, label),
+        innerHTML: escapeForTemplate(allowHTML, label),
         className: getClassNames(labelClass).join(' '),
       });
       div.appendChild(spanLabel);
     } else {
-      div.innerHTML = unwrapForTemplate(allowHTML, label);
+      div.innerHTML = escapeForTemplate(allowHTML, label);
     }
 
     Object.assign(div.dataset, {
@@ -245,7 +246,7 @@ const templates = {
     div.appendChild(
       Object.assign(document.createElement('div'), {
         className: getClassNames(groupHeading).join(' '),
-        innerHTML: unwrapForTemplate(allowHTML, label),
+        innerHTML: escapeForTemplate(allowHTML, label),
       }),
     );
 
@@ -290,19 +291,19 @@ const templates = {
 
     if (typeof labelClass === 'string' || Array.isArray(labelClass)) {
       const spanLabel = Object.assign(document.createElement('span'), {
-        innerHTML: unwrapForTemplate(allowHTML, label),
+        innerHTML: escapeForTemplate(allowHTML, label),
         className: getClassNames(labelClass).join(' '),
       });
       spanLabel.setAttribute('aria-describedby', descId);
       div.appendChild(spanLabel);
     } else {
-      div.innerHTML = unwrapForTemplate(allowHTML, label);
+      div.innerHTML = escapeForTemplate(allowHTML, label);
       div.setAttribute('aria-describedby', descId);
     }
 
     if (typeof labelDescription === 'string') {
       const spanDesc = Object.assign(document.createElement('span'), {
-        innerHTML: unwrapForTemplate(allowHTML, labelDescription),
+        innerHTML: escapeForTemplate(allowHTML, labelDescription),
         id: descId,
       });
       spanDesc.classList.add(...getClassNames(description));
@@ -360,7 +361,9 @@ const templates = {
 
     inp.setAttribute('role', 'textbox');
     inp.setAttribute('aria-autocomplete', 'list');
-    inp.setAttribute('aria-label', placeholderValue);
+    if (placeholderValue) {
+      inp.setAttribute('aria-label', placeholderValue);
+    }
 
     return inp;
   },
@@ -394,7 +397,7 @@ const templates = {
     }
 
     return Object.assign(document.createElement('div'), {
-      innerHTML: unwrapForTemplate(allowHTML, innerText),
+      innerHTML: escapeForTemplate(allowHTML, innerText),
       className: classes.join(' '),
     });
   },
