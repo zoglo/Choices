@@ -49,6 +49,10 @@ export interface Choices {
 
   _prevState: State;
 
+  _lastAddedChoiceId: number;
+
+  _lastAddedGroupId: number;
+
   _currentValue: string;
 
   _canSearch: boolean;

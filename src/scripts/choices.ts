@@ -120,6 +120,10 @@ class Choices implements Choices {
 
   _prevState: State;
 
+  _lastAddedChoiceId: number = 0;
+
+  _lastAddedGroupId: number = 0;
+
   _currentValue: string;
 
   _canSearch: boolean;
@@ -821,6 +825,8 @@ class Choices implements Choices {
 
   clearStore(): this {
     this._store.dispatch(clearAll());
+    this._lastAddedChoiceId = 0;
+    this._lastAddedGroupId = 0;
 
     return this;
   }
@@ -2173,9 +2179,9 @@ class Choices implements Choices {
     }
 
     // Generate unique id, in-place update is required so chaining _addItem works as expected
-    const { choices } = this._store;
     const item = choice;
-    item.id = choices ? choices.length + 1 : 1;
+    this._lastAddedChoiceId++;
+    item.id = this._lastAddedChoiceId;
     item.elementId = `${this._baseId}-${this._idNames.itemChoice}-${item.id}`;
 
     this._store.dispatch(addChoice(choice));
@@ -2197,10 +2203,17 @@ class Choices implements Choices {
     if (!group.choices) {
       return;
     }
-    const { id } = group;
-    group.choices.forEach((choice: ChoiceFull) => {
+
+    // add unique id for the group(s), and do not store the full list of choices in this group
+    const g = group;
+    this._lastAddedGroupId++;
+    g.id = this._lastAddedGroupId;
+    const { id, choices } = group;
+    g.choices = [];
+
+    choices.forEach((choice: ChoiceFull) => {
       const item = choice;
-      item.groupId = id || -1;
+      item.groupId = id;
       if (group.disabled) {
         item.disabled = true;
       }
