@@ -65,7 +65,7 @@ export default class Store {
     /**
      * Get single choice by it's ID
      */
-    getChoiceById(id: string): Choice | undefined;
+    getChoiceById(id: number): Choice | undefined;
     /**
      * Get group by group id
      */

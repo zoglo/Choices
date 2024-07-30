@@ -7,6 +7,7 @@ import { Options } from './interfaces/options';
 import { State } from './interfaces/state';
 import Store from './store/store';
 import templates from './templates';
+import { UntrustedString } from './lib/UntrustedString';
 /**
  * Choices
  * @author Josh Johnson<josh@joshuajohnson.co.uk>
@@ -182,7 +183,7 @@ declare class Choices implements Choices {
     _highlightChoice(el?: HTMLElement | null): void;
     _addItem({ value, label, choiceId, groupId, labelClass, labelDescription, customProperties, placeholder, keyCode, }: {
         value: string;
-        label?: string | null;
+        label?: UntrustedString | string | null;
         choiceId?: number;
         groupId?: number;
         labelClass?: string | Array<string> | null;

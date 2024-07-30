@@ -19,7 +19,7 @@ export declare const sortByScore: (a: Pick<Choice, "score">, b: Pick<Choice, "sc
 export declare const dispatchEvent: (element: HTMLElement, type: EventType, customArgs?: object | null) => boolean;
 export declare const existsInArray: (array: any[], value: string, key?: string) => boolean;
 export declare const cloneObject: (obj: object) => object;
-export declare const isEmptyObject: (obj: object | undefined) => boolean;
+export declare const isEmptyObject: (obj: object | undefined | null) => boolean;
 /**
  * Returns an array of keys present on the first but missing on the second object
  */
@@ -28,5 +28,6 @@ export declare const extend: (...args: (boolean | object)[]) => true | object;
 export declare const getClassNames: (ClassNames: Array<string> | string) => Array<string>;
 export declare const getClassNamesSelector: (option: string | Array<string> | null) => string;
 export declare const parseCustomProperties: (customProperties: any) => any;
+export declare const parseDataSetId: (element?: HTMLElement) => number | undefined;
 export {};
 //# sourceMappingURL=utils.d.ts.map
