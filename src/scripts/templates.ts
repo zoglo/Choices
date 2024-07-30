@@ -7,7 +7,11 @@ import { Choice } from './interfaces/choice';
 import { Group } from './interfaces/group';
 import { Item } from './interfaces/item';
 import { PassedElementType } from './interfaces/passed-element-type';
-import { isEmptyObject, getClassNames } from './lib/utils';
+import {
+  isEmptyObject,
+  getClassNames,
+  sanitise,
+} from './lib/utils';
 
 type TemplateOptions = Record<
   'classNames' | 'allowHTML' | 'removeItemButtonAlignLeft',
@@ -82,7 +86,7 @@ const templates = {
   ): HTMLDivElement {
     return Object.assign(document.createElement('div'), {
       className: getClassNames(placeholder).join(' '),
-      [allowHTML ? 'innerHTML' : 'innerText']: value,
+      innerHTML: allowHTML ? value : sanitise(value),
     });
   },
 
@@ -118,14 +122,12 @@ const templates = {
 
     if (typeof labelClass === 'string' || Array.isArray(labelClass)) {
       const spanLabel = Object.assign(document.createElement('span'), {
-        [allowHTML ? 'innerHTML' : 'innerText']: label,
+        innerHTML: allowHTML ? label : sanitise(label),
         className: getClassNames(labelClass).join(' '),
       });
       div.appendChild(spanLabel);
-    } else if (allowHTML) {
-      div.innerHTML = label;
     } else {
-      div.innerText = label;
+      div.innerHTML = allowHTML ? label : sanitise(label);
     }
 
     Object.assign(div.dataset, {
@@ -177,7 +179,7 @@ const templates = {
       const removeButton = Object.assign(document.createElement('button'), {
         type: 'button',
         className: getClassNames(button).join(' '),
-        [allowHTML ? 'innerHTML' : 'innerText']: REMOVE_ITEM_ICON,
+        innerHTML: allowHTML ? REMOVE_ITEM_ICON : sanitise(REMOVE_ITEM_ICON),
       });
       removeButton.setAttribute('aria-label', REMOVE_ITEM_LABEL);
       removeButton.dataset.button = '';
@@ -235,7 +237,7 @@ const templates = {
     div.appendChild(
       Object.assign(document.createElement('div'), {
         className: getClassNames(groupHeading).join(' '),
-        [allowHTML ? 'innerHTML' : 'innerText']: value,
+        innerHTML: allowHTML ? value : sanitise(value),
       }),
     );
 
@@ -280,22 +282,19 @@ const templates = {
 
     if (typeof labelClass === 'string' || Array.isArray(labelClass)) {
       const spanLabel = Object.assign(document.createElement('span'), {
-        [allowHTML ? 'innerHTML' : 'innerText']: label,
+        innerHTML: allowHTML ? label : sanitise(label),
         className: getClassNames(labelClass).join(' '),
       });
       spanLabel.setAttribute('aria-describedby', descId);
       div.appendChild(spanLabel);
-    } else if (allowHTML) {
-      div.innerHTML = label;
-      div.setAttribute('aria-describedby', descId);
     } else {
-      div.innerText = label;
+      div.innerHTML = allowHTML ? label : sanitise(label);
       div.setAttribute('aria-describedby', descId);
     }
 
     if (typeof labelDescription === 'string') {
       const spanDesc = Object.assign(document.createElement('span'), {
-        [allowHTML ? 'innerHTML' : 'innerText']: labelDescription,
+        innerHTML: allowHTML ? labelDescription : sanitise(labelDescription),
         id: descId,
       });
       spanDesc.classList.add(...getClassNames(description));
@@ -387,7 +386,7 @@ const templates = {
     }
 
     return Object.assign(document.createElement('div'), {
-      [allowHTML ? 'innerHTML' : 'innerText']: innerText,
+      innerHTML: allowHTML ? innerText : sanitise(innerText),
       className: classes.join(' '),
     });
   },
