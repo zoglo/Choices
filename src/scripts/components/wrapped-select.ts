@@ -1,9 +1,9 @@
-import { Choice } from '../interfaces/choice';
 import { parseCustomProperties } from '../lib/utils';
 import { ClassNames } from '../interfaces/class-names';
 import WrappedElement from './wrapped-element';
 import { isHTMLOptgroup, isHTMLOption } from '../lib/htmlElementGuards';
-import { Group } from '../interfaces';
+import { GroupFull } from '../interfaces/group-full';
+import { ChoiceFull } from '../interfaces/choice-full';
 
 export default class WrappedSelect extends WrappedElement {
   element: HTMLSelectElement;
@@ -41,9 +41,9 @@ export default class WrappedSelect extends WrappedElement {
     return Array.from(this.element.options);
   }
 
-  set options(options: Choice[]) {
+  set options(options: ChoiceFull[]) {
     const fragment = document.createDocumentFragment();
-    const addOptionToFragment = (data: Choice): void => {
+    const addOptionToFragment = (data: ChoiceFull): void => {
       // Create a standard select option
       const option = data.element ? data.element : this.template(data);
       // Append it to fragment
@@ -51,22 +51,27 @@ export default class WrappedSelect extends WrappedElement {
     };
 
     // Add each list item to list
-    options.forEach((optionData: Choice) => addOptionToFragment(optionData));
+    options.forEach((optionData: ChoiceFull) =>
+      addOptionToFragment(optionData),
+    );
 
     this.appendDocFragment(fragment);
   }
 
-  optionsAsChoices(): Partial<Choice>[] {
-    const choices: Partial<Choice>[] = [];
+  optionsAsChoices(): (ChoiceFull | GroupFull)[] {
+    const choices: (ChoiceFull | GroupFull)[] = [];
 
-    this.element.querySelectorAll(':scope > *').forEach((e) => {
-      if (isHTMLOption(e)) {
-        choices.push(this._optionToChoice(e as HTMLOptionElement));
-      } else if (isHTMLOptgroup(e)) {
-        choices.push(this._optgroupToChoice(e as HTMLOptGroupElement));
-      }
-      // There should only be those two in a <select> and we wouldn't care about others anyways
-    });
+    this.element
+      .querySelectorAll(':scope > option, :scope > optgroup')
+      .forEach((e) => {
+        if (isHTMLOption(e)) {
+          choices.push(this._optionToChoice(e as HTMLOptionElement));
+        } else if (isHTMLOptgroup(e)) {
+          choices.push(this._optgroupToChoice(e as HTMLOptGroupElement));
+        }
+        // There should only be those two in a <select> and we wouldn't care about others anyways
+        // todo: hr as empty optgroup
+      });
 
     return choices;
   }
@@ -77,14 +82,17 @@ export default class WrappedSelect extends WrappedElement {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  _optionToChoice(option: HTMLOptionElement): Choice {
-    return {
+  _optionToChoice(option: HTMLOptionElement): ChoiceFull {
+    const result: ChoiceFull = {
+      id: 0,
+      groupId: 0,
       value: option.value,
       label: option.innerHTML,
       element: option,
       active: true,
       selected: option.selected,
       disabled: option.disabled,
+      highlighted: false,
       placeholder: option.value === '' || option.hasAttribute('placeholder'),
       labelClass:
         typeof option.dataset.labelClass !== 'undefined'
@@ -94,23 +102,27 @@ export default class WrappedSelect extends WrappedElement {
         typeof option.dataset.labelDescription !== 'undefined'
           ? option.dataset.labelDescription
           : undefined,
-      customProperties: parseCustomProperties(option.dataset.customProperties),
-    } as Choice;
+      customProperties: parseCustomProperties(option.dataset.customProperties)
+    };
+
+    return result as ChoiceFull;
   }
 
-  _optgroupToChoice(optgroup: HTMLOptGroupElement): Partial<Choice> {
+  _optgroupToChoice(optgroup: HTMLOptGroupElement): GroupFull {
     const options = optgroup.querySelectorAll('option');
     const choices = Array.from(options).map((option) =>
       this._optionToChoice(option),
     );
 
-    return {
-      id: Math.floor(new Date().valueOf() * Math.random()),
-      value: optgroup.label || '',
+    const result: GroupFull = {
+      id: 0,
+      label: optgroup.label || '',
       element: optgroup,
       active: choices.length !== 0,
       disabled: optgroup.disabled,
       choices,
-    } as Group;
+    };
+
+    return result as GroupFull;
   }
 }

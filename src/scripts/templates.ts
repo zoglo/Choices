@@ -3,8 +3,8 @@
  * Can be overridden by providing `callbackOnCreateTemplates` option
  */
 
-import { Choice } from './interfaces/choice';
-import { Group } from './interfaces/group';
+import { ChoiceFull } from './interfaces/choice-full';
+import { GroupFull } from './interfaces/group-full';
 import { PassedElementType } from './interfaces/passed-element-type';
 import { StringPreEscaped } from './interfaces/string-pre-escaped';
 import { StringUntrusted } from './interfaces/string-untrusted';
@@ -121,7 +121,7 @@ const templates = {
       disabled,
       highlighted,
       placeholder: isPlaceholder,
-    }: Choice,
+    }: ChoiceFull,
     removeItemButton: boolean,
   ): HTMLDivElement {
     const div = Object.assign(document.createElement('div'), {
@@ -222,7 +222,7 @@ const templates = {
       allowHTML,
       classNames: { group, groupHeading, itemDisabled },
     }: TemplateOptions,
-    { id, value, disabled }: Group,
+    { id, label, disabled }: GroupFull,
   ): HTMLDivElement {
     const div = Object.assign(document.createElement('div'), {
       className: `${getClassNames(group).join(' ')} ${
@@ -235,7 +235,7 @@ const templates = {
     Object.assign(div.dataset, {
       group: '',
       id,
-      value,
+      value: label,
     });
 
     if (disabled) {
@@ -245,7 +245,7 @@ const templates = {
     div.appendChild(
       Object.assign(document.createElement('div'), {
         className: getClassNames(groupHeading).join(' '),
-        innerHTML: unwrapForTemplate(allowHTML, value),
+        innerHTML: unwrapForTemplate(allowHTML, label),
       }),
     );
 
@@ -276,7 +276,7 @@ const templates = {
       disabled: isDisabled,
       selected: isSelected,
       placeholder: isPlaceholder,
-    }: Choice,
+    }: ChoiceFull,
     selectText: string,
   ): HTMLDivElement {
     const div = Object.assign(document.createElement('div'), {
@@ -407,7 +407,7 @@ const templates = {
     customProperties,
     active,
     disabled,
-  }: Choice): HTMLOptionElement {
+  }: ChoiceFull): HTMLOptionElement {
     // HtmlOptionElement's label value does not support HTML, so the avoid double escaping unwrap the untrusted string.
     const labelValue = unwrapStringForRaw(label);
 
@@ -423,7 +423,7 @@ const templates = {
       opt.dataset.customProperties = JSON.stringify(customProperties);
     }
 
-    opt.disabled = !!disabled;
+    opt.disabled = disabled;
 
     return opt;
   },

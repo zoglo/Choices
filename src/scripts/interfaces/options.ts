@@ -1,11 +1,11 @@
 import Fuse from 'fuse.js';
-// eslint-disable-next-line import/no-cycle
 import { Choices } from './choices';
-import { Choice } from './choice';
+import { InputChoice } from './input-choice';
 import { ClassNames } from './class-names';
 import { PositionOptionsType } from './position-options-type';
 import { Types } from './types';
 import Templates from '../templates';
+import { RecordToCompare } from '../lib/utils';
 
 /**
  * Choices options interface
@@ -55,7 +55,7 @@ export interface Options {
    *
    * @default []
    */
-  items: string[] | Choice[];
+  items: string[] | InputChoice[];
 
   /**
    * Add choices (see terminology) to select input.
@@ -104,7 +104,7 @@ export interface Options {
    *
    * @default []
    */
-  choices: Choice[];
+  choices: InputChoice[];
 
   /**
    * The amount of choices to be rendered within the dropdown list `("-1" indicates no limit)`. This is useful if you have a lot of choices where it is easier for a user to use the search area to find a choice.
@@ -392,7 +392,7 @@ export interface Options {
    *
    * @default sortByAlpha
    */
-  sorter: (current: Choice, next: Choice) => number;
+  sorter: (current: RecordToCompare, next: RecordToCompare) => number;
 
   /**
    * Whether the input should show a placeholder. Used in conjunction with `placeholderValue`. If `placeholder` is set to true and no value is passed to `placeholderValue`, the passed input's placeholder attribute will be used as the placeholder value.

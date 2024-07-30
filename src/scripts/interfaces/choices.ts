@@ -7,7 +7,7 @@ import {
   Input,
   Dropdown,
 } from '../components';
-import { Choice } from './choice';
+import { InputChoice } from './input-choice';
 import { State } from './state';
 import templates from '../templates';
 // eslint-disable-next-line import/no-cycle
@@ -71,9 +71,9 @@ export interface Choices {
     itemChoice: string;
   };
 
-  _presetChoices: Partial<Choice>[];
+  _presetChoices: InputChoice[];
 
-  _presetItems: Choice[] | string[];
+  _presetItems: (InputChoice | string)[];
 
   new (
     element: string | Element | HTMLInputElement | HTMLSelectElement,

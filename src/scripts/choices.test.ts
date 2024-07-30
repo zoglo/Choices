@@ -8,9 +8,11 @@ import { EVENTS, ACTION_TYPES, KEY_CODES } from './constants';
 import { WrappedSelect, WrappedInput } from './components/index';
 import { removeItem } from './actions/items';
 import templates from './templates';
-import { Choice } from './interfaces/choice';
-import { Group } from './interfaces/group';
+import { InputChoice } from './interfaces/input-choice';
+import { InputGroup } from './interfaces/input-group';
 import { DEFAULT_CONFIG } from './defaults';
+import { ChoiceFull } from './interfaces/choice-full';
+import { GroupFull } from './interfaces/group-full';
 
 chai.use(sinonChai);
 
@@ -760,7 +762,13 @@ describe('choices', () => {
       });
 
       describe('item passed', () => {
-        const item: Choice = {
+        const item: ChoiceFull = {
+          groupId: -1,
+          highlighted: false,
+          active: false,
+          disabled: false,
+          placeholder: false,
+          selected: false,
           id: 1234,
           value: 'Test',
           label: 'Test',
@@ -881,7 +889,13 @@ describe('choices', () => {
       });
 
       describe('item passed', () => {
-        const item: Choice = {
+        const item: ChoiceFull = {
+          groupId: 0,
+          highlighted: false,
+          active: false,
+          disabled: false,
+          placeholder: false,
+          selected: false,
           id: 1234,
           value: 'Test',
           label: 'Test',
@@ -1199,7 +1213,7 @@ describe('choices', () => {
           const handleLoadingStateSpy = spy(choice, '_handleLoadingState');
 
           let fetcherCalled = false;
-          const fetcher = async (inst): Promise<Choice[]> => {
+          const fetcher = async (inst): Promise<InputChoice[]> => {
             expect(inst).to.eq(choice);
             fetcherCalled = true;
             // eslint-disable-next-line no-promise-executor-return
@@ -1590,28 +1604,29 @@ describe('choices', () => {
       let containerOuterRemoveLoadingStateStub;
       const value = 'value';
       const label = 'label';
-      const choices: Choice[] = [
+      const choices: InputChoice[] = [
         {
-          id: 1,
           value: '1',
           label: 'Test 1',
           selected: false,
           disabled: false,
         },
         {
-          id: 2,
           value: '2',
           label: 'Test 2',
           selected: false,
           disabled: true,
         },
       ];
-      const groups: Group[] = [
+      const groups: InputGroup[] = [
         {
           ...choices[0],
           choices,
         },
-        choices[1],
+        {
+          ...choices[1],
+          choices: [],
+        },
       ];
 
       beforeEach(() => {
@@ -1735,16 +1750,14 @@ describe('choices', () => {
 
   describe('events', () => {
     describe('search', () => {
-      const choices: Choice[] = [
+      const choices: InputChoice[] = [
         {
-          id: 1,
           value: '1',
           label: 'Test 1',
           selected: false,
           disabled: false,
         },
         {
-          id: 2,
           value: '2',
           label: 'Test 2',
           selected: false,
@@ -1832,13 +1845,17 @@ describe('choices', () => {
   describe('private methods', () => {
     describe('_createGroupsFragment', () => {
       let _createChoicesFragmentStub;
-      const choices: Choice[] = [
+      const choices: ChoiceFull[] = [
         {
           id: 1,
           selected: true,
           groupId: 1,
           value: 'Choice 1',
           label: 'Choice 1',
+          disabled: false,
+          active: false,
+          placeholder: false,
+          highlighted: false,
         },
         {
           id: 2,
@@ -1846,6 +1863,10 @@ describe('choices', () => {
           groupId: 2,
           value: 'Choice 2',
           label: 'Choice 2',
+          disabled: false,
+          active: false,
+          placeholder: false,
+          highlighted: false,
         },
         {
           id: 3,
@@ -1853,21 +1874,27 @@ describe('choices', () => {
           groupId: 1,
           value: 'Choice 3',
           label: 'Choice 3',
+          disabled: false,
+          active: false,
+          placeholder: false,
+          highlighted: false,
         },
       ];
 
-      const groups: Group[] = [
+      const groups: GroupFull[] = [
         {
           id: 2,
-          value: 'Group 2',
+          label: 'Group 2',
           active: true,
           disabled: false,
+          choices: [],
         },
         {
           id: 1,
-          value: 'Group 1',
+          label: 'Group 1',
           active: true,
           disabled: false,
+          choices: [],
         },
       ];
 
@@ -2290,7 +2317,12 @@ describe('choices', () => {
       });
 
       describe('when given an item to remove', () => {
-        const item = {
+        const item: ChoiceFull = {
+          highlighted: false,
+          active: false,
+          disabled: false,
+          placeholder: false,
+          selected: false,
           id: 1111,
           value: 'test value',
           label: 'test label',

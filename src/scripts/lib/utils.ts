@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { Choice } from '../interfaces/choice';
 import { EventType } from '../interfaces/event-type';
 import { StringUntrusted } from '../interfaces/string-untrusted';
 import { StringPreEscaped } from '../interfaces/string-pre-escaped';
+import { ChoiceFull } from '../interfaces/choice-full';
 
 export const getRandomNumber = (min: number, max: number): number =>
   Math.floor(Math.random() * (max - min) + min);
@@ -132,8 +132,8 @@ export const strToEl = ((): ((str: string) => Element) => {
   };
 })();
 
-interface RecordToCompare {
-  value: string;
+export interface RecordToCompare {
+  value?: StringUntrusted | string;
   label?: StringUntrusted | string;
 }
 
@@ -194,8 +194,8 @@ export const sortByAlpha = (
   });
 
 export const sortByScore = (
-  a: Pick<Choice, 'score'>,
-  b: Pick<Choice, 'score'>,
+  a: Pick<ChoiceFull, 'score'>,
+  b: Pick<ChoiceFull, 'score'>,
 ): number => {
   const { score: scoreA = 0 } = a;
   const { score: scoreB = 0 } = b;
@@ -230,8 +230,7 @@ export const existsInArray = (
     return item[key] === value;
   });
 
-export const cloneObject = (obj: object): object =>
-  JSON.parse(JSON.stringify(obj));
+export const cloneObject = <T>(obj: T): T => JSON.parse(JSON.stringify(obj));
 
 export const isEmptyObject = (obj: object | undefined | null): boolean => {
   if (!obj || typeof obj !== 'object') {

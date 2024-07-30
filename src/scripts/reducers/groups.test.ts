@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import groups, { defaultState } from './groups';
-import { Group } from '../interfaces/group';
+import { cloneObject } from '../lib/utils';
+import { GroupFull } from '../interfaces/group-full';
 
 describe('reducers/groups', () => {
   it('should return same state when no action matches', () => {
@@ -10,28 +11,19 @@ describe('reducers/groups', () => {
   describe('when groups do not exist', () => {
     describe('ADD_GROUP', () => {
       it('adds group', () => {
-        const id = 1;
-        const value = 'Group one';
-        const active = true;
-        const disabled = false;
+        const group: GroupFull = {
+          active: true,
+          disabled: false,
+          id: 1,
+          label: 'Group one',
+          choices: [],
+        };
 
-        const expectedResponse = [
-          {
-            id,
-            value,
-            active,
-            disabled,
-          } as Group,
-        ];
+        const expectedResponse = [group];
 
         const actualResponse = groups(undefined, {
           type: 'ADD_GROUP',
-          group: {
-            id,
-            value,
-            active,
-            disabled,
-          },
+          group: cloneObject(group),
         });
 
         expect(actualResponse).to.eql(expectedResponse);
@@ -40,21 +32,23 @@ describe('reducers/groups', () => {
   });
 
   describe('when groups exist', () => {
-    let state: Group[];
+    let state: GroupFull[];
 
     beforeEach(() => {
       state = [
         {
           id: 1,
-          value: 'Group one',
+          label: 'Group one',
           active: true,
           disabled: false,
+          choices: [],
         },
         {
           id: 2,
-          value: 'Group two',
+          label: 'Group two',
           active: true,
           disabled: false,
+          choices: [],
         },
       ];
     });

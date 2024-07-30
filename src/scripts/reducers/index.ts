@@ -4,8 +4,9 @@ import groups from './groups';
 import choices from './choices';
 import loading from './loading';
 import { cloneObject } from '../lib/utils';
+import { State } from '../interfaces';
 
-export const defaultState = {
+export const defaultState: State = {
   groups: [],
   items: [],
   choices: [],

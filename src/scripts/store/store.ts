@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createStore, Store as IStore, AnyAction } from 'redux';
-import { Choice } from '../interfaces/choice';
-import { Group } from '../interfaces/group';
 import { State } from '../interfaces/state';
 import rootReducer from '../reducers/index';
 import { setIsLoading } from '../actions/misc';
+import { ChoiceFull } from '../interfaces/choice-full';
+import { GroupFull } from '../interfaces/group-full';
 
 export default class Store {
   _store: IStore;
@@ -58,80 +58,76 @@ export default class Store {
   /**
    * Get items from store
    */
-  get items(): Choice[] {
+  get items(): ChoiceFull[] {
     return this.state.items;
   }
 
   /**
    * Get active items from store
    */
-  get activeItems(): Choice[] {
-    return this.items.filter((item) => item.active === true);
+  get activeItems(): ChoiceFull[] {
+    return this.items.filter((item) => item.active);
   }
 
   /**
    * Get highlighted items from store
    */
-  get highlightedActiveItems(): Choice[] {
+  get highlightedActiveItems(): ChoiceFull[] {
     return this.items.filter((item) => item.active && item.highlighted);
   }
 
   /**
    * Get choices from store
    */
-  get choices(): Choice[] {
+  get choices(): ChoiceFull[] {
     return this.state.choices;
   }
 
   /**
    * Get active choices from store
    */
-  get activeChoices(): Choice[] {
-    return this.choices.filter((choice) => choice.active === true);
+  get activeChoices(): ChoiceFull[] {
+    return this.choices.filter((choice) => choice.active);
   }
 
   /**
    * Get selectable choices from store
    */
-  get selectableChoices(): Choice[] {
-    return this.choices.filter((choice) => choice.disabled !== true);
+  get selectableChoices(): ChoiceFull[] {
+    return this.choices.filter((choice) => !choice.disabled);
   }
 
   /**
    * Get choices that can be searched (excluding placeholders)
    */
-  get searchableChoices(): Choice[] {
-    return this.selectableChoices.filter(
-      (choice) => choice.placeholder !== true,
-    );
+  get searchableChoices(): ChoiceFull[] {
+    return this.selectableChoices.filter((choice) => !choice.placeholder);
   }
 
   /**
    * Get placeholder choice from store
    */
-  get placeholderChoice(): Choice | undefined {
-    return [...this.choices]
-      .reverse()
-      .find((choice) => choice.placeholder === true);
+  get placeholderChoice(): ChoiceFull | undefined {
+    return [...this.choices].reverse().find((choice) => choice.placeholder);
   }
 
   /**
    * Get groups from store
    */
-  get groups(): Group[] {
+  get groups(): GroupFull[] {
     return this.state.groups;
   }
 
   /**
    * Get active groups from store
    */
-  get activeGroups(): Group[] {
+  get activeGroups(): GroupFull[] {
     const { groups, choices } = this;
 
     return groups.filter((group) => {
-      const isActive = group.active === true && group.disabled === false;
+      const isActive = group.active && !group.disabled;
       const hasActiveOptions = choices.some(
-        (choice) => choice.active === true && choice.disabled === false,
+        (choice) => choice.active && !choice.disabled,
       );
 
       return isActive && hasActiveOptions;
@@ -148,14 +144,14 @@ export default class Store {
   /**
    * Get single choice by it's ID
    */
-  getChoiceById(id: number): Choice | undefined {
+  getChoiceById(id: number): ChoiceFull | undefined {
     return this.activeChoices.find((choice) => choice.id === id);
   }
 
   /**
    * Get group by group id
    */
-  getGroupById(id: number): Group | undefined {
+  getGroupById(id: number): GroupFull | undefined {
     return this.groups.find((group) => group.id === id);
   }
 }

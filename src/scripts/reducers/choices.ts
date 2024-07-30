@@ -6,7 +6,7 @@ import {
   ClearChoicesAction,
 } from '../actions/choices';
 import { AddItemAction, RemoveItemAction } from '../actions/items';
-import { Choice } from '../interfaces/choice';
+import { ChoiceFull } from '../interfaces/choice-full';
 
 export const defaultState = [];
 
@@ -21,9 +21,9 @@ type ActionTypes =
   | Record<string, never>;
 
 export default function choices(
-  state: Choice[] = defaultState,
+  state: ChoiceFull[] = defaultState,
   action: ActionTypes = {},
-): Choice[] {
+): ChoiceFull[] {
   switch (action.type) {
     case 'ADD_CHOICE': {
       const { choice } = action as AddChoiceAction;

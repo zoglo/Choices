@@ -1,53 +1,36 @@
 import { expect } from 'chai';
 import * as actions from './choices';
+import { cloneObject } from '../lib/utils';
+import { ChoiceFull } from '../interfaces/choice-full';
 
 describe('actions/choices', () => {
   describe('addChoice action', () => {
     it('returns ADD_CHOICE action', () => {
-      const value = 'test';
-      const label = 'test';
-      const id = 1;
-      const groupId = 1;
-      const disabled = false;
-      const elementId = '1';
-      const labelClass = 'test';
-      const labelDescription = 'test';
-      const customProperties = { test: true };
-      const placeholder = true;
-      const keyCode = 10;
+      const choice: ChoiceFull = {
+        highlighted: false,
+        value: 'test',
+        label: 'test',
+        id: 1,
+        groupId: 1,
+        disabled: false,
+        elementId: '1',
+        labelClass: 'test',
+        labelDescription: 'test',
+        customProperties: {
+          test: true,
+        },
+        placeholder: true,
+        keyCode: 10,
+        active: false,
+        selected: false,
+      };
 
       const expectedAction: actions.AddChoiceAction = {
         type: 'ADD_CHOICE',
-        choice: {
-          value,
-          label,
-          id,
-          groupId,
-          disabled,
-          elementId,
-          labelClass,
-          labelDescription,
-          customProperties,
-          placeholder,
-          keyCode,
-        },
+        choice,
       };
 
-      expect(
-        actions.addChoice({
-          value,
-          label,
-          id,
-          groupId,
-          disabled,
-          elementId,
-          labelClass,
-          labelDescription,
-          customProperties,
-          placeholder,
-          keyCode,
-        }),
-      ).to.eql(expectedAction);
+      expect(actions.addChoice(cloneObject(choice))).to.eql(expectedAction);
     });
   });
 

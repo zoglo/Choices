@@ -1,78 +1,56 @@
 import { expect } from 'chai';
 import * as actions from './items';
+import { cloneObject } from '../lib/utils';
+import { ChoiceFull } from '../interfaces/choice-full';
 
 describe('actions/items', () => {
   describe('addItem action', () => {
     it('returns ADD_ITEM action', () => {
-      const value = 'test';
-      const label = 'test';
-      const id = 1;
-      const groupId = 1;
-      const customProperties = { test: true };
-      const placeholder = true;
-      const keyCode = 10;
+      const item: ChoiceFull = {
+        highlighted: false,
+        active: false,
+        disabled: false,
+        selected: false,
+        value: 'test',
+        label: 'test',
+        id: 1,
+        groupId: 1,
+        customProperties: { test: true },
+        placeholder: true,
+        keyCode: 10,
+      };
 
       const expectedAction: actions.AddItemAction = {
         type: 'ADD_ITEM',
-        item: {
-          value,
-          label,
-          id,
-          groupId,
-          customProperties,
-          placeholder,
-          keyCode,
-        },
+        item,
       };
 
-      expect(
-        actions.addItem({
-          value,
-          label,
-          id,
-          groupId,
-          customProperties,
-          placeholder,
-          keyCode,
-        }),
-      ).to.eql(expectedAction);
+      expect(actions.addItem(cloneObject(item))).to.eql(expectedAction);
     });
   });
 
   describe('removeItem action', () => {
     it('returns REMOVE_ITEM action', () => {
-      const value = 'test';
-      const label = 'test';
-      const id = 1;
-      const groupId = 1;
-      const customProperties = { test: true };
-      const placeholder = true;
-      const keyCode = 10;
+      const item: ChoiceFull = {
+        highlighted: false,
+        active: false,
+        disabled: false,
+        selected: false,
+        value: 'test',
+        label: 'test',
+        id: 1,
+        groupId: 1,
+        customProperties: { test: true },
+        placeholder: true,
+        keyCode: 10,
+      };
 
       const expectedAction: actions.RemoveItemAction = {
         type: 'REMOVE_ITEM',
-        item: {
-          value,
-          label,
-          id,
-          groupId,
-          customProperties,
-          placeholder,
-          keyCode,
-        },
+        item,
       };
 
-      expect(
-        actions.removeItem({
-          value,
-          label,
-          id,
-          groupId,
-          customProperties,
-          placeholder,
-          keyCode,
-        }),
-      ).to.eql(expectedAction);
+      expect(actions.removeItem(cloneObject(item))).to.eql(expectedAction);
     });
   });
 

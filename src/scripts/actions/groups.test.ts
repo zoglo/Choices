@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import * as actions from './groups';
 import { mapInputToChoice } from '../lib/choice-input';
+import { InputGroup } from '../interfaces/input-group';
 
 describe('actions/groups', () => {
   describe('addGroup action', () => {
@@ -13,10 +14,11 @@ describe('actions/groups', () => {
       const expectedAction: actions.AddGroupAction = {
         type: 'ADD_GROUP',
         group: {
-          value,
+          label: value,
           id,
           active,
           disabled,
+          choices: [],
         },
       };
 
@@ -24,12 +26,12 @@ describe('actions/groups', () => {
         actions.addGroup(
           mapInputToChoice(
             {
-              label: value,
+              value,
               id,
               active,
               disabled,
               choices: [],
-            },
+            } as InputGroup,
             true,
           ),
         ),

@@ -15,7 +15,7 @@ import {
   sanitise,
   parseCustomProperties,
   sortByAlpha,
-  sortByScore
+  sortByScore,
 } from './utils';
 
 describe('utils', () => {

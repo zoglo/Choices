@@ -1,59 +1,67 @@
-import { Choice, Group } from '../interfaces';
+import { InputChoice } from '../interfaces/input-choice';
+import { InputGroup } from '../interfaces/input-group';
+import { GroupFull } from '../interfaces/group-full';
+import { ChoiceFull } from '../interfaces/choice-full';
+import { unwrapStringForRaw } from './utils';
 
-export type ChoiceGroup = {
-  id?: string | number;
-  label: string;
-  active?: boolean;
-  disabled?: boolean;
-  choices: Choice[];
-};
+type MappedInputTypeToChoiceType<T extends string | InputChoice | InputGroup> =
+  T extends InputGroup ? GroupFull : ChoiceFull;
 
-export const mapInputToChoice = (
-  value: string | Choice | ChoiceGroup,
+const coerceBool = (arg: unknown, defaultValue: boolean = true) =>
+  typeof arg === 'undefined' ? defaultValue : !!arg;
+
+export const mapInputToChoice = <T extends string | InputChoice | InputGroup>(
+  value: T,
   allowGroup: boolean,
-): Choice | Group => {
+): MappedInputTypeToChoiceType<T> => {
   if (typeof value === 'string') {
-    return mapInputToChoice(
+    const result: ChoiceFull = mapInputToChoice(
       {
         value,
         label: value,
-      } as Choice,
+      } as InputChoice,
       false,
     );
+
+    return result as MappedInputTypeToChoiceType<T>;
   }
 
-  if (value.choices) {
+  const groupOrChoice = value as InputChoice | InputGroup;
+  if ('choices' in groupOrChoice) {
     if (!allowGroup) {
       // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/optgroup
       throw new TypeError(`optGroup is not allowed`);
     }
-    const group = value as ChoiceGroup;
-    const choices = group.choices.map((e) =>
-      mapInputToChoice(e, false),
-    ) as Choice[];
+    const group = groupOrChoice;
+    const choices = group.choices.map((e) => mapInputToChoice(e, false));
 
-    return {
-      id: group.id || Math.floor(new Date().valueOf() * Math.random()),
-      value: group.label,
+    const result: GroupFull = {
+      id: group.id || 0,
+      label: unwrapStringForRaw(group.label) || group.value,
       active: choices.length !== 0,
       disabled: !!group.disabled,
       choices,
-    } as Group;
+    };
+
+    return result as MappedInputTypeToChoiceType<T>;
   }
 
-  const choice = value as Choice;
-  const coerceBool = (arg: unknown, defaultValue: boolean = true) =>
-    typeof arg === 'undefined' ? defaultValue : !!arg;
+  const choice = groupOrChoice;
 
-  return {
+  const result: ChoiceFull = {
+    id: choice.id || 0,
+    groupId: 0,
     value: choice.value,
     label: choice.label || choice.value,
     active: coerceBool(choice.active),
     selected: coerceBool(choice.selected, false),
     disabled: coerceBool(choice.disabled, false),
     placeholder: coerceBool(choice.placeholder, false),
+    highlighted: false,
     labelClass: choice.labelClass,
     labelDescription: choice.labelDescription,
     customProperties: choice.customProperties,
-  } as Choice;
+  };
+
+  return result as MappedInputTypeToChoiceType<T>;
 };

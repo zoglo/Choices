@@ -1,9 +1,9 @@
-import { Choice } from './choice';
-import { Group } from './group';
+import { ChoiceFull } from './choice-full';
+import { GroupFull } from './group-full';
 
 export interface State {
-  choices: Choice[];
-  groups: Group[];
-  items: Choice[];
+  choices: ChoiceFull[];
+  groups: GroupFull[];
+  items: ChoiceFull[];
   loading: number;
 }

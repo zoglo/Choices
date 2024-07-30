@@ -1,7 +1,8 @@
 import { expect } from 'chai';
 import items, { defaultState } from './items';
 import { RemoveItemAction } from '../actions/items';
-import { Choice } from '../interfaces';
+import { cloneObject } from '../lib/utils';
+import { ChoiceFull } from '../interfaces/choice-full';
 
 describe('reducers/items', () => {
   it('should return same state when no action matches', () => {
@@ -10,48 +11,34 @@ describe('reducers/items', () => {
 
   describe('when items do not exist', () => {
     describe('ADD_ITEM', () => {
-      const value = 'Item one';
-      const label = 'Item one';
-      const id = 1234;
-      const groupId = 1;
-      const customProperties = {
-        property: 'value',
+      const choice: ChoiceFull = {
+        value: 'Item one',
+        label: 'Item one',
+        id: 1234,
+        groupId: 1,
+        customProperties: {
+          property: 'value',
+        },
+        placeholder: true,
+        active: true,
+        disabled: false,
+        selected: false,
+        highlighted: false,
+        keyCode: 10,
       };
-      const placeholder = true;
-      const keyCode = 10;
 
       describe('passing expected values', () => {
-        let actualResponse: Choice[];
+        let actualResponse: ChoiceFull[];
 
         beforeEach(() => {
           actualResponse = items(undefined, {
             type: 'ADD_ITEM',
-            item: {
-              value,
-              label,
-              id,
-              groupId,
-              customProperties,
-              placeholder,
-              keyCode,
-            },
+            item: cloneObject(choice),
           });
         });
 
         it('adds item', () => {
-          const expectedResponse = [
-            {
-              id,
-              groupId,
-              value,
-              label,
-              active: true,
-              highlighted: false,
-              customProperties,
-              placeholder,
-              keyCode,
-            } as Choice,
-          ];
+          const expectedResponse = [choice];
 
           expect(actualResponse).to.eql(expectedResponse);
         });
@@ -65,32 +52,15 @@ describe('reducers/items', () => {
 
       describe('fallback values', () => {
         describe('passing no placeholder value', () => {
+          const item = Object.assign(cloneObject(choice), {
+            placeholder: false,
+          });
           it('adds item with placeholder set to false', () => {
-            const expectedResponse = [
-              {
-                id,
-                groupId,
-                value,
-                label,
-                active: true,
-                highlighted: false,
-                customProperties,
-                placeholder: false,
-                keyCode,
-              } as Choice,
-            ];
+            const expectedResponse = [item];
 
             const actualResponse = items(undefined, {
               type: 'ADD_ITEM',
-              item: {
-                value,
-                label,
-                id,
-                groupId,
-                customProperties,
-                placeholder: undefined,
-                keyCode,
-              } as Choice,
+              item: cloneObject(item),
             });
 
             expect(actualResponse).to.eql(expectedResponse);
@@ -101,7 +71,7 @@ describe('reducers/items', () => {
   });
 
   describe('when items exist', () => {
-    let state: Choice[];
+    let state: ChoiceFull[];
 
     beforeEach(() => {
       state = [
@@ -114,6 +84,8 @@ describe('reducers/items', () => {
           highlighted: false,
           customProperties: null,
           placeholder: false,
+          disabled: false,
+          selected: false,
         },
         {
           id: 2,
@@ -124,6 +96,8 @@ describe('reducers/items', () => {
           highlighted: false,
           customProperties: null,
           placeholder: false,
+          disabled: false,
+          selected: false,
         },
       ];
     });
@@ -140,7 +114,7 @@ describe('reducers/items', () => {
             ...state[1],
             active: false,
           },
-        ] as Choice[];
+        ] as ChoiceFull[];
 
         const actualResponse = items(clonedState, {
           type: 'REMOVE_ITEM',
@@ -165,7 +139,7 @@ describe('reducers/items', () => {
             ...state[1],
             highlighted: true,
           },
-        ] as Choice[];
+        ] as ChoiceFull[];
 
         const actualResponse = items(clonedState, {
           type: 'HIGHLIGHT_ITEM',

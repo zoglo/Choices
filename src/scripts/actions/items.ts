@@ -1,14 +1,14 @@
 import { ACTION_TYPES } from '../constants';
-import { Choice } from '../interfaces/choice';
+import { ChoiceFull } from '../interfaces/choice-full';
 
 export interface AddItemAction {
   type: typeof ACTION_TYPES.ADD_ITEM;
-  item: Choice;
+  item: ChoiceFull;
 }
 
 export interface RemoveItemAction {
   type: typeof ACTION_TYPES.REMOVE_ITEM;
-  item: Choice;
+  item: ChoiceFull;
 }
 
 export interface HighlightItemAction {
@@ -17,12 +17,12 @@ export interface HighlightItemAction {
   highlighted: boolean;
 }
 
-export const addItem = (item: Choice): AddItemAction => ({
+export const addItem = (item: ChoiceFull): AddItemAction => ({
   type: ACTION_TYPES.ADD_ITEM,
   item,
 });
 
-export const removeItem = (item: Choice): RemoveItemAction => ({
+export const removeItem = (item: ChoiceFull): RemoveItemAction => ({
   type: ACTION_TYPES.REMOVE_ITEM,
   item,
 });

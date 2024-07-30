@@ -4,8 +4,8 @@ import {
   HighlightItemAction,
 } from '../actions/items';
 import { State } from '../interfaces/state';
-import { Choice } from '../interfaces/choice';
 import { RemoveChoiceAction } from '../actions/choices';
+import { ChoiceFull } from '../interfaces/choice-full';
 
 export const defaultState = [];
 
@@ -17,7 +17,7 @@ type ActionTypes =
   | Record<string, never>;
 
 export default function items(
-  state: Choice[] = defaultState,
+  state: ChoiceFull[] = defaultState,
   action: ActionTypes = {},
 ): State['items'] {
   switch (action.type) {
@@ -34,7 +34,7 @@ export default function items(
         el.setAttribute('selected', '');
       }
 
-      return [...state, item].map((obj: Choice) => {
+      return [...state, item].map((obj) => {
         const choice = obj;
         choice.highlighted = false;
 
