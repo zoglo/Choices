@@ -138,7 +138,7 @@ export interface Options {
    *
    * **Input types affected:** text, select-one, select-multiple
    *
-   * @default null
+   * @default (value) => !!value && value !== ''
    */
   addItemFilter: string | RegExp | Types.FilterFunction | null;
 

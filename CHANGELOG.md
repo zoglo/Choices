@@ -35,3 +35,4 @@
 * Fix `data-custom-properties` attribute did not serialize to created elements as a json blob as expected.
 * Fix multi-select not resizing correctly when an select option is selected on choices.js initialization.
 * Fix clearInput function did not clear the last search
+* Fix `addItemFilter` would allow empty strings as input to be added for items

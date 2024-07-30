@@ -41,7 +41,7 @@ export const DEFAULT_CONFIG: Options = {
   pseudoMultiSelectForSingle: false,
   addChoices: false,
   addItems: true,
-  addItemFilter: null,
+  addItemFilter: (value) => !!value && value !== '',
   removeItems: true,
   removeItemButton: false,
   removeItemButtonAlignLeft: false,
