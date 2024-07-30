@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { StringUntrusted } from './string-untrusted';
+
 export interface Choice {
   id?: number;
   labelClass?: string | Array<string>;
@@ -10,7 +12,7 @@ export interface Choice {
   elementId?: number;
   groupId?: number;
   keyCode?: number;
-  label: string;
+  label: StringUntrusted | string;
   placeholder?: boolean;
   selected?: boolean;
   value: any;

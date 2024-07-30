@@ -2,6 +2,8 @@
 
 import { Choice } from '../interfaces/choice';
 import { EventType } from '../interfaces/event-type';
+import { StringUntrusted } from '../interfaces/string-untrusted';
+import { StringPreEscaped } from '../interfaces/string-pre-escaped';
 
 export const getRandomNumber = (min: number, max: number): number =>
   Math.floor(Math.random() * (max - min) + min);
@@ -86,8 +88,23 @@ export const isScrolledIntoView = (
   return isVisible;
 };
 
-export const sanitise = <T>(value: T | string): T | string => {
+export const sanitise = <T>(
+  value: T | StringUntrusted | StringPreEscaped | string,
+): T | string => {
   if (typeof value !== 'string') {
+    if (value === null || value === undefined) {
+      return '';
+    }
+
+    if (typeof value === 'object') {
+      if ('raw' in value) {
+        return sanitise(value.raw);
+      }
+      if ('trusted' in value) {
+        return value.trusted;
+      }
+    }
+
     return value;
   }
 
@@ -117,14 +134,52 @@ export const strToEl = ((): ((str: string) => Element) => {
 
 interface RecordToCompare {
   value: string;
-  label?: string;
+  label?: StringUntrusted | string;
 }
+
+export const unwrapStringForRaw = (
+  s: StringUntrusted | StringPreEscaped | string,
+): string => {
+  if (typeof s === 'string') {
+    return s;
+  }
+
+  if (typeof s === 'object') {
+    if ('trusted' in s) {
+      return s.trusted;
+    }
+    if ('raw' in s) {
+      return s.raw;
+    }
+  }
+
+  return `${s}`;
+};
+
+export const unwrapStringForEscaped = (
+  s: StringUntrusted | StringPreEscaped | string,
+): string => {
+  if (typeof s === 'string') {
+    return s;
+  }
+
+  if (typeof s === 'object') {
+    if ('escaped' in s) {
+      return s.escaped;
+    }
+    if ('trusted' in s) {
+      return s.trusted;
+    }
+  }
+
+  return `${s}`;
+};
 
 export const sortByAlpha = (
   { value, label = value }: RecordToCompare,
   { value: value2, label: label2 = value2 }: RecordToCompare,
 ): number =>
-  label.localeCompare(label2, [], {
+  unwrapStringForRaw(label).localeCompare(unwrapStringForRaw(label2), [], {
     sensitivity: 'base',
     ignorePunctuation: true,
     numeric: true,

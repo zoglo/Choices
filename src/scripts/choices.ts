@@ -35,7 +35,7 @@ import { Notice } from './interfaces/notice';
 import { Options } from './interfaces/options';
 import { PassedElement } from './interfaces/passed-element';
 import { State } from './interfaces/state';
-
+import { StringUntrusted } from './interfaces/string-untrusted';
 import {
   cloneObject,
   diff,
@@ -56,8 +56,6 @@ import {
 import { defaultState } from './reducers';
 import Store from './store/store';
 import templates from './templates';
-import { PreEscapedString } from './lib/PreEscapedString';
-import { UntrustedString } from './lib/UntrustedString';
 
 /** @see {@link http://browserhacks.com/#hack-acea075d0ac6954f275a70023906050c} */
 const IS_IE11 =
@@ -1405,7 +1403,9 @@ class Choices implements Choices {
 
     return {
       response: canAddItem,
-      notice: new PreEscapedString(notice),
+      notice: {
+        trusted: notice,
+      },
     };
   }
 
@@ -1689,7 +1689,10 @@ class Choices implements Choices {
         this.hideDropdown(true);
         this._addItem({
           value: this.config.allowHtmlUserInput ? value : sanitise(value),
-          label: new UntrustedString(value),
+          label: {
+            escaped: sanitise(value),
+            raw: value,
+          },
         });
         this._triggerChange(value);
         this.clearInput();
@@ -2087,7 +2090,7 @@ class Choices implements Choices {
     keyCode = -1,
   }: {
     value: string;
-    label?: UntrustedString | string | null;
+    label?: StringUntrusted | string | null;
     choiceId?: number;
     groupId?: number;
     labelClass?: string | Array<string> | null;
@@ -2189,7 +2192,7 @@ class Choices implements Choices {
     keyCode = -1,
   }: {
     value: string;
-    label?: string | null;
+    label?: StringUntrusted | string | null;
     isSelected?: boolean;
     isDisabled?: boolean;
     groupId?: number;

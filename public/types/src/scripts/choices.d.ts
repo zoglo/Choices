@@ -5,9 +5,9 @@ import { Item } from './interfaces/item';
 import { Notice } from './interfaces/notice';
 import { Options } from './interfaces/options';
 import { State } from './interfaces/state';
+import { StringUntrusted } from './interfaces/string-untrusted';
 import Store from './store/store';
 import templates from './templates';
-import { UntrustedString } from './lib/UntrustedString';
 /**
  * Choices
  * @author Josh Johnson<josh@joshuajohnson.co.uk>
@@ -183,7 +183,7 @@ declare class Choices implements Choices {
     _highlightChoice(el?: HTMLElement | null): void;
     _addItem({ value, label, choiceId, groupId, labelClass, labelDescription, customProperties, placeholder, keyCode, }: {
         value: string;
-        label?: UntrustedString | string | null;
+        label?: StringUntrusted | string | null;
         choiceId?: number;
         groupId?: number;
         labelClass?: string | Array<string> | null;
@@ -195,7 +195,7 @@ declare class Choices implements Choices {
     _removeItem(item: Item): void;
     _addChoice({ value, label, isSelected, isDisabled, groupId, labelClass, labelDescription, customProperties, placeholder, keyCode, }: {
         value: string;
-        label?: string | null;
+        label?: StringUntrusted | string | null;
         isSelected?: boolean;
         isDisabled?: boolean;
         groupId?: number;

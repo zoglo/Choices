@@ -7,15 +7,26 @@ import { Choice } from './interfaces/choice';
 import { Group } from './interfaces/group';
 import { Item } from './interfaces/item';
 import { PassedElementType } from './interfaces/passed-element-type';
-import { isEmptyObject, getClassNames, sanitise, isType } from './lib/utils';
-import { PreEscapedString } from './lib/PreEscapedString';
-import { UntrustedString } from './lib/UntrustedString';
+import { StringPreEscaped } from './interfaces/string-pre-escaped';
+import { StringUntrusted } from './interfaces/string-untrusted';
+import {
+  isEmptyObject,
+  getClassNames,
+  sanitise,
+  unwrapStringForRaw,
+  unwrapStringForEscaped,
+} from './lib/utils';
 
 type TemplateOptions = Record<
   'classNames' | 'allowHTML' | 'removeItemButtonAlignLeft',
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   any
 >;
+
+const unwrapForTemplate = (
+  allowHTML: boolean,
+  s: StringUntrusted | StringPreEscaped | string,
+): string => (allowHTML ? unwrapStringForEscaped(s) : (sanitise(s) as string));
 
 const templates = {
   containerOuter(
@@ -80,11 +91,11 @@ const templates = {
 
   placeholder(
     { allowHTML, classNames: { placeholder } }: TemplateOptions,
-    value: string,
+    value: StringPreEscaped | string,
   ): HTMLDivElement {
     return Object.assign(document.createElement('div'), {
       className: getClassNames(placeholder).join(' '),
-      innerHTML: allowHTML ? value : sanitise(value),
+      innerHTML: unwrapForTemplate(allowHTML, value),
     });
   },
 
@@ -120,12 +131,12 @@ const templates = {
 
     if (typeof labelClass === 'string' || Array.isArray(labelClass)) {
       const spanLabel = Object.assign(document.createElement('span'), {
-        innerHTML: allowHTML ? label : sanitise(label),
+        innerHTML: unwrapForTemplate(allowHTML, label),
         className: getClassNames(labelClass).join(' '),
       });
       div.appendChild(spanLabel);
     } else {
-      div.innerHTML = allowHTML ? label : sanitise(label);
+      div.innerHTML = unwrapForTemplate(allowHTML, label);
     }
 
     Object.assign(div.dataset, {
@@ -235,7 +246,7 @@ const templates = {
     div.appendChild(
       Object.assign(document.createElement('div'), {
         className: getClassNames(groupHeading).join(' '),
-        innerHTML: allowHTML ? value : sanitise(value),
+        innerHTML: unwrapForTemplate(allowHTML, value),
       }),
     );
 
@@ -280,19 +291,19 @@ const templates = {
 
     if (typeof labelClass === 'string' || Array.isArray(labelClass)) {
       const spanLabel = Object.assign(document.createElement('span'), {
-        innerHTML: allowHTML ? label : sanitise(label),
+        innerHTML: unwrapForTemplate(allowHTML, label),
         className: getClassNames(labelClass).join(' '),
       });
       spanLabel.setAttribute('aria-describedby', descId);
       div.appendChild(spanLabel);
     } else {
-      div.innerHTML = allowHTML ? label : sanitise(label);
+      div.innerHTML = unwrapForTemplate(allowHTML, label);
       div.setAttribute('aria-describedby', descId);
     }
 
     if (typeof labelDescription === 'string') {
       const spanDesc = Object.assign(document.createElement('span'), {
-        innerHTML: allowHTML ? labelDescription : sanitise(labelDescription),
+        innerHTML: unwrapForTemplate(allowHTML, labelDescription),
         id: descId,
       });
       spanDesc.classList.add(...getClassNames(description));
@@ -372,7 +383,7 @@ const templates = {
       allowHTML,
       classNames: { item, itemChoice, noResults, noChoices },
     }: TemplateOptions,
-    innerText: UntrustedString | PreEscapedString | string,
+    innerText: StringUntrusted | StringPreEscaped | string,
     type: 'no-choices' | 'no-results' | '' = '',
   ): HTMLDivElement {
     const classes = [...getClassNames(item), ...getClassNames(itemChoice)];
@@ -384,7 +395,7 @@ const templates = {
     }
 
     return Object.assign(document.createElement('div'), {
-      innerHTML: allowHTML ? innerText : sanitise(innerText),
+      innerHTML: unwrapForTemplate(allowHTML, innerText),
       className: classes.join(' '),
     });
   },
@@ -398,11 +409,8 @@ const templates = {
     active,
     disabled,
   }: Item): HTMLOptionElement {
-    let labelValue = label;
-    if (typeof label === 'object' && isType('UntrustedString', label)) {
-      // HtmlOptionElement's label value does not support HTML, so the avoid double escaping unwrap the untrusted string.
-      labelValue = (label as UntrustedString).raw;
-    }
+    // HtmlOptionElement's label value does not support HTML, so the avoid double escaping unwrap the untrusted string.
+    const labelValue = unwrapStringForRaw(label);
 
     const opt = new Option(labelValue, value, false, active);
     if (typeof labelClass !== 'undefined' && labelClass) {

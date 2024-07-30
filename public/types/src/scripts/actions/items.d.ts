@@ -1,10 +1,10 @@
 import { ACTION_TYPES } from '../constants';
-import { UntrustedString } from '../lib/UntrustedString';
+import { StringUntrusted } from '../interfaces/string-untrusted';
 export interface AddItemAction {
     type: typeof ACTION_TYPES.ADD_ITEM;
     id: number;
     value: string;
-    label: UntrustedString | string;
+    label: StringUntrusted | string;
     choiceId: number;
     groupId: number;
     labelClass?: string | Array<string> | null;
@@ -26,7 +26,7 @@ export interface HighlightItemAction {
 export declare const addItem: ({ value, label, id, choiceId, groupId, labelClass, labelDescription, customProperties, placeholder, keyCode, }: {
     id: number;
     value: string;
-    label: UntrustedString | string;
+    label: StringUntrusted | string;
     choiceId: number;
     groupId: number;
     labelClass?: string | Array<string> | null;

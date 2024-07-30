@@ -1,8 +1,8 @@
-import { PreEscapedString } from '../lib/PreEscapedString';
-import { UntrustedString } from '../lib/UntrustedString';
+import { StringPreEscaped } from './string-pre-escaped';
+import { StringUntrusted } from './string-untrusted';
 
 // @todo rename
 export interface Notice {
   response: boolean;
-  notice: UntrustedString | PreEscapedString | string;
+  notice: StringUntrusted | StringPreEscaped | string;
 }
