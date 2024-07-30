@@ -138,7 +138,7 @@ interface RecordToCompare {
 }
 
 export const unwrapStringForRaw = (
-  s: StringUntrusted | StringPreEscaped | string,
+  s?: StringUntrusted | StringPreEscaped | string,
 ): string => {
   if (typeof s === 'string') {
     return s;
@@ -153,11 +153,15 @@ export const unwrapStringForRaw = (
     }
   }
 
+  if (s === null || s === undefined) {
+    return '';
+  }
+
   return `${s}`;
 };
 
 export const unwrapStringForEscaped = (
-  s: StringUntrusted | StringPreEscaped | string,
+  s?: StringUntrusted | StringPreEscaped | string,
 ): string => {
   if (typeof s === 'string') {
     return s;
@@ -170,6 +174,10 @@ export const unwrapStringForEscaped = (
     if ('trusted' in s) {
       return s.trusted;
     }
+  }
+
+  if (s === null || s === undefined) {
+    return '';
   }
 
   return `${s}`;
