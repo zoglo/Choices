@@ -5,12 +5,13 @@
 ### ⚠ BREAKING CHANGES
 
 * HTML escaping of choice/item labels should no longer double escape depending on allowHTML mode.
-* Templates/text functions now escape `'` characters for display
-* `addItemText`/`uniqueItemText`/`customAddItemText` are now called with the `value` argument already escaped
+* Templates/text functions now escape `'` characters for display.
+* `addItemText`/`uniqueItemText`/`customAddItemText` are now called with the `value` argument already escaped.
+* Typescript classes for input data vs internal working data have been adjusted resulting in the `Choice`/`Group`/`Item` typescript classes have been renamed, and aliases left as required.
 
 ### Features
 
-* The original option list for the select is not destroyed, and all loaded choices are serialised to HTML for better compatibility with external javascript
+* The original option list for the select is not destroyed, and all loaded choices are serialised to HTML for better compatibility with external javascript.
 * Remove `deepMerge` dependency for a custom extend, reduces minified javascript by ~2kb.
 * `Remove item text` can be localized.
 * Allow user-created choices for selects. #1117
