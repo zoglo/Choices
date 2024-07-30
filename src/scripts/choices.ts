@@ -753,6 +753,47 @@ class Choices implements Choices {
     return this;
   }
 
+  refresh(selectFirstOption: boolean = false): this {
+    if (!this._isSelectElement) {
+      if (!this.config.silent) {
+        console.warn(
+          'refresh method can only be used on choices backed by a <select> element',
+        );
+      }
+
+      return this;
+    }
+
+    this._store.withDeferRendering(() => {
+      const choicesFromOptions = (
+        this.passedElement as WrappedSelect
+      ).optionsAsChoices();
+
+      // preserve existing items
+      const existingChoices = this._store.choices
+        .filter(
+          (choice) => choice.active && choice.selected && !choice.disabled,
+        )
+        .map((choice): string => choice.value);
+
+      choicesFromOptions.forEach((obj) => {
+        const choice = obj;
+        choice.selected = existingChoices.indexOf(choice.value) !== -1;
+      });
+
+      // load new items
+      this.clearStore();
+      this._addPredefinedChoices(choicesFromOptions, selectFirstOption);
+
+      // re-do search if required
+      if (this._isSearching) {
+        this._searchChoices(this.input.value);
+      }
+    });
+
+    return this;
+  }
+
   removeChoice(value: string): this {
     this._store.dispatch(removeChoice(value));
 
@@ -2259,46 +2300,52 @@ class Choices implements Choices {
     this._isSearching = false;
     this._store.withDeferRendering(() => {
       if (this._isSelectElement) {
-        this._addPredefinedChoices(this._presetChoices);
+        this._addPredefinedChoices(
+          this._presetChoices,
+          this._isSelectOneElement,
+        );
       } else if (this._isTextElement) {
         this._addPredefinedItems(this._presetItems);
       }
     });
   }
 
-  _addPredefinedChoices(choices: Partial<Choice>[]): void {
+  _addPredefinedChoices(
+    choices: Partial<Choice>[],
+    selectFirstOption: boolean = false,
+  ): void {
     // If sorting is enabled or the user is searching, filter choices
     if (this.config.shouldSort) {
       choices.sort(this.config.sorter);
     }
 
-    const hasSelectedChoice = choices.some((choice) => choice.selected);
-    const firstEnabledChoiceIndex = choices.findIndex(
-      (choice) => choice.disabled === undefined || !choice.disabled,
-    );
+    if (selectFirstOption) {
+      /**
+       * If there is a selected choice already or the choice is not the first in
+       * the array, add each choice normally.
+       *
+       * Otherwise we pre-select the first enabled choice in the array ("select-one" only)
+       */
+      const hasSelectedChoice =
+        choices.findIndex((choice) => choice.selected) === -1;
+      if (hasSelectedChoice) {
+        const i = choices.findIndex(
+          (choice) => choice.disabled === undefined || !choice.disabled,
+        );
+        if (i !== -1) {
+          const choice = choices[i];
+          choice.selected = true;
+        }
+      }
+    }
 
-    choices.forEach((item, index) => {
+    choices.forEach((item) => {
       if (this._isSelectElement) {
         // If the choice is actually a group
         if (item.choices) {
           this._addGroup(item as Group);
         } else {
-          /**
-           * If there is a selected choice already or the choice is not the first in
-           * the array, add each choice normally.
-           *
-           * Otherwise we pre-select the first enabled choice in the array ("select-one" only)
-           */
-          const choice = item as Choice;
-          if (
-            this._isSelectOneElement &&
-            !hasSelectedChoice &&
-            index === firstEnabledChoiceIndex
-          ) {
-            choice.selected = true;
-          }
-
-          this._addChoice(choice);
+          this._addChoice(item as Choice);
         }
       } else {
         this._addChoice(item as Choice);
