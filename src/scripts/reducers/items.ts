@@ -3,72 +3,65 @@ import {
   RemoveItemAction,
   HighlightItemAction,
 } from '../actions/items';
-import { Item } from '../interfaces/item';
 import { State } from '../interfaces/state';
+import { Choice } from '../interfaces/choice';
 import { RemoveChoiceAction } from '../actions/choices';
 
 export const defaultState = [];
 
 type ActionTypes =
   | AddItemAction
-  | RemoveItemAction
   | RemoveChoiceAction
+  | RemoveItemAction
   | HighlightItemAction
   | Record<string, never>;
 
 export default function items(
-  state: Item[] = defaultState,
+  state: Choice[] = defaultState,
   action: ActionTypes = {},
 ): State['items'] {
   switch (action.type) {
     case 'ADD_ITEM': {
-      const addItemAction = action as AddItemAction;
-      // Add object to items array
-      const newState = [
-        ...state,
-        {
-          id: addItemAction.id,
-          choiceId: addItemAction.choiceId,
-          groupId: addItemAction.groupId,
-          value: addItemAction.value,
-          label: addItemAction.label,
-          active: true,
-          highlighted: false,
-          labelClass: addItemAction.labelClass,
-          labelDescription: addItemAction.labelDescription,
-          customProperties: addItemAction.customProperties,
-          placeholder: addItemAction.placeholder || false,
-          keyCode: null,
-        },
-      ];
+      const { item } = action as AddItemAction;
+      if (!item.id) {
+        return state;
+      }
 
-      return newState.map((obj: Item) => {
-        const item = obj;
-        item.highlighted = false;
+      item.selected = true;
+      const el = item.element as HTMLOptionElement;
+      if (el) {
+        el.selected = true;
+        el.setAttribute('selected', '');
+      }
 
-        return item;
+      return [...state, item].map((obj: Choice) => {
+        const choice = obj;
+        choice.highlighted = false;
+
+        return choice;
       });
     }
 
     case 'REMOVE_ITEM': {
-      const removeItemAction = action as RemoveItemAction;
+      const { item } = action as RemoveItemAction;
+      if (!item.id) {
+        return state;
+      }
 
-      // Set item to inactive
-      return state.map((obj) => {
-        const item = obj;
-        if (item.id === removeItemAction.id) {
-          item.active = false;
-        }
+      item.selected = false;
+      const el = item.element as HTMLOptionElement;
+      if (el) {
+        el.selected = false;
+        el.removeAttribute('selected');
+      }
 
-        return item;
-      });
+      return state.filter((choice) => choice.id !== item.id);
     }
 
     case 'REMOVE_CHOICE': {
-      const removeChoiceAction = action as RemoveChoiceAction;
-      const choiceValue = removeChoiceAction.value;
+      const { value } = action as RemoveChoiceAction;
 
-      return state.filter((choice) => choice.value !== choiceValue);
+      return state.filter((choice) => choice.value !== value);
     }
 
     case 'HIGHLIGHT_ITEM': {

@@ -30,12 +30,10 @@ import {
 import { DEFAULT_CONFIG } from './defaults';
 import { Choice } from './interfaces/choice';
 import { Group } from './interfaces/group';
-import { Item } from './interfaces/item';
 import { Notice } from './interfaces/notice';
 import { Options } from './interfaces/options';
 import { PassedElement } from './interfaces/passed-element';
 import { State } from './interfaces/state';
-import { StringUntrusted } from './interfaces/string-untrusted';
 import {
   cloneObject,
   diff,
@@ -45,9 +43,7 @@ import {
   getAdjacentEl,
   getClassNames,
   getClassNamesSelector,
-  getType,
   isScrolledIntoView,
-  isType,
   parseDataSetId,
   sanitise,
   sortByScore,
@@ -56,6 +52,7 @@ import {
 import { defaultState } from './reducers';
 import Store from './store/store';
 import templates from './templates';
+import { ChoiceGroup, mapInputToChoice } from './lib/choice-input';
 
 /** @see {@link http://browserhacks.com/#hack-acea075d0ac6954f275a70023906050c} */
 const IS_IE11 =
@@ -143,13 +140,9 @@ class Choices implements Choices {
     itemChoice: string;
   };
 
-  _presetGroups: Group[] | HTMLOptGroupElement[] | Element[];
+  _presetChoices: Partial<Choice | Group>[];
 
-  _presetOptions: Item[] | HTMLOptionElement[];
-
-  _presetChoices: Partial<Choice>[];
-
-  _presetItems: Item[] | string[];
+  _presetItems: Partial<Choice>[];
 
   constructor(
     element:
@@ -253,7 +246,7 @@ class Choices implements Choices {
       this.passedElement = new WrappedSelect({
         element: passedElement as HTMLSelectElement,
         classNames: this.config.classNames,
-        template: (data: Item): HTMLOptionElement =>
+        template: (data: Choice): HTMLOptionElement =>
           this._templates.option(data),
       });
     }
@@ -294,30 +287,31 @@ class Choices implements Choices {
       itemChoice: 'item-choice',
     };
 
-    if (this._isSelectElement) {
-      // Assign preset groups from passed element
-      this._presetGroups = (this.passedElement as WrappedSelect).optionGroups;
-      // Assign preset options from passed element
-      this._presetOptions = (this.passedElement as WrappedSelect).options;
-    }
-
     // Assign preset choices from passed object
-    this._presetChoices = this.config.choices;
+    this._presetChoices = this.config.choices.map((e: Choice) =>
+      mapInputToChoice(e, true),
+    );
     // Assign preset items from passed object first
-    this._presetItems = this.config.items;
+    this._presetItems = this.config.items.map((e: Choice | string) =>
+      mapInputToChoice(e, false),
+    );
     // Add any values passed from attribute
-    if (this.passedElement.value && this._isTextElement) {
-      const splitValues: string[] = this.passedElement.value.split(
-        this.config.delimiter,
-      );
-      this._presetItems = (this._presetItems as string[]).concat(splitValues);
-    }
-    // Create array of choices from option elements
-    if ((this.passedElement as WrappedSelect).options) {
+    if (this._isTextElement) {
+      const { value } = this.passedElement;
+      if (value) {
+        const elementItems: Choice[] = value
+          .split(this.config.delimiter)
+          .map((e: Choice | string) => mapInputToChoice(e, false) as Choice);
+        this._presetItems = this._presetItems.concat(elementItems);
+      }
+    } else if (this._isSelectElement) {
+      // Create array of choices from option elements
       const choicesFromOptions = (
         this.passedElement as WrappedSelect
       ).optionsAsChoices();
-      this._presetChoices.push(...choicesFromOptions);
+      if (choicesFromOptions) {
+        this._presetChoices.push(...choicesFromOptions);
+      }
     }
 
     this._render = this._render.bind(this);
@@ -399,10 +393,6 @@ class Choices implements Choices {
 
     this.clearStore();
 
-    if (this._isSelectElement) {
-      (this.passedElement as WrappedSelect).options = this._presetOptions;
-    }
-
     this._templates = templates;
     this.initialised = false;
   }
@@ -435,17 +425,19 @@ class Choices implements Choices {
     return this;
   }
 
-  highlightItem(item: Item, runEvent = true): this {
+  highlightItem(item: Choice, runEvent = true): this {
     if (!item || !item.id) {
       return this;
     }
 
-    const { id, groupId = -1, value = '', label = '' } = item;
+    const { id, groupId = -1 } = item;
     const group = groupId >= 0 ? this._store.getGroupById(groupId) : null;
 
     this._store.dispatch(highlightItem(id, true));
 
     if (runEvent) {
+      const { value = '', label = '' } = item;
+
       this.passedElement.triggerEvent(EVENTS.highlightItem, {
         id,
         value,
@@ -457,7 +449,7 @@ class Choices implements Choices {
     return this;
   }
 
-  unhighlightItem(item: Item): this {
+  unhighlightItem(item: Choice): this {
     if (!item || !item.id) {
       return this;
     }
@@ -556,7 +548,7 @@ class Choices implements Choices {
     return this;
   }
 
-  getValue(valueOnly = false): string[] | Item[] | Item | string {
+  getValue(valueOnly = false): string[] | Choice[] | Choice | string {
     const values = this._store.activeItems.reduce<any[]>(
       (selectedItems, item) => {
         const itemValue = valueOnly ? item.value : item;
@@ -570,12 +562,14 @@ class Choices implements Choices {
     return this._isSelectOneElement ? values[0] : values;
   }
 
-  setValue(items: string[] | Item[]): this {
+  setValue(items: string[] | Choice[]): this {
     if (!this.initialised) {
       return this;
     }
 
-    items.forEach((value) => this._setChoiceOrItem(value));
+    items.forEach((value: string | Choice) => {
+      this._addChoice(mapInputToChoice(value, false) as Choice);
+    });
 
     return this;
   }
@@ -662,7 +656,7 @@ class Choices implements Choices {
       | Choice[]
       | Group[]
       | ((instance: Choices) => Choice[] | Promise<Choice[]>) = [],
-    value = 'value',
+    value: string | null = 'value',
     label = 'label',
     replaceChoices = false,
   ): this | Promise<this> {
@@ -728,31 +722,28 @@ class Choices implements Choices {
     this.containerOuter.removeLoadingState();
 
     this._store.withDeferRendering(() => {
-      type ChoiceGroup = {
-        id: string;
-        choices: Choice[];
-      };
+      const isDefaultValue = value === 'value';
+      const isDefaultLabel = label === 'label';
 
       choicesArrayOrFetcher.forEach((groupOrChoice: ChoiceGroup | Choice) => {
         if ((groupOrChoice as ChoiceGroup).choices) {
-          this._addGroup({
-            id: groupOrChoice.id ? parseInt(`${groupOrChoice.id}`, 10) : null,
-            group: groupOrChoice,
-            valueKey: value,
-            labelKey: label,
-          });
+          let group = groupOrChoice as ChoiceGroup;
+          if (!isDefaultLabel) {
+            group = extend(true, {}, group, {
+              label: group[label],
+            }) as ChoiceGroup;
+          }
+
+          this._addGroup(mapInputToChoice(group, true) as Group);
         } else {
-          const choice = groupOrChoice as Choice;
-          this._addChoice({
-            value: choice[value],
-            label: choice[label],
-            isSelected: !!choice.selected,
-            isDisabled: !!choice.disabled,
-            placeholder: !!choice.placeholder,
-            labelClass: choice.labelClass,
-            labelDescription: choice.labelDescription,
-            customProperties: choice.customProperties,
-          });
+          let choice = groupOrChoice as Choice;
+          if (!isDefaultLabel || !isDefaultValue) {
+            choice = extend(true, {}, choice, {
+              value: choice[value],
+              label: choice[label],
+            }) as Choice;
+          }
+          this._addChoice(mapInputToChoice(choice, false) as Choice);
         }
       });
     });
@@ -1052,7 +1043,7 @@ class Choices implements Choices {
   }
 
   _createItemsFragment(
-    items: Item[],
+    items: Choice[],
     fragment: DocumentFragment = document.createDocumentFragment(),
   ): DocumentFragment {
     // Create fragment to add elements to
@@ -1068,12 +1059,9 @@ class Choices implements Choices {
       this.passedElement.value = items
         .map(({ value }) => value)
         .join(this.config.delimiter);
-    } else {
-      // Update the options of the hidden input
-      (this.passedElement as WrappedSelect).options = items;
     }
 
-    const addItemToFragment = (item: Item): void => {
+    const addItemToFragment = (item: Choice): void => {
       // Create new list element
       const listItem = this._getTemplate('item', item, removeItemButton);
       // Append it to list
@@ -1097,20 +1085,14 @@ class Choices implements Choices {
   }
 
   _selectPlaceholderChoice(placeholderChoice: Choice): void {
-    this._addItem({
-      value: placeholderChoice.value,
-      label: placeholderChoice.label,
-      choiceId: placeholderChoice.id,
-      groupId: placeholderChoice.groupId,
-      placeholder: placeholderChoice.placeholder,
-    });
+    this._addItem(placeholderChoice);
 
     if (placeholderChoice.value) {
       this._triggerChange(placeholderChoice.value);
     }
   }
 
-  _handleButtonAction(activeItems?: Item[], element?: HTMLElement): void {
+  _handleButtonAction(activeItems?: Choice[], element?: HTMLElement): void {
     if (
       !activeItems ||
       !this.config.removeItems ||
@@ -1135,15 +1117,11 @@ class Choices implements Choices {
   }
 
   _handleItemAction(
-    activeItems?: Item[],
+    activeItems?: Choice[],
     element?: HTMLElement,
     hasShiftKey = false,
   ): void {
-    if (
-      !activeItems ||
-      !this.config.removeItems ||
-      this._isSelectOneElement
-    ) {
+    if (!activeItems || !this.config.removeItems || this._isSelectOneElement) {
       return;
     }
 
@@ -1168,7 +1146,7 @@ class Choices implements Choices {
     this.input.focus();
   }
 
-  _handleChoiceAction(activeItems?: Item[], element?: HTMLElement): void {
+  _handleChoiceAction(activeItems?: Choice[], element?: HTMLElement): void {
     if (!activeItems) {
       return;
     }
@@ -1205,17 +1183,7 @@ class Choices implements Choices {
               this._removeItem(lastItem);
             }
           }
-          this._addItem({
-            value: choice.value,
-            label: choice.label,
-            choiceId: choice.id,
-            groupId: choice.groupId,
-            labelClass: choice.labelClass,
-            labelDescription: choice.labelDescription,
-            customProperties: choice.customProperties,
-            placeholder: choice.placeholder,
-            keyCode: choice.keyCode,
-          });
+          this._addItem(choice);
 
           triggerChange = true;
         }
@@ -1237,7 +1205,7 @@ class Choices implements Choices {
     }
   }
 
-  _handleBackspace(activeItems?: Item[]): void {
+  _handleBackspace(activeItems?: Choice[]): void {
     if (!this.config.removeItems || !activeItems) {
       return;
     }
@@ -1308,7 +1276,7 @@ class Choices implements Choices {
     }
   }
 
-  _handleSearch(value: string): void {
+  _handleSearch(value?: string): void {
     if (!this.input.isFocussed) {
       return;
     }
@@ -1336,7 +1304,7 @@ class Choices implements Choices {
     }
   }
 
-  _canAddChoice(activeItems: Item[], value: string): Notice {
+  _canAddChoice(activeItems: Choice[], value: string): Notice {
     const canAddItem = this._canAddItem(activeItems, value);
 
     canAddItem.response = this.config.addChoices && canAddItem.response;
@@ -1344,7 +1312,7 @@ class Choices implements Choices {
     return canAddItem;
   }
 
-  _canAddItem(activeItems: Item[], value: string): Notice {
+  _canAddItem(activeItems: Choice[], value: string): Notice {
     let canAddItem = true;
     let notice =
       typeof this.config.addItemText === 'function'
@@ -1662,7 +1630,7 @@ class Choices implements Choices {
 
   _onEnterKey(
     event: KeyboardEvent,
-    activeItems: Item[],
+    activeItems: Choice[],
     hasActiveDropdown: boolean,
   ): void {
     const { target } = event;
@@ -1682,13 +1650,19 @@ class Choices implements Choices {
 
       if (canAdd.response) {
         this.hideDropdown(true);
-        this._addItem({
-          value: this.config.allowHtmlUserInput ? value : sanitise(value),
-          label: {
-            escaped: sanitise(value),
-            raw: value,
-          },
-        });
+        this._addItem(
+          mapInputToChoice(
+            {
+              value: this.config.allowHtmlUserInput ? value : sanitise(value),
+              label: {
+                escaped: sanitise(value),
+                raw: value,
+              },
+              selected: true,
+            },
+            false,
+          ) as Choice,
+        );
         this._triggerChange(value);
         this.clearInput();
         addedItem = true;
@@ -1798,7 +1772,7 @@ class Choices implements Choices {
 
   _onDeleteKey(
     event: KeyboardEvent,
-    activeItems: Item[],
+    activeItems: Choice[],
     hasFocusedInput: boolean,
   ): void {
     const { target } = event;
@@ -2073,59 +2047,18 @@ class Choices implements Choices {
     }
   }
 
-  _addItem({
-    value,
-    label = null,
-    choiceId = -1,
-    groupId = -1,
-    labelClass = null,
-    labelDescription = null,
-    customProperties = {},
-    placeholder = false,
-    keyCode = -1,
-  }: {
-    value: string;
-    label?: StringUntrusted | string | null;
-    choiceId?: number;
-    groupId?: number;
-    labelClass?: string | Array<string> | null;
-    labelDescription?: string | null;
-    customProperties?: object;
-    placeholder?: boolean;
-    keyCode?: number;
-  }): void {
-    let passedValue = typeof value === 'string' ? value.trim() : value;
+  _addItem(item: Choice): void {
+    const { id } = item;
+    if (typeof id !== 'number') {
+      throw new TypeError(
+        'item.id must be set before _addItem is called for a choice/item',
+      );
+    }
 
-    const { items } = this._store;
-    const passedLabel = label || passedValue;
-    const passedOptionId = choiceId || -1;
+    const groupId = item.groupId || -1;
     const group = groupId >= 0 ? this._store.getGroupById(groupId) : null;
-    const id = items ? items.length + 1 : 1;
 
-    // If a prepended value has been passed, prepend it
-    if (this.config.prependValue) {
-      passedValue = this.config.prependValue + passedValue.toString();
-    }
-
-    // If an appended value has been passed, append it
-    if (this.config.appendValue) {
-      passedValue += this.config.appendValue.toString();
-    }
-
-    this._store.dispatch(
-      addItem({
-        value: passedValue,
-        label: passedLabel,
-        id,
-        choiceId: passedOptionId,
-        groupId,
-        labelClass,
-        labelDescription,
-        customProperties,
-        placeholder,
-        keyCode,
-      }),
-    );
+    this._store.dispatch(addItem(item));
 
     if (this._isSelectOneElement) {
       this.removeActiveItems(id);
@@ -2134,35 +2067,28 @@ class Choices implements Choices {
     // Trigger change event
     this.passedElement.triggerEvent(EVENTS.addItem, {
       id,
-      value: passedValue,
-      label: passedLabel,
-      labelClass,
-      labelDescription,
-      customProperties,
+      value: item.value,
+      label: item.label,
+      labelClass: item.labelClass,
+      labelDescription: item.labelDescription,
+      customProperties: item.customProperties,
       groupValue: group && group.value ? group.value : null,
-      keyCode,
+      keyCode: item.keyCode,
     });
   }
 
-  _removeItem(item: Item): void {
-    const {
-      id,
-      value,
-      label,
-      labelClass,
-      labelDescription,
-      customProperties,
-      choiceId,
-      groupId,
-    } = item;
-    const group =
-      groupId && groupId >= 0 ? this._store.getGroupById(groupId) : null;
-
-    if (!id || !choiceId) {
+  _removeItem(item: Choice): void {
+    const { id } = item;
+    if (!id) {
       return;
     }
 
-    this._store.dispatch(removeItem(id, choiceId));
+    const { value, label, labelClass, labelDescription, customProperties } =
+      item;
+    const groupId = item.groupId || -1;
+    const group = groupId >= 0 ? this._store.getGroupById(groupId) : null;
+    this._store.dispatch(removeItem(item));
+
     this.passedElement.triggerEvent(EVENTS.removeItem, {
       id,
       value,
@@ -2174,114 +2100,42 @@ class Choices implements Choices {
     });
   }
 
-  _addChoice({
-    value,
-    label = null,
-    isSelected = false,
-    isDisabled = false,
-    groupId = -1,
-    labelClass = null,
-    labelDescription = null,
-    customProperties = {},
-    placeholder = false,
-    keyCode = -1,
-  }: {
-    value: string;
-    label?: StringUntrusted | string | null;
-    isSelected?: boolean;
-    isDisabled?: boolean;
-    groupId?: number;
-    labelClass?: string | Array<string> | null;
-    labelDescription?: string | null;
-    customProperties?: Record<string, any>;
-    placeholder?: boolean;
-    keyCode?: number;
-  }): void {
-    if (typeof value === 'undefined' || value === null) {
-      return;
+  _addChoice(choice: Choice): void {
+    if (typeof choice.id === 'number') {
+      throw new TypeError(
+        'Can not re-add a choice which has already been added',
+      );
     }
 
-    // Generate unique id
+    // Generate unique id, in-place update is required so chaining _addItem works as expected
     const { choices } = this._store;
-    const choiceLabel = label || value;
-    const choiceId = choices ? choices.length + 1 : 1;
-    const choiceElementId = `${this._baseId}-${this._idNames.itemChoice}-${choiceId}`;
+    const item = choice;
+    item.id = choices ? choices.length + 1 : 1;
+    item.elementId = `${this._baseId}-${this._idNames.itemChoice}-${item.id}`;
 
-    this._store.dispatch(
-      addChoice({
-        id: choiceId,
-        groupId,
-        elementId: choiceElementId,
-        value,
-        label: choiceLabel,
-        disabled: isDisabled,
-        labelClass,
-        labelDescription,
-        customProperties,
-        placeholder,
-        keyCode,
-      }),
-    );
+    this._store.dispatch(addChoice(choice));
 
-    if (isSelected) {
-      this._addItem({
-        value,
-        label: choiceLabel,
-        choiceId,
-        labelClass,
-        labelDescription,
-        customProperties,
-        placeholder,
-        keyCode,
-      });
+    if (choice.selected) {
+      this._addItem(choice);
     }
   }
 
-  _addGroup({ group, id, valueKey = 'value', labelKey = 'label' }): void {
-    const groupChoices: Choice[] | HTMLOptionElement[] = isType('Object', group)
-      ? group.choices
-      : Array.from(group.getElementsByTagName('OPTION'));
-    const groupId = id || Math.floor(new Date().valueOf() * Math.random());
-    const isDisabled = group.disabled ? group.disabled : false;
+  _addGroup(group: Group): void {
+    this._store.dispatch(addGroup(group));
 
-    if (groupChoices) {
-      this._store.dispatch(
-        addGroup({
-          value: group.label,
-          id: groupId,
-          active: true,
-          disabled: isDisabled,
-        }),
-      );
-
-      const addGroupChoices = (choice: any): void => {
-        const isOptDisabled =
-          choice.disabled || (choice.parentNode && choice.parentNode.disabled);
-
-        this._addChoice({
-          value: choice[valueKey],
-          label: isType('Object', choice) ? choice[labelKey] : choice.innerHTML,
-          isSelected: choice.selected,
-          isDisabled: isOptDisabled,
-          groupId,
-          labelClass: choice.labelClass,
-          labelDescription: choice.labelDescription,
-          customProperties: choice.customProperties,
-          placeholder: choice.placeholder,
-        });
-      };
-
-      groupChoices.forEach(addGroupChoices);
-    } else {
-      this._store.dispatch(
-        addGroup({
-          value: group.label,
-          id: group.id,
-          active: false,
-          disabled: group.disabled,
-        }),
-      );
+    if (!group.choices) {
+      return;
     }
+    const { id } = group;
+    group.choices.forEach((choice: Choice) => {
+      const item = choice;
+      item.groupId = id;
+      if (group.disabled) {
+        item.disabled = true;
+      }
+
+      this._addChoice(item);
+    });
   }
 
   _getTemplate(template: string, ...args: any): any {
@@ -2402,35 +2256,6 @@ class Choices implements Choices {
     });
   }
 
-  _addPredefinedGroups(
-    groups: Group[] | HTMLOptGroupElement[] | Element[],
-  ): void {
-    // If we have a placeholder option
-    const placeholderChoice = (this.passedElement as WrappedSelect)
-      .placeholderOption;
-
-    if (
-      placeholderChoice &&
-      placeholderChoice.parentNode &&
-      (placeholderChoice.parentNode as HTMLElement).tagName === 'SELECT'
-    ) {
-      this._addChoice({
-        value: placeholderChoice.value,
-        label: placeholderChoice.innerHTML,
-        isSelected: placeholderChoice.selected,
-        isDisabled: placeholderChoice.disabled,
-        placeholder: true,
-      });
-    }
-
-    groups.forEach((group) =>
-      this._addGroup({
-        group,
-        id: group.id || null,
-      }),
-    );
-  }
-
   _addPredefinedChoices(choices: Partial<Choice>[]): void {
     // If sorting is enabled or the user is searching, filter choices
     if (this.config.shouldSort) {
@@ -2442,23 +2267,11 @@ class Choices implements Choices {
       (choice) => choice.disabled === undefined || !choice.disabled,
     );
 
-    choices.forEach((choice, index) => {
-      const {
-        value = '',
-        label,
-        labelClass,
-        labelDescription,
-        customProperties,
-        placeholder,
-      } = choice;
-
+    choices.forEach((item, index) => {
       if (this._isSelectElement) {
         // If the choice is actually a group
-        if (choice.choices) {
-          this._addGroup({
-            group: choice,
-            id: choice.id || null,
-          });
+        if (item.choices) {
+          this._addGroup(item as Group);
         } else {
           /**
            * If there is a selected choice already or the choice is not the first in
@@ -2466,112 +2279,27 @@ class Choices implements Choices {
            *
            * Otherwise we pre-select the first enabled choice in the array ("select-one" only)
            */
-          const shouldPreselect =
+          const choice = item as Choice;
+          if (
             this._isSelectOneElement &&
             !hasSelectedChoice &&
-            index === firstEnabledChoiceIndex;
+            index === firstEnabledChoiceIndex
+          ) {
+            choice.selected = true;
+          }
 
-          const isSelected = shouldPreselect ? true : choice.selected;
-          const isDisabled = choice.disabled;
-
-          this._addChoice({
-            value,
-            label,
-            isSelected: !!isSelected,
-            isDisabled: !!isDisabled,
-            placeholder: !!placeholder,
-            labelClass,
-            labelDescription,
-            customProperties,
-          });
+          this._addChoice(choice);
         }
       } else {
-        this._addChoice({
-          value,
-          label,
-          isSelected: !!choice.selected,
-          isDisabled: !!choice.disabled,
-          placeholder: !!choice.placeholder,
-          labelClass,
-          labelDescription,
-          customProperties,
-        });
+        this._addChoice(item as Choice);
       }
     });
   }
 
-  _addPredefinedItems(items: Item[] | string[]): void {
+  _addPredefinedItems(items: Partial<Choice>[]): void {
     items.forEach((item) => {
-      if (typeof item === 'object' && item.value) {
-        this._addItem({
-          value: item.value,
-          label: item.label,
-          choiceId: item.id,
-          customProperties: item.customProperties,
-          labelClass: item.labelClass,
-          labelDescription: item.labelDescription,
-          placeholder: item.placeholder,
-        });
-      }
-
-      if (typeof item === 'string') {
-        this._addItem({
-          value: item,
-        });
-      }
+      this._addChoice(item as Choice);
     });
-  }
-
-  _setChoiceOrItem(item: any): void {
-    const itemType = getType(item).toLowerCase();
-    const handleType = {
-      object: (): void => {
-        if (!item.value) {
-          return;
-        }
-
-        // If we are dealing with a select input, we need to create an option first
-        // that is then selected. For text inputs we can just add items normally.
-        if (!this._isTextElement) {
-          this._addChoice({
-            value: item.value,
-            label: item.label,
-            isSelected: true,
-            isDisabled: false,
-            labelClass: item.labelClass,
-            labelDescription: item.labelDescription,
-            customProperties: item.customProperties,
-            placeholder: item.placeholder,
-          });
-        } else {
-          this._addItem({
-            value: item.value,
-            label: item.label,
-            choiceId: item.id,
-            labelClass: item.labelClass,
-            labelDescription: item.labelDescription,
-            customProperties: item.customProperties,
-            placeholder: item.placeholder,
-          });
-        }
-      },
-      string: (): void => {
-        if (!this._isTextElement) {
-          this._addChoice({
-            value: item,
-            label: item,
-            isSelected: true,
-            isDisabled: false,
-          });
-        } else {
-          this._addItem({
-            value: item,
-          });
-        }
-      },
-    };
-
-    handleType[itemType]();
   }
 
   _findAndSelectChoiceByValue(value: string): void {
@@ -2582,17 +2310,7 @@ class Choices implements Choices {
     );
 
     if (foundChoice && !foundChoice.selected) {
-      this._addItem({
-        value: foundChoice.value,
-        label: foundChoice.label,
-        choiceId: foundChoice.id,
-        groupId: foundChoice.groupId,
-        labelClass: foundChoice.labelClass,
-        labelDescription: foundChoice.labelDescription,
-        customProperties: foundChoice.customProperties,
-        placeholder: foundChoice.placeholder,
-        keyCode: foundChoice.keyCode,
-      });
+      this._addItem(foundChoice);
     }
   }
 

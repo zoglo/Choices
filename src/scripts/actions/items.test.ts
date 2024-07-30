@@ -7,7 +7,6 @@ describe('actions/items', () => {
       const value = 'test';
       const label = 'test';
       const id = 1;
-      const choiceId = 1;
       const groupId = 1;
       const customProperties = { test: true };
       const placeholder = true;
@@ -15,14 +14,15 @@ describe('actions/items', () => {
 
       const expectedAction: actions.AddItemAction = {
         type: 'ADD_ITEM',
-        value,
-        label,
-        id,
-        choiceId,
-        groupId,
-        customProperties,
-        placeholder,
-        keyCode,
+        item: {
+          value,
+          label,
+          id,
+          groupId,
+          customProperties,
+          placeholder,
+          keyCode,
+        },
       };
 
       expect(
@@ -30,7 +30,6 @@ describe('actions/items', () => {
           value,
           label,
           id,
-          choiceId,
           groupId,
           customProperties,
           placeholder,
@@ -42,16 +41,38 @@ describe('actions/items', () => {
 
   describe('removeItem action', () => {
     it('returns REMOVE_ITEM action', () => {
+      const value = 'test';
+      const label = 'test';
       const id = 1;
-      const choiceId = 1;
+      const groupId = 1;
+      const customProperties = { test: true };
+      const placeholder = true;
+      const keyCode = 10;
 
       const expectedAction: actions.RemoveItemAction = {
         type: 'REMOVE_ITEM',
-        id,
-        choiceId,
+        item: {
+          value,
+          label,
+          id,
+          groupId,
+          customProperties,
+          placeholder,
+          keyCode,
+        },
       };
 
-      expect(actions.removeItem(id, choiceId)).to.eql(expectedAction);
+      expect(
+        actions.removeItem({
+          value,
+          label,
+          id,
+          groupId,
+          customProperties,
+          placeholder,
+          keyCode,
+        }),
+      ).to.eql(expectedAction);
     });
   });
 

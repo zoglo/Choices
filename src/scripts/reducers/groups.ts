@@ -15,15 +15,7 @@ export default function groups(
     case 'ADD_GROUP': {
       const addGroupAction = action as AddGroupAction;
 
-      return [
-        ...state,
-        {
-          id: addGroupAction.id,
-          value: addGroupAction.value,
-          active: addGroupAction.active,
-          disabled: addGroupAction.disabled,
-        },
-      ];
+      return [...state, addGroupAction.group];
     }
 
     case 'CLEAR_CHOICES': {

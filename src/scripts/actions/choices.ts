@@ -3,17 +3,7 @@ import { Choice } from '../interfaces/choice';
 
 export interface AddChoiceAction {
   type: typeof ACTION_TYPES.ADD_CHOICE;
-  id: number;
-  value: string;
-  label: string;
-  groupId: number;
-  disabled: boolean;
-  elementId: number;
-  labelClass: string | Array<string>;
-  labelDescription: string;
-  customProperties: object;
-  placeholder: boolean;
-  keyCode: number;
+  choice: Choice;
 }
 
 export interface RemoveChoiceAction {
@@ -40,31 +30,9 @@ export interface ClearChoicesAction {
   type: typeof ACTION_TYPES.CLEAR_CHOICES;
 }
 
-export const addChoice = ({
-  value,
-  label,
-  id,
-  groupId,
-  disabled,
-  elementId,
-  labelClass,
-  labelDescription,
-  customProperties,
-  placeholder,
-  keyCode,
-}): AddChoiceAction => ({
+export const addChoice = (choice: Choice): AddChoiceAction => ({
   type: ACTION_TYPES.ADD_CHOICE,
-  value,
-  label,
-  id,
-  groupId,
-  disabled,
-  elementId,
-  labelClass,
-  labelDescription,
-  customProperties,
-  placeholder,
-  keyCode,
+  choice,
 });
 
 export const removeChoice = (value): RemoveChoiceAction => ({

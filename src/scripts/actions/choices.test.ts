@@ -9,7 +9,7 @@ describe('actions/choices', () => {
       const id = 1;
       const groupId = 1;
       const disabled = false;
-      const elementId = 1;
+      const elementId = '1';
       const labelClass = 'test';
       const labelDescription = 'test';
       const customProperties = { test: true };
@@ -18,17 +18,19 @@ describe('actions/choices', () => {
 
       const expectedAction: actions.AddChoiceAction = {
         type: 'ADD_CHOICE',
-        value,
-        label,
-        id,
-        groupId,
-        disabled,
-        elementId,
-        labelClass,
-        labelDescription,
-        customProperties,
-        placeholder,
-        keyCode,
+        choice: {
+          value,
+          label,
+          id,
+          groupId,
+          disabled,
+          elementId,
+          labelClass,
+          labelDescription,
+          customProperties,
+          placeholder,
+          keyCode,
+        },
       };
 
       expect(

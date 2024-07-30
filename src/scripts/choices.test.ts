@@ -10,7 +10,6 @@ import { removeItem } from './actions/items';
 import templates from './templates';
 import { Choice } from './interfaces/choice';
 import { Group } from './interfaces/group';
-import { Item } from './interfaces/item';
 import { DEFAULT_CONFIG } from './defaults';
 
 chai.use(sinonChai);
@@ -761,7 +760,7 @@ describe('choices', () => {
       });
 
       describe('item passed', () => {
-        const item: Item = {
+        const item: Choice = {
           id: 1234,
           value: 'Test',
           label: 'Test',
@@ -882,7 +881,7 @@ describe('choices', () => {
       });
 
       describe('item passed', () => {
-        const item: Item = {
+        const item: Choice = {
           id: 1234,
           value: 'Test',
           label: 'Test',
@@ -2295,7 +2294,6 @@ describe('choices', () => {
           id: 1111,
           value: 'test value',
           label: 'test label',
-          choiceId: 2222,
           groupId: 3333,
           customProperties: {},
         };
@@ -2304,7 +2302,7 @@ describe('choices', () => {
           instance._removeItem(item);
 
           expect(instance._store.dispatch).to.have.been.calledWith(
-            removeItem(item.id, item.choiceId),
+            removeItem(item),
           );
         });
 

@@ -5,7 +5,6 @@
 
 import { Choice } from './interfaces/choice';
 import { Group } from './interfaces/group';
-import { Item } from './interfaces/item';
 import { PassedElementType } from './interfaces/passed-element-type';
 import { StringPreEscaped } from './interfaces/string-pre-escaped';
 import { StringUntrusted } from './interfaces/string-untrusted';
@@ -122,7 +121,7 @@ const templates = {
       disabled,
       highlighted,
       placeholder: isPlaceholder,
-    }: Item,
+    }: Choice,
     removeItemButton: boolean,
   ): HTMLDivElement {
     const div = Object.assign(document.createElement('div'), {
@@ -408,7 +407,7 @@ const templates = {
     customProperties,
     active,
     disabled,
-  }: Item): HTMLOptionElement {
+  }: Choice): HTMLOptionElement {
     // HtmlOptionElement's label value does not support HTML, so the avoid double escaping unwrap the untrusted string.
     const labelValue = unwrapStringForRaw(label);
 

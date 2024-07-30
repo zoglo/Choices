@@ -79,6 +79,26 @@ export interface Options {
    *     description: 'Custom description about Option 2',
    *     random: 'Another random custom property'
    *   },
+   * },
+   * {
+   *   id: 1,
+   *   label: 'Group 1',
+   *   choices: [{
+   *     value: 'Option 3',
+   *     label: 'Option 4',
+   *     selected: true,
+   *     disabled: false,
+   *   },
+   *   {
+   *     value: 'Option 2',
+   *     label: 'Option 2',
+   *     selected: false,
+   *     disabled: true,
+   *     customProperties: {
+   *       description: 'Custom description about Option 2',
+   *       random: 'Another random custom property'
+   *     }
+   *   }]
    * }]
    * ```
    *
@@ -418,7 +438,7 @@ export interface Options {
    *
    * @default null
    */
-  prependValue: string | null;
+  prependValue: string | null; // @todo reimplement
 
   /**
    * Append a value to each item added/selected.
@@ -427,7 +447,7 @@ export interface Options {
    *
    * @default null
    */
-  appendValue: string | null;
+  appendValue: string | null; // @todo reimplement
 
   /**
    * Whether selected choices should be removed from the list. By default choices are removed when they are selected in multiple select box. To always render choices pass `always`.

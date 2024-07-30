@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import * as actions from './groups';
+import { mapInputToChoice } from '../lib/choice-input';
 
 describe('actions/groups', () => {
   describe('addGroup action', () => {
@@ -11,15 +12,28 @@ describe('actions/groups', () => {
 
       const expectedAction: actions.AddGroupAction = {
         type: 'ADD_GROUP',
-        value,
-        id,
-        active,
-        disabled,
+        group: {
+          value,
+          id,
+          active,
+          disabled,
+        },
       };
 
-      expect(actions.addGroup({ value, id, active, disabled })).to.eql(
-        expectedAction,
-      );
+      expect(
+        actions.addGroup(
+          mapInputToChoice(
+            {
+              label: value,
+              id,
+              active,
+              disabled,
+              choices: [],
+            },
+            true,
+          ),
+        ),
+      ).to.eql(expectedAction);
     });
   });
 });

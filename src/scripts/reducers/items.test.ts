@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import items, { defaultState } from './items';
 import { RemoveItemAction } from '../actions/items';
+import { Choice } from '../interfaces';
 
 describe('reducers/items', () => {
   it('should return same state when no action matches', () => {
@@ -12,7 +13,6 @@ describe('reducers/items', () => {
       const value = 'Item one';
       const label = 'Item one';
       const id = 1234;
-      const choiceId = 5678;
       const groupId = 1;
       const customProperties = {
         property: 'value',
@@ -21,19 +21,20 @@ describe('reducers/items', () => {
       const keyCode = 10;
 
       describe('passing expected values', () => {
-        let actualResponse;
+        let actualResponse: Choice[];
 
         beforeEach(() => {
           actualResponse = items(undefined, {
             type: 'ADD_ITEM',
-            value,
-            label,
-            id,
-            choiceId,
-            groupId,
-            customProperties,
-            placeholder,
-            keyCode,
+            item: {
+              value,
+              label,
+              id,
+              groupId,
+              customProperties,
+              placeholder,
+              keyCode,
+            },
           });
         });
 
@@ -41,7 +42,6 @@ describe('reducers/items', () => {
           const expectedResponse = [
             {
               id,
-              choiceId,
               groupId,
               value,
               label,
@@ -49,8 +49,8 @@ describe('reducers/items', () => {
               highlighted: false,
               customProperties,
               placeholder,
-              keyCode: null,
-            },
+              keyCode,
+            } as Choice,
           ];
 
           expect(actualResponse).to.eql(expectedResponse);
@@ -69,7 +69,6 @@ describe('reducers/items', () => {
             const expectedResponse = [
               {
                 id,
-                choiceId,
                 groupId,
                 value,
                 label,
@@ -77,20 +76,21 @@ describe('reducers/items', () => {
                 highlighted: false,
                 customProperties,
                 placeholder: false,
-                keyCode: null,
-              },
+                keyCode,
+              } as Choice,
             ];
 
             const actualResponse = items(undefined, {
               type: 'ADD_ITEM',
-              value,
-              label,
-              id,
-              choiceId,
-              groupId,
-              customProperties,
-              placeholder: undefined,
-              keyCode,
+              item: {
+                value,
+                label,
+                id,
+                groupId,
+                customProperties,
+                placeholder: undefined,
+                keyCode,
+              } as Choice,
             });
 
             expect(actualResponse).to.eql(expectedResponse);
@@ -101,13 +101,12 @@ describe('reducers/items', () => {
   });
 
   describe('when items exist', () => {
-    let state;
+    let state: Choice[];
 
     beforeEach(() => {
       state = [
         {
           id: 1,
-          choiceId: 1,
           groupId: -1,
           value: 'Item one',
           label: 'Item one',
@@ -115,11 +114,9 @@ describe('reducers/items', () => {
           highlighted: false,
           customProperties: null,
           placeholder: false,
-          keyCode: null,
         },
         {
           id: 2,
-          choiceId: 2,
           groupId: -1,
           value: 'Item one',
           label: 'Item one',
@@ -127,7 +124,6 @@ describe('reducers/items', () => {
           highlighted: false,
           customProperties: null,
           placeholder: false,
-          keyCode: null,
         },
       ];
     });
@@ -144,11 +140,13 @@ describe('reducers/items', () => {
             ...state[1],
             active: false,
           },
-        ];
+        ] as Choice[];
 
         const actualResponse = items(clonedState, {
           type: 'REMOVE_ITEM',
-          id,
+          item: {
+            id,
+          },
         } as RemoveItemAction);
 
         expect(actualResponse).to.eql(expectedResponse);
@@ -167,7 +165,7 @@ describe('reducers/items', () => {
             ...state[1],
             highlighted: true,
           },
-        ];
+        ] as Choice[];
 
         const actualResponse = items(clonedState, {
           type: 'HIGHLIGHT_ITEM',

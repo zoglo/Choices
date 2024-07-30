@@ -13,9 +13,9 @@ import {
   getType,
   isType,
   sanitise,
-  sortByAlpha,
-  sortByScore,
   parseCustomProperties,
+  sortByAlpha,
+  sortByScore
 } from './utils';
 
 describe('utils', () => {

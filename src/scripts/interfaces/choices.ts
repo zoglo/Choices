@@ -8,8 +8,6 @@ import {
   Dropdown,
 } from '../components';
 import { Choice } from './choice';
-import { Group } from './group';
-import { Item } from './item';
 import { State } from './state';
 import templates from '../templates';
 // eslint-disable-next-line import/no-cycle
@@ -73,13 +71,9 @@ export interface Choices {
     itemChoice: string;
   };
 
-  _presetGroups: Group[] | HTMLOptGroupElement[] | Element[];
-
-  _presetOptions: Item[] | HTMLOptionElement[];
-
   _presetChoices: Partial<Choice>[];
 
-  _presetItems: Item[] | string[];
+  _presetItems: Choice[] | string[];
 
   new (
     element: string | Element | HTMLInputElement | HTMLSelectElement,

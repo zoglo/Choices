@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import groups, { defaultState } from './groups';
+import { Group } from '../interfaces/group';
 
 describe('reducers/groups', () => {
   it('should return same state when no action matches', () => {
@@ -20,15 +21,17 @@ describe('reducers/groups', () => {
             value,
             active,
             disabled,
-          },
+          } as Group,
         ];
 
         const actualResponse = groups(undefined, {
           type: 'ADD_GROUP',
-          id,
-          value,
-          active,
-          disabled,
+          group: {
+            id,
+            value,
+            active,
+            disabled,
+          },
         });
 
         expect(actualResponse).to.eql(expectedResponse);
@@ -37,7 +40,7 @@ describe('reducers/groups', () => {
   });
 
   describe('when groups exist', () => {
-    let state;
+    let state: Group[];
 
     beforeEach(() => {
       state = [

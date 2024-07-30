@@ -2,7 +2,6 @@
 import { createStore, Store as IStore, AnyAction } from 'redux';
 import { Choice } from '../interfaces/choice';
 import { Group } from '../interfaces/group';
-import { Item } from '../interfaces/item';
 import { State } from '../interfaces/state';
 import rootReducer from '../reducers/index';
 import { setIsLoading } from '../actions/misc';
@@ -59,21 +58,21 @@ export default class Store {
   /**
    * Get items from store
    */
-  get items(): Item[] {
+  get items(): Choice[] {
     return this.state.items;
   }
 
   /**
    * Get active items from store
    */
-  get activeItems(): Item[] {
+  get activeItems(): Choice[] {
     return this.items.filter((item) => item.active === true);
   }
 
   /**
    * Get highlighted items from store
    */
-  get highlightedActiveItems(): Item[] {
+  get highlightedActiveItems(): Choice[] {
     return this.items.filter((item) => item.active && item.highlighted);
   }
 

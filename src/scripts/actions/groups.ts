@@ -1,27 +1,12 @@
 import { ACTION_TYPES } from '../constants';
+import { Group } from '../interfaces/group';
 
 export interface AddGroupAction {
   type: typeof ACTION_TYPES.ADD_GROUP;
-  id: number;
-  value: string;
-  active: boolean;
-  disabled: boolean;
+  group: Group;
 }
 
-export const addGroup = ({
-  value,
-  id,
-  active,
-  disabled,
-}: {
-  id: number;
-  value: string;
-  active: boolean;
-  disabled: boolean;
-}): AddGroupAction => ({
+export const addGroup = (group: Group): AddGroupAction => ({
   type: ACTION_TYPES.ADD_GROUP,
-  value,
-  id,
-  active,
-  disabled,
+  group,
 });

@@ -14,7 +14,7 @@ describe('reducers/choices', () => {
       const id = 1;
       const groupId = 1;
       const disabled = false;
-      const elementId = 1;
+      const elementId = '1';
       const customProperties = { test: true };
       const placeholder = true;
 
@@ -33,19 +33,21 @@ describe('reducers/choices', () => {
               selected: false,
               active: true,
               score: 9999,
-            },
+            } as Choice,
           ];
 
           const actualResponse = choices(undefined, {
             type: 'ADD_CHOICE',
-            value,
-            label,
-            id,
-            groupId,
-            disabled,
-            elementId,
-            customProperties,
-            placeholder,
+            choice: {
+              value,
+              label,
+              id,
+              groupId,
+              disabled,
+              elementId,
+              customProperties,
+              placeholder,
+            } as Choice,
           });
 
           expect(actualResponse).to.eql(expectedResponse);
@@ -68,19 +70,21 @@ describe('reducers/choices', () => {
                 selected: false,
                 active: true,
                 score: 9999,
-              },
+              } as Choice,
             ];
 
             const actualResponse = choices(undefined, {
               type: 'ADD_CHOICE',
-              value,
-              label: undefined,
-              id,
-              groupId,
-              disabled,
-              elementId,
-              customProperties,
-              placeholder,
+              choice: {
+                value,
+                label: value,
+                id,
+                groupId,
+                disabled,
+                elementId,
+                customProperties,
+                placeholder,
+              } as Choice,
             });
 
             expect(actualResponse).to.eql(expectedResponse);
@@ -102,19 +106,21 @@ describe('reducers/choices', () => {
                 selected: false,
                 active: true,
                 score: 9999,
-              },
+              } as Choice,
             ];
 
             const actualResponse = choices(undefined, {
               type: 'ADD_CHOICE',
-              value,
-              label: undefined,
-              id,
-              groupId,
-              disabled,
-              elementId,
-              customProperties,
-              placeholder: undefined,
+              choice: {
+                value,
+                label: value,
+                id,
+                groupId,
+                disabled,
+                elementId,
+                customProperties,
+                placeholder: undefined,
+              } as Choice,
             });
 
             expect(actualResponse).to.eql(expectedResponse);
@@ -125,7 +131,7 @@ describe('reducers/choices', () => {
   });
 
   describe('when choices exist', () => {
-    let state;
+    let state: Choice[];
 
     beforeEach(() => {
       state = [
@@ -155,7 +161,7 @@ describe('reducers/choices', () => {
           customProperties: null,
           placeholder: false,
         },
-      ];
+      ] as Choice[];
     });
 
     describe('FILTER_CHOICES', () => {
@@ -197,7 +203,7 @@ describe('reducers/choices', () => {
             ...state[1],
             active: true,
           },
-        ];
+        ] as Choice[];
 
         const actualResponse = choices(clonedState, {
           type: 'ACTIVATE_CHOICES',
@@ -233,11 +239,13 @@ describe('reducers/choices', () => {
               ...state[1],
               selected: true,
             },
-          ];
+          ] as Choice[];
 
           const actualResponse = choices(clonedState, {
             type: 'ADD_ITEM',
-            choiceId: id,
+            item: {
+              id,
+            } as Choice,
           });
 
           expect(actualResponse).to.eql(expectedResponse);
@@ -259,7 +267,6 @@ describe('reducers/choices', () => {
 
     describe('REMOVE_ITEM', () => {
       it('selects choice by passed id', () => {
-        const id = 2;
         const clonedState = state.slice(0);
         const expectedResponse = [
           {
@@ -269,11 +276,11 @@ describe('reducers/choices', () => {
             ...state[1],
             selected: false,
           },
-        ];
+        ] as Choice[];
 
         const actualResponse = choices(clonedState, {
           type: 'REMOVE_ITEM',
-          choiceId: id,
+          item: state[2],
         });
 
         expect(actualResponse).to.eql(expectedResponse);
@@ -284,7 +291,7 @@ describe('reducers/choices', () => {
           const clonedState = state.slice(0);
           const actualResponse = choices(clonedState, {
             type: 'REMOVE_ITEM',
-            choiceId: undefined,
+            id: undefined,
           });
 
           expect(actualResponse).to.equal(clonedState);

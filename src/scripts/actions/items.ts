@@ -1,24 +1,14 @@
 import { ACTION_TYPES } from '../constants';
-import { StringUntrusted } from '../interfaces/string-untrusted';
+import { Choice } from '../interfaces/choice';
 
 export interface AddItemAction {
   type: typeof ACTION_TYPES.ADD_ITEM;
-  id: number;
-  value: string;
-  label: StringUntrusted | string;
-  choiceId: number;
-  groupId: number;
-  labelClass?: string | Array<string> | null;
-  labelDescription?: string | null;
-  customProperties: object;
-  placeholder: boolean;
-  keyCode: number;
+  item: Choice;
 }
 
 export interface RemoveItemAction {
   type: typeof ACTION_TYPES.REMOVE_ITEM;
-  id: number;
-  choiceId: number;
+  item: Choice;
 }
 
 export interface HighlightItemAction {
@@ -27,46 +17,14 @@ export interface HighlightItemAction {
   highlighted: boolean;
 }
 
-export const addItem = ({
-  value,
-  label,
-  id,
-  choiceId,
-  groupId,
-  labelClass,
-  labelDescription,
-  customProperties,
-  placeholder,
-  keyCode,
-}: {
-  id: number;
-  value: string;
-  label: StringUntrusted | string;
-  choiceId: number;
-  groupId: number;
-  labelClass?: string | Array<string> | null;
-  labelDescription?: string | null;
-  customProperties: object;
-  placeholder: boolean;
-  keyCode: number;
-}): AddItemAction => ({
+export const addItem = (item: Choice): AddItemAction => ({
   type: ACTION_TYPES.ADD_ITEM,
-  value,
-  label,
-  id,
-  choiceId,
-  groupId,
-  labelClass,
-  labelDescription,
-  customProperties,
-  placeholder,
-  keyCode,
+  item,
 });
 
-export const removeItem = (id: number, choiceId: number): RemoveItemAction => ({
+export const removeItem = (item: Choice): RemoveItemAction => ({
   type: ACTION_TYPES.REMOVE_ITEM,
-  id,
-  choiceId,
+  item,
 });
 
 export const highlightItem = (
