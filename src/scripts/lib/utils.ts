@@ -169,8 +169,8 @@ export const existsInArray = (
 export const cloneObject = (obj: object): object =>
   JSON.parse(JSON.stringify(obj));
 
-export const isEmptyObject = (obj: object | undefined): boolean => {
-  if (typeof obj !== 'object') {
+export const isEmptyObject = (obj: object | undefined | null): boolean => {
+  if (!obj || typeof obj !== 'object') {
     return true;
   }
 
