@@ -260,26 +260,17 @@ export const diff = (
   return aKeys.filter((i) => bKeys.indexOf(i) < 0);
 };
 
-export const extend = (...args: (boolean | object)[]) => {
+export const deepExtend = <T extends object>(...args: Partial<T>[]): T => {
   // Variables
-  let deep = false;
-  let target = args[0] || {};
-  let i = 1;
-
-  if (typeof target === 'boolean') {
-    deep = target;
-    target = args[i] || {};
-    i++;
-  }
-
-  for (; i < args.length; i++) {
+  const target = args[0] || {};
+  for (let i = 1; i < args.length; i++) {
     const source = args[i];
 
     Object.keys(source).forEach((key) => {
       const srcValue = target[key];
       const copyValue = source[key];
 
-      if (deep && copyValue && typeof copyValue === 'object') {
+      if (copyValue && typeof copyValue === 'object') {
         if (Array.isArray(copyValue)) {
           target[key] = srcValue && Array.isArray(srcValue) ? srcValue : [];
         } else {
@@ -287,14 +278,14 @@ export const extend = (...args: (boolean | object)[]) => {
             srcValue && typeof srcValue === 'object' ? srcValue : {};
         }
 
-        target[key] = extend(deep, target[key], copyValue);
+        target[key] = deepExtend<object>(target[key], copyValue);
       } else if (copyValue !== undefined) {
         target[key] = copyValue;
       }
     });
   }
 
-  return target;
+  return target as T;
 };
 
 export const getClassNames = (

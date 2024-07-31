@@ -37,7 +37,7 @@ import { State } from './interfaces/state';
 import {
   diff,
   existsInArray,
-  extend,
+  deepExtend,
   generateId,
   getAdjacentEl,
   getClassNames,
@@ -161,13 +161,12 @@ class Choices implements ChoicesInterface {
       | HTMLSelectElement = '[data-choice]',
     userConfig: Partial<Options> = {},
   ) {
-    this.config = extend(
-      true,
+    this.config = deepExtend<Options>(
       {},
       DEFAULT_CONFIG,
       Choices.defaults.options,
       userConfig,
-    ) as Options;
+    );
 
     const invalidConfigOptions = diff(this.config, DEFAULT_CONFIG);
     if (invalidConfigOptions.length) {
@@ -740,19 +739,19 @@ class Choices implements ChoicesInterface {
           if ('choices' in groupOrChoice) {
             let group = groupOrChoice;
             if (!isDefaultLabel) {
-              group = extend(true, {}, group, {
+              group = deepExtend<InputGroup>({}, group, {
                 label: group[label],
-              }) as InputGroup;
+              });
             }
 
             this._addGroup(mapInputToChoice(group, true));
           } else {
             let choice = groupOrChoice;
             if (!isDefaultLabel || !isDefaultValue) {
-              choice = extend(true, {}, choice, {
+              choice = deepExtend<InputChoice>({}, choice, {
                 value: choice[value],
                 label: choice[label],
-              }) as InputChoice;
+              });
             }
             this._addChoice(mapInputToChoice(choice, false));
           }
@@ -2318,12 +2317,11 @@ class Choices implements ChoicesInterface {
       );
     }
 
-    this._templates = extend(
-      true,
+    this._templates = deepExtend<typeof templates>(
       {},
       defaultTemplates,
       userTemplates,
-    ) as typeof templates;
+    );
 
     Object.keys(this._templates).forEach((name) => {
       this._templates[name] = this._templates[name].bind(this);
