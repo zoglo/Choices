@@ -14,7 +14,7 @@
 
 * The original option list for the select is not destroyed, and all loaded choices are serialised to HTML for better compatibility with external javascript.
 * New `singleModeForMultiSelect` feature to treat a `select-single` as if it was a `select-multiple` with a max item count of `1`, and still auto-close the dropdown and swap the active item on selection.
-* Remove `deepMerge` dependency for a custom `extend` method, reduces minified javascript by ~2kb.
+* Remove `deepMerge` dependency.
 * `Remove item text` can be localized.
 * Allow user-created choices for selects. [#1117](https://github.com/Choices-js/Choices/issues/1117)
     * User input is escaped by default. At the risk of XSS attacks this can be disabled by `allowHtmlUserInput`.

@@ -260,34 +260,6 @@ export const diff = (
   return aKeys.filter((i) => bKeys.indexOf(i) < 0);
 };
 
-export const deepExtend = <T extends object>(...args: Partial<T>[]): T => {
-  // Variables
-  const target = args[0] || {};
-  for (let i = 1; i < args.length; i++) {
-    const source = args[i];
-
-    Object.keys(source).forEach((key) => {
-      const srcValue = target[key];
-      const copyValue = source[key];
-
-      if (copyValue && typeof copyValue === 'object') {
-        if (Array.isArray(copyValue)) {
-          target[key] = srcValue && Array.isArray(srcValue) ? srcValue : [];
-        } else {
-          target[key] =
-            srcValue && typeof srcValue === 'object' ? srcValue : {};
-        }
-
-        target[key] = deepExtend<object>(target[key], copyValue);
-      } else if (copyValue !== undefined) {
-        target[key] = copyValue;
-      }
-    });
-  }
-
-  return target as T;
-};
-
 export const getClassNames = (
   ClassNames: Array<string> | string,
 ): Array<string> => {

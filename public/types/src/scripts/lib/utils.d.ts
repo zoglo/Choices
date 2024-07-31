@@ -28,7 +28,6 @@ export declare const isEmptyObject: (obj: object | undefined | null) => boolean;
  * Returns an array of keys present on the first but missing on the second object
  */
 export declare const diff: (a: Record<string, any>, b: Record<string, any>) => string[];
-export declare const extend: (...args: (boolean | object)[]) => true | object;
 export declare const getClassNames: (ClassNames: Array<string> | string) => Array<string>;
 export declare const getClassNamesSelector: (option: string | Array<string> | null) => string;
 export declare const parseCustomProperties: (customProperties: any) => any;

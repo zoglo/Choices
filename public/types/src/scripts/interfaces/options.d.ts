@@ -5,6 +5,7 @@ import { ClassNames } from './class-names';
 import { PositionOptionsType } from './position-options-type';
 import { Types } from './types';
 import { RecordToCompare } from '../lib/utils';
+export declare const ObjectsInConfig: string[];
 /**
  * Choices options interface
  *
@@ -325,6 +326,10 @@ export interface Options {
      * @default true
      */
     resetScrollPosition: boolean;
+    /**
+     * The shadow root for use within ShadowDom
+     */
+    shadowRoot: ShadowRoot | null;
     /**
      * Whether choices and groups should be sorted. If false, choices/groups will appear in the order they were given.
      *

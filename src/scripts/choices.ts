@@ -31,13 +31,12 @@ import { DEFAULT_CONFIG } from './defaults';
 import { InputChoice } from './interfaces/input-choice';
 import { InputGroup } from './interfaces/input-group';
 import { Notice } from './interfaces/notice';
-import { Options } from './interfaces/options';
+import { Options, ObjectsInConfig } from './interfaces/options';
 import { PassedElement } from './interfaces/passed-element';
 import { State } from './interfaces/state';
 import {
   diff,
   existsInArray,
-  deepExtend,
   generateId,
   getAdjacentEl,
   getClassNames,
@@ -161,16 +160,19 @@ class Choices implements ChoicesInterface {
       | HTMLSelectElement = '[data-choice]',
     userConfig: Partial<Options> = {},
   ) {
-    this.config = deepExtend<Options>(
-      {},
-      DEFAULT_CONFIG,
-      Choices.defaults.options,
-      userConfig,
-    );
-    // Restore the shadowRoot if provided. deepExtend converts it into an empty object.
-    if (userConfig.shadowRoot) {
-      this.config.shadowRoot = userConfig.shadowRoot;
-    }
+    this.config = {
+      ...DEFAULT_CONFIG,
+      ...Choices.defaults.options,
+      ...userConfig,
+    } as Options;
+    ObjectsInConfig.forEach((key) => {
+      Object.assign(
+        this.config[key],
+        DEFAULT_CONFIG[key],
+        Choices.defaults.options[key],
+        userConfig[key],
+      );
+    });
 
     const invalidConfigOptions = diff(this.config, DEFAULT_CONFIG);
     if (invalidConfigOptions.length) {
@@ -743,19 +745,21 @@ class Choices implements ChoicesInterface {
           if ('choices' in groupOrChoice) {
             let group = groupOrChoice;
             if (!isDefaultLabel) {
-              group = deepExtend<InputGroup>({}, group, {
+              group = {
+                ...group,
                 label: group[label],
-              });
+              } as InputGroup;
             }
 
             this._addGroup(mapInputToChoice(group, true));
           } else {
             let choice = groupOrChoice;
             if (!isDefaultLabel || !isDefaultValue) {
-              choice = deepExtend<InputChoice>({}, choice, {
+              choice = {
+                ...choice,
                 value: choice[value],
                 label: choice[label],
-              });
+              } as InputChoice;
             }
             this._addChoice(mapInputToChoice(choice, false));
           }
@@ -2307,7 +2311,6 @@ class Choices implements ChoicesInterface {
 
   _createTemplates(): void {
     const { callbackOnCreateTemplates } = this.config;
-    const defaultTemplates = templates;
     let userTemplates = {};
 
     if (
@@ -2321,15 +2324,16 @@ class Choices implements ChoicesInterface {
       );
     }
 
-    this._templates = deepExtend<typeof templates>(
-      {},
-      defaultTemplates,
-      userTemplates,
-    );
-
-    Object.keys(this._templates).forEach((name) => {
-      this._templates[name] = this._templates[name].bind(this);
+    const templating = {};
+    Object.keys(templates).forEach((name) => {
+      if (name in userTemplates) {
+        templating[name] = userTemplates[name].bind(this);
+      } else {
+        templating[name] = templates[name].bind(this);
+      }
     });
+
+    this._templates = templating as typeof templates;
   }
 
   _createElements(): void {

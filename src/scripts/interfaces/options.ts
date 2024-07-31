@@ -1,10 +1,13 @@
 import Fuse from 'fuse.js';
+// eslint-disable-next-line import/no-cycle
 import { Choices } from './choices';
 import { InputChoice } from './input-choice';
 import { ClassNames } from './class-names';
 import { PositionOptionsType } from './position-options-type';
 import { Types } from './types';
 import { RecordToCompare } from '../lib/utils';
+
+export const ObjectsInConfig = ['fuseOptions', 'classNames'];
 
 /**
  * Choices options interface
