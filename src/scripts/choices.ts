@@ -2251,6 +2251,16 @@ class Choices implements ChoicesInterface {
     item.id = this._lastAddedChoiceId;
     item.elementId = `${this._baseId}-${this._idNames.itemChoice}-${item.id}`;
 
+    if (this.config.prependValue) {
+      item.value = this.config.prependValue + item.value;
+    }
+    if (this.config.appendValue) {
+      item.value += this.config.appendValue.toString();
+    }
+    if ((this.config.prependValue || this.config.appendValue) && item.element) {
+      (item.element as HTMLOptionElement).value = item.value;
+    }
+
     this._store.dispatch(addChoice(choice));
 
     if (choice.selected) {

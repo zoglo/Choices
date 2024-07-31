@@ -1851,6 +1851,15 @@ var Choices = /** @class */function () {
     this._lastAddedChoiceId++;
     item.id = this._lastAddedChoiceId;
     item.elementId = "".concat(this._baseId, "-").concat(this._idNames.itemChoice, "-").concat(item.id);
+    if (this.config.prependValue) {
+      item.value = this.config.prependValue + item.value;
+    }
+    if (this.config.appendValue) {
+      item.value += this.config.appendValue.toString();
+    }
+    if ((this.config.prependValue || this.config.appendValue) && item.element) {
+      item.element.value = item.value;
+    }
     this._store.dispatch((0, choices_1.addChoice)(choice));
     if (choice.selected) {
       this._addItem(choice, withEvents);
