@@ -220,8 +220,6 @@ class Choices implements ChoicesInterface {
     this._isSelectMultipleElement = this._elementType === SELECT_MULTIPLE_TYPE;
     this._isSelectElement =
       this._isSelectOneElement || this._isSelectMultipleElement;
-    this.config.searchEnabled =
-      this._isSelectMultipleElement || this.config.searchEnabled;
 
     if (!['auto', 'always'].includes(`${this.config.renderSelectedChoices}`)) {
       this.config.renderSelectedChoices = 'auto';

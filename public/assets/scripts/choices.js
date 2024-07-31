@@ -258,7 +258,6 @@ var Choices = /** @class */function () {
     this._isSelectOneElement = this._elementType === constants_1.SELECT_ONE_TYPE;
     this._isSelectMultipleElement = this._elementType === constants_1.SELECT_MULTIPLE_TYPE;
     this._isSelectElement = this._isSelectOneElement || this._isSelectMultipleElement;
-    this.config.searchEnabled = this._isSelectMultipleElement || this.config.searchEnabled;
     if (!['auto', 'always'].includes("".concat(this.config.renderSelectedChoices))) {
       this.config.renderSelectedChoices = 'auto';
     }

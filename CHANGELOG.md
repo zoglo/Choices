@@ -45,3 +45,4 @@
 * Fix `addItemFilter` would allow empty strings as input to be added for items.
 * Fix various issues with double escaping when displaying items/choices depending on allowHTML mode.
 * Fix `aria-label` for placeholders was set to the string `null`
+* Fix `searchEnable` flag was not respected for `select-multiple` [#1042](https://github.com/Choices-js/Choices/issues/1042)

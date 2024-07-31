@@ -272,9 +272,7 @@ export interface Options {
     /**
      * Whether a search area should be shown.
      *
-     * @note Multiple select boxes will always show search areas.
-     *
-     * **Input types affected:** select-one
+     * **Input types affected:** select-one, select-multiple
      *
      * @default true
      */

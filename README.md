@@ -401,9 +401,9 @@ Pass an array of objects:
 
 **Type:** `Boolean` **Default:** `true`
 
-**Input types affected:** `select-one`
+**Input types affected:** `select-one`, `select-multiple`
 
-**Usage:** Whether a search area should be shown. **Note:** Multiple select boxes will _always_ show search areas.
+**Usage:** Whether a search area should be shown.
 
 ### searchChoices
 
