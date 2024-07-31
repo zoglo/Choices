@@ -1,4 +1,3 @@
-import { Store } from 'redux';
 import {
   WrappedInput,
   WrappedSelect,
@@ -7,11 +6,14 @@ import {
   Input,
   Dropdown,
 } from '../components';
+import { Store } from './store';
 import { InputChoice } from './input-choice';
 import { State } from './state';
 import templates from '../templates';
 // eslint-disable-next-line import/no-cycle
 import { Options } from './options';
+import { ChoiceFull } from './choice-full';
+import { GroupFull } from './group-full';
 
 export interface Choices {
   initialised: boolean;
@@ -75,12 +77,7 @@ export interface Choices {
     itemChoice: string;
   };
 
-  _presetChoices: InputChoice[];
+  _presetChoices: (ChoiceFull | GroupFull)[];
 
   _presetItems: (InputChoice | string)[];
-
-  new (
-    element: string | Element | HTMLInputElement | HTMLSelectElement,
-    userConfig: Partial<Options>,
-  );
 }

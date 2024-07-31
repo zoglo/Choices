@@ -56,6 +56,7 @@ import { mapInputToChoice } from './lib/choice-input';
 import { ChoiceFull } from './interfaces/choice-full';
 import { GroupFull } from './interfaces/group-full';
 import { PassedElementType } from './interfaces';
+import { Choices as ChoicesInterface } from './interfaces/choices';
 
 /** @see {@link http://browserhacks.com/#hack-acea075d0ac6954f275a70023906050c} */
 const IS_IE11 =
@@ -68,7 +69,7 @@ const USER_DEFAULTS: Partial<Options> = {};
  * Choices
  * @author Josh Johnson<josh@joshuajohnson.co.uk>
  */
-class Choices implements Choices {
+class Choices implements ChoicesInterface {
   static get defaults(): {
     options: Partial<Options>;
     templates: typeof templates;

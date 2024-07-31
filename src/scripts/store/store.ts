@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { createStore, Store as IStore, AnyAction } from 'redux';
+import { createStore, Store as ReduxStore, AnyAction } from 'redux';
+import { Store as IStore } from '../interfaces/store';
 import { State } from '../interfaces/state';
 import rootReducer from '../reducers/index';
 import { setIsLoading } from '../actions/misc';
 import { ChoiceFull } from '../interfaces/choice-full';
 import { GroupFull } from '../interfaces/group-full';
 
-export default class Store {
-  _store: IStore;
+export default class Store implements IStore {
+  _store: ReduxStore;
 
   constructor() {
     this._store = createStore(
