@@ -4,6 +4,7 @@
 
 ### ⚠ BREAKING CHANGES
 
+* `allowHtml` now defaults to false.
 * HTML escaping of choice/item labels should no longer double escape depending on allowHTML mode.
 * Templates/text functions now escape `'` characters for display.
 * `addItemText`/`uniqueItemText`/`customAddItemText` are now called with the `value` argument already escaped.

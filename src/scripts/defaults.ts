@@ -46,7 +46,7 @@ export const DEFAULT_CONFIG: Options = {
   removeItemButton: false,
   removeItemButtonAlignLeft: false,
   editItems: false,
-  allowHTML: true,
+  allowHTML: false,
   allowHtmlUserInput: false,
   duplicateItemsAllowed: true,
   delimiter: ',',

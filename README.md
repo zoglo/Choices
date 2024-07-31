@@ -129,7 +129,7 @@ Or include Choices directly:
     removeItemButton: false,
     removeItemButtonAlignLeft: false,
     editItems: false,
-    allowHTML: true,
+    allowHTML: false,
     duplicateItemsAllowed: true,
     delimiter: ',',
     paste: true,
@@ -359,13 +359,11 @@ Pass an array of objects:
 
 ### allowHTML
 
-**Type:** `Boolean` **Default:** `true`
+**Type:** `Boolean` **Default:** `false`
 
 **Input types affected:** `text`, `select-one`, `select-multiple`
 
 **Usage:** Whether HTML should be rendered in all Choices elements. If `false`, all elements (placeholder, items, etc.) will be treated as plain text. If `true`, this can be used to perform XSS scripting attacks if you load choices from a remote source.
-
-**Deprecation Warning:** This will default to `false` in a future release.
 
 ### allowHtmlUserInput
 

@@ -230,11 +230,9 @@ export interface Options {
      * If `false`, all elements (placeholder, items, etc.) will be treated as plain text.
      * If `true`, this can be used to perform XSS scripting attacks if you load choices from a remote source.
      *
-     * **Deprecation Warning:** This will default to `false` in a future release.
-     *
      * **Input types affected:** text, select-one, select-multiple
      *
-     * @default true
+     * @default false
      */
     allowHTML: boolean;
     /**

@@ -161,12 +161,6 @@ class Choices implements ChoicesInterface {
       | HTMLSelectElement = '[data-choice]',
     userConfig: Partial<Options> = {},
   ) {
-    if (userConfig.allowHTML === undefined) {
-      console.warn(
-        'Deprecation warning: allowHTML will default to false in a future release. To render HTML in Choices, you will need to set it to true. Setting allowHTML will suppress this message.',
-      );
-    }
-
     this.config = extend(
       true,
       {},
@@ -190,12 +184,12 @@ class Choices implements ChoicesInterface {
     ) {
       if (this.config.addItems) {
         console.warn(
-          'Deprecation warning: allowHTML/allowHtmlUserInput/addItems all being true is strongly not recommended and may lead to XSS attacks',
+          'Warning: allowHTML/allowHtmlUserInput/addItems all being true is strongly not recommended and may lead to XSS attacks',
         );
       }
       if (this.config.addChoices) {
         console.warn(
-          'Deprecation warning: allowHTML/allowHtmlUserInput/addChoices all being true is strongly not recommended and may lead to XSS attacks',
+          'Warning: allowHTML/allowHtmlUserInput/addChoices all being true is strongly not recommended and may lead to XSS attacks',
         );
       }
     }

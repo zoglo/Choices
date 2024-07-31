@@ -230,9 +230,6 @@ var Choices = /** @class */function () {
     var _this = this;
     this._lastAddedChoiceId = 0;
     this._lastAddedGroupId = 0;
-    if (userConfig.allowHTML === undefined) {
-      console.warn('Deprecation warning: allowHTML will default to false in a future release. To render HTML in Choices, you will need to set it to true. Setting allowHTML will suppress this message.');
-    }
     this.config = (0, utils_1.extend)(true, {}, defaults_1.DEFAULT_CONFIG, Choices.defaults.options, userConfig);
     var invalidConfigOptions = (0, utils_1.diff)(this.config, defaults_1.DEFAULT_CONFIG);
     if (invalidConfigOptions.length) {
@@ -240,10 +237,10 @@ var Choices = /** @class */function () {
     }
     if (!this.config.silent && this.config.allowHTML && this.config.allowHtmlUserInput) {
       if (this.config.addItems) {
-        console.warn('Deprecation warning: allowHTML/allowHtmlUserInput/addItems all being true is strongly not recommended and may lead to XSS attacks');
+        console.warn('Warning: allowHTML/allowHtmlUserInput/addItems all being true is strongly not recommended and may lead to XSS attacks');
       }
       if (this.config.addChoices) {
-        console.warn('Deprecation warning: allowHTML/allowHtmlUserInput/addChoices all being true is strongly not recommended and may lead to XSS attacks');
+        console.warn('Warning: allowHTML/allowHtmlUserInput/addChoices all being true is strongly not recommended and may lead to XSS attacks');
       }
     }
     var passedElement = typeof element === 'string' ? document.querySelector(element) : element;
@@ -2958,7 +2955,7 @@ exports.DEFAULT_CONFIG = {
   removeItemButton: false,
   removeItemButtonAlignLeft: false,
   editItems: false,
-  allowHTML: true,
+  allowHTML: false,
   allowHtmlUserInput: false,
   duplicateItemsAllowed: true,
   delimiter: ',',
