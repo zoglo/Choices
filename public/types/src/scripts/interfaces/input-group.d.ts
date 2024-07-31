@@ -1,6 +1,6 @@
 import { InputChoice } from './input-choice';
 import { StringUntrusted } from './string-untrusted';
-export interface Group {
+export interface InputGroup {
     id?: number;
     active?: boolean;
     disabled?: boolean;
@@ -8,4 +8,4 @@ export interface Group {
     value: string;
     choices: InputChoice[];
 }
-//# sourceMappingURL=group.d.ts.map
+//# sourceMappingURL=input-group.d.ts.map

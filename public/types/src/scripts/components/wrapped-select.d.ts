@@ -1,7 +1,7 @@
-import { Choice } from '../interfaces/choice';
 import { ClassNames } from '../interfaces/class-names';
-import { Item } from '../interfaces/item';
 import WrappedElement from './wrapped-element';
+import { GroupFull } from '../interfaces/group-full';
+import { ChoiceFull } from '../interfaces/choice-full';
 export default class WrappedSelect extends WrappedElement {
     element: HTMLSelectElement;
     classNames: ClassNames;
@@ -13,11 +13,12 @@ export default class WrappedSelect extends WrappedElement {
     });
     get placeholderOption(): HTMLOptionElement | null;
     get optionGroups(): Element[];
-    get options(): Item[] | HTMLOptionElement[];
-    set options(options: Item[] | HTMLOptionElement[]);
-    optionsAsChoices(): Partial<Choice>[];
+    get options(): HTMLOptionElement[];
+    set options(options: ChoiceFull[]);
+    addOptions(choices: ChoiceFull[]): void;
+    optionsAsChoices(): (ChoiceFull | GroupFull)[];
     appendDocFragment(fragment: DocumentFragment): void;
-    _optionToChoice(option: HTMLOptionElement): Choice;
-    _optgroupToChoice(optgroup: HTMLOptGroupElement): Partial<Choice>;
+    _optionToChoice(option: HTMLOptionElement): ChoiceFull;
+    _optgroupToChoice(optgroup: HTMLOptGroupElement): GroupFull;
 }
 //# sourceMappingURL=wrapped-select.d.ts.map

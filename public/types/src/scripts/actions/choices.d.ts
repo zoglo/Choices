@@ -1,18 +1,8 @@
 import { ACTION_TYPES } from '../constants';
-import { Choice } from '../interfaces/choice';
+import { ChoiceFull } from '../interfaces/choice-full';
 export interface AddChoiceAction {
     type: typeof ACTION_TYPES.ADD_CHOICE;
-    id: number;
-    value: string;
-    label: string;
-    groupId: number;
-    disabled: boolean;
-    elementId: number;
-    labelClass: string | Array<string>;
-    labelDescription: string;
-    customProperties: object;
-    placeholder: boolean;
-    keyCode: number;
+    choice: ChoiceFull;
 }
 export interface RemoveChoiceAction {
     type: typeof ACTION_TYPES.REMOVE_CHOICE;
@@ -24,7 +14,7 @@ export interface Result<T> {
 }
 export interface FilterChoicesAction {
     type: typeof ACTION_TYPES.FILTER_CHOICES;
-    results: Result<Choice>[];
+    results: Result<ChoiceFull>[];
 }
 export interface ActivateChoicesAction {
     type: typeof ACTION_TYPES.ACTIVATE_CHOICES;
@@ -33,21 +23,9 @@ export interface ActivateChoicesAction {
 export interface ClearChoicesAction {
     type: typeof ACTION_TYPES.CLEAR_CHOICES;
 }
-export declare const addChoice: ({ value, label, id, groupId, disabled, elementId, labelClass, labelDescription, customProperties, placeholder, keyCode, }: {
-    value: any;
-    label: any;
-    id: any;
-    groupId: any;
-    disabled: any;
-    elementId: any;
-    labelClass: any;
-    labelDescription: any;
-    customProperties: any;
-    placeholder: any;
-    keyCode: any;
-}) => AddChoiceAction;
+export declare const addChoice: (choice: ChoiceFull) => AddChoiceAction;
 export declare const removeChoice: (value: any) => RemoveChoiceAction;
-export declare const filterChoices: (results: Result<Choice>[]) => FilterChoicesAction;
+export declare const filterChoices: (results: Result<ChoiceFull>[]) => FilterChoicesAction;
 export declare const activateChoices: (active?: boolean) => ActivateChoicesAction;
 export declare const clearChoices: () => ClearChoicesAction;
 //# sourceMappingURL=choices.d.ts.map

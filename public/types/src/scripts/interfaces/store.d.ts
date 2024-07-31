@@ -1,19 +1,7 @@
-import { Store as ReduxStore, AnyAction } from 'redux';
-import { Store as IStore } from '../interfaces/store';
-import { State } from '../interfaces/state';
-import { ChoiceFull } from '../interfaces/choice-full';
-import { GroupFull } from '../interfaces/group-full';
-export default class Store implements IStore {
-    _store: ReduxStore;
-    constructor();
-    /**
-     * Subscribe store to function call (wrapped Redux method)
-     */
-    subscribe(onChange: () => void): void;
-    /**
-     * Dispatch event to store (wrapped Redux method)
-     */
-    dispatch(action: AnyAction): void;
+import { State } from './state';
+import { ChoiceFull } from './choice-full';
+import { GroupFull } from './group-full';
+export interface Store {
     startDeferRendering(): void;
     stopDeferRendering(): void;
     withDeferRendering(func: () => void): void;

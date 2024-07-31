@@ -1,11 +1,11 @@
-import { Store } from 'redux';
 import { WrappedInput, WrappedSelect, Container, List, Input, Dropdown } from '../components';
-import { Choice } from './choice';
-import { Group } from './group';
-import { Item } from './item';
+import { Store } from './store';
+import { InputChoice } from './input-choice';
 import { State } from './state';
 import templates from '../templates';
 import { Options } from './options';
+import { ChoiceFull } from './choice-full';
+import { GroupFull } from './group-full';
 export interface Choices {
     initialised: boolean;
     config: Options;
@@ -25,6 +25,8 @@ export interface Choices {
     _initialState: State;
     _currentState: State;
     _prevState: State;
+    _lastAddedChoiceId: number;
+    _lastAddedGroupId: number;
     _currentValue: string;
     _canSearch: boolean;
     _isScrollingOnIe: boolean;
@@ -37,10 +39,8 @@ export interface Choices {
     _idNames: {
         itemChoice: string;
     };
-    _presetGroups: Group[] | HTMLOptGroupElement[] | Element[];
-    _presetOptions: Item[] | HTMLOptionElement[];
-    _presetChoices: Partial<Choice>[];
-    _presetItems: Item[] | string[];
-    new (element: string | Element | HTMLInputElement | HTMLSelectElement, userConfig: Partial<Options>): any;
+    _presetChoices: (ChoiceFull | GroupFull)[];
+    _presetItems: (InputChoice | string)[];
+    _initialItems: string[];
 }
 //# sourceMappingURL=choices.d.ts.map

@@ -1,5 +1,5 @@
 import { StringUntrusted } from './string-untrusted';
-export interface Choice {
+export interface InputChoice {
     id?: number;
     highlighted?: boolean;
     labelClass?: string | Array<string>;
@@ -13,4 +13,4 @@ export interface Choice {
     selected?: boolean;
     value: any;
 }
-//# sourceMappingURL=choice.d.ts.map
+//# sourceMappingURL=input-choice.d.ts.map

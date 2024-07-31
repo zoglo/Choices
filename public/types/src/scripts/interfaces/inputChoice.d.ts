@@ -13,4 +13,4 @@ export interface Choice {
     selected?: boolean;
     value: any;
 }
-//# sourceMappingURL=choice.d.ts.map
+//# sourceMappingURL=inputChoice.d.ts.map
