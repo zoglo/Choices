@@ -39,7 +39,7 @@
 * Fix 'remove item' button would trigger the change event twice due to placeholder value being used (match html single-select). [#892](https://github.com/Choices-js/Choices/issues/892)
 * Fix optgroups are not preserved when Choices is destroyed [#1055](https://github.com/Choices-js/Choices/issues/1055)
 * Fix placeholder config option would be ignored for select boxes which have blank entries.
-* Fix `data-custom-properties` attribute did not serialize to created elements as a json blob as expected.
+* Fix `data-custom-properties` attribute did not serialize to created elements as a json blob as expected. [#840](https://github.com/Choices-js/Choices/issues/840) [#1155](https://github.com/Choices-js/Choices/issues/1155) [#543](https://github.com/Choices-js/Choices/issues/543)
 * Fix multi-select did not correctly resizing when a select option is selected on choices.js initialization.
 * Fix clearInput function did not clear the last search.
 * Fix `addItemFilter` would allow empty strings as input to be added for items.
