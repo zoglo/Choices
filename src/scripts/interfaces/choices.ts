@@ -80,4 +80,6 @@ export interface Choices {
   _presetChoices: (ChoiceFull | GroupFull)[];
 
   _presetItems: (InputChoice | string)[];
+
+  _initialItems: string[];
 }

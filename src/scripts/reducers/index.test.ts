@@ -39,22 +39,4 @@ describe('reducers/rootReducer', () => {
       });
     });
   });
-
-  describe('RESET_TO', () => {
-    it('replaces state with given state', () => {
-      const output = rootReducer(
-        {
-          items: [1, 2, 3],
-          groups: [1, 2, 3],
-          choices: [1, 2, 3],
-        },
-        {
-          type: 'RESET_TO',
-          state: {},
-        },
-      );
-
-      expect(output).to.eql({});
-    });
-  });
 });

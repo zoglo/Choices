@@ -9,5 +9,4 @@ export type ActionType =
   | 'REMOVE_ITEM'
   | 'HIGHLIGHT_ITEM'
   | 'CLEAR_ALL'
-  | 'RESET_TO'
   | 'SET_IS_LOADING';

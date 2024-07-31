@@ -32,8 +32,6 @@ const rootReducer = (passedState, action): object => {
     const isLoading = state.loading;
     state = cloneObject(defaultState);
     state.loading = isLoading;
-  } else if (action.type === ACTION_TYPES.RESET_TO) {
-    return cloneObject(action.state);
   }
 
   return appReducer(state, action);

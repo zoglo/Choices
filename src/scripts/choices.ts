@@ -11,7 +11,7 @@ import {
 } from './actions/choices';
 import { addGroup } from './actions/groups';
 import { addItem, highlightItem, removeItem } from './actions/items';
-import { clearAll, resetTo } from './actions/misc';
+import { clearAll } from './actions/misc';
 import {
   Container,
   Dropdown,
@@ -35,7 +35,6 @@ import { Options } from './interfaces/options';
 import { PassedElement } from './interfaces/passed-element';
 import { State } from './interfaces/state';
 import {
-  cloneObject,
   diff,
   existsInArray,
   extend,
@@ -151,6 +150,8 @@ class Choices implements ChoicesInterface {
   _presetChoices: (ChoiceFull | GroupFull)[];
 
   _presetItems: ChoiceFull[];
+
+  _initialItems: string[];
 
   constructor(
     element:
@@ -355,8 +356,8 @@ class Choices implements ChoicesInterface {
 
     // Let's go
     this.init();
-    // preserve the state after setup for form reset
-    this._initialState = <State>cloneObject(this._currentState);
+    // preserve the selected item list after setup for form reset
+    this._initialItems = this._store.activeItems.map((choice) => choice.value);
   }
 
   init(): void {
@@ -771,6 +772,7 @@ class Choices implements ChoicesInterface {
   refresh(
     withEvents: boolean = false,
     selectFirstOption: boolean = false,
+    deselectAll: boolean = false,
   ): this {
     if (!this._isSelectElement) {
       if (!this.config.silent) {
@@ -790,11 +792,18 @@ class Choices implements ChoicesInterface {
       const { items } = this._store;
       // Build the list of items which require preserving
       const existingItems = {};
-      items.forEach((choice) => {
-        if (choice.id && choice.active && choice.selected && !choice.disabled) {
-          existingItems[choice.value] = true;
-        }
-      });
+      if (!deselectAll) {
+        items.forEach((choice) => {
+          if (
+            choice.id &&
+            choice.active &&
+            choice.selected &&
+            !choice.disabled
+          ) {
+            existingItems[choice.value] = true;
+          }
+        });
+      }
 
       choicesFromOptions.forEach((groupOrChoice) => {
         if ('choices' in groupOrChoice) {
@@ -802,7 +811,9 @@ class Choices implements ChoicesInterface {
         }
 
         const choice = groupOrChoice;
-        if (existingItems[choice.value]) {
+        if (deselectAll) {
+          choice.selected = false;
+        } else if (existingItems[choice.value]) {
           choice.selected = true;
         }
       });
@@ -822,7 +833,11 @@ class Choices implements ChoicesInterface {
       */
 
       // load new choices & items
-      this._addPredefinedChoices(choicesFromOptions, selectFirstOption, withEvents);
+      this._addPredefinedChoices(
+        choicesFromOptions,
+        selectFirstOption,
+        withEvents,
+      );
 
       // re-do search if required
       if (this._isSearching) {
@@ -2121,9 +2136,15 @@ class Choices implements ChoicesInterface {
   }
 
   _onFormReset(): void {
-    this._store.dispatch(resetTo(this._initialState));
-    this.clearInput();
-    this.hideDropdown();
+    this._store.withDeferRendering(() => {
+      this.clearInput();
+      this.hideDropdown();
+      this.refresh(false, false, true);
+
+      if (this._initialItems.length !== 0) {
+        this.setChoiceByValue(this._initialItems);
+      }
+    });
   }
 
   _highlightChoice(el: HTMLElement | null = null): void {

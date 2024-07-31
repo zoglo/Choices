@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-import { State } from '../interfaces/state';
 import * as actions from './misc';
 
 describe('actions/misc', () => {
@@ -10,23 +9,6 @@ describe('actions/misc', () => {
       };
 
       expect(actions.clearAll()).to.eql(expectedAction);
-    });
-  });
-
-  describe('resetTo action', () => {
-    it('returns RESET_TO action', () => {
-      const state: State = {
-        choices: [],
-        items: [],
-        groups: [],
-        loading: 0,
-      };
-      const expectedAction: actions.ResetToAction = {
-        type: 'RESET_TO',
-        state,
-      };
-
-      expect(actions.resetTo(state)).to.eql(expectedAction);
     });
   });
 
