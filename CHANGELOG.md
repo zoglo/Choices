@@ -17,7 +17,7 @@
 * `Remove item text` can be localized.
 * Allow user-created choices for selects. [#1117](https://github.com/Choices-js/Choices/issues/1117)
     * User input is escaped by default. At the risk of XSS attacks this can be disabled by `allowHtmlUserInput`.
-* Render options without a group even if groups are present.
+* Render options without a group even if groups are present. [#615](https://github.com/Choices-js/Choices/issues/615) [#1110](https://github.com/Choices-js/Choices/issues/1110)
 * Read `data-labelclass`/`data-label-description` from `<option>` HTML to drive adding a per-choice CSS label and description text when `allowHtml: false`.
 * Add `removeItemButtonAlignLeft` option, to control if the remove item button is at the start or the end of the item.
 * Add `removeChoice` method. Removes the choice from the `choices.js` object and any backing `<option>` HTML element

@@ -922,7 +922,7 @@ var Choices = /** @class */function () {
     // Add Choices without group first, regardless of sort, otherwise they won't be distinguishable
     // from the last group
     var choicesWithoutGroup = choices.filter(function (c) {
-      return c.groupId === -1;
+      return c.groupId === 0;
     });
     if (choicesWithoutGroup.length > 0) {
       this._createChoicesFragment(choicesWithoutGroup, fragment, false);

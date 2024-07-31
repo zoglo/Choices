@@ -1029,7 +1029,7 @@ class Choices implements ChoicesInterface {
 
     // Add Choices without group first, regardless of sort, otherwise they won't be distinguishable
     // from the last group
-    const choicesWithoutGroup = choices.filter((c) => c.groupId === -1);
+    const choicesWithoutGroup = choices.filter((c) => c.groupId === 0);
     if (choicesWithoutGroup.length > 0) {
       this._createChoicesFragment(choicesWithoutGroup, fragment, false);
     }
