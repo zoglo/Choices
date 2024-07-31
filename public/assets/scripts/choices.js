@@ -3233,7 +3233,8 @@ var mapInputToChoice = function (value, allowGroup) {
       return (0, exports.mapInputToChoice)(e, false);
     });
     var result_2 = {
-      id: group.id || 0,
+      id: 0,
+      // actual ID will be assigned during _addGroup
       label: (0, utils_1.unwrapStringForRaw)(group.label) || group.value,
       active: choices.length !== 0,
       disabled: !!group.disabled,
@@ -3243,8 +3244,10 @@ var mapInputToChoice = function (value, allowGroup) {
   }
   var choice = groupOrChoice;
   var result = {
-    id: choice.id || 0,
+    id: 0,
+    // actual ID will be assigned during _addChoice
     groupId: 0,
+    // actual ID will be assigned during _addGroup but before _addChoice
     value: choice.value,
     label: choice.label || choice.value,
     active: coerceBool(choice.active),

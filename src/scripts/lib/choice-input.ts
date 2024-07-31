@@ -36,7 +36,7 @@ export const mapInputToChoice = <T extends string | InputChoice | InputGroup>(
     const choices = group.choices.map((e) => mapInputToChoice(e, false));
 
     const result: GroupFull = {
-      id: group.id || 0,
+      id: 0, // actual ID will be assigned during _addGroup
       label: unwrapStringForRaw(group.label) || group.value,
       active: choices.length !== 0,
       disabled: !!group.disabled,
@@ -49,8 +49,8 @@ export const mapInputToChoice = <T extends string | InputChoice | InputGroup>(
   const choice = groupOrChoice;
 
   const result: ChoiceFull = {
-    id: choice.id || 0,
-    groupId: 0,
+    id: 0, // actual ID will be assigned during _addChoice
+    groupId: 0, // actual ID will be assigned during _addGroup but before _addChoice
     value: choice.value,
     label: choice.label || choice.value,
     active: coerceBool(choice.active),
