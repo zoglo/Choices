@@ -38,7 +38,7 @@ export const DEFAULT_CONFIG: Options = {
   silent: false,
   renderChoiceLimit: -1,
   maxItemCount: -1,
-  pseudoMultiSelectForSingle: false,
+  singleModeForMultiSelect: false,
   addChoices: false,
   addItems: true,
   addItemFilter: (value) => !!value && value !== '',

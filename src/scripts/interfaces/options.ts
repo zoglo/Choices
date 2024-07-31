@@ -124,15 +124,15 @@ export interface Options {
   maxItemCount: number;
 
   /**
-   * Make multi-select with a max of 1 work similar to single select does (ie replace the selected item and close the down-drop)
-   * Only applies if maxItemCount === 1
-   * searchEnabled is forced enabled
+   * Make select-multiple with a max item count of 1 work similar to select-one does.
+   * Selecting an item will auto-close the dropdown and swap any existing item for the just selected choice.
+   * If applied to a select-one, it functions as above and not the standard select-one.
    *
    * **Input types affected:** select-one, select-multiple
    *
    * @default false
    */
-  pseudoMultiSelectForSingle: boolean;
+  singleModeForMultiSelect: boolean;
 
   /**
    * Whether a user can add choices dynamically.

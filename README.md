@@ -308,6 +308,14 @@ Pass an array of objects:
 
 **Usage:** The amount of items a user can input/select ("-1" indicates no limit).
 
+### singleModeForMultiSelect
+
+**Type:** `Boolean` **Default:** `false`
+
+**Input types affected:** select-one, select-multiple
+
+**Usage:** Make select-multiple with a max item count of 1 work similar to select-one does. Selecting an item will auto-close the dropdown and swap any existing item for the just selected choice. If applied to a select-one, it functions as above and not the standard select-one.
+
 ### addChoices
 **Type**: `Boolean` **Default:** `false`
 

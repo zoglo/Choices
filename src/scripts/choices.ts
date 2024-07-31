@@ -211,9 +211,9 @@ class Choices implements ChoicesInterface {
     this._elementType = passedElement.type as PassedElementType;
     this._isTextElement = this._elementType === TEXT_TYPE;
     if (this._isTextElement || this.config.maxItemCount !== 1) {
-      this.config.pseudoMultiSelectForSingle = false;
+      this.config.singleModeForMultiSelect = false;
     }
-    if (this.config.pseudoMultiSelectForSingle) {
+    if (this.config.singleModeForMultiSelect) {
       this._elementType = SELECT_MULTIPLE_TYPE;
     }
     this._isSelectOneElement = this._elementType === SELECT_ONE_TYPE;
@@ -561,7 +561,9 @@ class Choices implements ChoicesInterface {
       [],
     );
 
-    return this._isSelectOneElement ? values[0] : values;
+    return this._isSelectOneElement || this.config.singleModeForMultiSelect
+      ? values[0]
+      : values;
   }
 
   setValue(items: string[] | InputChoice[]): this {
@@ -1313,7 +1315,7 @@ class Choices implements ChoicesInterface {
         const canAddItem = this._canAddItem(activeItems, choice.value);
 
         if (canAddItem.response) {
-          if (this.config.pseudoMultiSelectForSingle) {
+          if (this.config.singleModeForMultiSelect) {
             const lastItem = activeItems[activeItems.length - 1];
             if (lastItem) {
               this._removeItem(lastItem);
@@ -1334,7 +1336,7 @@ class Choices implements ChoicesInterface {
     // We want to close the dropdown if we are dealing with a single select box
     if (
       hasActiveDropdown &&
-      (this.config.pseudoMultiSelectForSingle || this._isSelectOneElement)
+      (this.config.singleModeForMultiSelect || this._isSelectOneElement)
     ) {
       this.hideDropdown(true);
       this.containerOuter.focus();
@@ -1466,7 +1468,7 @@ class Choices implements ChoicesInterface {
       ) {
         // If there is a max entry limit and we have reached that limit
         // don't update
-        if (!this.config.pseudoMultiSelectForSingle) {
+        if (!this.config.singleModeForMultiSelect) {
           canAddItem = false;
           notice =
             typeof this.config.maxItemText === 'function'
