@@ -167,6 +167,10 @@ class Choices implements ChoicesInterface {
       Choices.defaults.options,
       userConfig,
     );
+    // Restore the shadowRoot if provided. deeperge converts it into an empty object.
+    if (userConfig.shadowRoot) {
+      this.config.shadowRoot = userConfig.shadowRoot;
+    }
 
     const invalidConfigOptions = diff(this.config, DEFAULT_CONFIG);
     if (invalidConfigOptions.length) {
@@ -1538,7 +1542,7 @@ class Choices implements ChoicesInterface {
   }
 
   _addEventListeners(): void {
-    const { documentElement } = document;
+    const documentElement = this.config.shadowRoot || document.documentElement;
 
     // capture events - can cancel event processing or propagation
     documentElement.addEventListener('touchend', this._onTouchEnd, true);
@@ -1592,7 +1596,7 @@ class Choices implements ChoicesInterface {
   }
 
   _removeEventListeners(): void {
-    const { documentElement } = document;
+    const documentElement = this.config.shadowRoot || document.documentElement;
 
     documentElement.removeEventListener('touchend', this._onTouchEnd, true);
     this.containerOuter.element.removeEventListener(

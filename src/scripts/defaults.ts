@@ -61,6 +61,7 @@ export const DEFAULT_CONFIG: Options = {
   shouldSort: true,
   shouldSortItems: false,
   sorter: sortByAlpha,
+  shadowRoot: null,
   placeholder: true,
   placeholderValue: null,
   searchPlaceholderValue: null,
