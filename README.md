@@ -457,7 +457,9 @@ Pass an array of objects:
 var shadowRoot = document
   .getElementById('wrapper')
   .attachShadow({ mode: 'open' });
-var choices = new Choices({
+...
+var el = shadowRoot.querySelector(...);
+var choices = new Choices(el, {
   shadowRoot: shadowRoot,
 });
 ```

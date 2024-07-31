@@ -167,7 +167,7 @@ class Choices implements ChoicesInterface {
       Choices.defaults.options,
       userConfig,
     );
-    // Restore the shadowRoot if provided. deeperge converts it into an empty object.
+    // Restore the shadowRoot if provided. deepExtend converts it into an empty object.
     if (userConfig.shadowRoot) {
       this.config.shadowRoot = userConfig.shadowRoot;
     }

@@ -27,6 +27,7 @@
 * `escapeForTemplate` function is passed to the 2nd method of the `callbackOnCreateTemplates` callback.
 * When `allowHtml` is false, default templates now render escaped html to `innerHtml` writing to `innerText`.
     * This provides consistent rendering performance as `innerText` is quirky and slower than escaped html into `innerHtml`
+* Shadow DOM support [#938](https://github.com/Choices-js/Choices/pull/938)
 
 ### Bug Fixes
 

@@ -355,7 +355,7 @@ export interface Options {
   /**
    * The shadow root for use within ShadowDom
    */
-  shadowRoot: any;
+  shadowRoot: ShadowRoot | null;
 
   /**
    * Whether choices and groups should be sorted. If false, choices/groups will appear in the order they were given.
