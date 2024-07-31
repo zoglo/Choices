@@ -5,6 +5,7 @@ import choices from './choices';
 import loading from './loading';
 import { cloneObject } from '../lib/utils';
 import { State } from '../interfaces';
+import { ACTION_TYPES } from '../constants';
 
 export const defaultState: State = {
   groups: [],
@@ -26,9 +27,12 @@ const rootReducer = (passedState, action): object => {
   // state and then pass that state to our proper reducer. This isn't
   // mutating our actual state
   // See: http://stackoverflow.com/a/35641992
-  if (action.type === 'CLEAR_ALL') {
-    state = defaultState;
-  } else if (action.type === 'RESET_TO') {
+  if (action.type === ACTION_TYPES.CLEAR_ALL) {
+    // preserve the loading state as to allow withDeferRendering to work
+    const isLoading = state.loading;
+    state = cloneObject(defaultState);
+    state.loading = isLoading;
+  } else if (action.type === ACTION_TYPES.RESET_TO) {
     return cloneObject(action.state);
   }
 

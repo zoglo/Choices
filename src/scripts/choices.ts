@@ -768,7 +768,10 @@ class Choices implements ChoicesInterface {
     return this;
   }
 
-  refresh(selectFirstOption: boolean = false): this {
+  refresh(
+    withEvents: boolean = false,
+    selectFirstOption: boolean = false,
+  ): this {
     if (!this._isSelectElement) {
       if (!this.config.silent) {
         console.warn(
@@ -784,12 +787,14 @@ class Choices implements ChoicesInterface {
         this.passedElement as WrappedSelect
       ).optionsAsChoices();
 
-      // preserve existing items
-      const existingSelectedChoices = this._store.choices
-        .filter(
-          (choice) => choice.active && choice.selected && !choice.disabled,
-        )
-        .map((choice): string => choice.value);
+      const { items } = this._store;
+      // Build the list of items which require preserving
+      const existingItems = {};
+      items.forEach((choice) => {
+        if (choice.id && choice.active && choice.selected && !choice.disabled) {
+          existingItems[choice.value] = true;
+        }
+      });
 
       choicesFromOptions.forEach((groupOrChoice) => {
         if ('choices' in groupOrChoice) {
@@ -797,12 +802,27 @@ class Choices implements ChoicesInterface {
         }
 
         const choice = groupOrChoice;
-        choice.selected = existingSelectedChoices.indexOf(choice.value) !== -1;
+        if (existingItems[choice.value]) {
+          choice.selected = true;
+        }
       });
 
-      // load new items
       this.clearStore();
-      this._addPredefinedChoices(choicesFromOptions, selectFirstOption);
+      /* @todo only generate add events for the added options instead of all
+      if (withEvents) {
+        items.forEach((choice) => {
+          if (existingItems[choice.value]) {
+            this.passedElement.triggerEvent(
+              EVENTS.removeItem,
+              this._getChoiceForEvent(choice),
+            );
+          }
+        });
+      }
+      */
+
+      // load new choices & items
+      this._addPredefinedChoices(choicesFromOptions, selectFirstOption, withEvents);
 
       // re-do search if required
       if (this._isSearching) {
@@ -2161,9 +2181,9 @@ class Choices implements ChoicesInterface {
     }
   }
 
-  _addItem(item: ChoiceFull): void {
+  _addItem(item: ChoiceFull, withEvents: boolean = true): void {
     const { id } = item;
-    if (typeof id !== 'number') {
+    if (id === 0) {
       throw new TypeError(
         'item.id must be set before _addItem is called for a choice/item',
       );
@@ -2175,10 +2195,12 @@ class Choices implements ChoicesInterface {
       this.removeActiveItems(id);
     }
 
-    this.passedElement.triggerEvent(
-      EVENTS.addItem,
-      this._getChoiceForEvent(item),
-    );
+    if (withEvents) {
+      this.passedElement.triggerEvent(
+        EVENTS.addItem,
+        this._getChoiceForEvent(item),
+      );
+    }
   }
 
   _removeItem(item: ChoiceFull): void {
@@ -2195,7 +2217,7 @@ class Choices implements ChoicesInterface {
     );
   }
 
-  _addChoice(choice: ChoiceFull): void {
+  _addChoice(choice: ChoiceFull, withEvents: boolean = true): void {
     if (choice.id !== 0) {
       throw new TypeError(
         'Can not re-add a choice which has already been added',
@@ -2211,11 +2233,11 @@ class Choices implements ChoicesInterface {
     this._store.dispatch(addChoice(choice));
 
     if (choice.selected) {
-      this._addItem(choice);
+      this._addItem(choice, withEvents);
     }
   }
 
-  _addGroup(group: GroupFull): void {
+  _addGroup(group: GroupFull, withEvents: boolean = true): void {
     if (group.id !== 0) {
       throw new TypeError(
         'Can not re-add a group which has already been added',
@@ -2242,7 +2264,7 @@ class Choices implements ChoicesInterface {
         item.disabled = true;
       }
 
-      this._addChoice(item);
+      this._addChoice(item, withEvents);
     });
   }
 
@@ -2382,6 +2404,7 @@ class Choices implements ChoicesInterface {
   _addPredefinedChoices(
     choices: (ChoiceFull | GroupFull)[],
     selectFirstOption: boolean = false,
+    withEvents: boolean = true,
   ): void {
     // If sorting is enabled or the user is searching, filter choices
     if (this.config.shouldSort) {
@@ -2413,10 +2436,10 @@ class Choices implements ChoicesInterface {
     choices.forEach((item) => {
       if ('choices' in item) {
         if (this._isSelectElement) {
-          this._addGroup(item);
+          this._addGroup(item, withEvents);
         }
       } else {
-        this._addChoice(item);
+        this._addChoice(item, withEvents);
       }
     });
   }

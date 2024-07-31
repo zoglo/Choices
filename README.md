@@ -943,11 +943,11 @@ choices.disable();
 
 **Note:** This is called implicitly when a new instance of Choices is created. This would be used after a Choices instance had already been destroyed (using `destroy()`).
 
-### refresh(selectFirstOption: boolean = false);
+### refresh(withEvents: boolean = false, selectFirstOption: boolean = false);
 
 **Input types affected:** `select-multiple`, `select-one`
 
-**Usage:** Reads options from backing `<select>` element, and recreates choices. Existing items are preserved
+**Usage:** Reads options from backing `<select>` element, and recreates choices. Existing items are preserved. When `withEvents` only addItem events are generated.
 
 ### highlightAll();
 
