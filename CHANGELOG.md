@@ -12,14 +12,15 @@
 ### Features
 
 * The original option list for the select is not destroyed, and all loaded choices are serialised to HTML for better compatibility with external javascript.
-* Remove `deepMerge` dependency for a custom extend, reduces minified javascript by ~2kb.
+* Remove `deepMerge` dependency for a custom `extend` method, reduces minified javascript by ~2kb.
 * `Remove item text` can be localized.
-* Allow user-created choices for selects. #1117
+* Allow user-created choices for selects. [#1117](https://github.com/Choices-js/Choices/issues/1117)
     * User input is escaped by default. At the risk of XSS attacks this can be disabled by `allowHtmlUserInput`.
 * Render options without a group even if groups are present.
 * Read `data-labelclass`/`data-label-description` from `<option>` HTML to drive adding a per-choice CSS label and description text when `allowHtml: false`.
 * Add `removeItemButtonAlignLeft` option, to control if the remove item button is at the start or the end of the item.
-* Add `removeChoice` method.
+* Add `removeChoice` method. Removes the choice from the `choices.js` object and any backing `<option>` HTML element
+* Add `refresh` method. Reloads choices from the backing `<select>`s options.
 * Improve rendering performance by batching changes.
 * `escapeForTemplate` function is passed to the 2nd method of the `callbackOnCreateTemplates` callback.
 * When `allowHtml` is false, default templates now render escaped html to `innerHtml` writing to `innerText`.
@@ -27,18 +28,18 @@
 
 ### Bug Fixes
 
-* Replace malicious polyfill with cdnjs. #1161
-* Maintain groups in search mode. #1152
-* Fix various "first press" bugs on single select dropdowns. #1104
-* Fix 'esc' would close the dropdown and also apply to the container resulting in an overlay/modal unexpectedly closing. #1039
-* Fix form reset would clear the choices list, but not clear the search bar. #1023
-* Fix options would be disabled when choices.js was intialized on a disabled <select> element. #1025
-* Fix a `search_term` element to appear in form submit data. #1049
-* Fix 'remove item' button would trigger the change event twice due to placeholder value being used (match html single-select). #892
-* Fix optgroups are not preserved when Choices is destroyed #1055
+* Replace malicious polyfill with cdnjs. [#1161](https://github.com/Choices-js/Choices/issues/1161)
+* Maintain groups in search mode. [#1152](https://github.com/Choices-js/Choices/issues/1152)
+* Fix various "first press" bugs on single select dropdowns. [#1104](https://github.com/Choices-js/Choices/issues/1104)
+* Fix 'esc' would close the dropdown and also apply to the container resulting in an overlay/modal unexpectedly closing. [#1039](https://github.com/Choices-js/Choices/issues/1039)
+* Fix form reset would clear the choices list, but not clear the search bar. [#1023](https://github.com/Choices-js/Choices/issues/1023)
+* Fix options would be disabled when choices.js was intialized on a disabled <select> element. [#1025](https://github.com/Choices-js/Choices/issues/1025)
+* Fix a `search_term` element to appear in form submit data. [#1049](https://github.com/Choices-js/Choices/issues/1049)
+* Fix 'remove item' button would trigger the change event twice due to placeholder value being used (match html single-select). [#892](https://github.com/Choices-js/Choices/issues/892)
+* Fix optgroups are not preserved when Choices is destroyed [#1055](https://github.com/Choices-js/Choices/issues/1055)
 * Fix placeholder config option would be ignored for select boxes which have blank entries.
 * Fix `data-custom-properties` attribute did not serialize to created elements as a json blob as expected.
-* Fix multi-select not resizing correctly when an select option is selected on choices.js initialization.
+* Fix multi-select did not correctly resizing when a select option is selected on choices.js initialization.
 * Fix clearInput function did not clear the last search.
 * Fix `addItemFilter` would allow empty strings as input to be added for items.
 * Fix various issues with double escaping when displaying items/choices depending on allowHTML mode.

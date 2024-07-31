@@ -943,6 +943,12 @@ choices.disable();
 
 **Note:** This is called implicitly when a new instance of Choices is created. This would be used after a Choices instance had already been destroyed (using `destroy()`).
 
+### refresh(selectFirstOption: boolean = false);
+
+**Input types affected:** `select-multiple`, `select-one`
+
+**Usage:** Reads options from backing `<select>` element, and recreates choices. Existing items are preserved
+
 ### highlightAll();
 
 **Input types affected:** `text`, `select-multiple`
@@ -966,6 +972,12 @@ choices.disable();
 **Input types affected:** `text`, `select-multiple`
 
 **Usage:** Remove each selectable item.
+
+## removeChoice(value: string);
+
+**Input types affected:** `text`, `select-multiple`, `select-one`
+
+**Usage:** Remove an option/item by value
 
 ### removeHighlightedItems();
 
