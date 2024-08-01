@@ -71,11 +71,15 @@ const USER_DEFAULTS: Partial<Options> = {};
 class Choices implements ChoicesInterface {
   static get defaults(): {
     options: Partial<Options>;
+    allOptions: Options;
     templates: typeof templates;
   } {
     return Object.preventExtensions({
       get options(): Partial<Options> {
         return USER_DEFAULTS;
+      },
+      get allOptions(): Options {
+        return DEFAULT_CONFIG;
       },
       get templates(): typeof templates {
         return templates;
@@ -164,7 +168,7 @@ class Choices implements ChoicesInterface {
     this.config = extend(
       true,
       {},
-      DEFAULT_CONFIG,
+      Choices.defaults.allOptions,
       Choices.defaults.options,
       userConfig,
     ) as Options;
