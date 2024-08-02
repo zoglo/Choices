@@ -257,7 +257,8 @@ var Choices = /** @class */function () {
         console.warn('Warning: allowHTML/allowHtmlUserInput/addChoices all being true is strongly not recommended and may lead to XSS attacks');
       }
     }
-    var passedElement = typeof element === 'string' ? document.querySelector(element) : element;
+    var documentElement = this.config.shadowRoot || document.documentElement;
+    var passedElement = typeof element === 'string' ? documentElement.querySelector(element) : element;
     if (!(passedElement instanceof HTMLInputElement || passedElement instanceof HTMLSelectElement)) {
       if (!passedElement && typeof element === 'string') {
         throw TypeError("Selector ".concat(element, " failed to find an element"));

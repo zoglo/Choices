@@ -199,8 +199,11 @@ class Choices implements ChoicesInterface {
       }
     }
 
+    const documentElement = this.config.shadowRoot || document.documentElement;
     const passedElement =
-      typeof element === 'string' ? document.querySelector(element) : element;
+      typeof element === 'string'
+        ? documentElement.querySelector(element)
+        : element;
 
     if (
       !(
