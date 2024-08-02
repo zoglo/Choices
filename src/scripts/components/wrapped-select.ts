@@ -41,21 +41,6 @@ export default class WrappedSelect extends WrappedElement {
     return Array.from(this.element.options);
   }
 
-  set options(options: ChoiceFull[]) {
-    const fragment = document.createDocumentFragment();
-    const addOptionToFragment = (data: ChoiceFull): void => {
-      // Create a standard select option
-      const option = data.element ? data.element : this.template(data);
-      // Append it to fragment
-      fragment.appendChild(option);
-    };
-
-    // Add each list item to list
-    options.forEach((optionData) => addOptionToFragment(optionData));
-
-    this.appendDocFragment(fragment);
-  }
-
   addOptions(choices: ChoiceFull[]) {
     choices.forEach((obj) => {
       const choice = obj;
@@ -85,11 +70,6 @@ export default class WrappedSelect extends WrappedElement {
       });
 
     return choices;
-  }
-
-  appendDocFragment(fragment: DocumentFragment): void {
-    this.element.innerHTML = '';
-    this.element.appendChild(fragment);
   }
 
   // eslint-disable-next-line class-methods-use-this
