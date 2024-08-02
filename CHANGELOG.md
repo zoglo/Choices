@@ -6,14 +6,16 @@
 * Avoid pushing a search to fuse.js which is just additional whitespace to the existing search term
 
 ### Bug Fixes (from 11.0.0 RC1)
-* Fix error when using backspace when no items are selected after adding an item
+* Fix error when using backspace key after adding an item and then removing it
 * Fix adding items for select boxes would not give the max item messages reliably
 * Fix `destroy()`/`init()` would not load choices from the underlying <select> as expected
+* Fix adding user provided choices for `select-one` would not remove the existing item and result in a select-one with multiple items set.
 
 ### Chore
 * Remove unused code
 * Use constant enum instead of repeating strings and type information
 * For test html pages, prevent a failing `fetch()` from breaking the rest of the examples
+* Tweak _render loop to avoid duplicating has-changed checks
 
 ## [11.0.0 RC1] (2024-08-02)
 
