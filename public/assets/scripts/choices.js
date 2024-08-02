@@ -259,7 +259,10 @@ var Choices = /** @class */function () {
     }
     var passedElement = typeof element === 'string' ? document.querySelector(element) : element;
     if (!(passedElement instanceof HTMLInputElement || passedElement instanceof HTMLSelectElement)) {
-      throw TypeError('Expected one of the following types text|select-one|select-multiple');
+      if (!passedElement && typeof element === 'string') {
+        throw TypeError("Selector ".concat(element, " failed to find an element"));
+      }
+      throw TypeError("Expected one of the following types text|select-one|select-multiple");
     }
     this._elementType = passedElement.type;
     this._isTextElement = this._elementType === constants_1.TEXT_TYPE;

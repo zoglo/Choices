@@ -208,8 +208,11 @@ class Choices implements ChoicesInterface {
         passedElement instanceof HTMLSelectElement
       )
     ) {
+      if (!passedElement && typeof element === 'string') {
+        throw TypeError(`Selector ${element} failed to find an element`);
+      }
       throw TypeError(
-        'Expected one of the following types text|select-one|select-multiple',
+        `Expected one of the following types text|select-one|select-multiple`,
       );
     }
 

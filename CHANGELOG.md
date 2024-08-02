@@ -48,3 +48,4 @@
 * Fix various issues with double escaping when displaying items/choices depending on allowHTML mode.
 * Fix `aria-label` for placeholders was set to the string `null`
 * Fix `searchEnable` flag was not respected for `select-multiple` [#1042](https://github.com/Choices-js/Choices/issues/1042)
+* Fix poor error message when Choices is passed a string selector which fails to find the element for Choices to attach to.
