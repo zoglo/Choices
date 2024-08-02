@@ -897,19 +897,18 @@ class Choices implements ChoicesInterface {
 
     this._currentState = this._store.state;
 
+    const shouldRenderItems =
+      this._currentState.items !== this._prevState.items;
     const stateChanged =
       this._currentState.choices !== this._prevState.choices ||
       this._currentState.groups !== this._prevState.groups ||
-      this._currentState.items !== this._prevState.items;
-    const shouldRenderChoices = this._isSelectElement;
-    const shouldRenderItems =
-      this._currentState.items !== this._prevState.items;
+      shouldRenderItems;
 
     if (!stateChanged) {
       return;
     }
 
-    if (shouldRenderChoices) {
+    if (this._isSelectElement) {
       this._renderChoices();
     }
 
