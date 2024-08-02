@@ -145,6 +145,16 @@
             <input class="form-control" id="choices-within-form" type="text" />
           </form>
         </div>
+
+        <div data-test-hook="shadow-dom">
+          <noscript style="display:none;">
+          <link rel="stylesheet" href="../../assets/styles/base.min.css" />
+          <link rel="stylesheet" href="../../assets/styles/choices.min.css" />
+          <script src="../../assets/scripts/choices.min.js"></script>
+          <label for="choices-basic">Shadow DOM - Basic</label>
+          <input class="form-control" id="shadow-dom-choices-basic" type="text" />
+          </noscript>
+        </div>
       </div>
     </div>
     <script>
@@ -240,6 +250,17 @@
 
         new Choices('#choices-within-form', {
           allowHTML: true,
+        });
+
+        const shadowDomWrapper = document.querySelector('div[data-test-hook="shadow-dom"]'),
+          shadowDomHtml = shadowDomWrapper.querySelector('noscript').innerHTML;
+        shadowDomWrapper.innerHTML = ''; // ensure the shadow-dom example is not part of the main document
+        const shadowRoot = shadowDomWrapper.attachShadow({ mode: 'open' });
+        shadowRoot.innerHTML = shadowDomHtml;
+
+        new Choices('#shadow-dom-choices-basic', {
+          allowHTML: false,
+          shadowRoot: shadowRoot,
         });
       });
     </script>

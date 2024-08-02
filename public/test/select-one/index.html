@@ -427,6 +427,22 @@
           </select>
         </div>
 
+        <div data-test-hook="shadow-dom">
+          <noscript style="display:none;">
+          <link rel="stylesheet" href="../../assets/styles/base.min.css" />
+          <link rel="stylesheet" href="../../assets/styles/choices.min.css" />
+          <script src="../../assets/scripts/choices.min.js"></script>
+          <label for="choices-basic">Shadow DOM - Basic</label>
+          <button class="disable push-bottom">Disable</button>
+          <button class="enable push-bottom">Enable</button>
+          <select class="form-control" name="shadow-dom-choices-basic" id="shadow-dom-choices-basic">
+            <option value="Choice 1">Choice 1</option>
+            <option value="Choice 2">Choice 2</option>
+            <option value="Find me">Choice 3</option>
+            <option value="Choice 4">Choice 4</option>
+          </select>
+          </noscript>
+        </div>
       </div>
     </div>
     <script>
@@ -688,6 +704,28 @@
         });
 
         new Choices('#choices-add-choices', { addChoices: true });
+
+        const shadowDomWrapper = document.querySelector('div[data-test-hook="shadow-dom"]'),
+          shadowDomHtml = shadowDomWrapper.querySelector('noscript').innerHTML;
+        shadowDomWrapper.innerHTML = ''; // ensure the shadow-dom example is not part of the main document
+        const shadowRoot = shadowDomWrapper.attachShadow({ mode: 'open' });
+        shadowRoot.innerHTML = shadowDomHtml;
+
+        const choicesShadow = new Choices('#shadow-dom-choices-basic', {
+          allowHTML: false,
+          shadowRoot: shadowRoot,
+        });
+        shadowRoot
+          .querySelector('button.disable')
+          .addEventListener('click', () => {
+            choicesShadow.disable();
+          });
+
+        shadowRoot
+          .querySelector('button.enable')
+          .addEventListener('click', () => {
+            choicesShadow.enable();
+          });
       });
     </script>
   </body>
