@@ -8,7 +8,7 @@
 ### Bug Fixes (from 11.0.0 RC1)
 * Fix error when using backspace key after adding an item and then removing it
 * Fix adding items for select boxes would not give the max item messages reliably
-* Fix `destroy()`/`init()` would not load choices from the underlying <select> as expected
+* Fix `destroy()`/`init()` would not load choices from the underlying `<select>` as expected
 * Fix adding user provided choices for `select-one` would not remove the existing item and result in a select-one with multiple items set.
 
 ### Chore
