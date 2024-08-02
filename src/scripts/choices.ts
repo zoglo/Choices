@@ -21,8 +21,6 @@ import {
   WrappedSelect,
 } from './components';
 import {
-  EVENTS,
-  KEY_CODES,
   SELECT_MULTIPLE_TYPE,
   SELECT_ONE_TYPE,
   TEXT_TYPE,
@@ -53,7 +51,7 @@ import templates, { escapeForTemplate } from './templates';
 import { mapInputToChoice } from './lib/choice-input';
 import { ChoiceFull } from './interfaces/choice-full';
 import { GroupFull } from './interfaces/group-full';
-import { PassedElementType } from './interfaces';
+import { EventType, KeyCodeMap, PassedElementType } from './interfaces';
 import { Choices as ChoicesInterface } from './interfaces/choices';
 
 /** @see {@link http://browserhacks.com/#hack-acea075d0ac6954f275a70023906050c} */
@@ -451,7 +449,7 @@ class Choices implements ChoicesInterface {
 
     if (runEvent) {
       this.passedElement.triggerEvent(
-        EVENTS.highlightItem,
+        EventType.highlightItem,
         this._getChoiceForEvent(id),
       );
     }
@@ -468,7 +466,7 @@ class Choices implements ChoicesInterface {
     this._store.dispatch(highlightItem(id, false));
 
     this.passedElement.triggerEvent(
-      EVENTS.highlightItem,
+      EventType.highlightItem,
       this._getChoiceForEvent(id),
     );
 
@@ -539,7 +537,7 @@ class Choices implements ChoicesInterface {
         this.input.focus();
       }
 
-      this.passedElement.triggerEvent(EVENTS.showDropdown, {});
+      this.passedElement.triggerEvent(EventType.showDropdown, {});
     });
 
     return this;
@@ -559,7 +557,7 @@ class Choices implements ChoicesInterface {
         this.input.blur();
       }
 
-      this.passedElement.triggerEvent(EVENTS.hideDropdown, {});
+      this.passedElement.triggerEvent(EventType.hideDropdown, {});
     });
 
     return this;
@@ -835,7 +833,7 @@ class Choices implements ChoicesInterface {
         items.forEach((choice) => {
           if (existingItems[choice.value]) {
             this.passedElement.triggerEvent(
-              EVENTS.removeItem,
+              EventType.removeItem,
               this._getChoiceForEvent(choice),
             );
           }
@@ -1234,7 +1232,7 @@ class Choices implements ChoicesInterface {
       return;
     }
 
-    this.passedElement.triggerEvent(EVENTS.change, {
+    this.passedElement.triggerEvent(EventType.change, {
       value,
     });
   }
@@ -1322,7 +1320,7 @@ class Choices implements ChoicesInterface {
     // Update choice keyCode
     choice.keyCode = passedKeyCode;
 
-    this.passedElement.triggerEvent(EVENTS.choice, {
+    this.passedElement.triggerEvent(EventType.choice, {
       choice,
     });
 
@@ -1450,7 +1448,7 @@ class Choices implements ChoicesInterface {
     ) {
       const resultCount = searchChoices ? this._searchChoices(value) : 0;
       // Trigger search event
-      this.passedElement.triggerEvent(EVENTS.search, {
+      this.passedElement.triggerEvent(EventType.search, {
         value,
         resultCount,
       });
@@ -1683,18 +1681,6 @@ class Choices implements ChoicesInterface {
       (event.key.length === 2 && event.key.charCodeAt(0) >= 0xd800) ||
       event.key === 'Unidentified';
 
-    const {
-      BACK_KEY,
-      DELETE_KEY,
-      ENTER_KEY,
-      A_KEY,
-      ESC_KEY,
-      UP_KEY,
-      DOWN_KEY,
-      PAGE_UP_KEY,
-      PAGE_DOWN_KEY,
-    } = KEY_CODES;
-
     if (!this._isTextElement && !hasActiveDropdown) {
       this.showDropdown();
 
@@ -1709,19 +1695,19 @@ class Choices implements ChoicesInterface {
     }
 
     switch (keyCode) {
-      case A_KEY:
+      case KeyCodeMap.A_KEY:
         return this._onSelectKey(event, hasItems);
-      case ENTER_KEY:
+      case KeyCodeMap.ENTER_KEY:
         return this._onEnterKey(event, activeItems, hasActiveDropdown);
-      case ESC_KEY:
+      case KeyCodeMap.ESC_KEY:
         return this._onEscapeKey(event, hasActiveDropdown);
-      case UP_KEY:
-      case PAGE_UP_KEY:
-      case DOWN_KEY:
-      case PAGE_DOWN_KEY:
+      case KeyCodeMap.UP_KEY:
+      case KeyCodeMap.PAGE_UP_KEY:
+      case KeyCodeMap.DOWN_KEY:
+      case KeyCodeMap.PAGE_DOWN_KEY:
         return this._onDirectionKey(event, hasActiveDropdown);
-      case DELETE_KEY:
-      case BACK_KEY:
+      case KeyCodeMap.DELETE_KEY:
+      case KeyCodeMap.BACK_KEY:
         return this._onDeleteKey(event, activeItems, hasFocusedInput);
       default:
     }
@@ -1734,7 +1720,6 @@ class Choices implements ChoicesInterface {
     const { value } = this.input;
     const { activeItems } = this._store;
     const canAddItem = this._canAddItem(activeItems, value);
-    const { BACK_KEY: backKey, DELETE_KEY: deleteKey } = KEY_CODES;
 
     // We are typing into a text input and have a value, we want to show a dropdown
     // notice. Otherwise hide the dropdown
@@ -1752,7 +1737,7 @@ class Choices implements ChoicesInterface {
         this.hideDropdown(true);
       }
     } else {
-      const wasRemovalKeyCode = keyCode === backKey || keyCode === deleteKey;
+      const wasRemovalKeyCode = keyCode === KeyCodeMap.BACK_KEY || keyCode === KeyCodeMap.DELETE_KEY;
       const userHasRemovedValue =
         wasRemovalKeyCode && target && !(target as HTMLSelectElement).value;
       const canReactivateChoices = !this._isTextElement && this._isSearching;
@@ -1794,7 +1779,6 @@ class Choices implements ChoicesInterface {
     hasActiveDropdown: boolean,
   ): void {
     const { target } = event;
-    const { ENTER_KEY: enterKey } = KEY_CODES;
     const targetWasButton =
       target && (target as HTMLElement).hasAttribute('data-button');
     let addedItem = false;
@@ -1845,7 +1829,7 @@ class Choices implements ChoicesInterface {
         } else {
           if (activeItems[0]) {
             // add enter keyCode value
-            activeItems[0].keyCode = enterKey; // eslint-disable-line no-param-reassign
+            activeItems[0].keyCode = KeyCodeMap.ENTER_KEY; // eslint-disable-line no-param-reassign
           }
           this._handleChoiceAction(activeItems, highlightedChoice);
         }
@@ -1868,11 +1852,6 @@ class Choices implements ChoicesInterface {
 
   _onDirectionKey(event: KeyboardEvent, hasActiveDropdown: boolean): void {
     const { keyCode, metaKey } = event;
-    const {
-      DOWN_KEY: downKey,
-      PAGE_UP_KEY: pageUpKey,
-      PAGE_DOWN_KEY: pageDownKey,
-    } = KEY_CODES;
 
     // If up or down key is pressed, traverse through options
     if (hasActiveDropdown || this._isSelectOneElement) {
@@ -1880,9 +1859,9 @@ class Choices implements ChoicesInterface {
       this._canSearch = false;
 
       const directionInt =
-        keyCode === downKey || keyCode === pageDownKey ? 1 : -1;
+        keyCode === KeyCodeMap.DOWN_KEY || keyCode === KeyCodeMap.PAGE_DOWN_KEY ? 1 : -1;
       const skipKey =
-        metaKey || keyCode === pageDownKey || keyCode === pageUpKey;
+        metaKey || keyCode === KeyCodeMap.PAGE_DOWN_KEY || keyCode === KeyCodeMap.PAGE_UP_KEY;
       const selectableChoiceIdentifier = '[data-choice-selectable]';
 
       let nextEl;
@@ -2203,7 +2182,7 @@ class Choices implements ChoicesInterface {
       ...getClassNames(this.config.classNames.highlightedState),
     );
     passedEl.setAttribute('aria-selected', 'true');
-    this.passedElement.triggerEvent(EVENTS.highlightChoice, { el: passedEl });
+    this.passedElement.triggerEvent(EventType.highlightChoice, { el: passedEl });
 
     if (this.dropdown.isActive) {
       // IE11 ignores aria-label and blocks virtual keyboard
@@ -2229,7 +2208,7 @@ class Choices implements ChoicesInterface {
 
     if (withEvents) {
       this.passedElement.triggerEvent(
-        EVENTS.addItem,
+        EventType.addItem,
         this._getChoiceForEvent(item),
       );
     }
@@ -2244,7 +2223,7 @@ class Choices implements ChoicesInterface {
     this._store.dispatch(removeItem(item));
 
     this.passedElement.triggerEvent(
-      EVENTS.removeItem,
+      EventType.removeItem,
       this._getChoiceForEvent(item),
     );
   }

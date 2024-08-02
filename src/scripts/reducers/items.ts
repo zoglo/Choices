@@ -6,6 +6,7 @@ import {
 import { State } from '../interfaces/state';
 import { RemoveChoiceAction } from '../actions/choices';
 import { ChoiceFull } from '../interfaces/choice-full';
+import { ActionType } from '../interfaces';
 
 export const defaultState = [];
 
@@ -21,7 +22,7 @@ export default function items(
   action: ActionTypes = {},
 ): State['items'] {
   switch (action.type) {
-    case 'ADD_ITEM': {
+    case ActionType.ADD_ITEM: {
       const { item } = action as AddItemAction;
       if (!item.id) {
         return state;
@@ -42,7 +43,7 @@ export default function items(
       });
     }
 
-    case 'REMOVE_ITEM': {
+    case ActionType.REMOVE_ITEM: {
       const { item } = action as RemoveItemAction;
       if (!item.id) {
         return state;
@@ -58,13 +59,13 @@ export default function items(
       return state.filter((choice) => choice.id !== item.id);
     }
 
-    case 'REMOVE_CHOICE': {
+    case ActionType.REMOVE_CHOICE: {
       const { value } = action as RemoveChoiceAction;
 
       return state.filter((choice) => choice.value !== value);
     }
 
-    case 'HIGHLIGHT_ITEM': {
+    case ActionType.HIGHLIGHT_ITEM: {
       const highlightItemAction = action as HighlightItemAction;
 
       return state.map((obj) => {

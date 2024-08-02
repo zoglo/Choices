@@ -5,6 +5,7 @@ import groups from './groups';
 import choices from './choices';
 import items from './items';
 import loading from './loading';
+import { ActionType } from '../interfaces';
 
 describe('reducers/rootReducer', () => {
   const store = createStore(rootReducer);
@@ -27,7 +28,7 @@ describe('reducers/rootReducer', () => {
           choices: [1, 2, 3],
         },
         {
-          type: 'CLEAR_ALL',
+          type: ActionType.CLEAR_ALL,
         },
       );
 

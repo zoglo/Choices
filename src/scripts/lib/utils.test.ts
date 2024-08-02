@@ -17,6 +17,7 @@ import {
   sortByAlpha,
   sortByScore,
 } from './utils';
+import { EventType } from '../interfaces';
 
 describe('utils', () => {
   describe('getRandomNumber', () => {
@@ -188,7 +189,7 @@ describe('utils', () => {
       const fakeElement = {
         dispatchEvent: stub(),
       };
-      const eventType = 'addItem';
+      const eventType = EventType.addItem;
       const customArgs = {
         testing: true,
       };

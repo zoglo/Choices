@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import choices, { defaultState } from './choices';
 import { cloneObject } from '../lib/utils';
 import { ChoiceFull } from '../interfaces/choice-full';
+import { ActionType } from '../interfaces';
 
 describe('reducers/choices', () => {
   it('should return same state when no action matches', () => {
@@ -31,7 +32,7 @@ describe('reducers/choices', () => {
           const expectedResponse = [choice];
 
           const actualResponse = choices(undefined, {
-            type: 'ADD_CHOICE',
+            type: ActionType.ADD_CHOICE,
             choice: cloneObject(choice),
           });
 
@@ -48,7 +49,7 @@ describe('reducers/choices', () => {
             const expectedResponse = [item];
 
             const actualResponse = choices(undefined, {
-              type: 'ADD_CHOICE',
+              type: ActionType.ADD_CHOICE,
               choice: cloneObject(item),
             });
 
@@ -108,7 +109,7 @@ describe('reducers/choices', () => {
         } as ChoiceFull;
 
         const actualResponse = choices(state, {
-          type: 'FILTER_CHOICES',
+          type: ActionType.FILTER_CHOICES,
           results: [
             {
               item: { id } as ChoiceFull,
@@ -137,7 +138,7 @@ describe('reducers/choices', () => {
         ] as ChoiceFull[];
 
         const actualResponse = choices(clonedState, {
-          type: 'ACTIVATE_CHOICES',
+          type: ActionType.ACTIVATE_CHOICES,
           active: true,
         });
 
@@ -150,7 +151,7 @@ describe('reducers/choices', () => {
         const clonedState = state.slice(0);
         const expectedResponse = defaultState;
         const actualResponse = choices(clonedState, {
-          type: 'CLEAR_CHOICES',
+          type: ActionType.CLEAR_CHOICES,
         });
 
         expect(actualResponse).to.eql(expectedResponse);
@@ -173,25 +174,13 @@ describe('reducers/choices', () => {
           ] as ChoiceFull[];
 
           const actualResponse = choices(clonedState, {
-            type: 'ADD_ITEM',
+            type: ActionType.ADD_ITEM,
             item: {
               id,
             } as ChoiceFull,
           });
 
           expect(actualResponse).to.eql(expectedResponse);
-        });
-      });
-
-      describe('when action has no choice id', () => {
-        it('returns state', () => {
-          const clonedState = state.slice(0);
-          const actualResponse = choices(clonedState, {
-            type: 'ADD_ITEM',
-            choiceId: undefined,
-          });
-
-          expect(actualResponse).to.equal(clonedState);
         });
       });
     });
@@ -210,23 +199,11 @@ describe('reducers/choices', () => {
         ] as ChoiceFull[];
 
         const actualResponse = choices(clonedState, {
-          type: 'REMOVE_ITEM',
+          type: ActionType.REMOVE_ITEM,
           item: cloneObject(state[2]),
         });
 
         expect(actualResponse).to.eql(expectedResponse);
-      });
-
-      describe('passing no id', () => {
-        it('returns state', () => {
-          const clonedState = state.slice(0);
-          const actualResponse = choices(clonedState, {
-            type: 'REMOVE_ITEM',
-            id: undefined,
-          });
-
-          expect(actualResponse).to.equal(clonedState);
-        });
       });
     });
   });

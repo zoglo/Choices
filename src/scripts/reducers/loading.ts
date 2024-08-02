@@ -1,5 +1,6 @@
 import { SetIsLoadingAction } from '../actions/misc';
 import { State } from '../interfaces/state';
+import { ActionType } from '../interfaces';
 
 export const defaultState = 0;
 
@@ -10,7 +11,7 @@ const general = (
   action: ActionTypes = {},
 ): State['loading'] => {
   switch (action.type) {
-    case 'SET_IS_LOADING': {
+    case ActionType.SET_IS_LOADING: {
       if (action.isLoading) {
         return state + 1;
       }

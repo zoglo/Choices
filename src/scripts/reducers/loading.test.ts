@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import general, { defaultState } from './loading';
+import { ActionType } from '../interfaces';
 
 describe('reducers/loading', () => {
   it('should return same state when no action matches', () => {
@@ -11,7 +12,7 @@ describe('reducers/loading', () => {
       const expectedState = true;
 
       const actualState = general(undefined, {
-        type: 'SET_IS_LOADING',
+        type: ActionType.SET_IS_LOADING,
         isLoading: true,
       });
 

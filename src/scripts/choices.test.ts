@@ -4,7 +4,6 @@ import sinonChai from 'sinon-chai';
 
 import Choices from './choices';
 
-import { EVENTS, ACTION_TYPES, KEY_CODES } from './constants';
 import { WrappedSelect, WrappedInput } from './components/index';
 import { removeItem } from './actions/items';
 import templates from './templates';
@@ -13,6 +12,7 @@ import { InputGroup } from './interfaces/input-group';
 import { DEFAULT_CONFIG } from './defaults';
 import { ChoiceFull } from './interfaces/choice-full';
 import { GroupFull } from './interfaces/group-full';
+import { ActionType, EventType, KeyCodeMap } from './interfaces';
 
 chai.use(sinonChai);
 
@@ -593,7 +593,7 @@ describe('choices', () => {
           requestAnimationFrame(() => {
             expect(passedElementTriggerEventStub.called).to.equal(true);
             expect(passedElementTriggerEventStub.lastCall.args[0]).to.eql(
-              EVENTS.showDropdown,
+              EventType.showDropdown,
             );
             expect(passedElementTriggerEventStub.lastCall.args[1]).to.eql({});
             done();
@@ -691,7 +691,7 @@ describe('choices', () => {
           requestAnimationFrame(() => {
             expect(passedElementTriggerEventStub.called).to.equal(true);
             expect(passedElementTriggerEventStub.lastCall.args[0]).to.eql(
-              EVENTS.hideDropdown,
+              EventType.hideDropdown,
             );
             expect(passedElementTriggerEventStub.lastCall.args[1]).to.eql({});
             done();
@@ -786,7 +786,7 @@ describe('choices', () => {
           it('dispatches highlightItem action with correct arguments', () => {
             expect(storeDispatchSpy.called).to.equal(true);
             expect(storeDispatchSpy.lastCall.args[0]).to.eql({
-              type: ACTION_TYPES.HIGHLIGHT_ITEM,
+              type: ActionType.HIGHLIGHT_ITEM,
               id: item.id,
               highlighted: true,
             });
@@ -801,7 +801,7 @@ describe('choices', () => {
             it('triggers event with null groupValue', () => {
               expect(passedElementTriggerEventStub.called).to.equal(true);
               expect(passedElementTriggerEventStub.lastCall.args[0]).to.equal(
-                EVENTS.highlightItem,
+                EventType.highlightItem,
               );
               expect(passedElementTriggerEventStub.lastCall.args[1]).to.eql({
                 id: item.id,
@@ -821,7 +821,7 @@ describe('choices', () => {
             it('triggers event with groupValue', () => {
               expect(passedElementTriggerEventStub.called).to.equal(true);
               expect(passedElementTriggerEventStub.lastCall.args[0]).to.equal(
-                EVENTS.highlightItem,
+                EventType.highlightItem,
               );
               expect(passedElementTriggerEventStub.lastCall.args[1]).to.eql({
                 id: item.id,
@@ -913,7 +913,7 @@ describe('choices', () => {
           it('dispatches highlightItem action with correct arguments', () => {
             expect(storeDispatchSpy.called).to.equal(true);
             expect(storeDispatchSpy.lastCall.args[0]).to.eql({
-              type: ACTION_TYPES.HIGHLIGHT_ITEM,
+              type: ActionType.HIGHLIGHT_ITEM,
               id: item.id,
               highlighted: false,
             });
@@ -928,7 +928,7 @@ describe('choices', () => {
             it('triggers event with null groupValue', () => {
               expect(passedElementTriggerEventStub.called).to.equal(true);
               expect(passedElementTriggerEventStub.lastCall.args[0]).to.equal(
-                EVENTS.highlightItem,
+                EventType.highlightItem,
               );
               expect(passedElementTriggerEventStub.lastCall.args[1]).to.eql({
                 id: item.id,
@@ -948,7 +948,7 @@ describe('choices', () => {
             it('triggers event with groupValue', () => {
               expect(passedElementTriggerEventStub.called).to.equal(true);
               expect(passedElementTriggerEventStub.lastCall.args[0]).to.equal(
-                EVENTS.highlightItem,
+                EventType.highlightItem,
               );
               expect(passedElementTriggerEventStub.lastCall.args[1]).to.eql({
                 id: item.id,
@@ -1076,7 +1076,7 @@ describe('choices', () => {
 
       it('dispatches clearChoices action', () => {
         expect(storeDispatchStub.lastCall.args[0]).to.eql({
-          type: ACTION_TYPES.CLEAR_CHOICES,
+          type: ActionType.CLEAR_CHOICES,
         });
       });
     });
@@ -1101,7 +1101,7 @@ describe('choices', () => {
 
       it('dispatches clearAll action', () => {
         expect(storeDispatchStub.lastCall.args[0]).to.eql({
-          type: ACTION_TYPES.CLEAR_ALL,
+          type: ActionType.CLEAR_ALL,
         });
       });
     });
@@ -1161,7 +1161,7 @@ describe('choices', () => {
         it('dispatches activateChoices action', () => {
           expect(storeDispatchStub.called).to.equal(true);
           expect(storeDispatchStub.lastCall.args[0]).to.eql({
-            type: ACTION_TYPES.ACTIVATE_CHOICES,
+            type: ActionType.ACTIVATE_CHOICES,
             active: true,
           });
         });
@@ -2225,10 +2225,10 @@ describe('choices', () => {
 
       describe('direction key', () => {
         const keyCodes = [
-          [KEY_CODES.UP_KEY, 'ArrowUp'],
-          [KEY_CODES.DOWN_KEY, 'ArrowDown'],
-          [KEY_CODES.PAGE_UP_KEY, 'PageUp'],
-          [KEY_CODES.PAGE_DOWN_KEY, 'PageDown'],
+          [KeyCodeMap.UP_KEY, 'ArrowUp'],
+          [KeyCodeMap.DOWN_KEY, 'ArrowDown'],
+          [KeyCodeMap.PAGE_UP_KEY, 'PageUp'],
+          [KeyCodeMap.PAGE_DOWN_KEY, 'PageDown'],
         ];
 
         keyCodes.forEach(([keyCode, key]) => {
@@ -2251,7 +2251,7 @@ describe('choices', () => {
       describe('select key', () => {
         it(`calls _onSelectKey with the expected arguments`, () => {
           const event = {
-            keyCode: KEY_CODES.A_KEY,
+            keyCode: KeyCodeMap.A_KEY,
             key: 'A',
           };
 
@@ -2267,7 +2267,7 @@ describe('choices', () => {
       describe('enter key', () => {
         it(`calls _onEnterKey with the expected arguments`, () => {
           const event = {
-            keyCode: KEY_CODES.ENTER_KEY,
+            keyCode: KeyCodeMap.ENTER_KEY,
             key: 'Enter',
           };
 
@@ -2287,8 +2287,8 @@ describe('choices', () => {
         // 0x08 = 'Backspace', 0x2E = 'Delete'
         // https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_key_values#editing_keys
         const keyCodes = [
-          [KEY_CODES.DELETE_KEY, 'Backspace'],
-          [KEY_CODES.BACK_KEY, 'Delete'],
+          [KeyCodeMap.DELETE_KEY, 'Backspace'],
+          [KeyCodeMap.BACK_KEY, 'Delete'],
         ];
 
         keyCodes.forEach(([keyCode, key]) => {

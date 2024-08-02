@@ -2,6 +2,7 @@ import { AddGroupAction } from '../actions/groups';
 import { ClearChoicesAction } from '../actions/choices';
 import { State } from '../interfaces/state';
 import { GroupFull } from '../interfaces/group-full';
+import { ActionType } from '../interfaces';
 
 export const defaultState = [];
 
@@ -12,13 +13,13 @@ export default function groups(
   action: ActionTypes = {},
 ): State['groups'] {
   switch (action.type) {
-    case 'ADD_GROUP': {
+    case ActionType.ADD_GROUP: {
       const addGroupAction = action as AddGroupAction;
 
       return [...state, addGroupAction.group];
     }
 
-    case 'CLEAR_CHOICES': {
+    case ActionType.CLEAR_CHOICES: {
       return [];
     }
 

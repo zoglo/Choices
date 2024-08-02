@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import * as actions from './items';
 import { cloneObject } from '../lib/utils';
 import { ChoiceFull } from '../interfaces/choice-full';
+import { ActionType } from '../interfaces';
 
 describe('actions/items', () => {
   describe('addItem action', () => {
@@ -21,7 +22,7 @@ describe('actions/items', () => {
       };
 
       const expectedAction: actions.AddItemAction = {
-        type: 'ADD_ITEM',
+        type: ActionType.ADD_ITEM,
         item,
       };
 
@@ -46,7 +47,7 @@ describe('actions/items', () => {
       };
 
       const expectedAction: actions.RemoveItemAction = {
-        type: 'REMOVE_ITEM',
+        type: ActionType.REMOVE_ITEM,
         item,
       };
 
@@ -60,7 +61,7 @@ describe('actions/items', () => {
       const highlighted = true;
 
       const expectedAction: actions.HighlightItemAction = {
-        type: 'HIGHLIGHT_ITEM',
+        type: ActionType.HIGHLIGHT_ITEM,
         id,
         highlighted,
       };

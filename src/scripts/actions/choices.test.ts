@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import * as actions from './choices';
 import { cloneObject } from '../lib/utils';
 import { ChoiceFull } from '../interfaces/choice-full';
+import { ActionType } from '../interfaces';
 
 describe('actions/choices', () => {
   describe('addChoice action', () => {
@@ -26,7 +27,7 @@ describe('actions/choices', () => {
       };
 
       const expectedAction: actions.AddChoiceAction = {
-        type: 'ADD_CHOICE',
+        type: ActionType.ADD_CHOICE,
         choice,
       };
 
@@ -38,7 +39,7 @@ describe('actions/choices', () => {
     it('returns FILTER_CHOICES action', () => {
       const results = Array(10);
       const expectedAction: actions.FilterChoicesAction = {
-        type: 'FILTER_CHOICES',
+        type: ActionType.FILTER_CHOICES,
         results,
       };
 
@@ -50,7 +51,7 @@ describe('actions/choices', () => {
     describe('not passing active parameter', () => {
       it('returns ACTIVATE_CHOICES action', () => {
         const expectedAction: actions.ActivateChoicesAction = {
-          type: 'ACTIVATE_CHOICES',
+          type: ActionType.ACTIVATE_CHOICES,
           active: true,
         };
 
@@ -62,7 +63,7 @@ describe('actions/choices', () => {
       it('returns ACTIVATE_CHOICES action', () => {
         const active = true;
         const expectedAction: actions.ActivateChoicesAction = {
-          type: 'ACTIVATE_CHOICES',
+          type: ActionType.ACTIVATE_CHOICES,
           active,
         };
 
@@ -74,7 +75,7 @@ describe('actions/choices', () => {
   describe('clearChoices action', () => {
     it('returns CLEAR_CHOICES action', () => {
       const expectedAction: actions.ClearChoicesAction = {
-        type: 'CLEAR_CHOICES',
+        type: ActionType.CLEAR_CHOICES,
       };
 
       expect(actions.clearChoices()).to.eql(expectedAction);

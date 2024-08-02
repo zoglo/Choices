@@ -7,6 +7,7 @@ import {
 } from '../actions/choices';
 import { AddItemAction, RemoveItemAction } from '../actions/items';
 import { ChoiceFull } from '../interfaces/choice-full';
+import { ActionType } from '../interfaces';
 
 export const defaultState = [];
 
@@ -25,7 +26,7 @@ export default function choices(
   action: ActionTypes = {},
 ): ChoiceFull[] {
   switch (action.type) {
-    case 'ADD_CHOICE': {
+    case ActionType.ADD_CHOICE: {
       const { choice } = action as AddChoiceAction;
 
       /*
@@ -36,13 +37,13 @@ export default function choices(
       return [...state, choice];
     }
 
-    case 'REMOVE_CHOICE': {
+    case ActionType.REMOVE_CHOICE: {
       const { value } = action as RemoveChoiceAction;
 
       return state.filter((choice) => choice.value !== value);
     }
 
-    case 'ADD_ITEM': {
+    case ActionType.ADD_ITEM: {
       const { item } = action as AddItemAction;
       // trigger a rebuild of the choices list as the item can not be added multiple times
       if (item.id && item.selected) {
@@ -52,7 +53,7 @@ export default function choices(
       return state;
     }
 
-    case 'REMOVE_ITEM': {
+    case ActionType.REMOVE_ITEM: {
       const { item } = action as RemoveItemAction;
       // trigger a rebuild of the choices list as the item can be added
       if (item.id && !item.selected) {
@@ -62,7 +63,7 @@ export default function choices(
       return state;
     }
 
-    case 'FILTER_CHOICES': {
+    case ActionType.FILTER_CHOICES: {
       const { results } = action as FilterChoicesAction;
 
       return state.map((obj) => {
@@ -83,7 +84,7 @@ export default function choices(
       });
     }
 
-    case 'ACTIVATE_CHOICES': {
+    case ActionType.ACTIVATE_CHOICES: {
       const { active } = action as ActivateChoicesAction;
 
       return state.map((obj) => {
@@ -94,7 +95,7 @@ export default function choices(
       });
     }
 
-    case 'CLEAR_CHOICES': {
+    case ActionType.CLEAR_CHOICES: {
       return defaultState;
     }
 

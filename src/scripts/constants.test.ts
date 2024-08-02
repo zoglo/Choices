@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { EVENTS, ACTION_TYPES, KEY_CODES, SCROLLING_SPEED } from './constants';
+import { SCROLLING_SPEED } from './constants';
 import { DEFAULT_CLASSNAMES, DEFAULT_CONFIG } from './defaults';
 
 describe('constants', () => {
@@ -83,65 +83,6 @@ describe('constants', () => {
         expect(DEFAULT_CONFIG.fuseOptions).to.be.an('object');
         expect(DEFAULT_CONFIG.callbackOnInit).to.equal(null);
         expect(DEFAULT_CONFIG.callbackOnCreateTemplates).to.equal(null);
-      });
-    });
-
-    describe('EVENTS', () => {
-      it('exports as an object with expected keys', () => {
-        expect(EVENTS).to.be.an('object');
-        expect(Object.keys(EVENTS)).to.eql([
-          'showDropdown',
-          'hideDropdown',
-          'change',
-          'choice',
-          'search',
-          'addItem',
-          'removeItem',
-          'highlightItem',
-          'highlightChoice',
-          'unhighlightItem',
-        ]);
-      });
-    });
-
-    describe('ACTION_TYPES', () => {
-      it('exports as an object with expected keys', () => {
-        expect(ACTION_TYPES).to.be.an('object');
-        expect(Object.keys(ACTION_TYPES)).to.eql([
-          'ADD_CHOICE',
-          'FILTER_CHOICES',
-          'ACTIVATE_CHOICES',
-          'CLEAR_CHOICES',
-          'ADD_GROUP',
-          'ADD_ITEM',
-          'REMOVE_ITEM',
-          'HIGHLIGHT_ITEM',
-          'CLEAR_ALL',
-          'SET_IS_LOADING',
-        ]);
-      });
-    });
-
-    describe('KEY_CODES', () => {
-      it('exports as an object with expected keys', () => {
-        expect(KEY_CODES).to.be.an('object');
-        expect(Object.keys(KEY_CODES)).to.eql([
-          'BACK_KEY',
-          'DELETE_KEY',
-          'ENTER_KEY',
-          'A_KEY',
-          'ESC_KEY',
-          'UP_KEY',
-          'DOWN_KEY',
-          'PAGE_UP_KEY',
-          'PAGE_DOWN_KEY',
-        ]);
-      });
-
-      it('exports each value as a number', () => {
-        Object.keys(KEY_CODES).forEach((key) => {
-          expect(KEY_CODES[key]).to.be.a('number');
-        });
       });
     });
 

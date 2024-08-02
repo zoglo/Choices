@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import groups, { defaultState } from './groups';
 import { cloneObject } from '../lib/utils';
 import { GroupFull } from '../interfaces/group-full';
+import { ActionType } from '../interfaces';
 
 describe('reducers/groups', () => {
   it('should return same state when no action matches', () => {
@@ -22,7 +23,7 @@ describe('reducers/groups', () => {
         const expectedResponse = [group];
 
         const actualResponse = groups(undefined, {
-          type: 'ADD_GROUP',
+          type: ActionType.ADD_GROUP,
           group: cloneObject(group),
         });
 
@@ -58,7 +59,7 @@ describe('reducers/groups', () => {
         const clonedState = state.slice(0);
         const expectedResponse = defaultState;
         const actualResponse = groups(clonedState, {
-          type: 'CLEAR_CHOICES',
+          type: ActionType.CLEAR_CHOICES,
         });
 
         expect(actualResponse).to.eql(expectedResponse);

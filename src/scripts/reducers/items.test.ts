@@ -3,6 +3,7 @@ import items, { defaultState } from './items';
 import { RemoveItemAction } from '../actions/items';
 import { cloneObject } from '../lib/utils';
 import { ChoiceFull } from '../interfaces/choice-full';
+import { ActionType } from '../interfaces';
 
 describe('reducers/items', () => {
   it('should return same state when no action matches', () => {
@@ -32,7 +33,7 @@ describe('reducers/items', () => {
 
         beforeEach(() => {
           actualResponse = items(undefined, {
-            type: 'ADD_ITEM',
+            type: ActionType.ADD_ITEM,
             item: cloneObject(choice),
           });
         });
@@ -59,7 +60,7 @@ describe('reducers/items', () => {
             const expectedResponse = [item];
 
             const actualResponse = items(undefined, {
-              type: 'ADD_ITEM',
+              type: ActionType.ADD_ITEM,
               item: cloneObject(item),
             });
 
@@ -117,7 +118,7 @@ describe('reducers/items', () => {
         ] as ChoiceFull[];
 
         const actualResponse = items(clonedState, {
-          type: 'REMOVE_ITEM',
+          type: ActionType.REMOVE_ITEM,
           item: {
             id,
           },
@@ -142,7 +143,7 @@ describe('reducers/items', () => {
         ] as ChoiceFull[];
 
         const actualResponse = items(clonedState, {
-          type: 'HIGHLIGHT_ITEM',
+          type: ActionType.HIGHLIGHT_ITEM,
           id,
           highlighted: true,
         });

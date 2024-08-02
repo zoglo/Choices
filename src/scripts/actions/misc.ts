@@ -1,19 +1,19 @@
-import { ACTION_TYPES } from '../constants';
+import { ActionType } from '../interfaces';
 
 export interface ClearAllAction {
-  type: typeof ACTION_TYPES.CLEAR_ALL;
+  type: ActionType.CLEAR_ALL;
 }
 
 export interface SetIsLoadingAction {
-  type: typeof ACTION_TYPES.SET_IS_LOADING;
+  type: ActionType.SET_IS_LOADING;
   isLoading: boolean;
 }
 
 export const clearAll = (): ClearAllAction => ({
-  type: ACTION_TYPES.CLEAR_ALL,
+  type: ActionType.CLEAR_ALL,
 });
 
 export const setIsLoading = (isLoading: boolean): SetIsLoadingAction => ({
-  type: ACTION_TYPES.SET_IS_LOADING,
+  type: ActionType.SET_IS_LOADING,
   isLoading,
 });

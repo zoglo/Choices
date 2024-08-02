@@ -1,11 +1,12 @@
 import { expect } from 'chai';
 import * as actions from './misc';
+import { ActionType } from '../interfaces';
 
 describe('actions/misc', () => {
   describe('clearAll action', () => {
     it('returns CLEAR_ALL action', () => {
       const expectedAction: actions.ClearAllAction = {
-        type: 'CLEAR_ALL',
+        type: ActionType.CLEAR_ALL,
       };
 
       expect(actions.clearAll()).to.eql(expectedAction);
@@ -16,7 +17,7 @@ describe('actions/misc', () => {
     describe('setting loading state to true', () => {
       it('returns expected action', () => {
         const expectedAction: actions.SetIsLoadingAction = {
-          type: 'SET_IS_LOADING',
+          type: ActionType.SET_IS_LOADING,
           isLoading: true,
         };
 
@@ -27,7 +28,7 @@ describe('actions/misc', () => {
     describe('setting loading state to false', () => {
       it('returns expected action', () => {
         const expectedAction: actions.SetIsLoadingAction = {
-          type: 'SET_IS_LOADING',
+          type: ActionType.SET_IS_LOADING,
           isLoading: false,
         };
 
