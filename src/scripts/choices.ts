@@ -34,7 +34,6 @@ import { PassedElement } from './interfaces/passed-element';
 import { State } from './interfaces/state';
 import {
   diff,
-  existsInArray,
   generateId,
   getAdjacentEl,
   getClassNames,
@@ -111,6 +110,8 @@ class Choices implements ChoicesInterface {
   _isSelectMultipleElement: boolean;
 
   _isSelectElement: boolean;
+
+  _canAddUserChoices: boolean;
 
   _store: Store;
 
@@ -233,7 +234,9 @@ class Choices implements ChoicesInterface {
     this._isSelectMultipleElement = this._elementType === SELECT_MULTIPLE_TYPE;
     this._isSelectElement =
       this._isSelectOneElement || this._isSelectMultipleElement;
-
+    this._canAddUserChoices =
+      (this._isTextElement && this.config.addItems) ||
+      (this._isSelectElement && this.config.addChoices);
     if (!['auto', 'always'].includes(`${this.config.renderSelectedChoices}`)) {
       this.config.renderSelectedChoices = 'auto';
     }
@@ -1466,63 +1469,70 @@ class Choices implements ChoicesInterface {
   }
 
   _canAddChoice(items: InputChoice[], value: string): Notice {
-    const canAddItem = this._canAddItem(items, value);
+    if (!this._canAddUserChoices) {
+      return {
+        response: false,
+        notice: '',
+      };
+    }
 
-    canAddItem.response = this.config.addChoices && canAddItem.response;
-
-    return canAddItem;
+    return this._canAddItem(items, value);
   }
 
   _canAddItem(items: InputChoice[], value: string): Notice {
     let canAddItem = true;
-    let notice =
-      typeof this.config.addItemText === 'function'
-        ? this.config.addItemText(sanitise(value), value)
-        : this.config.addItemText;
+    let notice = '';
 
-    if (!this._isSelectOneElement) {
-      const isDuplicateValue = existsInArray(items, value);
-
-      if (
-        this.config.maxItemCount > 0 &&
-        this.config.maxItemCount <= items.length
-      ) {
-        // If there is a max entry limit and we have reached that limit
-        // don't update
-        if (!this.config.singleModeForMultiSelect) {
-          canAddItem = false;
-          notice =
-            typeof this.config.maxItemText === 'function'
-              ? this.config.maxItemText(this.config.maxItemCount)
-              : this.config.maxItemText;
-        }
+    if (
+      this.config.maxItemCount > 0 &&
+      this.config.maxItemCount <= items.length
+    ) {
+      // If there is a max entry limit and we have reached that limit
+      // don't update
+      if (!this.config.singleModeForMultiSelect) {
+        canAddItem = false;
+        notice =
+          typeof this.config.maxItemText === 'function'
+            ? this.config.maxItemText(this.config.maxItemCount)
+            : this.config.maxItemText;
       }
+    }
 
-      if (
-        !this.config.duplicateItemsAllowed &&
-        isDuplicateValue &&
-        canAddItem
-      ) {
+    if (
+      canAddItem &&
+      this._canAddUserChoices &&
+      value !== '' &&
+      typeof this.config.addItemFilter === 'function' &&
+      !this.config.addItemFilter(value)
+    ) {
+      canAddItem = false;
+      notice =
+        typeof this.config.customAddItemText === 'function'
+          ? this.config.customAddItemText(sanitise(value), value)
+          : this.config.customAddItemText;
+    }
+
+    if (
+      canAddItem &&
+      (this._isSelectElement || !this.config.duplicateItemsAllowed)
+    ) {
+      const foundChoice = this._store.items.find((choice) =>
+        this.config.valueComparer(choice.value, value),
+      );
+      if (foundChoice) {
         canAddItem = false;
         notice =
           typeof this.config.uniqueItemText === 'function'
             ? this.config.uniqueItemText(sanitise(value), value)
             : this.config.uniqueItemText;
       }
+    }
 
-      if (
-        this._isTextElement &&
-        this.config.addItems &&
-        canAddItem &&
-        typeof this.config.addItemFilter === 'function' &&
-        !this.config.addItemFilter(value)
-      ) {
-        canAddItem = false;
-        notice =
-          typeof this.config.customAddItemText === 'function'
-            ? this.config.customAddItemText(sanitise(value), value)
-            : this.config.customAddItemText;
-      }
+    if (canAddItem) {
+      notice =
+        typeof this.config.addItemText === 'function'
+          ? this.config.addItemText(sanitise(value), value)
+          : this.config.addItemText;
     }
 
     return {

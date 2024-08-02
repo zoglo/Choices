@@ -6,7 +6,6 @@ import {
   cloneObject,
   diff,
   dispatchEvent,
-  existsInArray,
   generateChars,
   generateId,
   getRandomNumber,
@@ -202,20 +201,6 @@ describe('utils', () => {
       expect(event.bubbles).to.equal(true);
       expect(event.cancelable).to.equal(true);
       expect(event.detail).to.equal(customArgs);
-    });
-  });
-
-  describe('existsInArray', () => {
-    it('determines whether a value exists within given array', () => {
-      const values = [
-        { value: 'The Strokes' },
-        { value: 'Arctic Monkeys' },
-        { value: 'Oasis' },
-        { value: 'Tame Impala' },
-      ];
-
-      expect(existsInArray(values, 'Oasis', 'value')).to.equal(true);
-      expect(existsInArray(values, 'The Beatles', 'value')).to.equal(false);
     });
   });
 

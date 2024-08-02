@@ -217,19 +217,6 @@ export const dispatchEvent = (
   return element.dispatchEvent(event);
 };
 
-export const existsInArray = (
-  array: any[],
-  value: string,
-  key = 'value',
-): boolean =>
-  array.some((item) => {
-    if (typeof value === 'string') {
-      return item[key] === value.trim();
-    }
-
-    return item[key] === value;
-  });
-
 export const cloneObject = <T>(obj: T): T => JSON.parse(JSON.stringify(obj));
 
 export const isEmptyObject = (obj: object | undefined | null): boolean => {
