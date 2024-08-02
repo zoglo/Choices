@@ -49,3 +49,4 @@
 * Fix `aria-label` for placeholders was set to the string `null`
 * Fix `searchEnable` flag was not respected for `select-multiple` [#1042](https://github.com/Choices-js/Choices/issues/1042)
 * Fix poor error message when Choices is passed a string selector which fails to find the element for Choices to attach to.
+* Avoid pushing a search to fuse.js which is just additional whitespace to the existing search term

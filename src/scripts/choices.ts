@@ -1447,11 +1447,13 @@ class Choices implements ChoicesInterface {
       value.length >= searchFloor
     ) {
       const resultCount = searchChoices ? this._searchChoices(value) : 0;
-      // Trigger search event
-      this.passedElement.triggerEvent(EventType.search, {
-        value,
-        resultCount,
-      });
+      if (resultCount !== null) {
+        // Trigger search event
+        this.passedElement.triggerEvent(EventType.search, {
+          value,
+          resultCount,
+        });
+      }
     } else if (hasUnactiveChoices) {
       // Otherwise reset choices to active
       this._isSearching = false;
@@ -1527,12 +1529,12 @@ class Choices implements ChoicesInterface {
     };
   }
 
-  _searchChoices(value: string): number {
-    const newValue = value.trim();
-    const currentValue = this._currentValue.trim();
+  _searchChoices(value: string): number | null {
+    const newValue = value.trim().replace(/\s{2,}/, ' ');
 
-    if (newValue.length < 1 && newValue === `${currentValue} `) {
-      return 0;
+    // signal input didn't change search
+    if (newValue.length === 0 || newValue === this._currentValue) {
+      return null;
     }
 
     // If new value matches the desired length and is not the same as the current value with a space
