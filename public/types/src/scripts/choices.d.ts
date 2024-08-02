@@ -34,6 +34,7 @@ declare class Choices implements ChoicesInterface {
     _isSelectOneElement: boolean;
     _isSelectMultipleElement: boolean;
     _isSelectElement: boolean;
+    _canAddUserChoices: boolean;
     _store: Store;
     _templates: typeof templates;
     _initialState: State;
@@ -151,26 +152,27 @@ declare class Choices implements ChoicesInterface {
     _getChoiceForEvent(id: number | ChoiceFull): object | undefined;
     _triggerChange(value: any): void;
     _selectPlaceholderChoice(placeholderChoice: ChoiceFull): void;
-    _handleButtonAction(activeItems?: ChoiceFull[], element?: HTMLElement): void;
-    _handleItemAction(activeItems?: InputChoice[], element?: HTMLElement, hasShiftKey?: boolean): void;
-    _handleChoiceAction(activeItems?: ChoiceFull[], element?: HTMLElement): void;
-    _handleBackspace(activeItems?: ChoiceFull[]): void;
+    _handleButtonAction(items: ChoiceFull[], element?: HTMLElement): void;
+    _handleItemAction(items: InputChoice[], element?: HTMLElement, hasShiftKey?: boolean): void;
+    _handleChoiceAction(items: ChoiceFull[], element?: HTMLElement): void;
+    _handleBackspace(items: ChoiceFull[]): void;
+    _loadChoices(): void;
     _startLoading(): void;
     _stopLoading(): void;
     _handleLoadingState(setLoading?: boolean): void;
     _handleSearch(value?: string): void;
-    _canAddChoice(activeItems: InputChoice[], value: string): Notice;
-    _canAddItem(activeItems: InputChoice[], value: string): Notice;
+    _canAddChoice(items: InputChoice[], value: string): Notice;
+    _canAddItem(items: InputChoice[], value: string): Notice;
     _searchChoices(value: string): number | null;
     _addEventListeners(): void;
     _removeEventListeners(): void;
     _onKeyDown(event: KeyboardEvent): void;
     _onKeyUp({ target, keyCode, }: Pick<KeyboardEvent, 'target' | 'keyCode'>): void;
     _onSelectKey(event: KeyboardEvent, hasItems: boolean): void;
-    _onEnterKey(event: KeyboardEvent, activeItems: ChoiceFull[], hasActiveDropdown: boolean): void;
+    _onEnterKey(event: KeyboardEvent, items: ChoiceFull[], hasActiveDropdown: boolean): void;
     _onEscapeKey(event: KeyboardEvent, hasActiveDropdown: boolean): void;
     _onDirectionKey(event: KeyboardEvent, hasActiveDropdown: boolean): void;
-    _onDeleteKey(event: KeyboardEvent, activeItems: ChoiceFull[], hasFocusedInput: boolean): void;
+    _onDeleteKey(event: KeyboardEvent, items: ChoiceFull[], hasFocusedInput: boolean): void;
     _onTouchMove(): void;
     _onTouchEnd(event: TouchEvent): void;
     /**
@@ -202,7 +204,7 @@ declare class Choices implements ChoicesInterface {
     _createStructure(): void;
     _addPredefinedChoices(choices: (ChoiceFull | GroupFull)[], selectFirstOption?: boolean, withEvents?: boolean): void;
     _addPredefinedItems(items: ChoiceFull[]): void;
-    _findAndSelectChoiceByValue(value: string): void;
+    _findAndSelectChoiceByValue(value: string): boolean;
     _generatePlaceholderValue(): string | null;
 }
 export default Choices;

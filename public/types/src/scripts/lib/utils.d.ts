@@ -21,7 +21,6 @@ export declare const unwrapStringForEscaped: (s?: StringUntrusted | StringPreEsc
 export declare const sortByAlpha: ({ value, label }: RecordToCompare, { value: value2, label: label2 }: RecordToCompare) => number;
 export declare const sortByScore: (a: Pick<ChoiceFull, "score">, b: Pick<ChoiceFull, "score">) => number;
 export declare const dispatchEvent: (element: HTMLElement, type: EventType, customArgs?: object | null) => boolean;
-export declare const existsInArray: (array: any[], value: string, key?: string) => boolean;
 export declare const cloneObject: <T>(obj: T) => T;
 export declare const isEmptyObject: (obj: object | undefined | null) => boolean;
 /**
