@@ -2,9 +2,12 @@
 
 ## [11.0.0 RC2] (2024-08-03)
 
-### Bug Fixes
+### Bug Fixes (from 10.2.0)
 * Avoid pushing a search to fuse.js which is just additional whitespace to the existing search term
+
+### Bug Fixes (from 11.0.0 RC1)
 * Fix error when using backspace when no items are selected after adding an item
+* Fix `destroy()`/`init()` would not load choices from the underlying <select> as expected
 
 ### Chore
 * Remove unused code

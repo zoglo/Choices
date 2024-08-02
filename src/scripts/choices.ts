@@ -301,33 +301,6 @@ class Choices implements ChoicesInterface {
       itemChoice: 'item-choice',
     };
 
-    if (this._isTextElement) {
-      // Assign preset items from passed object first
-      this._presetItems = this.config.items.map((e: InputChoice | string) =>
-        mapInputToChoice(e, false),
-      );
-      // Add any values passed from attribute
-      const { value } = this.passedElement;
-      if (value) {
-        const elementItems: ChoiceFull[] = value
-          .split(this.config.delimiter)
-          .map((e: InputChoice | string) => mapInputToChoice(e, false));
-        this._presetItems = this._presetItems.concat(elementItems);
-      }
-    } else if (this._isSelectElement) {
-      // Assign preset choices from passed object
-      this._presetChoices = this.config.choices.map((e: InputChoice) =>
-        mapInputToChoice(e, true),
-      );
-      // Create array of choices from option elements
-      const choicesFromOptions = (
-        this.passedElement as WrappedSelect
-      ).optionsAsChoices();
-      if (choicesFromOptions) {
-        this._presetChoices.push(...choicesFromOptions);
-      }
-    }
-
     this._render = this._render.bind(this);
     this._onFocus = this._onFocus.bind(this);
     this._onBlur = this._onBlur.bind(this);
@@ -370,6 +343,7 @@ class Choices implements ChoicesInterface {
       return;
     }
 
+    this._loadChoices();
     this._createTemplates();
     this._createElements();
     this._createStructure();
@@ -406,6 +380,8 @@ class Choices implements ChoicesInterface {
     this.containerOuter.unwrap(this.passedElement.element);
 
     this.clearStore();
+    this._isSearching = false;
+    this._currentValue = '';
 
     this._templates = templates;
     this.initialised = false;
@@ -1378,6 +1354,35 @@ class Choices implements ChoicesInterface {
         this.highlightItem(lastItem, false);
       }
       this.removeHighlightedItems(true);
+    }
+  }
+
+  _loadChoices(): void {
+    if (this._isTextElement) {
+      // Assign preset items from passed object first
+      this._presetItems = this.config.items.map((e: InputChoice | string) =>
+        mapInputToChoice(e, false),
+      );
+      // Add any values passed from attribute
+      const { value } = this.passedElement;
+      if (value) {
+        const elementItems: ChoiceFull[] = value
+          .split(this.config.delimiter)
+          .map((e: InputChoice | string) => mapInputToChoice(e, false));
+        this._presetItems = this._presetItems.concat(elementItems);
+      }
+    } else if (this._isSelectElement) {
+      // Assign preset choices from passed object
+      this._presetChoices = this.config.choices.map((e: InputChoice) =>
+        mapInputToChoice(e, true),
+      );
+      // Create array of choices from option elements
+      const choicesFromOptions = (
+        this.passedElement as WrappedSelect
+      ).optionsAsChoices();
+      if (choicesFromOptions) {
+        this._presetChoices.push(...choicesFromOptions);
+      }
     }
   }
 
