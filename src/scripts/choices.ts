@@ -1220,9 +1220,9 @@ class Choices implements ChoicesInterface {
     }
   }
 
-  _handleButtonAction(activeItems: ChoiceFull[], element?: HTMLElement): void {
+  _handleButtonAction(items: ChoiceFull[], element?: HTMLElement): void {
     if (
-      activeItems.length === 0 ||
+      items.length === 0 ||
       !this.config.removeItems ||
       !this.config.removeItemButton
     ) {
@@ -1230,7 +1230,7 @@ class Choices implements ChoicesInterface {
     }
 
     const id = element && parseDataSetId(element.parentNode as HTMLElement);
-    const itemToRemove = id && activeItems.find((item) => item.id === id);
+    const itemToRemove = id && items.find((item) => item.id === id);
     if (!itemToRemove) {
       return;
     }
@@ -1245,12 +1245,12 @@ class Choices implements ChoicesInterface {
   }
 
   _handleItemAction(
-    activeItems: InputChoice[],
+    items: InputChoice[],
     element?: HTMLElement,
     hasShiftKey = false,
   ): void {
     if (
-      activeItems.length === 0 ||
+      items.length === 0 ||
       !this.config.removeItems ||
       this._isSelectOneElement
     ) {
@@ -1265,7 +1265,7 @@ class Choices implements ChoicesInterface {
     // We only want to select one item with a click
     // so we deselect any items that aren't the target
     // unless shift is being pressed
-    activeItems.forEach((item) => {
+    items.forEach((item) => {
       if (item.id === id && !item.highlighted) {
         this.highlightItem(item);
       } else if (!hasShiftKey && item.highlighted) {
@@ -1278,7 +1278,7 @@ class Choices implements ChoicesInterface {
     this.input.focus();
   }
 
-  _handleChoiceAction(activeItems: ChoiceFull[], element?: HTMLElement): void {
+  _handleChoiceAction(items: ChoiceFull[], element?: HTMLElement): void {
     // If we are clicking on an option
     const id = parseDataSetId(element);
     const choice = id && this._store.getChoiceById(id);
@@ -1287,8 +1287,8 @@ class Choices implements ChoicesInterface {
     }
 
     const passedKeyCode =
-      activeItems.length !== 0 && activeItems[0] && activeItems[0].keyCode
-        ? activeItems[0].keyCode
+      items.length !== 0 && items[0] && items[0].keyCode
+        ? items[0].keyCode
         : undefined;
     const hasActiveDropdown = this.dropdown.isActive;
 
@@ -1302,12 +1302,12 @@ class Choices implements ChoicesInterface {
     let triggerChange = false;
     this._store.withDeferRendering(() => {
       if (!choice.selected && !choice.disabled) {
-        const canAddItem = this._canAddItem(activeItems, choice.value);
+        const canAddItem = this._canAddItem(items, choice.value);
 
         if (canAddItem.response) {
           if (this.config.singleModeForMultiSelect) {
-            if (activeItems.length !== 0) {
-              const lastItem = activeItems[activeItems.length - 1];
+            if (items.length !== 0) {
+              const lastItem = items[items.length - 1];
               this._removeItem(lastItem);
             }
           }
@@ -1333,13 +1333,13 @@ class Choices implements ChoicesInterface {
     }
   }
 
-  _handleBackspace(activeItems: ChoiceFull[]): void {
-    if (!this.config.removeItems || activeItems.length === 0) {
+  _handleBackspace(items: ChoiceFull[]): void {
+    if (!this.config.removeItems || items.length === 0) {
       return;
     }
 
-    const lastItem = activeItems[activeItems.length - 1];
-    const hasHighlightedItems = activeItems.some((item) => item.highlighted);
+    const lastItem = items[items.length - 1];
+    const hasHighlightedItems = items.some((item) => item.highlighted);
 
     // If editing the last item is allowed and there are not other selected items,
     // we can edit the item value. Otherwise if we can remove items, remove all selected items
@@ -1465,15 +1465,15 @@ class Choices implements ChoicesInterface {
     }
   }
 
-  _canAddChoice(activeItems: InputChoice[], value: string): Notice {
-    const canAddItem = this._canAddItem(activeItems, value);
+  _canAddChoice(items: InputChoice[], value: string): Notice {
+    const canAddItem = this._canAddItem(items, value);
 
     canAddItem.response = this.config.addChoices && canAddItem.response;
 
     return canAddItem;
   }
 
-  _canAddItem(activeItems: InputChoice[], value: string): Notice {
+  _canAddItem(items: InputChoice[], value: string): Notice {
     let canAddItem = true;
     let notice =
       typeof this.config.addItemText === 'function'
@@ -1481,11 +1481,11 @@ class Choices implements ChoicesInterface {
         : this.config.addItemText;
 
     if (!this._isSelectOneElement) {
-      const isDuplicateValue = existsInArray(activeItems, value);
+      const isDuplicateValue = existsInArray(items, value);
 
       if (
         this.config.maxItemCount > 0 &&
-        this.config.maxItemCount <= activeItems.length
+        this.config.maxItemCount <= items.length
       ) {
         // If there is a max entry limit and we have reached that limit
         // don't update
@@ -1650,7 +1650,7 @@ class Choices implements ChoicesInterface {
 
   _onKeyDown(event: KeyboardEvent): void {
     const { keyCode } = event;
-    const { activeItems } = this._store;
+    const { items } = this._store;
     const hasFocusedInput = this.input.isFocussed;
     const hasActiveDropdown = this.dropdown.isActive;
     const hasItems = this.itemList.hasChildren();
@@ -1704,7 +1704,7 @@ class Choices implements ChoicesInterface {
       case KeyCodeMap.A_KEY:
         return this._onSelectKey(event, hasItems);
       case KeyCodeMap.ENTER_KEY:
-        return this._onEnterKey(event, activeItems, hasActiveDropdown);
+        return this._onEnterKey(event, items, hasActiveDropdown);
       case KeyCodeMap.ESC_KEY:
         return this._onEscapeKey(event, hasActiveDropdown);
       case KeyCodeMap.UP_KEY:
@@ -1714,7 +1714,7 @@ class Choices implements ChoicesInterface {
         return this._onDirectionKey(event, hasActiveDropdown);
       case KeyCodeMap.DELETE_KEY:
       case KeyCodeMap.BACK_KEY:
-        return this._onDeleteKey(event, activeItems, hasFocusedInput);
+        return this._onDeleteKey(event, items, hasFocusedInput);
       default:
     }
   }
@@ -1724,8 +1724,8 @@ class Choices implements ChoicesInterface {
     keyCode,
   }: Pick<KeyboardEvent, 'target' | 'keyCode'>): void {
     const { value } = this.input;
-    const { activeItems } = this._store;
-    const canAddItem = this._canAddItem(activeItems, value);
+    const { items } = this._store;
+    const canAddItem = this._canAddItem(items, value);
 
     // We are typing into a text input and have a value, we want to show a dropdown
     // notice. Otherwise hide the dropdown
@@ -1781,7 +1781,7 @@ class Choices implements ChoicesInterface {
 
   _onEnterKey(
     event: KeyboardEvent,
-    activeItems: ChoiceFull[],
+    items: ChoiceFull[],
     hasActiveDropdown: boolean,
   ): void {
     const { target } = event;
@@ -1793,34 +1793,56 @@ class Choices implements ChoicesInterface {
       const { value } = this.input;
       let canAdd: Notice;
       if (this._isTextElement) {
-        canAdd = this._canAddItem(activeItems, value);
+        canAdd = this._canAddItem(items, value);
       } else {
-        canAdd = this._canAddChoice(activeItems, value);
+        canAdd = this._canAddChoice(items, value);
       }
 
       if (canAdd.response) {
         this.hideDropdown(true);
-        this._addChoice(
-          mapInputToChoice(
-            {
-              value: this.config.allowHtmlUserInput ? value : sanitise(value),
-              label: {
-                escaped: sanitise(value),
-                raw: value,
-              },
-              selected: true,
-            } as InputChoice,
-            false,
-          ),
-        );
+
+        this._store.withDeferRendering(() => {
+          if (
+            this._isSelectOneElement ||
+            this.config.singleModeForMultiSelect
+          ) {
+            if (items.length !== 0) {
+              const lastItem = items[items.length - 1];
+              this._removeItem(lastItem);
+            }
+          }
+          let choiceNotFound = true;
+          if (this._isSelectElement || !this.config.duplicateItemsAllowed) {
+            choiceNotFound = !this._findAndSelectChoiceByValue(value);
+          }
+
+          if (choiceNotFound) {
+            this._addChoice(
+              mapInputToChoice(
+                {
+                  value: this.config.allowHtmlUserInput
+                    ? value
+                    : sanitise(value),
+                  label: {
+                    escaped: sanitise(value),
+                    raw: value,
+                  },
+                  selected: true,
+                } as InputChoice,
+                false,
+              ),
+            );
+          }
+          this.clearInput();
+        });
+
         this._triggerChange(value);
-        this.clearInput();
         addedItem = true;
       }
     }
 
     if (targetWasButton) {
-      this._handleButtonAction(activeItems, target as HTMLElement);
+      this._handleButtonAction(items, target as HTMLElement);
       event.preventDefault();
     }
 
@@ -1833,11 +1855,11 @@ class Choices implements ChoicesInterface {
         if (addedItem) {
           this.unhighlightAll();
         } else {
-          if (activeItems[0]) {
+          if (items[0]) {
             // add enter keyCode value
-            activeItems[0].keyCode = KeyCodeMap.ENTER_KEY; // eslint-disable-line no-param-reassign
+            items[0].keyCode = KeyCodeMap.ENTER_KEY; // eslint-disable-line no-param-reassign
           }
-          this._handleChoiceAction(activeItems, highlightedChoice);
+          this._handleChoiceAction(items, highlightedChoice);
         }
       }
 
@@ -1917,7 +1939,7 @@ class Choices implements ChoicesInterface {
 
   _onDeleteKey(
     event: KeyboardEvent,
-    activeItems: ChoiceFull[],
+    items: ChoiceFull[],
     hasFocusedInput: boolean,
   ): void {
     const { target } = event;
@@ -1927,7 +1949,7 @@ class Choices implements ChoicesInterface {
       !(target as HTMLInputElement).value &&
       hasFocusedInput
     ) {
-      this._handleBackspace(activeItems);
+      this._handleBackspace(items);
       event.preventDefault();
     }
   }
@@ -1992,13 +2014,13 @@ class Choices implements ChoicesInterface {
     const item = target.closest('[data-button],[data-item],[data-choice]');
     if (item instanceof HTMLElement) {
       const hasShiftKey = event.shiftKey;
-      const { activeItems } = this._store;
+      const { activeItems, items } = this._store;
       const { dataset } = item;
 
       if ('button' in dataset) {
-        this._handleButtonAction(activeItems, item);
+        this._handleButtonAction(items, item);
       } else if ('item' in dataset) {
-        this._handleItemAction(activeItems, item, hasShiftKey);
+        this._handleItemAction(items, item, hasShiftKey);
       } else if ('choice' in dataset) {
         this._handleChoiceAction(activeItems, item);
       }
@@ -2476,7 +2498,7 @@ class Choices implements ChoicesInterface {
     });
   }
 
-  _findAndSelectChoiceByValue(value: string): void {
+  _findAndSelectChoiceByValue(value: string): boolean {
     const { choices } = this._store;
     // Check 'value' property exists and the choice isn't already selected
     const foundChoice = choices.find((choice) =>
@@ -2485,7 +2507,11 @@ class Choices implements ChoicesInterface {
 
     if (foundChoice && !foundChoice.selected) {
       this._addItem(foundChoice);
+
+      return true;
     }
+
+    return false;
   }
 
   _generatePlaceholderValue(): string | null {
