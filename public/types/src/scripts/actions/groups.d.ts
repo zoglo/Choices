@@ -1,7 +1,7 @@
-import { ACTION_TYPES } from '../constants';
 import { GroupFull } from '../interfaces/group-full';
+import { ActionType } from '../interfaces';
 export interface AddGroupAction {
-    type: typeof ACTION_TYPES.ADD_GROUP;
+    type: ActionType.ADD_GROUP;
     group: GroupFull;
 }
 export declare const addGroup: (group: GroupFull) => AddGroupAction;

@@ -1,11 +1,11 @@
-import { ACTION_TYPES } from '../constants';
 import { ChoiceFull } from '../interfaces/choice-full';
+import { ActionType } from '../interfaces';
 export interface AddChoiceAction {
-    type: typeof ACTION_TYPES.ADD_CHOICE;
+    type: ActionType.ADD_CHOICE;
     choice: ChoiceFull;
 }
 export interface RemoveChoiceAction {
-    type: typeof ACTION_TYPES.REMOVE_CHOICE;
+    type: ActionType.REMOVE_CHOICE;
     value: string;
 }
 export interface Result<T> {
@@ -13,15 +13,15 @@ export interface Result<T> {
     score: number;
 }
 export interface FilterChoicesAction {
-    type: typeof ACTION_TYPES.FILTER_CHOICES;
+    type: ActionType.FILTER_CHOICES;
     results: Result<ChoiceFull>[];
 }
 export interface ActivateChoicesAction {
-    type: typeof ACTION_TYPES.ACTIVATE_CHOICES;
+    type: ActionType.ACTIVATE_CHOICES;
     active: boolean;
 }
 export interface ClearChoicesAction {
-    type: typeof ACTION_TYPES.CLEAR_CHOICES;
+    type: ActionType.CLEAR_CHOICES;
 }
 export declare const addChoice: (choice: ChoiceFull) => AddChoiceAction;
 export declare const removeChoice: (value: any) => RemoveChoiceAction;

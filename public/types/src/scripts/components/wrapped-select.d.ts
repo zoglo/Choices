@@ -14,10 +14,8 @@ export default class WrappedSelect extends WrappedElement {
     get placeholderOption(): HTMLOptionElement | null;
     get optionGroups(): Element[];
     get options(): HTMLOptionElement[];
-    set options(options: ChoiceFull[]);
     addOptions(choices: ChoiceFull[]): void;
     optionsAsChoices(): (ChoiceFull | GroupFull)[];
-    appendDocFragment(fragment: DocumentFragment): void;
     _optionToChoice(option: HTMLOptionElement): ChoiceFull;
     _optgroupToChoice(optgroup: HTMLOptGroupElement): GroupFull;
 }

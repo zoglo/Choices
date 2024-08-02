@@ -161,7 +161,7 @@ declare class Choices implements ChoicesInterface {
     _handleSearch(value?: string): void;
     _canAddChoice(activeItems: InputChoice[], value: string): Notice;
     _canAddItem(activeItems: InputChoice[], value: string): Notice;
-    _searchChoices(value: string): number;
+    _searchChoices(value: string): number | null;
     _addEventListeners(): void;
     _removeEventListeners(): void;
     _onKeyDown(event: KeyboardEvent): void;
