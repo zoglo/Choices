@@ -3,6 +3,7 @@ import * as actions from './choices';
 import { cloneObject } from '../lib/utils';
 import { ChoiceFull } from '../interfaces/choice-full';
 import { ActionType } from '../interfaces';
+import { stringToHtmlClass } from '../lib/choice-input';
 
 describe('actions/choices', () => {
   describe('addChoice action', () => {
@@ -15,7 +16,7 @@ describe('actions/choices', () => {
         groupId: 1,
         disabled: false,
         elementId: '1',
-        labelClass: 'test',
+        labelClass: stringToHtmlClass('test foo--bar'),
         labelDescription: 'test',
         customProperties: {
           test: true,

@@ -4,6 +4,7 @@ import WrappedElement from './wrapped-element';
 import { isHTMLOptgroup, isHTMLOption } from '../lib/htmlElementGuards';
 import { GroupFull } from '../interfaces/group-full';
 import { ChoiceFull } from '../interfaces/choice-full';
+import { stringToHtmlClass } from '../lib/choice-input';
 
 export default class WrappedSelect extends WrappedElement {
   element: HTMLSelectElement;
@@ -87,7 +88,7 @@ export default class WrappedSelect extends WrappedElement {
       placeholder: option.value === '' || option.hasAttribute('placeholder'),
       labelClass:
         typeof option.dataset.labelClass !== 'undefined'
-          ? option.dataset.labelClass.split(' ')
+          ? stringToHtmlClass(option.dataset.labelClass)
           : undefined,
       labelDescription:
         typeof option.dataset.labelDescription !== 'undefined'

@@ -1,3 +1,4 @@
+
 import { InputChoice } from '../interfaces/input-choice';
 import { InputGroup } from '../interfaces/input-group';
 import { GroupFull } from '../interfaces/group-full';
@@ -9,6 +10,19 @@ type MappedInputTypeToChoiceType<T extends string | InputChoice | InputGroup> =
 
 const coerceBool = (arg: unknown, defaultValue: boolean = true) =>
   typeof arg === 'undefined' ? defaultValue : !!arg;
+
+export const stringToHtmlClass = (input): string[] | undefined => {
+  if (typeof input === 'string') {
+    // eslint-disable-next-line no-param-reassign
+    input = input.split(' ').filter((s) => s.length !== 0);
+  }
+
+  if (Array.isArray(input) && input.length !== 0) {
+    return input;
+  }
+
+  return undefined;
+};
 
 export const mapInputToChoice = <T extends string | InputChoice | InputGroup>(
   value: T,
@@ -58,7 +72,7 @@ export const mapInputToChoice = <T extends string | InputChoice | InputGroup>(
     disabled: coerceBool(choice.disabled, false),
     placeholder: coerceBool(choice.placeholder, false),
     highlighted: false,
-    labelClass: choice.labelClass,
+    labelClass: stringToHtmlClass(choice.labelClass),
     labelDescription: choice.labelDescription,
     customProperties: choice.customProperties,
   };

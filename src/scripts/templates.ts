@@ -129,7 +129,7 @@ const templates = {
       className: getClassNames(item).join(' '),
     });
 
-    if (typeof labelClass === 'string' || Array.isArray(labelClass)) {
+    if (labelClass) {
       const spanLabel = Object.assign(document.createElement('span'), {
         innerHTML: escapeForTemplate(allowHTML, label),
         className: getClassNames(labelClass).join(' '),
@@ -144,10 +144,10 @@ const templates = {
       id,
       value,
     });
-    if (typeof labelClass !== 'undefined' && labelClass) {
+    if (labelClass) {
       div.dataset.labelClass = getClassNames(labelClass).join(' ');
     }
-    if (typeof labelDescription !== 'undefined' && labelDescription) {
+    if (labelDescription) {
       div.dataset.labelDescription = labelDescription;
     }
     if (!isEmptyObject(customProperties)) {
@@ -289,7 +289,7 @@ const templates = {
 
     const descId = `${elementId}-description`;
 
-    if (typeof labelClass === 'string' || Array.isArray(labelClass)) {
+    if (labelClass) {
       const spanLabel = Object.assign(document.createElement('span'), {
         innerHTML: escapeForTemplate(allowHTML, label),
         className: getClassNames(labelClass).join(' '),
@@ -326,10 +326,10 @@ const templates = {
       value,
       selectText,
     });
-    if (typeof labelClass !== 'undefined' && labelClass) {
+    if (labelClass) {
       div.dataset.labelClass = getClassNames(labelClass).join(' ');
     }
-    if (typeof labelDescription !== 'undefined' && labelDescription) {
+    if (labelDescription) {
       div.dataset.labelDescription = labelDescription;
     }
 
@@ -415,10 +415,10 @@ const templates = {
     const labelValue = unwrapStringForRaw(label);
 
     const opt = new Option(labelValue, value, false, active);
-    if (typeof labelClass !== 'undefined' && labelClass) {
+    if (labelClass) {
       opt.dataset.labelClass = getClassNames(labelClass).join(' ');
     }
-    if (typeof labelDescription !== 'undefined' && labelDescription) {
+    if (labelDescription) {
       opt.dataset.labelDescription = labelDescription;
     }
 
