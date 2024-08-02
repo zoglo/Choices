@@ -241,9 +241,9 @@ var Choices = /** @class */function () {
     var _this = this;
     this._lastAddedChoiceId = 0;
     this._lastAddedGroupId = 0;
-    this.config = __assign(__assign(__assign({}, defaults_1.DEFAULT_CONFIG), Choices.defaults.options), userConfig);
+    this.config = __assign(__assign(__assign({}, Choices.defaults.allOptions), Choices.defaults.options), userConfig);
     options_1.ObjectsInConfig.forEach(function (key) {
-      Object.assign(_this.config[key], defaults_1.DEFAULT_CONFIG[key], Choices.defaults.options[key], userConfig[key]);
+      Object.assign(_this.config[key], Choices.defaults.allOptions[key], Choices.defaults.options[key], userConfig[key]);
     });
     var invalidConfigOptions = (0, utils_1.diff)(this.config, defaults_1.DEFAULT_CONFIG);
     if (invalidConfigOptions.length) {
@@ -387,6 +387,9 @@ var Choices = /** @class */function () {
       return Object.preventExtensions({
         get options() {
           return USER_DEFAULTS;
+        },
+        get allOptions() {
+          return defaults_1.DEFAULT_CONFIG;
         },
         get templates() {
           return templates_1.default;
@@ -2932,33 +2935,33 @@ Object.defineProperty(exports, "__esModule", ({
 exports.DEFAULT_CONFIG = exports.DEFAULT_CLASSNAMES = void 0;
 var utils_1 = __webpack_require__(705);
 exports.DEFAULT_CLASSNAMES = {
-  containerOuter: 'choices',
-  containerInner: 'choices__inner',
-  input: 'choices__input',
-  inputCloned: 'choices__input--cloned',
-  list: 'choices__list',
-  listItems: 'choices__list--multiple',
-  listSingle: 'choices__list--single',
-  listDropdown: 'choices__list--dropdown',
-  item: 'choices__item',
-  itemSelectable: 'choices__item--selectable',
-  itemDisabled: 'choices__item--disabled',
-  itemChoice: 'choices__item--choice',
-  description: 'choices__description',
+  containerOuter: ['choices'],
+  containerInner: ['choices__inner'],
+  input: ['choices__input'],
+  inputCloned: ['choices__input--cloned'],
+  list: ['choices__list'],
+  listItems: ['choices__list--multiple'],
+  listSingle: ['choices__list--single'],
+  listDropdown: ['choices__list--dropdown'],
+  item: ['choices__item'],
+  itemSelectable: ['choices__item--selectable'],
+  itemDisabled: ['choices__item--disabled'],
+  itemChoice: ['choices__item--choice'],
+  description: ['choices__description'],
   placeholder: ['choices__placeholder'],
-  group: 'choices__group',
-  groupHeading: 'choices__heading',
-  button: 'choices__button',
-  activeState: 'is-active',
-  focusState: 'is-focused',
-  openState: 'is-open',
-  disabledState: 'is-disabled',
-  highlightedState: 'is-highlighted',
-  selectedState: 'is-selected',
-  flippedState: 'is-flipped',
-  loadingState: 'is-loading',
-  noResults: 'has-no-results',
-  noChoices: 'has-no-choices'
+  group: ['choices__group'],
+  groupHeading: ['choices__heading'],
+  button: ['choices__button'],
+  activeState: ['is-active'],
+  focusState: ['is-focused'],
+  openState: ['is-open'],
+  disabledState: ['is-disabled'],
+  highlightedState: ['is-highlighted'],
+  selectedState: ['is-selected'],
+  flippedState: ['is-flipped'],
+  loadingState: ['is-loading'],
+  noResults: ['has-no-results'],
+  noChoices: ['has-no-choices']
 };
 exports.DEFAULT_CONFIG = {
   items: [],

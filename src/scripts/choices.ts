@@ -70,11 +70,15 @@ const USER_DEFAULTS: Partial<Options> = {};
 class Choices implements ChoicesInterface {
   static get defaults(): {
     options: Partial<Options>;
+    allOptions: Options;
     templates: typeof templates;
   } {
     return Object.preventExtensions({
       get options(): Partial<Options> {
         return USER_DEFAULTS;
+      },
+      get allOptions(): Options {
+        return DEFAULT_CONFIG;
       },
       get templates(): typeof templates {
         return templates;
@@ -161,14 +165,14 @@ class Choices implements ChoicesInterface {
     userConfig: Partial<Options> = {},
   ) {
     this.config = {
-      ...DEFAULT_CONFIG,
+      ...Choices.defaults.allOptions,
       ...Choices.defaults.options,
       ...userConfig,
     } as Options;
     ObjectsInConfig.forEach((key) => {
       Object.assign(
         this.config[key],
-        DEFAULT_CONFIG[key],
+        Choices.defaults.allOptions[key],
         Choices.defaults.options[key],
         userConfig[key],
       );

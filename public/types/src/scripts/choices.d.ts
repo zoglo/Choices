@@ -17,6 +17,7 @@ import { Choices as ChoicesInterface } from './interfaces/choices';
 declare class Choices implements ChoicesInterface {
     static get defaults(): {
         options: Partial<Options>;
+        allOptions: Options;
         templates: typeof templates;
     };
     initialised: boolean;
