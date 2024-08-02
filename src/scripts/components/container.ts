@@ -62,10 +62,6 @@ export default class Container {
    * dropdown position
    */
   shouldFlip(dropdownPos: number): boolean {
-    if (typeof dropdownPos !== 'number') {
-      return false;
-    }
-
     // If flip is enabled and the dropdown bottom position is
     // greater than the window height flip the dropdown.
     let shouldFlip = false;
