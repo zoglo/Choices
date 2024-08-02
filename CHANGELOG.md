@@ -4,6 +4,7 @@
 
 ### Bug Fixes
 * Avoid pushing a search to fuse.js which is just additional whitespace to the existing search term
+* Fix error when using backspace when no items are selected after adding an item
 
 ### Chore
 * Remove unused code

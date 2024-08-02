@@ -1244,9 +1244,9 @@ class Choices implements ChoicesInterface {
     }
   }
 
-  _handleButtonAction(activeItems?: ChoiceFull[], element?: HTMLElement): void {
+  _handleButtonAction(activeItems: ChoiceFull[], element?: HTMLElement): void {
     if (
-      !activeItems ||
+      activeItems.length === 0 ||
       !this.config.removeItems ||
       !this.config.removeItemButton
     ) {
@@ -1269,11 +1269,15 @@ class Choices implements ChoicesInterface {
   }
 
   _handleItemAction(
-    activeItems?: InputChoice[],
+    activeItems: InputChoice[],
     element?: HTMLElement,
     hasShiftKey = false,
   ): void {
-    if (!activeItems || !this.config.removeItems || this._isSelectOneElement) {
+    if (
+      activeItems.length === 0 ||
+      !this.config.removeItems ||
+      this._isSelectOneElement
+    ) {
       return;
     }
 
@@ -1298,11 +1302,7 @@ class Choices implements ChoicesInterface {
     this.input.focus();
   }
 
-  _handleChoiceAction(activeItems?: ChoiceFull[], element?: HTMLElement): void {
-    if (!activeItems) {
-      return;
-    }
-
+  _handleChoiceAction(activeItems: ChoiceFull[], element?: HTMLElement): void {
     // If we are clicking on an option
     const id = parseDataSetId(element);
     const choice = id && this._store.getChoiceById(id);
@@ -1311,7 +1311,7 @@ class Choices implements ChoicesInterface {
     }
 
     const passedKeyCode =
-      activeItems[0] && activeItems[0].keyCode
+      activeItems.length !== 0 && activeItems[0] && activeItems[0].keyCode
         ? activeItems[0].keyCode
         : undefined;
     const hasActiveDropdown = this.dropdown.isActive;
@@ -1330,8 +1330,8 @@ class Choices implements ChoicesInterface {
 
         if (canAddItem.response) {
           if (this.config.singleModeForMultiSelect) {
-            const lastItem = activeItems[activeItems.length - 1];
-            if (lastItem) {
+            if (activeItems.length !== 0) {
+              const lastItem = activeItems[activeItems.length - 1];
               this._removeItem(lastItem);
             }
           }
@@ -1357,8 +1357,8 @@ class Choices implements ChoicesInterface {
     }
   }
 
-  _handleBackspace(activeItems?: ChoiceFull[]): void {
-    if (!this.config.removeItems || !activeItems) {
+  _handleBackspace(activeItems: ChoiceFull[]): void {
+    if (!this.config.removeItems || activeItems.length === 0) {
       return;
     }
 
