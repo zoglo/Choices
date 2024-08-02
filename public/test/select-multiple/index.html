@@ -519,7 +519,8 @@
           try {
             const data = await fetch('/data');
             return data.json();
-          } catch {
+          } catch (e) {
+            console.log(e);
             return [];
           }
         });

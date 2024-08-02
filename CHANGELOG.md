@@ -9,6 +9,7 @@
 ### Chore
 * Remove unused code
 * Use constant enum instead of repeating strings and type information
+* For test html pages, prevent a failing `fetch()` from breaking the rest of the examples
 
 ## [11.0.0 RC1] (2024-08-02)
 

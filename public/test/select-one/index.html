@@ -539,8 +539,13 @@
           allowHTML: true,
           shouldSort: false,
         }).setChoices(async () => {
-          const res = await fetch('/data');
-          return res.json();
+          try {
+            const res = await fetch('/data');
+            return res.json();
+          } catch (e) {
+            console.log(e);
+            return [];
+          }
         });
 
         new Choices('#choices-scrolling-dropdown', {
