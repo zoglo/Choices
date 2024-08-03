@@ -10,7 +10,6 @@ export interface InputChoice {
   customProperties?: Record<string, any> | null;
   disabled?: boolean;
   active?: boolean;
-  keyCode?: number;
   label: StringUntrusted | string;
   placeholder?: boolean;
   selected?: boolean;

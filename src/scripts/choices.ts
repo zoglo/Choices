@@ -52,6 +52,7 @@ import { ChoiceFull } from './interfaces/choice-full';
 import { GroupFull } from './interfaces/group-full';
 import { EventType, KeyCodeMap, PassedElementType } from './interfaces';
 import { Choices as ChoicesInterface } from './interfaces/choices';
+import { EventChoice } from './interfaces/event-choice';
 
 /** @see {@link http://browserhacks.com/#hack-acea075d0ac6954f275a70023906050c} */
 const IS_IE11 =
@@ -429,7 +430,7 @@ class Choices implements ChoicesInterface {
     if (runEvent) {
       this.passedElement.triggerEvent(
         EventType.highlightItem,
-        this._getChoiceForEvent(id),
+        this._getChoiceForOutput(id),
       );
     }
 
@@ -446,7 +447,7 @@ class Choices implements ChoicesInterface {
 
     this.passedElement.triggerEvent(
       EventType.highlightItem,
-      this._getChoiceForEvent(id),
+      this._getChoiceForOutput(id),
     );
 
     return this;
@@ -542,10 +543,12 @@ class Choices implements ChoicesInterface {
     return this;
   }
 
-  getValue(valueOnly = false): string[] | InputChoice[] | InputChoice | string {
+  getValue(valueOnly = false): string[] | EventChoice[] | EventChoice | string {
     const values = this._store.activeItems.reduce<any[]>(
       (selectedItems, item) => {
-        const itemValue = valueOnly ? item.value : item;
+        const itemValue = valueOnly
+          ? item.value
+          : this._getChoiceForOutput(item);
         selectedItems.push(itemValue);
 
         return selectedItems;
@@ -1179,7 +1182,7 @@ class Choices implements ChoicesInterface {
     return fragment;
   }
 
-  _getChoiceForEvent(id: number | ChoiceFull): object | undefined {
+  _getChoiceForOutput(id: number | ChoiceFull): EventChoice | undefined {
     const choice =
       typeof id === 'object'
         ? id
@@ -1194,12 +1197,16 @@ class Choices implements ChoicesInterface {
 
     return {
       id: choice.id,
-      value: choice.value,
-      label: choice.label,
+      highlighted: choice.highlighted,
       labelClass: choice.labelClass,
       labelDescription: choice.labelDescription,
       customProperties: choice.customProperties,
-      groupValue: group && group.label ? group.label : null,
+      disabled: choice.disabled,
+      active: choice.active,
+      label: choice.label,
+      placeholder: choice.placeholder,
+      value: choice.value,
+      groupValue: group && group.label ? group.label : undefined,
       element: choice.element,
       keyCode: choice.keyCode,
     };
@@ -2247,7 +2254,7 @@ class Choices implements ChoicesInterface {
     if (withEvents) {
       this.passedElement.triggerEvent(
         EventType.addItem,
-        this._getChoiceForEvent(item),
+        this._getChoiceForOutput(item),
       );
     }
   }
@@ -2262,7 +2269,7 @@ class Choices implements ChoicesInterface {
 
     this.passedElement.triggerEvent(
       EventType.removeItem,
-      this._getChoiceForEvent(item),
+      this._getChoiceForOutput(item),
     );
   }
 
