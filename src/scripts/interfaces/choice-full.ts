@@ -13,7 +13,6 @@ export interface ChoiceFull {
   active: boolean;
   elementId?: string;
   groupId: number;
-  keyCode?: number;
   label: StringUntrusted | string;
   placeholder: boolean;
   selected: boolean;

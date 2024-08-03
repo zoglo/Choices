@@ -25,7 +25,6 @@ describe('reducers/items', () => {
         disabled: false,
         selected: false,
         highlighted: false,
-        keyCode: 10,
       };
 
       describe('passing expected values', () => {

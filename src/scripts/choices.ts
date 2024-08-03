@@ -1182,7 +1182,10 @@ class Choices implements ChoicesInterface {
     return fragment;
   }
 
-  _getChoiceForOutput(id: number | ChoiceFull): EventChoice | undefined {
+  _getChoiceForOutput(
+    id: number | ChoiceFull,
+    keyCode?: number,
+  ): EventChoice | undefined {
     const choice =
       typeof id === 'object'
         ? id
@@ -1208,7 +1211,7 @@ class Choices implements ChoicesInterface {
       value: choice.value,
       groupValue: group && group.label ? group.label : undefined,
       element: choice.element,
-      keyCode: choice.keyCode,
+      keyCode,
     };
   }
 
@@ -1288,7 +1291,11 @@ class Choices implements ChoicesInterface {
     this.input.focus();
   }
 
-  _handleChoiceAction(items: ChoiceFull[], element?: HTMLElement): void {
+  _handleChoiceAction(
+    items: ChoiceFull[],
+    element?: HTMLElement,
+    keyCode?: number,
+  ): void {
     // If we are clicking on an option
     const id = parseDataSetId(element);
     const choice = id && this._store.getChoiceById(id);
@@ -1296,18 +1303,12 @@ class Choices implements ChoicesInterface {
       return;
     }
 
-    const passedKeyCode =
-      items.length !== 0 && items[0] && items[0].keyCode
-        ? items[0].keyCode
-        : undefined;
     const hasActiveDropdown = this.dropdown.isActive;
 
-    // Update choice keyCode
-    choice.keyCode = passedKeyCode;
-
-    this.passedElement.triggerEvent(EventType.choice, {
-      choice,
-    });
+    this.passedElement.triggerEvent(
+      EventType.choice,
+      this._getChoiceForOutput(choice, keyCode),
+    );
 
     let triggerChange = false;
     this._store.withDeferRendering(() => {
@@ -1872,11 +1873,7 @@ class Choices implements ChoicesInterface {
         if (addedItem) {
           this.unhighlightAll();
         } else {
-          if (items[0]) {
-            // add enter keyCode value
-            items[0].keyCode = KeyCodeMap.ENTER_KEY; // eslint-disable-line no-param-reassign
-          }
-          this._handleChoiceAction(items, highlightedChoice);
+          this._handleChoiceAction(items, highlightedChoice, KeyCodeMap.ENTER_KEY);
         }
       }
 

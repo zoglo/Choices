@@ -18,7 +18,6 @@ describe('actions/items', () => {
         groupId: 1,
         customProperties: { test: true },
         placeholder: true,
-        keyCode: 10,
       };
 
       const expectedAction: actions.AddItemAction = {
@@ -43,7 +42,6 @@ describe('actions/items', () => {
         groupId: 1,
         customProperties: { test: true },
         placeholder: true,
-        keyCode: 10,
       };
 
       const expectedAction: actions.RemoveItemAction = {

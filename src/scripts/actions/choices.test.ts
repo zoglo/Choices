@@ -22,7 +22,6 @@ describe('actions/choices', () => {
           test: true,
         },
         placeholder: true,
-        keyCode: 10,
         active: false,
         selected: false,
       };
