@@ -8,6 +8,9 @@
 ### Chore
 * Update defaults for classnames to be arrays instead of strings
 
+### Bug Fixes (from 11.0.0 RC1)
+* Fix `noResults`/`noChoices` classes could not be set to a list of classes
+
 ## [11.0.0 RC2] (2024-08-03)
 
 ### Bug Fixes (from 10.2.0)

@@ -16,11 +16,12 @@ import {
   unwrapStringForRaw,
   unwrapStringForEscaped,
 } from './lib/utils';
+// eslint-disable-next-line import/no-cycle
+import { Options } from './interfaces/options';
 
-type TemplateOptions = Record<
-  'classNames' | 'allowHTML' | 'removeItemButtonAlignLeft',
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  any
+type TemplateOptions = Pick<
+  Options,
+  'classNames' | 'allowHTML' | 'removeItemButtonAlignLeft'
 >;
 
 export const escapeForTemplate = (
@@ -391,9 +392,9 @@ const templates = {
     const classes = [...getClassNames(item), ...getClassNames(itemChoice)];
 
     if (type === 'no-choices') {
-      classes.push(noChoices);
+      classes.push(...getClassNames(noChoices));
     } else if (type === 'no-results') {
-      classes.push(noResults);
+      classes.push(...getClassNames(noResults));
     }
 
     return Object.assign(document.createElement('div'), {
