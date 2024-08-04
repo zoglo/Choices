@@ -64,10 +64,10 @@ export default class Store implements IStore {
   }
 
   /**
-   * Get active items from store
+   * @deprecated
    */
   get activeItems(): ChoiceFull[] {
-    return this.items.filter((item) => item.active);
+    return this.items;
   }
 
   /**

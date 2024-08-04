@@ -1380,7 +1380,7 @@ describe('choices', () => {
       ];
 
       beforeEach(() => {
-        activeItemsStub = stub(instance._store, 'activeItems').get(() => items);
+        activeItemsStub = stub(instance._store, 'items').get(() => items);
       });
 
       afterEach(() => {
@@ -1457,7 +1457,7 @@ describe('choices', () => {
 
       beforeEach(() => {
         removeItemStub = stub();
-        activeItemsStub = stub(instance._store, 'activeItems').get(() => items);
+        activeItemsStub = stub(instance._store, 'items').get(() => items);
         instance._removeItem = removeItemStub;
 
         output = instance.removeActiveItemsByValue(value);
@@ -1495,7 +1495,7 @@ describe('choices', () => {
 
       beforeEach(() => {
         removeItemStub = stub();
-        activeItemsStub = stub(instance._store, 'activeItems').get(() => items);
+        activeItemsStub = stub(instance._store, 'items').get(() => items);
         instance._removeItem = removeItemStub;
       });
 

@@ -342,7 +342,7 @@ class Choices implements ChoicesInterface {
     // Let's go
     this.init();
     // preserve the selected item list after setup for form reset
-    this._initialItems = this._store.activeItems.map((choice) => choice.value);
+    this._initialItems = this._store.items.map((choice) => choice.value);
   }
 
   init(): void {
@@ -473,7 +473,7 @@ class Choices implements ChoicesInterface {
 
   removeActiveItemsByValue(value: string): this {
     this._store.withDeferRendering(() => {
-      this._store.activeItems
+      this._store.items
         .filter((item) => item.value === value)
         .forEach((item) => this._removeItem(item));
     });
@@ -483,7 +483,7 @@ class Choices implements ChoicesInterface {
 
   removeActiveItems(excludedId: number): this {
     this._store.withDeferRendering(() => {
-      this._store.activeItems
+      this._store.items
         .filter(({ id }) => id !== excludedId)
         .forEach((item) => this._removeItem(item));
     });
@@ -546,7 +546,7 @@ class Choices implements ChoicesInterface {
   }
 
   getValue(valueOnly = false): string[] | EventChoice[] | EventChoice | string {
-    const values = this._store.activeItems.reduce<any[]>(
+    const values = this._store.items.reduce<any[]>(
       (selectedItems, item) => {
         const itemValue = valueOnly
           ? item.value
@@ -1006,12 +1006,12 @@ class Choices implements ChoicesInterface {
   }
 
   _renderItems(): void {
-    const activeItems = this._store.activeItems || [];
+    const items = this._store.items || [];
     this.itemList.clear();
 
     // Create a fragment to store our list items
     // (so we don't have to update the DOM for each item)
-    const itemListFragment = this._createItemsFragment(activeItems);
+    const itemListFragment = this._createItemsFragment(items);
 
     // If we have items to add, append them
     if (itemListFragment.childNodes) {
@@ -2090,7 +2090,7 @@ class Choices implements ChoicesInterface {
     const item = target.closest('[data-button],[data-item],[data-choice]');
     if (item instanceof HTMLElement) {
       const hasShiftKey = event.shiftKey;
-      const { activeItems, items } = this._store;
+      const { items } = this._store;
       const { dataset } = item;
 
       if ('button' in dataset) {
@@ -2098,7 +2098,7 @@ class Choices implements ChoicesInterface {
       } else if ('item' in dataset) {
         this._handleItemAction(items, item, hasShiftKey);
       } else if ('choice' in dataset) {
-        this._handleChoiceAction(activeItems, item);
+        this._handleChoiceAction(items, item);
       }
     }
 
@@ -2187,8 +2187,8 @@ class Choices implements ChoicesInterface {
       target && this.containerOuter.element.contains(target as Node);
 
     if (blurWasWithinContainer && !this._isScrollingOnIe) {
-      const { activeItems } = this._store;
-      const hasHighlightedItems = activeItems.some((item) => item.highlighted);
+      const { activeChoices } = this._store;
+      const hasHighlightedItems = activeChoices.some((item) => item.highlighted);
       const blurActions = {
         [TEXT_TYPE]: (): void => {
           if (target === this.input.element) {

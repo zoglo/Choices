@@ -159,13 +159,6 @@ describe('reducers/store', () => {
       });
     });
 
-    describe('activeItems getter', () => {
-      it('returns items that are active', () => {
-        const expectedResponse = state.items.filter((item) => item.active);
-        expect(instance.activeItems).to.eql(expectedResponse);
-      });
-    });
-
     describe('highlightedActiveItems getter', () => {
       it('returns items that are active and highlighted', () => {
         const expectedResponse = state.items.filter(
