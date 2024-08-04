@@ -18,12 +18,11 @@ export declare const sortByAlpha: ({ value, label }: RecordToCompare, { value: v
 export declare const sortByScore: (a: Pick<ChoiceFull, "score">, b: Pick<ChoiceFull, "score">) => number;
 export declare const dispatchEvent: (element: HTMLElement, type: EventType, customArgs?: object | null) => boolean;
 export declare const cloneObject: <T>(obj: T) => T;
-export declare const isEmptyObject: (obj: object | undefined | null) => boolean;
 /**
  * Returns an array of keys present on the first but missing on the second object
  */
 export declare const diff: (a: Record<string, any>, b: Record<string, any>) => string[];
 export declare const getClassNames: (ClassNames: Array<string> | string) => Array<string>;
 export declare const getClassNamesSelector: (option: string | Array<string> | null) => string;
-export declare const parseCustomProperties: (customProperties: any) => any;
+export declare const parseCustomProperties: (customProperties?: string) => object | string;
 //# sourceMappingURL=utils.d.ts.map

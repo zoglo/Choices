@@ -3360,7 +3360,7 @@ exports.isHTMLOptgroup = isHTMLOptgroup;
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.parseCustomProperties = exports.getClassNamesSelector = exports.getClassNames = exports.diff = exports.isEmptyObject = exports.cloneObject = exports.dispatchEvent = exports.sortByScore = exports.sortByAlpha = exports.unwrapStringForEscaped = exports.unwrapStringForRaw = exports.strToEl = exports.sanitise = exports.isScrolledIntoView = exports.getAdjacentEl = exports.wrap = exports.generateId = void 0;
+exports.parseCustomProperties = exports.getClassNamesSelector = exports.getClassNames = exports.diff = exports.cloneObject = exports.dispatchEvent = exports.sortByScore = exports.sortByAlpha = exports.unwrapStringForEscaped = exports.unwrapStringForRaw = exports.strToEl = exports.sanitise = exports.isScrolledIntoView = exports.getAdjacentEl = exports.wrap = exports.generateId = void 0;
 var getRandomNumber = function (min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 };
@@ -3519,19 +3519,6 @@ var cloneObject = function (obj) {
   return JSON.parse(JSON.stringify(obj));
 };
 exports.cloneObject = cloneObject;
-var isEmptyObject = function (obj) {
-  if (!obj || typeof obj !== 'object') {
-    return true;
-  }
-  // eslint-disable-next-line no-restricted-syntax
-  for (var prop in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, prop)) {
-      return false;
-    }
-  }
-  return true;
-};
-exports.isEmptyObject = isEmptyObject;
 /**
  * Returns an array of keys present on the first but missing on the second object
  */
@@ -4135,6 +4122,26 @@ var escapeForTemplate = function (allowHTML, s) {
   return allowHTML ? (0, utils_1.unwrapStringForEscaped)(s) : (0, utils_1.sanitise)(s);
 };
 exports.escapeForTemplate = escapeForTemplate;
+var isEmptyObject = function (obj) {
+  // eslint-disable-next-line no-restricted-syntax
+  for (var prop in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+      return false;
+    }
+  }
+  return true;
+};
+var assignCustomProperties = function (el, customProperties) {
+  if (!customProperties) {
+    return;
+  }
+  var dataset = el.dataset;
+  if (typeof customProperties === 'string') {
+    dataset.customProperties = customProperties;
+  } else if (typeof customProperties === 'object' && !isEmptyObject(customProperties)) {
+    dataset.customProperties = JSON.stringify(customProperties);
+  }
+};
 var templates = {
   containerOuter: function (_a, dir, isSelectElement, isSelectOneElement, searchEnabled, passedElementType, labelId) {
     var containerOuter = _a.classNames.containerOuter;
@@ -4227,9 +4234,7 @@ var templates = {
     if (labelDescription) {
       div.dataset.labelDescription = labelDescription;
     }
-    if (!(0, utils_1.isEmptyObject)(customProperties)) {
-      div.dataset.customProperties = JSON.stringify(customProperties);
-    }
+    assignCustomProperties(div, customProperties);
     if (active) {
       div.setAttribute('aria-selected', 'true');
     }
@@ -4456,9 +4461,7 @@ var templates = {
     if (labelDescription) {
       opt.dataset.labelDescription = labelDescription;
     }
-    if (!(0, utils_1.isEmptyObject)(customProperties)) {
-      opt.dataset.customProperties = JSON.stringify(customProperties);
-    }
+    assignCustomProperties(opt, customProperties);
     opt.disabled = disabled;
     return opt;
   }

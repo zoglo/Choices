@@ -202,21 +202,6 @@ export const dispatchEvent = (
 
 export const cloneObject = <T>(obj: T): T => JSON.parse(JSON.stringify(obj));
 
-export const isEmptyObject = (obj: object | undefined | null): boolean => {
-  if (!obj || typeof obj !== 'object') {
-    return true;
-  }
-
-  // eslint-disable-next-line no-restricted-syntax
-  for (const prop in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, prop)) {
-      return false;
-    }
-  }
-
-  return true;
-};
-
 /**
  * Returns an array of keys present on the first but missing on the second object
  */
@@ -250,7 +235,7 @@ export const getClassNamesSelector = (
   return `.${option}`;
 };
 
-export const parseCustomProperties = (customProperties): any => {
+export const parseCustomProperties = (customProperties?: string): object|string => {
   if (typeof customProperties !== 'undefined') {
     try {
       return JSON.parse(customProperties);

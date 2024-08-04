@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { StringUntrusted } from './string-untrusted';
+export type CustomProperties = Record<string, any> | string;
 
 export interface ChoiceFull {
   id: number;
@@ -8,7 +9,7 @@ export interface ChoiceFull {
   element?: HTMLOptionElement | HTMLOptGroupElement;
   labelClass?: Array<string>;
   labelDescription?: string;
-  customProperties?: Record<string, any> | null;
+  customProperties?: CustomProperties;
   disabled: boolean;
   active: boolean;
   elementId?: string;

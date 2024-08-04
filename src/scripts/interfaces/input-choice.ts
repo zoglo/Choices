@@ -7,7 +7,7 @@ export interface InputChoice {
   highlighted?: boolean;
   labelClass?: string | Array<string>;
   labelDescription?: string;
-  customProperties?: Record<string, any> | null;
+  customProperties?: Record<string, any> | string;
   disabled?: boolean;
   active?: boolean;
   label: StringUntrusted | string;

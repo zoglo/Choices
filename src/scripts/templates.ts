@@ -4,13 +4,12 @@
  * `Choices.defaults.templates` allows access to the default template methods from `callbackOnCreateTemplates`
  */
 
-import { ChoiceFull } from './interfaces/choice-full';
+import { ChoiceFull, CustomProperties } from './interfaces/choice-full';
 import { GroupFull } from './interfaces/group-full';
 import { PassedElementType } from './interfaces/passed-element-type';
 import { StringPreEscaped } from './interfaces/string-pre-escaped';
 import { StringUntrusted } from './interfaces/string-untrusted';
 import {
-  isEmptyObject,
   getClassNames,
   sanitise,
   unwrapStringForRaw,
@@ -28,6 +27,29 @@ export const escapeForTemplate = (
   allowHTML: boolean,
   s: StringUntrusted | StringPreEscaped | string,
 ): string => (allowHTML ? unwrapStringForEscaped(s) : (sanitise(s) as string));
+
+const isEmptyObject = (obj: object): boolean => {
+  // eslint-disable-next-line no-restricted-syntax
+  for (const prop in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+      return false;
+    }
+  }
+  return true;
+};
+
+const assignCustomProperties = (el: HTMLElement, customProperties?: CustomProperties): void => {
+  if (!customProperties) {
+    return;
+  }
+  const { dataset } = el;
+
+  if (typeof customProperties === 'string') {
+    dataset.customProperties = customProperties;
+  } else if (typeof customProperties === 'object' && !isEmptyObject(customProperties)) {
+    dataset.customProperties = JSON.stringify(customProperties);
+  }
+}
 
 const templates = {
   containerOuter(
@@ -151,9 +173,9 @@ const templates = {
     if (labelDescription) {
       div.dataset.labelDescription = labelDescription;
     }
-    if (!isEmptyObject(customProperties)) {
-      div.dataset.customProperties = JSON.stringify(customProperties);
-    }
+
+    assignCustomProperties(div, customProperties);
+
     if (active) {
       div.setAttribute('aria-selected', 'true');
     }
@@ -438,9 +460,7 @@ const templates = {
       opt.dataset.labelDescription = labelDescription;
     }
 
-    if (!isEmptyObject(customProperties)) {
-      opt.dataset.customProperties = JSON.stringify(customProperties);
-    }
+    assignCustomProperties(opt, customProperties);
 
     opt.disabled = disabled;
 
