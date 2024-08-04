@@ -1401,6 +1401,10 @@ class Choices implements ChoicesInterface {
           .map((e: InputChoice | string) => mapInputToChoice(e, false));
         this._presetItems = this._presetItems.concat(elementItems);
       }
+      this._presetItems.forEach((obj) => {
+        // eslint-disable-next-line no-param-reassign
+        obj.selected = true;
+      });
     } else if (this._isSelectElement) {
       // Assign preset choices from passed object
       this._presetChoices = this.config.choices.map((e: InputChoice) =>
@@ -1773,18 +1777,10 @@ class Choices implements ChoicesInterface {
     }
 
     if (this._isTextElement) {
-      // We are typing into a text input and have a value, we want to show a dropdown
-      // notice. Otherwise hide the dropdown
       const canAddItem = this._canAddItem(this._store.items, value);
-      if (canAddItem.response && canAddItem.notice) {
-        const dropdownItem = this._templates.notice(
-          this.config,
-          canAddItem.notice,
-        );
-        this.dropdown.element.innerHTML = dropdownItem.outerHTML;
+      if (canAddItem.notice) {
+        this._displayAddItemNotice(canAddItem);
         this.showDropdown(true);
-      } else {
-        this.hideDropdown(true);
       }
     }
 
@@ -1798,25 +1794,29 @@ class Choices implements ChoicesInterface {
     // determine if a notice needs to be displayed for why a search result can't be added
     const canAddItem = this._canAddItem(this._store.items, value);
     if (!canAddItem.response) {
-      const dropdownItem = this._templates.notice(
-        this.config,
-        canAddItem.notice,
-        'add-choice',
-      );
-
-      // only show the notice once!
-      const selector = `${getClassNamesSelector(this.config.classNames.addChoice)}[data-choice-selectable]`;
-      const noticeElement = this.choiceList.element.querySelector(selector);
-      if (noticeElement) {
-        noticeElement.outerHTML = dropdownItem.outerHTML;
-      } else {
-        this.choiceList.prepend(dropdownItem);
-      }
+      this._displayAddItemNotice(canAddItem);
     }
     if (this._canAddUserChoices) {
       // select the non-value so 'enter' doesn't select anything
       this._highlightPosition = 0;
       this._highlightChoice();
+    }
+  }
+
+  _displayAddItemNotice(canAddItem: Notice): void {
+    const dropdownItem = this._templates.notice(
+      this.config,
+      canAddItem.notice,
+      'add-choice',
+    );
+
+    // only show the notice once!
+    const selector = `${getClassNamesSelector(this.config.classNames.addChoice)}[data-choice-selectable]`;
+    const noticeElement = this.choiceList.element.querySelector(selector);
+    if (noticeElement) {
+      noticeElement.outerHTML = dropdownItem.outerHTML;
+    } else {
+      this.choiceList.prepend(dropdownItem);
     }
   }
 
@@ -2497,10 +2497,7 @@ class Choices implements ChoicesInterface {
     this.containerOuter.element.appendChild(this.containerInner.element);
     this.containerOuter.element.appendChild(this.dropdown.element);
     this.containerInner.element.appendChild(this.itemList.element);
-
-    if (!this._isTextElement) {
-      this.dropdown.element.appendChild(this.choiceList.element);
-    }
+    this.dropdown.element.appendChild(this.choiceList.element);
 
     if (!this._isSelectOneElement) {
       this.containerInner.element.appendChild(this.input.element);
