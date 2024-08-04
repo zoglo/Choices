@@ -131,6 +131,7 @@
       "src/scripts/**/**/*.test.js"
     ]
   },
+  "sideEffects": false,
   "bundlesize": [
     {
       "path": "public/assets/scripts/choices.min.js",
