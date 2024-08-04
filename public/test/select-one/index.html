@@ -394,6 +394,15 @@
           ></select>
         </div>
 
+        <div data-test-hook="allowhtml-true-userinput-false">
+          <label for="choices-allowhtml-true-userinput-false">HTML allowed (except user input)</label>
+          <select
+            class="form-control"
+            name="choices-allowhtml-true-userinput-false"
+            id="choices-allowhtml-true-userinput-false"
+          ></select>
+        </div>
+
         <div data-test-hook="allowhtml-false">
           <label for="choices-allowhtml-false">HTML disabled</label>
           <select
@@ -666,6 +675,27 @@
 
         new Choices('#choices-allowhtml-true', {
           allowHTML: true,
+          allowHtmlUserInput: true,
+          addChoices: true,
+          choices: [
+            {
+              id: 1,
+              label: '<b>Choice 1</b>',
+              value: 'Choice 1',
+            },
+            {
+              id: 2,
+              label: 'Choice 2',
+              value: 'Choice 2',
+            },
+          ],
+        });
+
+
+        new Choices('#choices-allowhtml-true-userinput-false', {
+          allowHTML: true,
+          allowHtmlUserInput: false,
+          addChoices: true,
           choices: [
             {
               id: 1,
@@ -682,6 +712,8 @@
 
         new Choices('#choices-allowhtml-false', {
           allowHTML: false,
+          allowHtmlUserInput: false,
+          addChoices: true,
           choices: [
             {
               id: 1,
@@ -708,8 +740,16 @@
           newDestroyInitChoices.init();
         });
 
-        new Choices('#choices-add-choices', { addChoices: true });
-
+        const addChoices = new Choices('#choices-add-choices', { addChoices: true });
+        addChoices.passedElement.element.addEventListener('addItem', function (e) {
+          console.log(e.detail);
+        });
+        addChoices.passedElement.element.addEventListener('removeItem', function (e) {
+          console.log(e.detail);
+        });
+        addChoices.passedElement.element.addEventListener('change', function (e) {
+          console.log(e.detail);
+        });
         const shadowDomWrapper = document.querySelector('div[data-test-hook="shadow-dom"]'),
           shadowDomHtml = shadowDomWrapper.querySelector('noscript').innerHTML;
         shadowDomWrapper.innerHTML = ''; // ensure the shadow-dom example is not part of the main document

@@ -86,6 +86,11 @@
           <input class="form-control" id="allowhtml-true" type="text" />
         </div>
 
+        <div data-test-hook="allowhtml-true-userinput-false">
+          <label for="allowhtml-true-userinput-false">HTML allowed (except user input)</label>
+          <input class="form-control" id="allowhtml-true-userinput-false" type="text" />
+        </div>
+
         <div data-test-hook="allowhtml-false">
           <label for="allowhtml-false">HTML disabled</label>
           <input class="form-control" id="allowhtml-false" type="text" />
@@ -186,6 +191,15 @@
 
         new Choices('#allowhtml-true', {
           allowHTML: true,
+          allowHtmlUserInput: true,
+          items: [
+            '<b>Mason Rogers</b>'
+          ],
+        });
+
+        new Choices('#allowhtml-true-userinput-false', {
+          allowHTML: true,
+          allowHtmlUserInput: false,
           items: [
             '<b>Mason Rogers</b>'
           ],
@@ -193,6 +207,7 @@
 
         new Choices('#allowhtml-false', {
           allowHTML: false,
+          allowHtmlUserInput: false,
           items: [
             '<b>Mason Rogers</b>'
           ],

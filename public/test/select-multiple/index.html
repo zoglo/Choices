@@ -405,6 +405,16 @@
           ></select>
         </div>
 
+        <div data-test-hook="allowhtml-true-userinput-false">
+          <label for="choices-allowhtml-true-userinput-false">HTML allowed (except user input)</label>
+          <select
+            class="form-control"
+            name="choices-allowhtml-true-userinput-false"
+            id="choices-allowhtml-true-userinput-false"
+            multiple
+          ></select>
+        </div>
+
         <div data-test-hook="allowhtml-false">
           <label for="choices-allowhtml-false">HTML disabled</label>
           <select
@@ -638,6 +648,8 @@
 
         new Choices('#choices-allowhtml-true', {
           allowHTML: true,
+          allowHtmlUserInput: true,
+          addChoices: true,
           choices: [
             {
               id: 1,
@@ -658,8 +670,35 @@
           ],
         });
 
+        new Choices('#choices-allowhtml-true-userinput-false', {
+          allowHTML: true,
+          allowHtmlUserInput: false,
+          addChoices: true,
+          choices: [
+            {
+              id: 1,
+              label: '<b>Choice 1</b>',
+              value: 'Choice 1',
+              selected: true
+            },
+            {
+              id: 2,
+              label: '<b>Choice 2</b>',
+              value: 'Choice 2',
+            },
+            {
+              id: 3,
+              label: 'Choice 3',
+              value: 'Choice 3',
+            },
+          ],
+        });
+
+
         new Choices('#choices-allowhtml-false', {
           allowHTML: false,
+          allowHtmlUserInput: false,
+          addChoices: true,
           choices: [
             {
               id: 1,

@@ -1921,14 +1921,15 @@ class Choices implements ChoicesInterface {
 
       if (choiceNotFound) {
         const sanitisedValue = sanitise(value);
+        const userValue =
+          this.config.allowHtmlUserInput || sanitisedValue === value
+            ? value
+            : { escaped: sanitisedValue, raw: value };
         this._addChoice(
           mapInputToChoice(
             {
-              value: this.config.allowHtmlUserInput ? value : sanitisedValue,
-              label:
-                sanitisedValue === value
-                  ? value
-                  : { escaped: sanitisedValue, raw: value },
+              value: userValue,
+              label: userValue,
               selected: true,
             } as InputChoice,
             false,
