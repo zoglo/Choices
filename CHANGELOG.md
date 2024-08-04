@@ -1,5 +1,10 @@
 # Changelog
 
+## [11.0.0 RC3] (2024-08-)
+
+### Bug Fixes (from 10.2.0)
+* Fix search did not trigger to copy&paste events [#860](https://github.com/Choices-js/Choices/issues/860) [#174](https://github.com/Choices-js/Choices/issues/174)
+
 ## [11.0.0 RC2] (2024-08-03)
 
 ### Bug Fixes (from 10.2.0)

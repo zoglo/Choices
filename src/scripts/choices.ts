@@ -276,7 +276,9 @@ class Choices implements ChoicesInterface {
     this._currentState = defaultState;
     this._prevState = defaultState;
     this._currentValue = '';
-    this._canSearch = !!this.config.searchEnabled;
+    this.config.searchEnabled =
+      !this._isTextElement && this.config.searchEnabled;
+    this._canSearch = this.config.searchEnabled;
     this._isScrollingOnIe = false;
     this._highlightPosition = 0;
     this._wasTap = true;
@@ -310,6 +312,7 @@ class Choices implements ChoicesInterface {
     this._onBlur = this._onBlur.bind(this);
     this._onKeyUp = this._onKeyUp.bind(this);
     this._onKeyDown = this._onKeyDown.bind(this);
+    this._onInput = this._onInput.bind(this);
     this._onClick = this._onClick.bind(this);
     this._onTouchMove = this._onTouchMove.bind(this);
     this._onTouchEnd = this._onTouchEnd.bind(this);
@@ -384,8 +387,7 @@ class Choices implements ChoicesInterface {
     this.containerOuter.unwrap(this.passedElement.element);
 
     this.clearStore();
-    this._isSearching = false;
-    this._currentValue = '';
+    this._stopSearch();
 
     this._templates = templates;
     this.initialised = false;
@@ -863,10 +865,8 @@ class Choices implements ChoicesInterface {
     const shouldSetInputWidth = !this._isSelectOneElement;
     this.input.clear(shouldSetInputWidth);
 
-    if (!this._isTextElement && this._canSearch) {
-      this._isSearching = false;
-      this._currentValue = '';
-      this._store.dispatch(activateChoices(true));
+    if (this._isSearching) {
+      this._stopSearch();
     }
 
     return this;
@@ -1470,9 +1470,7 @@ class Choices implements ChoicesInterface {
         });
       }
     } else if (hasUnactiveChoices) {
-      // Otherwise reset choices to active
-      this._isSearching = false;
-      this._store.dispatch(activateChoices(true));
+      this._stopSearch();
     }
   }
 
@@ -1577,6 +1575,15 @@ class Choices implements ChoicesInterface {
     return results.length;
   }
 
+  _stopSearch(): void {
+    const wasSearching = this._isSearching;
+    this._currentValue = '';
+    this._isSearching = false;
+    if (wasSearching) {
+      this._store.dispatch(activateChoices(true));
+    }
+  }
+
   _addEventListeners(): void {
     const documentElement = this.config.shadowRoot || document.documentElement;
 
@@ -1612,6 +1619,9 @@ class Choices implements ChoicesInterface {
     }
 
     this.input.element.addEventListener('keyup', this._onKeyUp, {
+      passive: true,
+    });
+    this.input.element.addEventListener('input', this._onInput, {
       passive: true,
     });
 
@@ -1656,6 +1666,7 @@ class Choices implements ChoicesInterface {
     }
 
     this.input.element.removeEventListener('keyup', this._onKeyUp);
+    this.input.element.removeEventListener('input', this._onInput);
     this.input.element.removeEventListener('focus', this._onFocus);
     this.input.element.removeEventListener('blur', this._onBlur);
 
@@ -1737,20 +1748,27 @@ class Choices implements ChoicesInterface {
     }
   }
 
-  _onKeyUp({
-    target,
-    keyCode,
-  }: Pick<KeyboardEvent, 'target' | 'keyCode'>): void {
+  _onKeyUp(/* event: KeyboardEvent */): void {
+    this._canSearch = this.config.searchEnabled;
+  }
+
+  _onInput(/* event: InputEvent */): void {
     const { value } = this.input;
-    const { items } = this._store;
-    const canAddItem = this._canAddItem(items, value);
+    if (!value) {
+      if (this._isTextElement) {
+        this.hideDropdown(true);
+      } else {
+        this._stopSearch();
+      }
 
-    // We are typing into a text input and have a value, we want to show a dropdown
-    // notice. Otherwise hide the dropdown
+      return;
+    }
+
     if (this._isTextElement) {
-      const canShowDropdownNotice = canAddItem.notice && value;
-
-      if (canShowDropdownNotice) {
+      // We are typing into a text input and have a value, we want to show a dropdown
+      // notice. Otherwise hide the dropdown
+      const canAddItem = this._canAddItem(this._store.items, value);
+      if (canAddItem.response && canAddItem.notice) {
         const dropdownItem = this._templates.notice(
           this.config,
           canAddItem.notice,
@@ -1760,22 +1778,19 @@ class Choices implements ChoicesInterface {
       } else {
         this.hideDropdown(true);
       }
-    } else {
-      const wasRemovalKeyCode = keyCode === KeyCodeMap.BACK_KEY || keyCode === KeyCodeMap.DELETE_KEY;
-      const userHasRemovedValue =
-        wasRemovalKeyCode && target && !(target as HTMLSelectElement).value;
-      const canReactivateChoices = !this._isTextElement && this._isSearching;
-      const canSearch = this._canSearch && canAddItem.response;
-
-      if (userHasRemovedValue && canReactivateChoices) {
-        this._isSearching = false;
-        this._store.dispatch(activateChoices(true));
-      } else if (canSearch) {
-        this._handleSearch(this.input.rawValue);
-      }
     }
 
-    this._canSearch = this.config.searchEnabled;
+    let doSearch = this._canSearch;
+    if (doSearch && !this._isSearching) {
+      const canAddItem = this._canAddItem(this._store.items, value);
+      doSearch = canAddItem && canAddItem.response;
+    }
+
+    if (doSearch) {
+      this._handleSearch(value);
+    } else {
+      this._stopSearch();
+    }
   }
 
   _onSelectKey(event: KeyboardEvent, hasItems: boolean): void {
