@@ -28,7 +28,7 @@ export default class WrappedElement {
   }
 
   set value(value: string) {
-    // you must define setter here otherwise it will be readonly property
+    this.element.setAttribute('value', value);
     this.element.value = value;
   }
 

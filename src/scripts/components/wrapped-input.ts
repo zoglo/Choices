@@ -18,13 +18,4 @@ export default class WrappedInput extends WrappedElement {
     super({ element, classNames });
     this.delimiter = delimiter;
   }
-
-  get value(): string {
-    return this.element.value;
-  }
-
-  set value(value: string) {
-    this.element.setAttribute('value', value);
-    this.element.value = value;
-  }
 }
