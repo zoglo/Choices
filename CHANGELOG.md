@@ -5,6 +5,9 @@
 ### Bug Fixes (from 10.2.0)
 * Fix search did not trigger to copy&paste events [#860](https://github.com/Choices-js/Choices/issues/860) [#174](https://github.com/Choices-js/Choices/issues/174)
 
+### Chore
+* Update defaults for classnames to be arrays instead of strings
+
 ## [11.0.0 RC2] (2024-08-03)
 
 ### Bug Fixes (from 10.2.0)
