@@ -6,10 +6,12 @@ export default class WrappedSelect extends WrappedElement {
     element: HTMLSelectElement;
     classNames: ClassNames;
     template: (data: object) => HTMLOptionElement;
-    constructor({ element, classNames, template, }: {
+    extractPlaceholder: boolean;
+    constructor({ element, classNames, template, extractPlaceholder, }: {
         element: HTMLSelectElement;
         classNames: ClassNames;
         template: (data: object) => HTMLOptionElement;
+        extractPlaceholder: boolean;
     });
     get placeholderOption(): HTMLOptionElement | null;
     get optionGroups(): Element[];

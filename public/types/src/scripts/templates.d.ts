@@ -8,7 +8,8 @@ import { GroupFull } from './interfaces/group-full';
 import { PassedElementType } from './interfaces/passed-element-type';
 import { StringPreEscaped } from './interfaces/string-pre-escaped';
 import { StringUntrusted } from './interfaces/string-untrusted';
-type TemplateOptions = Record<'classNames' | 'allowHTML' | 'removeItemButtonAlignLeft', any>;
+import { Options } from './interfaces/options';
+type TemplateOptions = Pick<Options, 'classNames' | 'allowHTML' | 'removeItemButtonAlignLeft'>;
 export declare const escapeForTemplate: (allowHTML: boolean, s: StringUntrusted | StringPreEscaped | string) => string;
 declare const templates: {
     containerOuter({ classNames: { containerOuter } }: TemplateOptions, dir: HTMLElement["dir"], isSelectElement: boolean, isSelectOneElement: boolean, searchEnabled: boolean, passedElementType: PassedElementType, labelId: string): HTMLDivElement;
@@ -21,7 +22,7 @@ declare const templates: {
     choice({ allowHTML, classNames: { item, itemChoice, itemSelectable, selectedState, itemDisabled, description, placeholder, }, }: TemplateOptions, { id, value, label, groupId, elementId, labelClass, labelDescription, disabled: isDisabled, selected: isSelected, placeholder: isPlaceholder, }: ChoiceFull, selectText: string): HTMLDivElement;
     input({ classNames: { input, inputCloned } }: TemplateOptions, placeholderValue: string | null): HTMLInputElement;
     dropdown({ classNames: { list, listDropdown }, }: TemplateOptions): HTMLDivElement;
-    notice({ allowHTML, classNames: { item, itemChoice, noResults, noChoices }, }: TemplateOptions, innerText: StringUntrusted | StringPreEscaped | string, type?: "no-choices" | "no-results" | ""): HTMLDivElement;
+    notice({ allowHTML, classNames: { item, itemChoice, addChoice, noResults, noChoices }, }: TemplateOptions, innerText: StringUntrusted | StringPreEscaped | string, type?: "no-choices" | "no-results" | "add-choice" | ""): HTMLDivElement;
     option({ label, value, labelClass, labelDescription, customProperties, active, disabled, }: ChoiceFull): HTMLOptionElement;
 };
 export default templates;

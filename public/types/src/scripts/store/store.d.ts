@@ -26,7 +26,7 @@ export default class Store implements IStore {
      */
     get items(): ChoiceFull[];
     /**
-     * Get active items from store
+     * @deprecated
      */
     get activeItems(): ChoiceFull[];
     /**

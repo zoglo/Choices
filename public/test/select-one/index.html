@@ -219,6 +219,23 @@
           </select>
         </div>
 
+        <div data-test-hook="placeholder-via-data-attr">
+          <label for="choices-placeholder-via-data-attr"
+          >Placeholder via data attribute</label
+          >
+          <select
+            class="form-control"
+            name="choices-placeholder-via-data-attr"
+            id="choices-placeholder-via-data-attr"
+            data-placeholder="I am a placeholder"
+          >
+            <option value="">I am a not placeholder</option>
+            <option value="Choice 1">Choice 1</option>
+            <option value="Choice 2">Choice 2</option>
+            <option value="Choice 3">Choice 3</option>
+          </select>
+        </div>
+
         <div data-test-hook="remote-data">
           <label for="choices-remote-data">Remote data</label>
           <select
@@ -541,6 +558,10 @@
         });
 
         new Choices('#choices-placeholder-via-option-attr', {
+          allowHTML: true,
+        });
+
+        new Choices('#choices-placeholder-via-data-attr', {
           allowHTML: true,
         });
 

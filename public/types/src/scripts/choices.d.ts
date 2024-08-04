@@ -10,6 +10,7 @@ import { ChoiceFull } from './interfaces/choice-full';
 import { GroupFull } from './interfaces/group-full';
 import { PassedElementType } from './interfaces';
 import { Choices as ChoicesInterface } from './interfaces/choices';
+import { EventChoice } from './interfaces/event-choice';
 /**
  * Choices
  * @author Josh Johnson<josh@joshuajohnson.co.uk>
@@ -34,6 +35,7 @@ declare class Choices implements ChoicesInterface {
     _isSelectOneElement: boolean;
     _isSelectMultipleElement: boolean;
     _isSelectElement: boolean;
+    _hasNonChoicePlaceholder: boolean;
     _canAddUserChoices: boolean;
     _store: Store;
     _templates: typeof templates;
@@ -71,7 +73,7 @@ declare class Choices implements ChoicesInterface {
     removeHighlightedItems(runEvent?: boolean): this;
     showDropdown(preventInputFocus?: boolean): this;
     hideDropdown(preventInputBlur?: boolean): this;
-    getValue(valueOnly?: boolean): string[] | InputChoice[] | InputChoice | string;
+    getValue(valueOnly?: boolean): string[] | EventChoice[] | EventChoice | string;
     setValue(items: string[] | InputChoice[]): this;
     setChoiceByValue(value: string | string[]): this;
     /**
@@ -149,25 +151,27 @@ declare class Choices implements ChoicesInterface {
     _createGroupsFragment(groups: GroupFull[], choices: ChoiceFull[], fragment?: DocumentFragment): DocumentFragment;
     _createChoicesFragment(choices: ChoiceFull[], fragment?: DocumentFragment, withinGroup?: boolean): DocumentFragment;
     _createItemsFragment(items: InputChoice[], fragment?: DocumentFragment): DocumentFragment;
-    _getChoiceForEvent(id: number | ChoiceFull): object | undefined;
+    _getChoiceForOutput(id: number | ChoiceFull, keyCode?: number): EventChoice | undefined;
     _triggerChange(value: any): void;
     _selectPlaceholderChoice(placeholderChoice: ChoiceFull): void;
     _handleButtonAction(items: ChoiceFull[], element?: HTMLElement): void;
     _handleItemAction(items: InputChoice[], element?: HTMLElement, hasShiftKey?: boolean): void;
-    _handleChoiceAction(items: ChoiceFull[], element?: HTMLElement): void;
+    _handleChoiceAction(items: ChoiceFull[], element?: HTMLElement, keyCode?: number): boolean;
     _handleBackspace(items: ChoiceFull[]): void;
     _loadChoices(): void;
     _startLoading(): void;
     _stopLoading(): void;
     _handleLoadingState(setLoading?: boolean): void;
     _handleSearch(value?: string): void;
-    _canAddChoice(items: InputChoice[], value: string): Notice;
     _canAddItem(items: InputChoice[], value: string): Notice;
     _searchChoices(value: string): number | null;
+    _stopSearch(): void;
     _addEventListeners(): void;
     _removeEventListeners(): void;
     _onKeyDown(event: KeyboardEvent): void;
-    _onKeyUp({ target, keyCode, }: Pick<KeyboardEvent, 'target' | 'keyCode'>): void;
+    _onKeyUp(): void;
+    _onInput(): void;
+    _displayAddItemNotice(canAddItem: Notice): void;
     _onSelectKey(event: KeyboardEvent, hasItems: boolean): void;
     _onEnterKey(event: KeyboardEvent, items: ChoiceFull[], hasActiveDropdown: boolean): void;
     _onEscapeKey(event: KeyboardEvent, hasActiveDropdown: boolean): void;
