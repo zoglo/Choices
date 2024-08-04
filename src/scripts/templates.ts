@@ -164,6 +164,7 @@ const templates = {
 
     if (isPlaceholder) {
       div.classList.add(...getClassNames(placeholder));
+      div.dataset.placeholder = '';
     }
 
     div.classList.add(

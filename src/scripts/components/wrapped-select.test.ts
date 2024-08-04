@@ -35,6 +35,7 @@ describe('components/wrappedSelect', () => {
       element: document.getElementById('target') as HTMLSelectElement,
       classNames: DEFAULT_CLASSNAMES,
       template: spy(Templates.option),
+      extractPlaceholder: true,
     });
   });
 

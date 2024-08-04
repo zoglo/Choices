@@ -112,6 +112,8 @@ class Choices implements ChoicesInterface {
 
   _isSelectElement: boolean;
 
+  _hasNonChoicePlaceholder: boolean = false;
+
   _canAddUserChoices: boolean;
 
   _store: Store;
@@ -242,6 +244,15 @@ class Choices implements ChoicesInterface {
       this.config.renderSelectedChoices = 'auto';
     }
 
+    if (this.config.placeholder) {
+      if (this.config.placeholderValue) {
+        this._hasNonChoicePlaceholder = true;
+      } else if (passedElement.dataset.placeholder) {
+        this._hasNonChoicePlaceholder = true;
+        this.config.placeholderValue = passedElement.dataset.placeholder;
+      }
+    }
+
     if (
       userConfig.addItemFilter &&
       typeof userConfig.addItemFilter !== 'function'
@@ -261,11 +272,13 @@ class Choices implements ChoicesInterface {
         delimiter: this.config.delimiter,
       });
     } else {
+      const selectEl = passedElement as HTMLSelectElement;
       this.passedElement = new WrappedSelect({
-        element: passedElement as HTMLSelectElement,
+        element: selectEl,
         classNames: this.config.classNames,
         template: (data: ChoiceFull): HTMLOptionElement =>
           this._templates.option(data),
+        extractPlaceholder: !this._hasNonChoicePlaceholder,
       });
     }
 
@@ -971,7 +984,7 @@ class Choices implements ChoicesInterface {
       // Otherwise show a notice
       let dropdownItem: Element | DocumentFragment;
 
-      if (canAdd.response && this._canAddUserChoices) {
+      if (canAdd.response && this._canAddUserChoices && value) {
         dropdownItem = this._templates.notice(
           this.config,
           canAdd.notice,
@@ -1194,6 +1207,25 @@ class Choices implements ChoicesInterface {
 
     // Add each list item to list
     items.forEach(addItemToFragment);
+
+    if (
+      this._isSelectOneElement &&
+      this._hasNonChoicePlaceholder &&
+      items.length === 0
+    ) {
+      const placeholder: ChoiceFull = {
+        id: 0,
+        groupId: 0,
+        selected: true,
+        value: '',
+        label: this.config.placeholderValue || '',
+        active: true,
+        disabled: false,
+        highlighted: false,
+        placeholder: true,
+      };
+      addItemToFragment(placeholder);
+    }
 
     return fragment;
   }
@@ -1532,6 +1564,7 @@ class Choices implements ChoicesInterface {
 
     if (
       canAddItem &&
+      value !== '' &&
       (this._isSelectElement || !this.config.duplicateItemsAllowed)
     ) {
       const foundChoice = this._store.items.find((choice) =>
@@ -2515,7 +2548,7 @@ class Choices implements ChoicesInterface {
       if (this._isSelectElement) {
         this._addPredefinedChoices(
           this._presetChoices,
-          this._isSelectOneElement,
+          this._isSelectOneElement && !this._hasNonChoicePlaceholder,
         );
       } else if (this._isTextElement) {
         this._addPredefinedItems(this._presetItems);
@@ -2589,9 +2622,12 @@ class Choices implements ChoicesInterface {
   }
 
   _generatePlaceholderValue(): string | null {
-    const { placeholder, placeholderValue } = this.config;
-    if (!placeholder) {
+    if (!this.config.placeholder) {
       return null;
+    }
+
+    if (this._hasNonChoicePlaceholder) {
+      return this.config.placeholderValue;
     }
 
     if (
@@ -2601,18 +2637,6 @@ class Choices implements ChoicesInterface {
       const { placeholderOption } = this.passedElement as WrappedSelect;
 
       return placeholderOption ? placeholderOption.text : null;
-    }
-
-    const {
-      element: { dataset },
-    } = this.passedElement;
-
-    if (placeholderValue) {
-      return placeholderValue;
-    }
-
-    if (dataset.placeholder) {
-      return dataset.placeholder;
     }
 
     return null;

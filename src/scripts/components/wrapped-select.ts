@@ -13,17 +13,22 @@ export default class WrappedSelect extends WrappedElement {
 
   template: (data: object) => HTMLOptionElement;
 
+  extractPlaceholder: boolean;
+
   constructor({
     element,
     classNames,
     template,
+    extractPlaceholder,
   }: {
     element: HTMLSelectElement;
     classNames: ClassNames;
     template: (data: object) => HTMLOptionElement;
+    extractPlaceholder: boolean;
   }) {
     super({ element, classNames });
     this.template = template;
+    this.extractPlaceholder = extractPlaceholder;
   }
 
   get placeholderOption(): HTMLOptionElement | null {
@@ -82,10 +87,15 @@ export default class WrappedSelect extends WrappedElement {
       label: option.innerHTML,
       element: option,
       active: true,
-      selected: option.selected,
+      // this returns true if nothing is selected on initial load, which will break placeholder support
+      selected: this.extractPlaceholder
+        ? option.selected
+        : option.hasAttribute('selected'),
       disabled: option.disabled,
       highlighted: false,
-      placeholder: option.value === '' || option.hasAttribute('placeholder'),
+      placeholder:
+        this.extractPlaceholder &&
+        (option.value === '' || option.hasAttribute('placeholder')),
       labelClass:
         typeof option.dataset.labelClass !== 'undefined'
           ? stringToHtmlClass(option.dataset.labelClass)

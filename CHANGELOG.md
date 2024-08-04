@@ -2,6 +2,9 @@
 
 ## [11.0.0 RC3] (2024-08-)
 
+### ⚠ BREAKING CHANGES
+* For `select-one` and `select-multiple`, the placeholder value is pulled from `config.placeholderValue="..."` or `<select data-placeholder="...">` before attempting to extract a placeholder from the options list. [#912](https://github.com/Choices-js/Choices/issues/912) [#567](https://github.com/Choices-js/Choices/issues/567) [#843](https://github.com/Choices-js/Choices/issues/843)
+
 ### Bug Fixes (from 10.2.0)
 * Fix search did not trigger to copy&paste events [#860](https://github.com/Choices-js/Choices/issues/860) [#174](https://github.com/Choices-js/Choices/issues/174)
 
