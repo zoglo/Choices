@@ -1,12 +1,13 @@
 import { expect } from 'chai';
-import groups, { defaultState } from './groups';
+import groups from './groups';
 import { cloneObject } from '../lib/utils';
 import { GroupFull } from '../interfaces/group-full';
 import { ActionType } from '../interfaces';
+import { defaultState } from './index';
 
 describe('reducers/groups', () => {
   it('should return same state when no action matches', () => {
-    expect(groups(defaultState, {} as any)).to.equal(defaultState);
+    expect(groups(defaultState.groups, {} as any)).to.equal(defaultState.groups);
   });
 
   describe('when groups do not exist', () => {

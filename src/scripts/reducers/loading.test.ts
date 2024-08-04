@@ -1,10 +1,11 @@
 import { expect } from 'chai';
-import general, { defaultState } from './loading';
+import general from './loading';
 import { ActionType } from '../interfaces';
+import { defaultState } from './index';
 
 describe('reducers/loading', () => {
   it('should return same state when no action matches', () => {
-    expect(general(defaultState, {} as any)).to.equal(defaultState);
+    expect(general(defaultState.loading, {} as any)).to.equal(defaultState.loading);
   });
 
   describe('SET_IS_LOADING', () => {

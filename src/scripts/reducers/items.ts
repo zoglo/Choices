@@ -8,8 +8,6 @@ import { RemoveChoiceAction } from '../actions/choices';
 import { ChoiceFull } from '../interfaces/choice-full';
 import { ActionType } from '../interfaces';
 
-export const defaultState = [];
-
 type ActionTypes =
   | AddItemAction
   | RemoveChoiceAction
@@ -18,7 +16,7 @@ type ActionTypes =
   | Record<string, never>;
 
 export default function items(
-  state: ChoiceFull[] = defaultState,
+  state: ChoiceFull[] = [],
   action: ActionTypes = {},
 ): State['items'] {
   switch (action.type) {

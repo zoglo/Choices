@@ -2,12 +2,10 @@ import { SetIsLoadingAction } from '../actions/misc';
 import { State } from '../interfaces/state';
 import { ActionType } from '../interfaces';
 
-export const defaultState = 0;
-
 type ActionTypes = SetIsLoadingAction | Record<string, never>;
 
 const general = (
-  state = defaultState,
+  state:number = 0,
   action: ActionTypes = {},
 ): State['loading'] => {
   switch (action.type) {

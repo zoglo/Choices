@@ -1,13 +1,14 @@
 import { expect } from 'chai';
-import items, { defaultState } from './items';
+import items from './items';
 import { RemoveItemAction } from '../actions/items';
 import { cloneObject } from '../lib/utils';
 import { ChoiceFull } from '../interfaces/choice-full';
 import { ActionType } from '../interfaces';
+import { defaultState } from './index';
 
 describe('reducers/items', () => {
   it('should return same state when no action matches', () => {
-    expect(items(defaultState, {} as any)).to.equal(defaultState);
+    expect(items(defaultState.items, {} as any)).to.equal(defaultState.items);
   });
 
   describe('when items do not exist', () => {

@@ -1,12 +1,13 @@
 import { expect } from 'chai';
-import choices, { defaultState } from './choices';
+import choices from './choices';
 import { cloneObject } from '../lib/utils';
 import { ChoiceFull } from '../interfaces/choice-full';
 import { ActionType } from '../interfaces';
+import { defaultState } from './index';
 
 describe('reducers/choices', () => {
   it('should return same state when no action matches', () => {
-    expect(choices(defaultState, {} as any)).to.equal(defaultState);
+    expect(choices(defaultState.choices, {} as any)).to.equal(defaultState.choices);
   });
 
   describe('when choices do not exist', () => {
@@ -150,7 +151,7 @@ describe('reducers/choices', () => {
     describe('CLEAR_CHOICES', () => {
       it('restores to defaultState', () => {
         const clonedState = state.slice(0);
-        const expectedResponse = defaultState;
+        const expectedResponse = defaultState.choices;
         const actualResponse = choices(clonedState, {
           type: ActionType.CLEAR_CHOICES,
         });
