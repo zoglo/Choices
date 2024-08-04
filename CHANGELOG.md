@@ -72,7 +72,7 @@
 * Fix various "first press" bugs on single select dropdowns. [#1104](https://github.com/Choices-js/Choices/issues/1104)
 * Fix 'esc' would close the dropdown and also apply to the container resulting in an overlay/modal unexpectedly closing. [#1039](https://github.com/Choices-js/Choices/issues/1039)
 * Fix form reset would clear the choices list, but not clear the search bar. [#1023](https://github.com/Choices-js/Choices/issues/1023)
-* Fix options would be disabled when choices.js was intialized on a disabled <select> element. [#1025](https://github.com/Choices-js/Choices/issues/1025)
+* Fix options would be disabled when choices.js was intialized on a disabled `<select>` element. [#1025](https://github.com/Choices-js/Choices/issues/1025)
 * Fix a `search_term` element to appear in form submit data. [#1049](https://github.com/Choices-js/Choices/issues/1049)
 * Fix 'remove item' button would trigger the change event twice due to placeholder value being used (match html single-select). [#892](https://github.com/Choices-js/Choices/issues/892)
 * Fix optgroups are not preserved when Choices is destroyed [#1055](https://github.com/Choices-js/Choices/issues/1055)
