@@ -10,6 +10,7 @@
 
 ### Bug Fixes (from 11.0.0 RC1)
 * Fix `noResults`/`noChoices` classes could not be set to a list of classes
+* Fix failing to add an item would close the dropdown
 
 ## [11.0.0 RC2] (2024-08-03)
 

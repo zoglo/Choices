@@ -1305,12 +1305,7 @@ class Choices implements ChoicesInterface {
 
     const hasActiveDropdown = this.dropdown.isActive;
 
-    this.passedElement.triggerEvent(
-      EventType.choice,
-      this._getChoiceForOutput(choice, keyCode),
-    );
-
-    let triggerChange = false;
+    let addedItem = false;
     this._store.withDeferRendering(() => {
       if (!choice.selected && !choice.disabled) {
         const canAddItem = this._canAddItem(items, choice.value);
@@ -1322,17 +1317,23 @@ class Choices implements ChoicesInterface {
               this._removeItem(lastItem);
             }
           }
-          this._addItem(choice);
 
-          triggerChange = true;
+          this.passedElement.triggerEvent(
+            EventType.choice,
+            this._getChoiceForOutput(choice, keyCode),
+          );
+
+          this._addItem(choice);
+          this.clearInput();
+          addedItem = true;
         }
       }
-
-      this.clearInput();
     });
-    if (triggerChange) {
-      this._triggerChange(choice.value);
+    if (!addedItem) {
+      return;
     }
+
+    this._triggerChange(choice.value);
 
     // We want to close the dropdown if we are dealing with a single select box
     if (
