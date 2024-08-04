@@ -3,7 +3,6 @@ import { StringUntrusted } from '../interfaces/string-untrusted';
 import { StringPreEscaped } from '../interfaces/string-pre-escaped';
 import { ChoiceFull } from '../interfaces/choice-full';
 export declare const generateId: (element: HTMLInputElement | HTMLSelectElement, prefix: string) => string;
-export declare const wrap: (element: HTMLElement, wrapper?: HTMLElement) => HTMLElement;
 export declare const getAdjacentEl: (startEl: Element, selector: string, direction?: number) => Element;
 export declare const isScrolledIntoView: (element: HTMLElement, parent: HTMLElement, direction?: number) => boolean;
 export declare const sanitise: <T>(value: T | StringUntrusted | StringPreEscaped | string) => T | string;

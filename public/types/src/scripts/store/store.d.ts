@@ -26,10 +26,6 @@ export default class Store implements IStore {
      */
     get items(): ChoiceFull[];
     /**
-     * @deprecated
-     */
-    get activeItems(): ChoiceFull[];
-    /**
      * Get highlighted items from store
      */
     get highlightedActiveItems(): ChoiceFull[];
@@ -41,10 +37,6 @@ export default class Store implements IStore {
      * Get active choices from store
      */
     get activeChoices(): ChoiceFull[];
-    /**
-     * Get selectable choices from store
-     */
-    get selectableChoices(): ChoiceFull[];
     /**
      * Get choices that can be searched (excluding placeholders)
      */

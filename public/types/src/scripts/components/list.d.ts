@@ -8,7 +8,6 @@ export default class List {
     clear(): void;
     prepend(node: Element | DocumentFragment): void;
     append(node: Element | DocumentFragment): void;
-    getChild(selector: string): HTMLElement | null;
     hasChildren(): boolean;
     scrollToTop(): void;
     scrollToChildElement(element: HTMLElement, direction: 1 | -1): void;
