@@ -25,6 +25,7 @@ describe('reducers/choices', () => {
         customProperties: {
           test: true,
         },
+        score: 0,
       };
 
       describe('passing expected values', () => {

@@ -16,6 +16,7 @@ describe('actions/items', () => {
         label: 'test',
         id: 1,
         groupId: 1,
+        score: 0,
         customProperties: { test: true },
         placeholder: true,
       };
@@ -40,6 +41,7 @@ describe('actions/items', () => {
         label: 'test',
         id: 1,
         groupId: 1,
+        score: 0,
         customProperties: { test: true },
         placeholder: true,
       };

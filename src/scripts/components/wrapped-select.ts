@@ -83,6 +83,7 @@ export default class WrappedSelect extends WrappedElement {
     const result: ChoiceFull = {
       id: 0,
       groupId: 0,
+      score: 0,
       value: option.value,
       label: option.innerHTML,
       element: option,

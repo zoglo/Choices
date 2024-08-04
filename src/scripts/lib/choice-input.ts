@@ -65,6 +65,7 @@ export const mapInputToChoice = <T extends string | InputChoice | InputGroup>(
   const result: ChoiceFull = {
     id: 0, // actual ID will be assigned during _addChoice
     groupId: 0, // actual ID will be assigned during _addGroup but before _addChoice
+    score: 0, // used in search
     value: choice.value,
     label: choice.label || choice.value,
     active: coerceBool(choice.active),

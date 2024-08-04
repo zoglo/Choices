@@ -14,6 +14,7 @@ describe('actions/choices', () => {
         label: 'test',
         id: 1,
         groupId: 1,
+        score: 0,
         disabled: false,
         elementId: '1',
         labelClass: stringToHtmlClass('test foo--bar'),

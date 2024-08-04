@@ -6,11 +6,7 @@ import {
   cloneObject,
   diff,
   dispatchEvent,
-  generateChars,
   generateId,
-  getRandomNumber,
-  getType,
-  isType,
   sanitise,
   parseCustomProperties,
   sortByAlpha,
@@ -19,24 +15,6 @@ import {
 import { EventType } from '../interfaces';
 
 describe('utils', () => {
-  describe('getRandomNumber', () => {
-    it('returns random number between range', () => {
-      for (let index = 0; index < 10; index++) {
-        const output = getRandomNumber(1, 10);
-        expect(output).to.be.a('number');
-        expect(output).to.be.within(1, 10);
-      }
-    });
-  });
-
-  describe('generateChars', () => {
-    it('generates a string of random chars with given length', () => {
-      const output = generateChars(10);
-      expect(output).to.be.a('string');
-      expect(output).to.have.length(10);
-    });
-  });
-
   describe('generateId', () => {
     describe('when given element has id value', () => {
       it('generates a unique prefixed id based on given elements id', () => {
@@ -75,27 +53,6 @@ describe('utils', () => {
         expect(output).to.contain(expectedOutput);
         expect(output).to.have.length(expectedOutput.length + 4);
       });
-    });
-  });
-
-  describe('getType', () => {
-    it('returns type of given object', () => {
-      expect(getType({})).to.equal('Object');
-      expect(getType(1)).to.equal('Number');
-      expect(getType(true)).to.equal('Boolean');
-      expect(getType([])).to.equal('Array');
-      expect(getType(() => {})).to.equal('Function');
-      expect(getType(new Error())).to.equal('Error');
-      expect(getType(/''/g)).to.equal('RegExp');
-      expect(getType(new String())).to.equal('String'); // eslint-disable-line
-      expect(getType('')).to.equal('String');
-    });
-  });
-
-  describe('isType', () => {
-    it('checks with given object type equals given type', () => {
-      expect(isType('Object', {})).to.equal(true);
-      expect(isType('String', {})).to.equal(false);
     });
   });
 

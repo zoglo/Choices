@@ -221,6 +221,13 @@ var choice_input_1 = __webpack_require__(200);
 /** @see {@link http://browserhacks.com/#hack-acea075d0ac6954f275a70023906050c} */
 var IS_IE11 = '-ms-scroll-limit' in document.documentElement.style && '-ms-ime-align' in document.documentElement.style;
 var USER_DEFAULTS = {};
+var parseDataSetId = function (element) {
+  if (!element) {
+    return undefined;
+  }
+  var id = element.dataset.id;
+  return id ? parseInt(id, 10) : undefined;
+};
 /**
  * Choices
  * @author Josh Johnson<josh@joshuajohnson.co.uk>
@@ -1064,18 +1071,13 @@ var Choices = /** @class */function () {
     // Add each list item to list
     items.forEach(addItemToFragment);
     if (this._isSelectOneElement && this._hasNonChoicePlaceholder && items.length === 0) {
-      var placeholder = {
-        id: 0,
-        groupId: 0,
+      addItemToFragment((0, choice_input_1.mapInputToChoice)({
         selected: true,
         value: '',
         label: this.config.placeholderValue || '',
         active: true,
-        disabled: false,
-        highlighted: false,
         placeholder: true
-      };
-      addItemToFragment(placeholder);
+      }, false));
     }
     return fragment;
   };
@@ -1121,7 +1123,7 @@ var Choices = /** @class */function () {
     if (items.length === 0 || !this.config.removeItems || !this.config.removeItemButton) {
       return;
     }
-    var id = element && (0, utils_1.parseDataSetId)(element.parentNode);
+    var id = element && parseDataSetId(element.parentNode);
     var itemToRemove = id && items.find(function (item) {
       return item.id === id;
     });
@@ -1143,7 +1145,7 @@ var Choices = /** @class */function () {
     if (items.length === 0 || !this.config.removeItems || this._isSelectOneElement) {
       return;
     }
-    var id = (0, utils_1.parseDataSetId)(element);
+    var id = parseDataSetId(element);
     if (!id) {
       return;
     }
@@ -1164,7 +1166,7 @@ var Choices = /** @class */function () {
   Choices.prototype._handleChoiceAction = function (items, element, keyCode) {
     var _this = this;
     // If we are clicking on an option
-    var id = (0, utils_1.parseDataSetId)(element);
+    var id = parseDataSetId(element);
     var choice = id && this._store.getChoiceById(id);
     if (!choice) {
       return false;
@@ -2894,6 +2896,7 @@ var WrappedSelect = /** @class */function (_super) {
     var result = {
       id: 0,
       groupId: 0,
+      score: 0,
       value: option.value,
       label: option.innerHTML,
       element: option,
@@ -3309,6 +3312,8 @@ var mapInputToChoice = function (value, allowGroup) {
     // actual ID will be assigned during _addChoice
     groupId: 0,
     // actual ID will be assigned during _addGroup but before _addChoice
+    score: 0,
+    // used in search
     value: choice.value,
     label: choice.label || choice.value,
     active: coerceBool(choice.active),
@@ -3355,34 +3360,24 @@ exports.isHTMLOptgroup = isHTMLOptgroup;
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.parseDataSetId = exports.parseCustomProperties = exports.getClassNamesSelector = exports.getClassNames = exports.diff = exports.isEmptyObject = exports.cloneObject = exports.dispatchEvent = exports.sortByScore = exports.sortByAlpha = exports.unwrapStringForEscaped = exports.unwrapStringForRaw = exports.strToEl = exports.sanitise = exports.isScrolledIntoView = exports.getAdjacentEl = exports.wrap = exports.isType = exports.getType = exports.generateId = exports.generateChars = exports.getRandomNumber = void 0;
+exports.parseCustomProperties = exports.getClassNamesSelector = exports.getClassNames = exports.diff = exports.isEmptyObject = exports.cloneObject = exports.dispatchEvent = exports.sortByScore = exports.sortByAlpha = exports.unwrapStringForEscaped = exports.unwrapStringForRaw = exports.strToEl = exports.sanitise = exports.isScrolledIntoView = exports.getAdjacentEl = exports.wrap = exports.generateId = void 0;
 var getRandomNumber = function (min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 };
-exports.getRandomNumber = getRandomNumber;
 var generateChars = function (length) {
   return Array.from({
     length: length
   }, function () {
-    return (0, exports.getRandomNumber)(0, 36).toString(36);
+    return getRandomNumber(0, 36).toString(36);
   }).join('');
 };
-exports.generateChars = generateChars;
 var generateId = function (element, prefix) {
-  var id = element.id || element.name && "".concat(element.name, "-").concat((0, exports.generateChars)(2)) || (0, exports.generateChars)(4);
+  var id = element.id || element.name && "".concat(element.name, "-").concat(generateChars(2)) || generateChars(4);
   id = id.replace(/(:|\.|\[|\]|,)/g, '');
   id = "".concat(prefix, "-").concat(id);
   return id;
 };
 exports.generateId = generateId;
-var getType = function (obj) {
-  return Object.prototype.toString.call(obj).slice(8, -1);
-};
-exports.getType = getType;
-var isType = function (type, obj) {
-  return obj !== undefined && obj !== null && (0, exports.getType)(obj) === type;
-};
-exports.isType = isType;
 var wrap = function (element, wrapper) {
   if (wrapper === void 0) {
     wrapper = document.createElement('div');
@@ -3472,10 +3467,7 @@ var unwrapStringForRaw = function (s) {
       return s.raw;
     }
   }
-  if (s === null || s === undefined) {
-    return '';
-  }
-  return "".concat(s);
+  return '';
 };
 exports.unwrapStringForRaw = unwrapStringForRaw;
 var unwrapStringForEscaped = function (s) {
@@ -3490,10 +3482,7 @@ var unwrapStringForEscaped = function (s) {
       return s.trusted;
     }
   }
-  if (s === null || s === undefined) {
-    return '';
-  }
-  return "".concat(s);
+  return '';
 };
 exports.unwrapStringForEscaped = unwrapStringForEscaped;
 var sortByAlpha = function (_a, _b) {
@@ -3511,11 +3500,7 @@ var sortByAlpha = function (_a, _b) {
 };
 exports.sortByAlpha = sortByAlpha;
 var sortByScore = function (a, b) {
-  var _a = a.score,
-    scoreA = _a === void 0 ? 0 : _a;
-  var _b = b.score,
-    scoreB = _b === void 0 ? 0 : _b;
-  return scoreA - scoreB;
+  return a.score - b.score;
 };
 exports.sortByScore = sortByScore;
 var dispatchEvent = function (element, type, customArgs) {
@@ -3582,17 +3567,6 @@ var parseCustomProperties = function (customProperties) {
   return {};
 };
 exports.parseCustomProperties = parseCustomProperties;
-var parseDataSetId = function (element) {
-  if (!element) {
-    return undefined;
-  }
-  var id = element.dataset.id;
-  if (!id) {
-    return undefined;
-  }
-  return parseInt(id, 10);
-};
-exports.parseDataSetId = parseDataSetId;
 
 /***/ }),
 
@@ -4352,19 +4326,20 @@ var templates = {
       id: elementId,
       className: "".concat((0, utils_1.getClassNames)(item).join(' '), " ").concat((0, utils_1.getClassNames)(itemChoice).join(' '))
     });
-    var descId = "".concat(elementId, "-description");
+    var describedBy = div;
     if (labelClass) {
       var spanLabel = Object.assign(document.createElement('span'), {
         innerHTML: (0, exports.escapeForTemplate)(allowHTML, label),
         className: (0, utils_1.getClassNames)(labelClass).join(' ')
       });
-      spanLabel.setAttribute('aria-describedby', descId);
+      describedBy = spanLabel;
       div.appendChild(spanLabel);
     } else {
       div.innerHTML = (0, exports.escapeForTemplate)(allowHTML, label);
-      div.setAttribute('aria-describedby', descId);
     }
-    if (typeof labelDescription === 'string') {
+    if (labelDescription) {
+      var descId = "".concat(elementId, "-description");
+      describedBy.setAttribute('aria-describedby', descId);
       var spanDesc = Object.assign(document.createElement('span'), {
         innerHTML: (0, exports.escapeForTemplate)(allowHTML, labelDescription),
         id: descId

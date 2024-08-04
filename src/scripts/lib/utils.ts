@@ -5,10 +5,10 @@ import { StringUntrusted } from '../interfaces/string-untrusted';
 import { StringPreEscaped } from '../interfaces/string-pre-escaped';
 import { ChoiceFull } from '../interfaces/choice-full';
 
-export const getRandomNumber = (min: number, max: number): number =>
+const getRandomNumber = (min: number, max: number): number =>
   Math.floor(Math.random() * (max - min) + min);
 
-export const generateChars = (length: number): string =>
+const generateChars = (length: number): string =>
   Array.from({ length }, () => getRandomNumber(0, 36).toString(36)).join('');
 
 export const generateId = (
@@ -24,12 +24,6 @@ export const generateId = (
 
   return id;
 };
-
-export const getType = (obj: any): string =>
-  Object.prototype.toString.call(obj).slice(8, -1);
-
-export const isType = (type: string, obj: any): boolean =>
-  obj !== undefined && obj !== null && getType(obj) === type;
 
 export const wrap = (
   element: HTMLElement,
@@ -153,11 +147,7 @@ export const unwrapStringForRaw = (
     }
   }
 
-  if (s === null || s === undefined) {
-    return '';
-  }
-
-  return `${s}`;
+  return '';
 };
 
 export const unwrapStringForEscaped = (
@@ -176,11 +166,7 @@ export const unwrapStringForEscaped = (
     }
   }
 
-  if (s === null || s === undefined) {
-    return '';
-  }
-
-  return `${s}`;
+  return '';
 };
 
 export const sortByAlpha = (
@@ -197,10 +183,7 @@ export const sortByScore = (
   a: Pick<ChoiceFull, 'score'>,
   b: Pick<ChoiceFull, 'score'>,
 ): number => {
-  const { score: scoreA = 0 } = a;
-  const { score: scoreB = 0 } = b;
-
-  return scoreA - scoreB;
+  return a.score - b.score;
 };
 
 export const dispatchEvent = (
@@ -277,17 +260,4 @@ export const parseCustomProperties = (customProperties): any => {
   }
 
   return {};
-};
-
-export const parseDataSetId = (element?: HTMLElement): number | undefined => {
-  if (!element) {
-    return undefined;
-  }
-
-  const { id } = element.dataset;
-  if (!id) {
-    return undefined;
-  }
-
-  return parseInt(id, 10);
 };

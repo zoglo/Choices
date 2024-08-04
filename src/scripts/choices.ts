@@ -39,7 +39,6 @@ import {
   getClassNames,
   getClassNamesSelector,
   isScrolledIntoView,
-  parseDataSetId,
   sanitise,
   sortByScore,
   strToEl,
@@ -60,6 +59,15 @@ const IS_IE11 =
   '-ms-ime-align' in document.documentElement.style;
 
 const USER_DEFAULTS: Partial<Options> = {};
+
+const parseDataSetId = (element?: HTMLElement): number | undefined => {
+  if (!element) {
+    return undefined;
+  }
+
+  const { id } = element.dataset;
+  return id ? parseInt(id, 10) : undefined;
+};
 
 /**
  * Choices
@@ -1212,18 +1220,13 @@ class Choices implements ChoicesInterface {
       this._hasNonChoicePlaceholder &&
       items.length === 0
     ) {
-      const placeholder: ChoiceFull = {
-        id: 0,
-        groupId: 0,
+      addItemToFragment(mapInputToChoice<InputChoice>({
         selected: true,
         value: '',
         label: this.config.placeholderValue || '',
         active: true,
-        disabled: false,
-        highlighted: false,
         placeholder: true,
-      };
-      addItemToFragment(placeholder);
+      }, false));
     }
 
     return fragment;

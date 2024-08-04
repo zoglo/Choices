@@ -772,6 +772,7 @@ describe('choices', () => {
           id: 1234,
           value: 'Test',
           label: 'Test',
+          score: 0,
         };
 
         describe('passing truthy second paremeter', () => {
@@ -899,6 +900,7 @@ describe('choices', () => {
           id: 1234,
           value: 'Test',
           label: 'Test',
+          score: 0,
         };
 
         describe('passing truthy second paremeter', () => {
@@ -1856,6 +1858,7 @@ describe('choices', () => {
           active: false,
           placeholder: false,
           highlighted: false,
+          score: 0,
         },
         {
           id: 2,
@@ -1867,6 +1870,7 @@ describe('choices', () => {
           active: false,
           placeholder: false,
           highlighted: false,
+          score: 0,
         },
         {
           id: 3,
@@ -1878,6 +1882,7 @@ describe('choices', () => {
           active: false,
           placeholder: false,
           highlighted: false,
+          score: 0,
         },
       ];
 
@@ -2331,6 +2336,7 @@ describe('choices', () => {
           label: 'test label',
           groupId: 3333,
           customProperties: {},
+          score: 0,
         };
 
         it('dispatches a REMOVE_ITEM action to the store', () => {

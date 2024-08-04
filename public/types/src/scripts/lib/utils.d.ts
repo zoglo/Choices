@@ -2,11 +2,7 @@ import { EventType } from '../interfaces/event-type';
 import { StringUntrusted } from '../interfaces/string-untrusted';
 import { StringPreEscaped } from '../interfaces/string-pre-escaped';
 import { ChoiceFull } from '../interfaces/choice-full';
-export declare const getRandomNumber: (min: number, max: number) => number;
-export declare const generateChars: (length: number) => string;
 export declare const generateId: (element: HTMLInputElement | HTMLSelectElement, prefix: string) => string;
-export declare const getType: (obj: any) => string;
-export declare const isType: (type: string, obj: any) => boolean;
 export declare const wrap: (element: HTMLElement, wrapper?: HTMLElement) => HTMLElement;
 export declare const getAdjacentEl: (startEl: Element, selector: string, direction?: number) => Element;
 export declare const isScrolledIntoView: (element: HTMLElement, parent: HTMLElement, direction?: number) => boolean;
@@ -30,5 +26,4 @@ export declare const diff: (a: Record<string, any>, b: Record<string, any>) => s
 export declare const getClassNames: (ClassNames: Array<string> | string) => Array<string>;
 export declare const getClassNamesSelector: (option: string | Array<string> | null) => string;
 export declare const parseCustomProperties: (customProperties: any) => any;
-export declare const parseDataSetId: (element?: HTMLElement) => number | undefined;
 //# sourceMappingURL=utils.d.ts.map
