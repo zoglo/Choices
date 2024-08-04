@@ -25,21 +25,6 @@ export const generateId = (
   return id;
 };
 
-export const wrap = (
-  element: HTMLElement,
-  wrapper: HTMLElement = document.createElement('div'),
-): HTMLElement => {
-  if (element.parentNode) {
-    if (element.nextSibling) {
-      element.parentNode.insertBefore(wrapper, element.nextSibling);
-    } else {
-      element.parentNode.appendChild(wrapper);
-    }
-  }
-
-  return wrapper.appendChild(element);
-};
-
 export const getAdjacentEl = (
   startEl: Element,
   selector: string,

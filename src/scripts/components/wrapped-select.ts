@@ -1,14 +1,17 @@
 import { parseCustomProperties } from '../lib/utils';
 import { ClassNames } from '../interfaces/class-names';
 import WrappedElement from './wrapped-element';
-import { isHTMLOptgroup, isHTMLOption } from '../lib/htmlElementGuards';
 import { GroupFull } from '../interfaces/group-full';
 import { ChoiceFull } from '../interfaces/choice-full';
 import { stringToHtmlClass } from '../lib/choice-input';
 
-export default class WrappedSelect extends WrappedElement {
-  element: HTMLSelectElement;
+const isHtmlOption = (e: Element): e is HTMLOptionElement =>
+  e.tagName === 'OPTION';
 
+const isHtmlOptgroup = (e: Element): e is HTMLOptGroupElement =>
+  e.tagName === 'OPTGROUP';
+
+export default class WrappedSelect extends WrappedElement<HTMLSelectElement> {
   classNames: ClassNames;
 
   template: (data: object) => HTMLOptionElement;
@@ -39,14 +42,6 @@ export default class WrappedSelect extends WrappedElement {
     );
   }
 
-  get optionGroups(): Element[] {
-    return Array.from(this.element.getElementsByTagName('OPTGROUP'));
-  }
-
-  get options(): HTMLOptionElement[] {
-    return Array.from(this.element.options);
-  }
-
   addOptions(choices: ChoiceFull[]) {
     choices.forEach((obj) => {
       const choice = obj;
@@ -66,13 +61,12 @@ export default class WrappedSelect extends WrappedElement {
     this.element
       .querySelectorAll(':scope > option, :scope > optgroup')
       .forEach((e) => {
-        if (isHTMLOption(e)) {
-          choices.push(this._optionToChoice(e as HTMLOptionElement));
-        } else if (isHTMLOptgroup(e)) {
-          choices.push(this._optgroupToChoice(e as HTMLOptGroupElement));
+        if (isHtmlOption(e)) {
+          choices.push(this._optionToChoice(e));
+        } else if (isHtmlOptgroup(e)) {
+          choices.push(this._optgroupToChoice(e));
         }
-        // There should only be those two in a <select> and we wouldn't care about others anyways
-        // todo: hr as empty optgroup
+        // todo: hr as empty optgroup, requires displaying empty opt-groups to be useful
       });
 
     return choices;
@@ -80,7 +74,7 @@ export default class WrappedSelect extends WrappedElement {
 
   // eslint-disable-next-line class-methods-use-this
   _optionToChoice(option: HTMLOptionElement): ChoiceFull {
-    const result: ChoiceFull = {
+    return {
       id: 0,
       groupId: 0,
       score: 0,
@@ -107,8 +101,6 @@ export default class WrappedSelect extends WrappedElement {
           : undefined,
       customProperties: parseCustomProperties(option.dataset.customProperties),
     };
-
-    return result as ChoiceFull;
   }
 
   _optgroupToChoice(optgroup: HTMLOptGroupElement): GroupFull {
@@ -117,7 +109,7 @@ export default class WrappedSelect extends WrappedElement {
       this._optionToChoice(option),
     );
 
-    const result: GroupFull = {
+    return {
       id: 0,
       label: optgroup.label || '',
       element: optgroup,
@@ -125,7 +117,5 @@ export default class WrappedSelect extends WrappedElement {
       disabled: optgroup.disabled,
       choices,
     };
-
-    return result as GroupFull;
   }
 }

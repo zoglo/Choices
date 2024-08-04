@@ -276,7 +276,6 @@ class Choices implements ChoicesInterface {
       this.passedElement = new WrappedInput({
         element: passedElement as HTMLInputElement,
         classNames: this.config.classNames,
-        delimiter: this.config.delimiter,
       });
     } else {
       const selectEl = passedElement as HTMLSelectElement;
@@ -1465,7 +1464,7 @@ class Choices implements ChoicesInterface {
   }
 
   _handleLoadingState(setLoading = true): void {
-    let placeholderItem = this.itemList.getChild(
+    let placeholderItem: HTMLElement | null = this.itemList.element.querySelector(
       getClassNamesSelector(this.config.classNames.placeholder),
     );
 
@@ -1910,7 +1909,7 @@ class Choices implements ChoicesInterface {
 
     // add the highlighted item
     if (hasActiveDropdown) {
-      const highlightedChoice = this.dropdown.getChild(
+      const highlightedChoice: HTMLElement | null = this.dropdown.element.querySelector(
         getClassNamesSelector(this.config.classNames.highlightedState),
       );
 
@@ -2632,10 +2631,7 @@ class Choices implements ChoicesInterface {
       return this.config.placeholderValue;
     }
 
-    if (
-      this._isSelectElement &&
-      (this.passedElement as WrappedSelect).placeholderOption
-    ) {
+    if (this._isSelectElement) {
       const { placeholderOption } = this.passedElement as WrappedSelect;
 
       return placeholderOption ? placeholderOption.text : null;

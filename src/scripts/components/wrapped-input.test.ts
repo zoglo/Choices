@@ -7,14 +7,12 @@ import WrappedInput from './wrapped-input';
 describe('components/wrappedInput', () => {
   let instance;
   let element;
-  const delimiter = '-';
 
   beforeEach(() => {
     element = document.createElement('input');
     instance = new WrappedInput({
       element,
       classNames: DEFAULT_CLASSNAMES,
-      delimiter,
     });
   });
 
@@ -39,7 +37,7 @@ describe('components/wrappedInput', () => {
     methods.forEach((method) => {
       describe(method, () => {
         beforeEach(() => {
-          stub(WrappedElement.prototype, method as keyof WrappedElement);
+          stub(WrappedElement.prototype, method as keyof WrappedElement<HTMLInputElement>);
         });
 
         afterEach(() => {

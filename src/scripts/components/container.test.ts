@@ -36,60 +36,6 @@ describe('components/container', () => {
     });
   });
 
-  describe('addEventListeners', () => {
-    let addEventListenerStub;
-
-    beforeEach(() => {
-      addEventListenerStub = stub(instance.element, 'addEventListener');
-    });
-
-    afterEach(() => {
-      addEventListenerStub.restore();
-    });
-
-    it('adds event listeners', () => {
-      instance.addEventListeners();
-      expect(addEventListenerStub.callCount).to.equal(2);
-      expect(addEventListenerStub.getCall(0).args[0]).to.equal('focus');
-      expect(addEventListenerStub.getCall(1).args[0]).to.equal('blur');
-    });
-  });
-
-  describe('removeEventListeners', () => {
-    let removeEventListenerStub;
-
-    beforeEach(() => {
-      removeEventListenerStub = stub(instance.element, 'removeEventListener');
-    });
-
-    afterEach(() => {
-      removeEventListenerStub.restore();
-    });
-
-    it('removes event listeners', () => {
-      instance.removeEventListeners();
-      expect(removeEventListenerStub.callCount).to.equal(2);
-      expect(removeEventListenerStub.getCall(0).args[0]).to.equal('focus');
-      expect(removeEventListenerStub.getCall(1).args[0]).to.equal('blur');
-    });
-  });
-
-  describe('onFocus', () => {
-    it('sets isFocussed flag to true', () => {
-      expect(instance.isFocussed).to.equal(false);
-      instance._onFocus();
-      expect(instance.isFocussed).to.equal(true);
-    });
-  });
-
-  describe('onBlur', () => {
-    it('sets isFocussed flag to false', () => {
-      instance.isFocussed = true;
-      instance._onBlur();
-      expect(instance.isFocussed).to.equal(false);
-    });
-  });
-
   describe('shouldFlip', () => {
     describe('passing dropdownPos', () => {
       describe('position config option set to "auto"', () => {
@@ -227,34 +173,6 @@ describe('components/container', () => {
 
       it('sets isFlipped flag to false', () => {
         expect(instance.isFlipped).to.equal(false);
-      });
-    });
-  });
-
-  describe('focus', () => {
-    let focusStub;
-
-    beforeEach(() => {
-      focusStub = stub(instance.element, 'focus');
-    });
-
-    afterEach(() => {
-      focusStub.restore();
-    });
-
-    describe('isFocussed flag being set to false', () => {
-      it('focuses element', () => {
-        instance.isFocussed = false;
-        instance.focus();
-        expect(focusStub.called).to.equal(true);
-      });
-    });
-
-    describe('isFocussed flag being set to true', () => {
-      it('does not focus element', () => {
-        instance.isFocussed = true;
-        instance.focus();
-        expect(focusStub.called).to.equal(false);
       });
     });
   });

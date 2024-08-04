@@ -51,23 +51,6 @@ describe('components/list', () => {
     });
   });
 
-  describe('getChild', () => {
-    let childElement;
-    const childClass = 'test-element';
-
-    beforeEach(() => {
-      childElement = document.createElement('span');
-      childElement.classList.add(...getClassNames(childClass));
-      instance.element.appendChild(childElement);
-    });
-
-    it('returns child element', () => {
-      const expectedResponse = childElement;
-      const actualResponse = instance.getChild(`.${childClass}`);
-      expect(expectedResponse).to.eql(actualResponse);
-    });
-  });
-
   describe('hasChildren', () => {
     describe('when list has children', () => {
       it('returns true', () => {

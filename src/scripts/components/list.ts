@@ -30,10 +30,6 @@ export default class List {
     this.element.appendChild(node);
   }
 
-  getChild(selector: string): HTMLElement | null {
-    return this.element.querySelector(selector);
-  }
-
   hasChildren(): boolean {
     return this.element.hasChildNodes();
   }

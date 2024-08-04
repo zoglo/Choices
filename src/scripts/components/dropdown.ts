@@ -33,10 +33,6 @@ export default class Dropdown {
     return this.element.getBoundingClientRect().bottom;
   }
 
-  getChild(selector: string): HTMLElement | null {
-    return this.element.querySelector(selector);
-  }
-
   /**
    * Show dropdown to user by adding active state class
    */

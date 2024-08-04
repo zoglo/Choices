@@ -1,4 +1,4 @@
-import { getClassNames, wrap } from '../lib/utils';
+import { getClassNames } from '../lib/utils';
 import { SELECT_ONE_TYPE } from '../constants';
 import { ClassNames } from '../interfaces/class-names';
 import { PositionOptionsType } from '../interfaces/position-options-type';
@@ -16,8 +16,6 @@ export default class Container {
   isOpen: boolean;
 
   isFlipped: boolean;
-
-  isFocussed: boolean;
 
   isDisabled: boolean;
 
@@ -40,21 +38,8 @@ export default class Container {
     this.position = position;
     this.isOpen = false;
     this.isFlipped = false;
-    this.isFocussed = false;
     this.isDisabled = false;
     this.isLoading = false;
-    this._onFocus = this._onFocus.bind(this);
-    this._onBlur = this._onBlur.bind(this);
-  }
-
-  addEventListeners(): void {
-    this.element.addEventListener('focus', this._onFocus);
-    this.element.addEventListener('blur', this._onBlur);
-  }
-
-  removeEventListeners(): void {
-    this.element.removeEventListener('focus', this._onFocus);
-    this.element.removeEventListener('blur', this._onBlur);
   }
 
   /**
@@ -112,9 +97,7 @@ export default class Container {
   }
 
   focus(): void {
-    if (!this.isFocussed) {
-      this.element.focus();
-    }
+    this.element.focus();
   }
 
   addFocusState(): void {
@@ -145,8 +128,16 @@ export default class Container {
     this.isDisabled = true;
   }
 
-  wrap(element: HTMLSelectElement | HTMLInputElement | HTMLElement): void {
-    wrap(element, this.element);
+  wrap(element: HTMLElement): void {
+    if (element.parentNode) {
+      if (element.nextSibling) {
+        element.parentNode.insertBefore(this.element, element.nextSibling);
+      } else {
+        element.parentNode.appendChild(this.element);
+      }
+    }
+
+    this.element.appendChild(element);
   }
 
   unwrap(element: HTMLElement): void {
@@ -170,13 +161,5 @@ export default class Container {
     );
     this.element.removeAttribute('aria-busy');
     this.isLoading = false;
-  }
-
-  _onFocus(): void {
-    this.isFocussed = true;
-  }
-
-  _onBlur(): void {
-    this.isFocussed = false;
   }
 }
