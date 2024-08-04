@@ -44,11 +44,12 @@
 
 ### Features
 
-* The original option list for the select is not destroyed, and all loaded choices are serialised to HTML for better compatibility with external javascript.
+* `config.classNames` now accept arrays to support multiple classes. [#1121](https://github.com/Choices-js/Choices/issues/1121) [#1074](https://github.com/Choices-js/Choices/issues/1074) [#907](https://github.com/Choices-js/Choices/issues/907) [#832](https://github.com/Choices-js/Choices/issues/832)
+* The original option list for the select is not destroyed, and all loaded choices are serialised to HTML for better compatibility with external javascript. [#1053](https://github.com/Choices-js/Choices/issues/1053) [#1023](https://github.com/Choices-js/Choices/issues/1023)
 * New `singleModeForMultiSelect` feature to treat a `select-single` as if it was a `select-multiple` with a max item count of `1`, and still auto-close the dropdown and swap the active item on selection.
 * Remove `deepMerge` dependency.
 * `Remove item text` can be localized.
-* Allow user-created choices for selects. [#1117](https://github.com/Choices-js/Choices/issues/1117)
+* Allow user-created choices for selects. [#1117](https://github.com/Choices-js/Choices/issues/1117) [#1114](https://github.com/Choices-js/Choices/issues/1114)
     * User input is escaped by default. At the risk of XSS attacks this can be disabled by `allowHtmlUserInput`.
 * Render options without a group even if groups are present. [#615](https://github.com/Choices-js/Choices/issues/615) [#1110](https://github.com/Choices-js/Choices/issues/1110)
 * Read `data-labelclass`/`data-label-description` from `<option>` HTML to drive adding a per-choice CSS label and description text when `allowHtml: false`.
