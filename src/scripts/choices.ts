@@ -1942,7 +1942,7 @@ class Choices implements ChoicesInterface {
       this._triggerChange(value);
     });
 
-    if (this._isTextElement) {
+    if (this._isTextElement || this._isSelectOneElement) {
       this.hideDropdown(true);
     }
   }
