@@ -261,7 +261,7 @@ export const getClassNamesSelector = (
       .map((item) => {
         return `.${item}`;
       })
-      .join(' ');
+      .join('');
   }
 
   return `.${option}`;
