@@ -172,12 +172,11 @@ class Choices implements ChoicesInterface {
       ...userConfig,
     } as Options;
     ObjectsInConfig.forEach((key) => {
-      Object.assign(
-        this.config[key],
-        Choices.defaults.allOptions[key],
-        Choices.defaults.options[key],
-        userConfig[key],
-      );
+      this.config[key] = {
+        ...Choices.defaults.allOptions[key],
+        ...Choices.defaults.options[key],
+        ...userConfig[key],
+      };
     });
 
     const invalidConfigOptions = diff(this.config, DEFAULT_CONFIG);
