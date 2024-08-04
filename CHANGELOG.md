@@ -12,6 +12,7 @@
 * Fix `noResults`/`noChoices` classes could not be set to a list of classes
 * Fix failing to add an item would close the dropdown
 * Fix invalid css selectors being generated for configurable css class-names with multiple css classes for an element
+* Fix "Press Enter to add..." would not render if the dropdown had partially matching search results
 
 ## [11.0.0 RC2] (2024-08-03)
 

@@ -936,31 +936,47 @@ class Choices implements ChoicesInterface {
       );
     }
 
-    const { activeItems } = this._store; // If we have choices to show
+    const { value } = this.input;
+    const canAdd = this._canAddItem(this._store.items, value);
 
     if (
       choiceListFragment.childNodes &&
       choiceListFragment.childNodes.length > 0
     ) {
-      const canAddItem = this._canAddItem(activeItems, this.input.value);
-
+      let showNotice = !canAdd.response;
       // ...and we can select them
-      if (canAddItem.response) {
+      if (canAdd.response) {
         // ...append them and highlight the first choice
         this.choiceList.append(choiceListFragment);
         this._highlightChoice();
-      } else {
-        const notice = this._templates.notice(this.config, canAddItem.notice);
-        this.choiceList.append(notice);
+
+        // for exact matches, do not prompt to add it as a custom choice
+        if (this._canAddUserChoices && value && canAdd.notice) {
+          showNotice = !activeChoices.find((choice) =>
+            this.config.valueComparer(choice.value, value),
+          );
+        }
+      }
+
+      // when adding items, provide feedback while also displaying choices
+      if (showNotice) {
+        const notice = this._templates.notice(
+          this.config,
+          canAdd.notice,
+          this._canAddUserChoices ? 'add-choice' : '',
+        );
+        this.choiceList.prepend(notice);
       }
     } else {
       // Otherwise show a notice
-      const canAddChoice = this._canAddChoice(activeItems, this.input.value);
-
       let dropdownItem: Element | DocumentFragment;
 
-      if (canAddChoice.response) {
-        dropdownItem = this._templates.notice(this.config, canAddChoice.notice);
+      if (canAdd.response && this._canAddUserChoices) {
+        dropdownItem = this._templates.notice(
+          this.config,
+          canAdd.notice,
+          'add-choice',
+        );
       } else if (this._isSearching) {
         const notice =
           typeof this.config.noResultsText === 'function'
@@ -1295,12 +1311,12 @@ class Choices implements ChoicesInterface {
     items: ChoiceFull[],
     element?: HTMLElement,
     keyCode?: number,
-  ): void {
+  ): boolean {
     // If we are clicking on an option
     const id = parseDataSetId(element);
     const choice = id && this._store.getChoiceById(id);
     if (!choice) {
-      return;
+      return false;
     }
 
     const hasActiveDropdown = this.dropdown.isActive;
@@ -1330,7 +1346,7 @@ class Choices implements ChoicesInterface {
       }
     });
     if (!addedItem) {
-      return;
+      return false;
     }
 
     this._triggerChange(choice.value);
@@ -1343,6 +1359,8 @@ class Choices implements ChoicesInterface {
       this.hideDropdown(true);
       this.containerOuter.focus();
     }
+
+    return true;
   }
 
   _handleBackspace(items: ChoiceFull[]): void {
@@ -1473,17 +1491,6 @@ class Choices implements ChoicesInterface {
     } else if (hasUnactiveChoices) {
       this._stopSearch();
     }
-  }
-
-  _canAddChoice(items: InputChoice[], value: string): Notice {
-    if (!this._canAddUserChoices) {
-      return {
-        response: false,
-        notice: '',
-      };
-    }
-
-    return this._canAddItem(items, value);
   }
 
   _canAddItem(items: InputChoice[], value: string): Notice {
@@ -1781,16 +1788,35 @@ class Choices implements ChoicesInterface {
       }
     }
 
-    let doSearch = this._canSearch;
-    if (doSearch && !this._isSearching) {
-      const canAddItem = this._canAddItem(this._store.items, value);
-      doSearch = canAddItem && canAddItem.response;
+    if (!this._canSearch) {
+      return;
     }
 
-    if (doSearch) {
-      this._handleSearch(value);
-    } else {
-      this._stopSearch();
+    // do the search even if the entered text can not be added
+    this._handleSearch(value);
+
+    // determine if a notice needs to be displayed for why a search result can't be added
+    const canAddItem = this._canAddItem(this._store.items, value);
+    if (!canAddItem.response) {
+      const dropdownItem = this._templates.notice(
+        this.config,
+        canAddItem.notice,
+        'add-choice',
+      );
+
+      // only show the notice once!
+      const selector = `${getClassNamesSelector(this.config.classNames.addChoice)}[data-choice-selectable]`;
+      const noticeElement = this.choiceList.element.querySelector(selector);
+      if (noticeElement) {
+        noticeElement.outerHTML = dropdownItem.outerHTML;
+      } else {
+        this.choiceList.prepend(dropdownItem);
+      }
+    }
+    if (this._canAddUserChoices) {
+      // select the non-value so 'enter' doesn't select anything
+      this._highlightPosition = 0;
+      this._highlightChoice();
     }
   }
 
@@ -1818,85 +1844,105 @@ class Choices implements ChoicesInterface {
     items: ChoiceFull[],
     hasActiveDropdown: boolean,
   ): void {
-    const { target } = event;
-    const targetWasButton =
-      target && (target as HTMLElement).hasAttribute('data-button');
+    const { value } = this.input;
+    const target = event.target as HTMLElement | null;
+    const targetWasRemoveButton = target && target.hasAttribute('data-button');
     let addedItem = false;
 
-    if (target && (target as HTMLInputElement).value) {
-      const { value } = this.input;
-      let canAdd: Notice;
-      if (this._isTextElement) {
-        canAdd = this._canAddItem(items, value);
-      } else {
-        canAdd = this._canAddChoice(items, value);
-      }
-
-      if (canAdd.response) {
-        this.hideDropdown(true);
-
-        this._store.withDeferRendering(() => {
-          if (
-            this._isSelectOneElement ||
-            this.config.singleModeForMultiSelect
-          ) {
-            if (items.length !== 0) {
-              const lastItem = items[items.length - 1];
-              this._removeItem(lastItem);
-            }
-          }
-          let choiceNotFound = true;
-          if (this._isSelectElement || !this.config.duplicateItemsAllowed) {
-            choiceNotFound = !this._findAndSelectChoiceByValue(value);
-          }
-
-          if (choiceNotFound) {
-            this._addChoice(
-              mapInputToChoice(
-                {
-                  value: this.config.allowHtmlUserInput
-                    ? value
-                    : sanitise(value),
-                  label: {
-                    escaped: sanitise(value),
-                    raw: value,
-                  },
-                  selected: true,
-                } as InputChoice,
-                false,
-              ),
-            );
-          }
-          this.clearInput();
-        });
-
-        this._triggerChange(value);
-        addedItem = true;
-      }
-    }
-
-    if (targetWasButton) {
-      this._handleButtonAction(items, target as HTMLElement);
+    if (targetWasRemoveButton) {
       event.preventDefault();
+      this._handleButtonAction(items, target);
+
+      return;
     }
 
+    if (!hasActiveDropdown && this._isSelectOneElement) {
+      event.preventDefault();
+      this.showDropdown();
+
+      return;
+    }
+
+    /*
+    Old:
+     - add if there is an input value, add that as an item
+     - add the highlighted item
+
+     New:
+     - if "press enter to add" is selected then add the input as a new item
+     - otherwise add the highlighted item(s)
+     */
+
+    // add the highlighted item
     if (hasActiveDropdown) {
       const highlightedChoice = this.dropdown.getChild(
         getClassNamesSelector(this.config.classNames.highlightedState),
       );
 
       if (highlightedChoice) {
+        addedItem = this._handleChoiceAction(
+          items,
+          highlightedChoice,
+          KeyCodeMap.ENTER_KEY,
+        );
+
         if (addedItem) {
+          event.preventDefault();
           this.unhighlightAll();
-        } else {
-          this._handleChoiceAction(items, highlightedChoice, KeyCodeMap.ENTER_KEY);
+
+          return;
         }
       }
 
-      event.preventDefault();
-    } else if (this._isSelectOneElement) {
-      this.showDropdown();
-      event.preventDefault();
+      if (!value) {
+        this.hideDropdown(true);
+      }
+    }
+
+    if (!target || !value || !this._canAddUserChoices) {
+      return;
+    }
+
+    const canAdd: Notice = this._canAddItem(items, value);
+    if (!canAdd.response) {
+      return;
+    }
+    this._store.withDeferRendering(() => {
+      if (this._isSelectOneElement || this.config.singleModeForMultiSelect) {
+        if (items.length !== 0) {
+          const lastItem = items[items.length - 1];
+          this._removeItem(lastItem);
+        }
+      }
+      let choiceNotFound = true;
+      if (this._isSelectElement || !this.config.duplicateItemsAllowed) {
+        choiceNotFound = !this._findAndSelectChoiceByValue(value);
+      }
+
+      if (choiceNotFound) {
+        const sanitisedValue = sanitise(value);
+        this._addChoice(
+          mapInputToChoice(
+            {
+              value: this.config.allowHtmlUserInput ? value : sanitisedValue,
+              label:
+                sanitisedValue === value
+                  ? value
+                  : { escaped: sanitisedValue, raw: value },
+              selected: true,
+            } as InputChoice,
+            false,
+          ),
+        );
+      }
+      this.clearInput();
+      this.unhighlightAll();
+
+      this._triggerChange(value);
+    });
+
+    if (this._isTextElement) {
+      this.hideDropdown(true);
     }
   }
 

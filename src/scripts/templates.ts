@@ -384,23 +384,37 @@ const templates = {
   notice(
     {
       allowHTML,
-      classNames: { item, itemChoice, noResults, noChoices },
+      classNames: { item, itemChoice, addChoice, noResults, noChoices },
     }: TemplateOptions,
     innerText: StringUntrusted | StringPreEscaped | string,
-    type: 'no-choices' | 'no-results' | '' = '',
+    type: 'no-choices' | 'no-results' | 'add-choice' | '' = '',
   ): HTMLDivElement {
     const classes = [...getClassNames(item), ...getClassNames(itemChoice)];
 
-    if (type === 'no-choices') {
-      classes.push(...getClassNames(noChoices));
-    } else if (type === 'no-results') {
-      classes.push(...getClassNames(noResults));
+    // eslint-disable-next-line default-case
+    switch (type) {
+      case 'add-choice':
+        classes.push(...getClassNames(addChoice));
+        break;
+      case 'no-results':
+        classes.push(...getClassNames(noResults));
+        break;
+      case 'no-choices':
+        classes.push(...getClassNames(noChoices));
+        break;
     }
 
-    return Object.assign(document.createElement('div'), {
+    const notice = Object.assign(document.createElement('div'), {
       innerHTML: escapeForTemplate(allowHTML, innerText),
       className: classes.join(' '),
     });
+
+    if (type === 'add-choice') {
+      notice.dataset.choiceSelectable = '';
+      notice.dataset.choice = '';
+    }
+
+    return notice;
   },
 
   option({

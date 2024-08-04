@@ -17,6 +17,15 @@ export default class List {
     this.element.innerHTML = '';
   }
 
+  prepend(node: Element | DocumentFragment) {
+    const child = this.element.firstElementChild;
+    if (child) {
+      this.element.insertBefore(node, child);
+    } else {
+      this.element.append(node);
+    }
+  }
+
   append(node: Element | DocumentFragment): void {
     this.element.appendChild(node);
   }
