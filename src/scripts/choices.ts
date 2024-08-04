@@ -1301,8 +1301,11 @@ class Choices implements ChoicesInterface {
     this._removeItem(itemToRemove);
     this._triggerChange(itemToRemove.value);
 
-    if (this._isSelectOneElement && this._store.placeholderChoice) {
-      this._selectPlaceholderChoice(this._store.placeholderChoice);
+    if (this._isSelectOneElement && !this._hasNonChoicePlaceholder) {
+      const placeholderChoice = this._store.placeholderChoice;
+      if (placeholderChoice) {
+        this._selectPlaceholderChoice(placeholderChoice);
+      }
     }
   }
 
