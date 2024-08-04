@@ -289,21 +289,21 @@ const templates = {
       ).join(' ')}`,
     });
 
-    const descId = `${elementId}-description`;
-
+    let describedBy: HTMLElement = div;
     if (labelClass) {
       const spanLabel = Object.assign(document.createElement('span'), {
         innerHTML: escapeForTemplate(allowHTML, label),
         className: getClassNames(labelClass).join(' '),
       });
-      spanLabel.setAttribute('aria-describedby', descId);
+      describedBy = spanLabel;
       div.appendChild(spanLabel);
     } else {
       div.innerHTML = escapeForTemplate(allowHTML, label);
-      div.setAttribute('aria-describedby', descId);
     }
 
-    if (typeof labelDescription === 'string') {
+    if (labelDescription) {
+      const descId = `${elementId}-description`;
+      describedBy.setAttribute('aria-describedby', descId);
       const spanDesc = Object.assign(document.createElement('span'), {
         innerHTML: escapeForTemplate(allowHTML, labelDescription),
         id: descId,
