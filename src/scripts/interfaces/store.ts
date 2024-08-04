@@ -20,11 +20,6 @@ export interface Store {
   get items(): ChoiceFull[];
 
   /**
-   * Get active items from store
-   */
-  get activeItems(): ChoiceFull[];
-
-  /**
    * Get highlighted items from store
    */
   get highlightedActiveItems(): ChoiceFull[];
@@ -38,11 +33,6 @@ export interface Store {
    * Get active choices from store
    */
   get activeChoices(): ChoiceFull[];
-
-  /**
-   * Get selectable choices from store
-   */
-  get selectableChoices(): ChoiceFull[];
 
   /**
    * Get choices that can be searched (excluding placeholders)

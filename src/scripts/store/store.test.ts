@@ -184,15 +184,6 @@ describe('reducers/store', () => {
       });
     });
 
-    describe('selectableChoices getter', () => {
-      it('returns choices that are not disabled', () => {
-        const expectedResponse = state.choices.filter(
-          (choice) => !choice.disabled,
-        );
-        expect(instance.selectableChoices).to.eql(expectedResponse);
-      });
-    });
-
     describe('searchableChoices getter', () => {
       it('returns choices that are not placeholders and are selectable', () => {
         const expectedResponse = state.choices.filter(
