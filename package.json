@@ -40,9 +40,7 @@
     "public/assets/scripts",
     "public/assets/styles",
     "public/types",
-    "src",
-    "!src/**/*.test.js",
-    "types"
+    "src"
   ],
   "bugs": {
     "url": "https://github.com/jshjohnson/Choices/issues"
@@ -129,7 +127,7 @@
       "src/scripts/**/**/*.js"
     ],
     "exclude": [
-      "src/scripts/**/**/*.test.js"
+      "test"
     ]
   },
   "sideEffects": false,

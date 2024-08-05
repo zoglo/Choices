@@ -5,6 +5,7 @@
 ### Bug Fixes (from 10.2.0)
 * Fix `aria-describedby` was being assigned when it shouldn't be
 * Fix `select-one` placeholder could ignore the non-option placeholder configuration
+* Remove typescript types for tests from distribution
 
 ### Chore
 * Reduce bundle size from ~24KB to ~22.4KB

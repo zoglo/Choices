@@ -27,7 +27,7 @@
   "mocha.env": {
     "NODE_ENV": "test"
   },
-  "mocha.files.glob": "src/scripts/**/*.test.js",
+  "mocha.files.glob": "test/scripts/**/*.test.js",
   "mocha.requires": ["@babel/register", "./config/jsdom.js"],
   // for Windows collaborators
   "files.eol": "\n",
