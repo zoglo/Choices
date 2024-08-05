@@ -20,7 +20,7 @@
     "test:unit:coverage": "NODE_ENV=test nyc --reporter=lcov --reporter=text --reporter=text-summary mocha",
     "test:e2e": "run-p --race start cypress:run",
     "js:watch": "cross-env NODE_ENV=development node server.js",
-    "js:build": "webpack --config webpack.config.prod.js",
+    "js:build": "rm -rf public/types ; mkdir -p public/types ; webpack --config webpack.config.prod.js",
     "css:watch": "nodemon -e scss -x \"npm run css:build\"",
     "css:build": "run-s css:sass css:prefix css:min",
     "css:sass": "sass -I scss src/styles/base.scss public/assets/styles/base.css && sass -I scss src/styles/choices.scss public/assets/styles/choices.css",
