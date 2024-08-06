@@ -681,7 +681,7 @@ describe('templates', () => {
           ${label}
         </div>
       `);
-      const actualOutput = templates.notice(noticeOptions, label);
+      const actualOutput = templates.notice(noticeOptions, label, '');
 
       expectEqualElements(actualOutput, expectedOutput);
     });

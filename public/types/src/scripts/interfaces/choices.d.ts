@@ -2,7 +2,7 @@ import { WrappedInput, WrappedSelect, Container, List, Input, Dropdown } from '.
 import { Store } from './store';
 import { InputChoice } from './input-choice';
 import { State } from './state';
-import templates from '../templates';
+import { Templates } from './templates';
 import { Options } from './options';
 import { ChoiceFull } from './choice-full';
 import { GroupFull } from './group-full';
@@ -21,7 +21,7 @@ export interface Choices {
     _isSelectMultipleElement: boolean;
     _isSelectElement: boolean;
     _store: Store;
-    _templates: typeof templates;
+    _templates: Templates;
     _initialState: State;
     _currentState: State;
     _prevState: State;

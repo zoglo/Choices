@@ -15,13 +15,11 @@ import {
   unwrapStringForRaw,
   unwrapStringForEscaped,
 } from './lib/utils';
-// eslint-disable-next-line import/no-cycle
-import { Options } from './interfaces/options';
-
-type TemplateOptions = Pick<
-  Options,
-  'classNames' | 'allowHTML' | 'removeItemButtonAlignLeft'
->;
+import {
+  NoticeType,
+  TemplateOptions,
+  Templates as TemplatesInterface,
+} from './interfaces/templates';
 
 export const escapeForTemplate = (
   allowHTML: boolean,
@@ -58,7 +56,7 @@ const assignCustomProperties = (
   }
 };
 
-const templates = {
+const templates: TemplatesInterface = {
   containerOuter(
     { classNames: { containerOuter } }: TemplateOptions,
     dir: HTMLElement['dir'],
@@ -417,7 +415,7 @@ const templates = {
       classNames: { item, itemChoice, addChoice, noResults, noChoices },
     }: TemplateOptions,
     innerText: StringUntrusted | StringPreEscaped | string,
-    type: 'no-choices' | 'no-results' | 'add-choice' | '' = '',
+    type: NoticeType = '',
   ): HTMLDivElement {
     const classes = [...getClassNames(item), ...getClassNames(itemChoice)];
 

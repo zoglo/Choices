@@ -8,5 +8,9 @@ export declare namespace Types {
     type NoticeLimitFunction = (maxItemCount: number) => string;
     type FilterFunction = (value: string) => boolean;
     type ValueCompareFunction = (value1: string, value2: string) => boolean;
+    interface RecordToCompare {
+        value?: StringUntrusted | string;
+        label?: StringUntrusted | string;
+    }
 }
 //# sourceMappingURL=types.d.ts.map

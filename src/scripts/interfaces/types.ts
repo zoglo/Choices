@@ -20,4 +20,9 @@ export namespace Types {
     value1: string,
     value2: string,
   ) => boolean;
+
+  export interface RecordToCompare {
+    value?: StringUntrusted | string;
+    label?: StringUntrusted | string;
+  }
 }

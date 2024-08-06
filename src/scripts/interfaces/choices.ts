@@ -9,14 +9,14 @@ import {
 import { Store } from './store';
 import { InputChoice } from './input-choice';
 import { State } from './state';
-import templates from '../templates';
-// eslint-disable-next-line import/no-cycle
-import { Options } from './options';
+import { Templates } from './templates';
 import { ChoiceFull } from './choice-full';
 import { GroupFull } from './group-full';
+import { Options } from './options';
 
 export interface Choices {
   initialised: boolean;
+
   config: Options;
 
   passedElement: WrappedInput | WrappedSelect;
@@ -43,7 +43,7 @@ export interface Choices {
 
   _store: Store;
 
-  _templates: typeof templates;
+  _templates: Templates;
 
   _initialState: State;
 

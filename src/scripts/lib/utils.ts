@@ -4,6 +4,7 @@ import { EventType } from '../interfaces/event-type';
 import { StringUntrusted } from '../interfaces/string-untrusted';
 import { StringPreEscaped } from '../interfaces/string-pre-escaped';
 import { ChoiceFull } from '../interfaces/choice-full';
+import { Types } from '../interfaces/types';
 
 const getRandomNumber = (min: number, max: number): number =>
   Math.floor(Math.random() * (max - min) + min);
@@ -111,11 +112,6 @@ export const strToEl = ((): ((str: string) => Element) => {
   };
 })();
 
-export interface RecordToCompare {
-  value?: StringUntrusted | string;
-  label?: StringUntrusted | string;
-}
-
 export const unwrapStringForRaw = (
   s?: StringUntrusted | StringPreEscaped | string,
 ): string => {
@@ -155,8 +151,8 @@ export const unwrapStringForEscaped = (
 };
 
 export const sortByAlpha = (
-  { value, label = value }: RecordToCompare,
-  { value: value2, label: label2 = value2 }: RecordToCompare,
+  { value, label = value }: Types.RecordToCompare,
+  { value: value2, label: label2 = value2 }: Types.RecordToCompare,
 ): number =>
   unwrapStringForRaw(label).localeCompare(unwrapStringForRaw(label2), [], {
     sensitivity: 'base',

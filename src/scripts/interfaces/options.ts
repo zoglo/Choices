@@ -1,11 +1,8 @@
 import Fuse from 'fuse.js';
-// eslint-disable-next-line import/no-cycle
-import { Choices } from './choices';
 import { InputChoice } from './input-choice';
 import { ClassNames } from './class-names';
 import { PositionOptionsType } from './position-options-type';
 import { Types } from './types';
-import { RecordToCompare } from '../lib/utils';
 
 export const ObjectsInConfig = ['fuseOptions', 'classNames'];
 
@@ -395,7 +392,10 @@ export interface Options {
    *
    * @default sortByAlpha
    */
-  sorter: (current: RecordToCompare, next: RecordToCompare) => number;
+  sorter: (
+    current: Types.RecordToCompare,
+    next: Types.RecordToCompare,
+  ) => number;
 
   /**
    * Whether the input should show a placeholder. Used in conjunction with `placeholderValue`. If `placeholder` is set to true and no value is passed to `placeholderValue`, the passed input's placeholder attribute will be used as the placeholder value.
@@ -551,7 +551,7 @@ export interface Options {
   /**
    * Choices uses the great Fuse library for searching. You can find more options here: https://fusejs.io/api/options.html
    */
-  fuseOptions: Fuse.IFuseOptions<Choices>;
+  fuseOptions: Fuse.IFuseOptions<unknown>; // Fuse.IFuseOptions<Choices>;
 
   /**
    * ID of the connected label to improve a11y. If set, aria-labelledby will be added.
@@ -567,7 +567,7 @@ export interface Options {
    *
    * @default null
    */
-  callbackOnInit: ((this: Choices) => void) | null;
+  callbackOnInit: (() => void) | null;
 
   /**
    * Function to run on template creation. Through this callback it is possible to provide custom templates for the various components of Choices (see terminology). For Choices to work with custom templates, it is important you maintain the various data attributes defined here [https://github.com/jshjohnson/Choices/blob/67f29c286aa21d88847adfcd6304dc7d068dc01f/assets/scripts/src/choices.js#L1993-L2067].

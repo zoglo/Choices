@@ -52,6 +52,7 @@ import { GroupFull } from './interfaces/group-full';
 import { EventType, KeyCodeMap, PassedElementType } from './interfaces';
 import { Choices as ChoicesInterface } from './interfaces/choices';
 import { EventChoice } from './interfaces/event-choice';
+import { Templates } from './interfaces/templates';
 
 /** @see {@link http://browserhacks.com/#hack-acea075d0ac6954f275a70023906050c} */
 const IS_IE11 =
@@ -77,7 +78,7 @@ class Choices implements ChoicesInterface {
   static get defaults(): {
     options: Partial<Options>;
     allOptions: Options;
-    templates: typeof templates;
+    templates: Templates;
   } {
     return Object.preventExtensions({
       get options(): Partial<Options> {
@@ -86,7 +87,7 @@ class Choices implements ChoicesInterface {
       get allOptions(): Options {
         return DEFAULT_CONFIG;
       },
-      get templates(): typeof templates {
+      get templates(): Templates {
         return templates;
       },
     });
@@ -126,7 +127,7 @@ class Choices implements ChoicesInterface {
 
   _store: Store;
 
-  _templates: typeof templates;
+  _templates: Templates;
 
   _initialState: State;
 
@@ -2464,7 +2465,7 @@ class Choices implements ChoicesInterface {
       }
     });
 
-    this._templates = templating as typeof templates;
+    this._templates = templating as Templates;
   }
 
   _createElements(): void {

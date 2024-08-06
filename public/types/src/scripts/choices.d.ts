@@ -5,12 +5,12 @@ import { Notice } from './interfaces/notice';
 import { Options } from './interfaces/options';
 import { State } from './interfaces/state';
 import Store from './store/store';
-import templates from './templates';
 import { ChoiceFull } from './interfaces/choice-full';
 import { GroupFull } from './interfaces/group-full';
 import { PassedElementType } from './interfaces';
 import { Choices as ChoicesInterface } from './interfaces/choices';
 import { EventChoice } from './interfaces/event-choice';
+import { Templates } from './interfaces/templates';
 /**
  * Choices
  * @author Josh Johnson<josh@joshuajohnson.co.uk>
@@ -19,7 +19,7 @@ declare class Choices implements ChoicesInterface {
     static get defaults(): {
         options: Partial<Options>;
         allOptions: Options;
-        templates: typeof templates;
+        templates: Templates;
     };
     initialised: boolean;
     config: Options;
@@ -38,7 +38,7 @@ declare class Choices implements ChoicesInterface {
     _hasNonChoicePlaceholder: boolean;
     _canAddUserChoices: boolean;
     _store: Store;
-    _templates: typeof templates;
+    _templates: Templates;
     _initialState: State;
     _currentState: State;
     _prevState: State;
