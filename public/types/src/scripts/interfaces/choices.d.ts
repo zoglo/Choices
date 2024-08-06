@@ -3,9 +3,9 @@ import { Store } from './store';
 import { InputChoice } from './input-choice';
 import { State } from './state';
 import { Templates } from './templates';
-import { Options } from './options';
 import { ChoiceFull } from './choice-full';
 import { GroupFull } from './group-full';
+import { Options } from './options';
 export interface Choices {
     initialised: boolean;
     config: Options;

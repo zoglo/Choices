@@ -2,7 +2,7 @@ import { EventType } from '../interfaces/event-type';
 import { StringUntrusted } from '../interfaces/string-untrusted';
 import { StringPreEscaped } from '../interfaces/string-pre-escaped';
 import { ChoiceFull } from '../interfaces/choice-full';
-import { Types } from '../interfaces';
+import { Types } from '../interfaces/types';
 export declare const generateId: (element: HTMLInputElement | HTMLSelectElement, prefix: string) => string;
 export declare const getAdjacentEl: (startEl: Element, selector: string, direction?: number) => Element;
 export declare const isScrolledIntoView: (element: HTMLElement, parent: HTMLElement, direction?: number) => boolean;
