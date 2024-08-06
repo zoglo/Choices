@@ -942,6 +942,7 @@
 
     <!-- Google Analytics - Ignore me -->
     <script>
+      try {
       window.ga =
         window.ga ||
         function() {
@@ -950,6 +951,9 @@
       ga.l = +new Date();
       ga('create', 'UA-31575166-1', 'auto');
       ga('send', 'pageview');
+      } catch (e) {
+        console.log(e);
+      }
     </script>
     <script async src="https://www.google-analytics.com/analytics.js"></script>
     <!-- End Google Analytics -->
