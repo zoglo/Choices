@@ -83,7 +83,7 @@ export default class Store implements IStore {
    * Get active choices from store
    */
   get activeChoices(): ChoiceFull[] {
-    return this.choices.filter((choice) => !choice.disabled && choice.active);
+    return this.choices.filter((choice) => choice.active);
   }
 
   /**

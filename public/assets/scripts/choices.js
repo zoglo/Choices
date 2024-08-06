@@ -3706,7 +3706,7 @@ var Store = /** @class */function () {
      */
     get: function () {
       return this.choices.filter(function (choice) {
-        return !choice.disabled && choice.active;
+        return choice.active;
       });
     },
     enumerable: false,
