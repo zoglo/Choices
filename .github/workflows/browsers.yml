@@ -86,7 +86,7 @@ jobs:
       - run: echo "$env:ChromeWebDriver" >> $GITHUB_PATH
         if: matrix.browser == 'chrome' && matrix.os == 'windows-latest'
 
-      - run: npm i --no-optional --no-audit selenium-webdriver pixelmatch pngjs
+      - run: npm i --no-optional --no-audit selenium-webdriver pixelmatch@5.3.0 pngjs
       - run: node .github/actions-scripts/selenium.js
         env:
           BROWSER: ${{ matrix.browser }}
@@ -118,7 +118,7 @@ jobs:
         env:
           CYPRESS_INSTALL_BINARY: 0
           HUSKY_SKIP_INSTALL: true
-      - run: npm i --no-optional --no-audit puppeteer pixelmatch pngjs
+      - run: npm i --no-optional --no-audit puppeteer pixelmatch@5.3.0 pngjs
       - run: node .github/actions-scripts/puppeteer.js
         env:
           PORT: 0

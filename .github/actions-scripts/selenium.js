@@ -2,7 +2,7 @@ const path = require('path');
 const { readFileSync, writeFileSync, mkdirSync } = require('fs');
 const { once } = require('events');
 
-const pixelmatch = import('pixelmatch');
+const pixelmatch = require('pixelmatch')
 const { PNG } = require('pngjs');
 const {
   Builder,

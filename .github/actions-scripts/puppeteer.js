@@ -3,7 +3,7 @@ const path = require('path');
 const { once } = require('events');
 
 const puppeteer = require('puppeteer');
-const pixelmatch = import('pixelmatch');
+const pixelmatch = require('pixelmatch');
 const { PNG } = require('pngjs');
 
 const server = require('../../server');
