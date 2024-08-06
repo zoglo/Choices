@@ -1587,14 +1587,6 @@ var Choices = /** @class */function () {
       this.showDropdown();
       return;
     }
-    /*
-    Old:
-     - add if there is an input value, add that as an item
-     - add the highlighted item
-          New:
-     - if "press enter to add" is selected then add the input as a new item
-     - otherwise add the highlighted item(s)
-     */
     // add the highlighted item
     if (hasActiveDropdown) {
       var highlightedChoice = this.dropdown.element.querySelector((0, utils_1.getClassNamesSelector)(this.config.classNames.highlightedState));
