@@ -67,7 +67,9 @@ export default class Store implements IStore {
    * Get highlighted items from store
    */
   get highlightedActiveItems(): ChoiceFull[] {
-    return this.items.filter((item) => !item.disabled && item.active && item.highlighted);
+    return this.items.filter(
+      (item) => !item.disabled && item.active && item.highlighted,
+    );
   }
 
   /**
@@ -88,14 +90,18 @@ export default class Store implements IStore {
    * Get choices that can be searched (excluding placeholders)
    */
   get searchableChoices(): ChoiceFull[] {
-    return this.choices.filter((choice) => !choice.disabled && !choice.placeholder);
+    return this.choices.filter(
+      (choice) => !choice.disabled && !choice.placeholder,
+    );
   }
 
   /**
    * Get placeholder choice from store
    */
   get placeholderChoice(): ChoiceFull | undefined {
-    return [...this.choices].reverse().find((choice) => !choice.disabled && choice.placeholder);
+    return [...this.choices]
+      .reverse()
+      .find((choice) => !choice.disabled && choice.placeholder);
   }
 
   /**

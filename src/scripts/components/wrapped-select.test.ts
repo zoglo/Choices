@@ -59,7 +59,10 @@ describe('components/wrappedSelect', () => {
 
     methods.forEach((method) => {
       beforeEach(() => {
-        stub(WrappedElement.prototype, method as keyof WrappedElement<HTMLSelectElement>);
+        stub(
+          WrappedElement.prototype,
+          method as keyof WrappedElement<HTMLSelectElement>,
+        );
       });
 
       afterEach(() => {

@@ -7,7 +7,9 @@ import { defaultState } from './index';
 
 describe('reducers/groups', () => {
   it('should return same state when no action matches', () => {
-    expect(groups(defaultState.groups, {} as any)).to.equal(defaultState.groups);
+    expect(groups(defaultState.groups, {} as any)).to.equal(
+      defaultState.groups,
+    );
   });
 
   describe('when groups do not exist', () => {

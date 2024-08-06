@@ -220,7 +220,9 @@ export const getClassNamesSelector = (
   return `.${option}`;
 };
 
-export const parseCustomProperties = (customProperties?: string): object|string => {
+export const parseCustomProperties = (
+  customProperties?: string,
+): object | string => {
   if (typeof customProperties !== 'undefined') {
     try {
       return JSON.parse(customProperties);

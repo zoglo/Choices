@@ -7,7 +7,9 @@ import { defaultState } from './index';
 
 describe('reducers/choices', () => {
   it('should return same state when no action matches', () => {
-    expect(choices(defaultState.choices, {} as any)).to.equal(defaultState.choices);
+    expect(choices(defaultState.choices, {} as any)).to.equal(
+      defaultState.choices,
+    );
   });
 
   describe('when choices do not exist', () => {

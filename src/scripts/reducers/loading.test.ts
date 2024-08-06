@@ -5,7 +5,9 @@ import { defaultState } from './index';
 
 describe('reducers/loading', () => {
   it('should return same state when no action matches', () => {
-    expect(general(defaultState.loading, {} as any)).to.equal(defaultState.loading);
+    expect(general(defaultState.loading, {} as any)).to.equal(
+      defaultState.loading,
+    );
   });
 
   describe('SET_IS_LOADING', () => {

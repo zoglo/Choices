@@ -35,10 +35,14 @@ const isEmptyObject = (obj: object): boolean => {
       return false;
     }
   }
+
   return true;
 };
 
-const assignCustomProperties = (el: HTMLElement, customProperties?: CustomProperties): void => {
+const assignCustomProperties = (
+  el: HTMLElement,
+  customProperties?: CustomProperties,
+): void => {
   if (!customProperties) {
     return;
   }
@@ -46,10 +50,13 @@ const assignCustomProperties = (el: HTMLElement, customProperties?: CustomProper
 
   if (typeof customProperties === 'string') {
     dataset.customProperties = customProperties;
-  } else if (typeof customProperties === 'object' && !isEmptyObject(customProperties)) {
+  } else if (
+    typeof customProperties === 'object' &&
+    !isEmptyObject(customProperties)
+  ) {
     dataset.customProperties = JSON.stringify(customProperties);
   }
-}
+};
 
 const templates = {
   containerOuter(

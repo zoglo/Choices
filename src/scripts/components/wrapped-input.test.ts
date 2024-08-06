@@ -37,7 +37,10 @@ describe('components/wrappedInput', () => {
     methods.forEach((method) => {
       describe(method, () => {
         beforeEach(() => {
-          stub(WrappedElement.prototype, method as keyof WrappedElement<HTMLInputElement>);
+          stub(
+            WrappedElement.prototype,
+            method as keyof WrappedElement<HTMLInputElement>,
+          );
         });
 
         afterEach(() => {

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { StringUntrusted } from './string-untrusted';
+
 export type CustomProperties = Record<string, any> | string;
 
 export interface ChoiceFull {

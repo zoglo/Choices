@@ -1,4 +1,3 @@
-
 import { InputChoice } from '../interfaces/input-choice';
 import { InputGroup } from '../interfaces/input-group';
 import { GroupFull } from '../interfaces/group-full';
