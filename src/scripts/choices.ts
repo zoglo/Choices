@@ -285,7 +285,8 @@ class Choices implements ChoicesInterface {
         classNames: this.config.classNames,
         template: (data: ChoiceFull): HTMLOptionElement =>
           this._templates.option(data),
-        extractPlaceholder: !this._hasNonChoicePlaceholder,
+        extractPlaceholder:
+          this.config.placeholder && !this._hasNonChoicePlaceholder,
       });
     }
 
