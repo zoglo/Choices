@@ -30,7 +30,7 @@ jobs:
 
       # we don't need to build here, as even minized assets expected to be commited
 
-      - run: npx bundlesize
+      - run: npm run bundlesize
         env:
           CI: true
           BUNDLESIZE_GITHUB_TOKEN: ${{secrets.BUNDLESIZE_GITHUB_TOKEN}}
