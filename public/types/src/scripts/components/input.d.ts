@@ -35,4 +35,3 @@ export default class Input {
     _onFocus(): void;
     _onBlur(): void;
 }
-//# sourceMappingURL=input.d.ts.map

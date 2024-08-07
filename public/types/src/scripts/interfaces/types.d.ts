@@ -13,4 +13,3 @@ export declare namespace Types {
         label?: StringUntrusted | string;
     }
 }
-//# sourceMappingURL=types.d.ts.map

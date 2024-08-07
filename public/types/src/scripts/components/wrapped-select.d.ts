@@ -18,4 +18,3 @@ export default class WrappedSelect extends WrappedElement<HTMLSelectElement> {
     _optionToChoice(option: HTMLOptionElement): ChoiceFull;
     _optgroupToChoice(optgroup: HTMLOptGroupElement): GroupFull;
 }
-//# sourceMappingURL=wrapped-select.d.ts.map

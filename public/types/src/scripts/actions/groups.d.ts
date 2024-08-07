@@ -5,4 +5,3 @@ export interface AddGroupAction {
     group: GroupFull;
 }
 export declare const addGroup: (group: GroupFull) => AddGroupAction;
-//# sourceMappingURL=groups.d.ts.map

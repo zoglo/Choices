@@ -57,4 +57,3 @@ export interface ClassNames {
     /** @default ['has-no-choices'] */
     noChoices: string | Array<string>;
 }
-//# sourceMappingURL=class-names.d.ts.map

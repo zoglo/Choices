@@ -11,4 +11,3 @@ export declare const enum ActionType {
     CLEAR_ALL = "CLEAR_ALL",
     SET_IS_LOADING = "SET_IS_LOADING"
 }
-//# sourceMappingURL=action-type.d.ts.map

@@ -17,4 +17,3 @@ export interface ChoiceFull {
     value: string;
     score: number;
 }
-//# sourceMappingURL=choice-full.d.ts.map

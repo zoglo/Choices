@@ -28,4 +28,3 @@ export declare const removeChoice: (value: any) => RemoveChoiceAction;
 export declare const filterChoices: (results: Result<ChoiceFull>[]) => FilterChoicesAction;
 export declare const activateChoices: (active?: boolean) => ActivateChoicesAction;
 export declare const clearChoices: () => ClearChoicesAction;
-//# sourceMappingURL=choices.d.ts.map

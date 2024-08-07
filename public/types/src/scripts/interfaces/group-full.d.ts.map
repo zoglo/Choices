@@ -1,1 +1,0 @@
-{"version":3,"file":"group-full.d.ts","sourceRoot":"","sources":["../../../../../src/scripts/interfaces/group-full.ts"],"names":[],"mappings":"AAEA,OAAO,EAAE,UAAU,EAAE,MAAM,eAAe,CAAC;AAE3C,MAAM,WAAW,SAAS;IACxB,EAAE,EAAE,MAAM,CAAC;IACX,MAAM,EAAE,OAAO,CAAC;IAChB,QAAQ,EAAE,OAAO,CAAC;IAClB,KAAK,EAAE,MAAM,CAAC;IACd,OAAO,CAAC,EAAE,mBAAmB,CAAC;IAC9B,OAAO,EAAE,UAAU,EAAE,CAAC;CACvB"}

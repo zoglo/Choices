@@ -4,4 +4,3 @@ import { ChoiceFull } from '../interfaces/choice-full';
 type ActionTypes = AddChoiceAction | RemoveChoiceAction | FilterChoicesAction | ActivateChoicesAction | ClearChoicesAction | AddItemAction | RemoveItemAction | Record<string, never>;
 export default function choices(state?: ChoiceFull[], action?: ActionTypes): ChoiceFull[];
 export {};
-//# sourceMappingURL=choices.d.ts.map

@@ -126,4 +126,3 @@ export interface EventMap {
         el: PassedElement;
     }>;
 }
-//# sourceMappingURL=passed-element.d.ts.map

@@ -4,4 +4,3 @@ export interface EventChoice extends InputChoice {
     groupValue?: string;
     keyCode?: number;
 }
-//# sourceMappingURL=event-choice.d.ts.map

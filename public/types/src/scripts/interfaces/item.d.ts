@@ -15,4 +15,3 @@ export interface Choice extends InputChoice {
  */
 export interface Group extends InputGroup {
 }
-//# sourceMappingURL=item.d.ts.map

@@ -1,8 +1,9 @@
 {
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
-    "declaration": false,
-    "types": ["mocha"]
+    "composite": false,
+    "noImplicitAny": false,
+    "types": ["vitest/globals"],
   },
   "include": [".", "../src"]
 }

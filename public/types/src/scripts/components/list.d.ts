@@ -15,4 +15,3 @@ export default class List {
     _scrollUp(scrollPos: number, strength: number, destination: number): void;
     _animateScroll(destination: number, direction: number): void;
 }
-//# sourceMappingURL=list.d.ts.map

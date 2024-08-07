@@ -6,4 +6,3 @@ export interface State {
     items: ChoiceFull[];
     loading: number;
 }
-//# sourceMappingURL=state.d.ts.map

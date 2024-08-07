@@ -43,4 +43,3 @@ export interface Choices {
     _presetItems: (InputChoice | string)[];
     _initialItems: string[];
 }
-//# sourceMappingURL=choices.d.ts.map

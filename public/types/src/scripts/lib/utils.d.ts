@@ -21,4 +21,3 @@ export declare const diff: (a: Record<string, any>, b: Record<string, any>) => s
 export declare const getClassNames: (ClassNames: Array<string> | string) => Array<string>;
 export declare const getClassNamesSelector: (option: string | Array<string> | null) => string;
 export declare const parseCustomProperties: (customProperties?: string) => object | string;
-//# sourceMappingURL=utils.d.ts.map

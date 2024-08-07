@@ -16,4 +16,3 @@ export interface HighlightItemAction {
 export declare const addItem: (item: ChoiceFull) => AddItemAction;
 export declare const removeItem: (item: ChoiceFull) => RemoveItemAction;
 export declare const highlightItem: (id: number, highlighted: boolean) => HighlightItemAction;
-//# sourceMappingURL=items.d.ts.map

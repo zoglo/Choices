@@ -8,4 +8,3 @@ export interface InputGroup {
     value: string;
     choices: InputChoice[];
 }
-//# sourceMappingURL=input-group.d.ts.map

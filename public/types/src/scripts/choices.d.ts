@@ -16,6 +16,7 @@ import { Templates } from './interfaces/templates';
  * @author Josh Johnson<josh@joshuajohnson.co.uk>
  */
 declare class Choices implements ChoicesInterface {
+    static version: string;
     static get defaults(): {
         options: Partial<Options>;
         allOptions: Options;
@@ -212,4 +213,3 @@ declare class Choices implements ChoicesInterface {
     _generatePlaceholderValue(): string | null;
 }
 export default Choices;
-//# sourceMappingURL=choices.d.ts.map

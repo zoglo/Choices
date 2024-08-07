@@ -20,4 +20,3 @@ export interface Templates {
     notice({ allowHTML, classNames: { item, itemChoice, addChoice, noResults, noChoices }, }: TemplateOptions, innerText: StringUntrusted | StringPreEscaped | string, type: NoticeType): HTMLDivElement;
     option(choice: ChoiceFull): HTMLOptionElement;
 }
-//# sourceMappingURL=templates.d.ts.map

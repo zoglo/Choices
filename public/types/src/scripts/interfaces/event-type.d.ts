@@ -10,4 +10,3 @@ export declare const enum EventType {
     highlightChoice = "highlightChoice",
     unhighlightItem = "unhighlightItem"
 }
-//# sourceMappingURL=event-type.d.ts.map

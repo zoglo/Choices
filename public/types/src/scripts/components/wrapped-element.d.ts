@@ -18,4 +18,3 @@ export default class WrappedElement<T extends HTMLInputElement | HTMLSelectEleme
     disable(): void;
     triggerEvent(eventType: EventType, data?: object): void;
 }
-//# sourceMappingURL=wrapped-element.d.ts.map

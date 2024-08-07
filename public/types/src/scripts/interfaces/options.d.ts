@@ -553,4 +553,3 @@ export interface Options {
     callbackOnCreateTemplates: ((template: Types.StrToEl, escapeForTemplate: Types.EscapeForTemplateFn) => void) | null;
     appendGroupInSearch: false;
 }
-//# sourceMappingURL=options.d.ts.map

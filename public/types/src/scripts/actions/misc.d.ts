@@ -8,4 +8,3 @@ export interface SetIsLoadingAction {
 }
 export declare const clearAll: () => ClearAllAction;
 export declare const setIsLoading: (isLoading: boolean) => SetIsLoadingAction;
-//# sourceMappingURL=misc.d.ts.map

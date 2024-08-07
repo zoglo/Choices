@@ -35,4 +35,3 @@ export default class Container {
     addLoadingState(): void;
     removeLoadingState(): void;
 }
-//# sourceMappingURL=container.d.ts.map

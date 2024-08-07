@@ -6,4 +6,3 @@ type MappedInputTypeToChoiceType<T extends string | InputChoice | InputGroup> = 
 export declare const stringToHtmlClass: (input: any) => string[] | undefined;
 export declare const mapInputToChoice: <T extends string | InputChoice | InputGroup>(value: T, allowGroup: boolean) => MappedInputTypeToChoiceType<T>;
 export {};
-//# sourceMappingURL=choice-input.d.ts.map

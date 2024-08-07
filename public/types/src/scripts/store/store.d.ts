@@ -66,4 +66,3 @@ export default class Store implements IStore {
      */
     getGroupById(id: number): GroupFull | undefined;
 }
-//# sourceMappingURL=store.d.ts.map

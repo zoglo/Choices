@@ -54,4 +54,3 @@ export interface Store {
      */
     getGroupById(id: number): GroupFull | undefined;
 }
-//# sourceMappingURL=store.d.ts.map

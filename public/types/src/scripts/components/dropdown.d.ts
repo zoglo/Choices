@@ -23,4 +23,3 @@ export default class Dropdown {
      */
     hide(): this;
 }
-//# sourceMappingURL=dropdown.d.ts.map

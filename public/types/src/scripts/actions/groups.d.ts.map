@@ -1,1 +1,0 @@
-{"version":3,"file":"groups.d.ts","sourceRoot":"","sources":["../../../../../src/scripts/actions/groups.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,SAAS,EAAE,MAAM,0BAA0B,CAAC;AACrD,OAAO,EAAE,UAAU,EAAE,MAAM,eAAe,CAAC;AAE3C,MAAM,WAAW,cAAc;IAC7B,IAAI,EAAE,UAAU,CAAC,SAAS,CAAC;IAC3B,KAAK,EAAE,SAAS,CAAC;CAClB;AAED,eAAO,MAAM,QAAQ,UAAW,SAAS,KAAG,cAG1C,CAAC"}

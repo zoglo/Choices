@@ -4,4 +4,3 @@ export interface Notice {
     response: boolean;
     notice: StringUntrusted | StringPreEscaped | string;
 }
-//# sourceMappingURL=notice.d.ts.map

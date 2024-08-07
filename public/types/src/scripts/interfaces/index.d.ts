@@ -14,4 +14,3 @@ export * from './passed-element-type';
 export * from './position-options-type';
 export * from './state';
 export * from './types';
-//# sourceMappingURL=index.d.ts.map

@@ -9,4 +9,3 @@ import { Templates as TemplatesInterface } from './interfaces/templates';
 export declare const escapeForTemplate: (allowHTML: boolean, s: StringUntrusted | StringPreEscaped | string) => string;
 declare const templates: TemplatesInterface;
 export default templates;
-//# sourceMappingURL=templates.d.ts.map
