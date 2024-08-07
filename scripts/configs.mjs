@@ -4,6 +4,7 @@ import babel from '@rollup/plugin-babel';
 import terser from '@rollup/plugin-terser';
 import typescript from '@rollup/plugin-typescript';
 import * as fs from 'node:fs';
+import server from './server.mjs';
 
 // @ts-ignore
 const pckg = require('../package.json');
@@ -134,6 +135,11 @@ candidateBuilds.forEach((build) => {
 buildConfig = buildConfig.filter((b) => !!b);
 if (buildConfig.length === 0) {
   console.log('No valid build targets or feature combinations.');
+} else {
+  const watch = server();
+  if (watch) {
+    buildConfig[0].output[0].plugins.push(watch)
+  }
 }
 
 // noinspection JSUnusedGlobalSymbols
