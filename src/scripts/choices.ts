@@ -297,7 +297,8 @@ class Choices implements ChoicesInterface {
     this._prevState = defaultState;
     this._currentValue = '';
     this.config.searchEnabled =
-      !this._isTextElement && this.config.searchEnabled;
+      (!this._isTextElement && this.config.searchEnabled) ||
+      this._elementType === SELECT_MULTIPLE_TYPE;
     this._canSearch = this.config.searchEnabled;
     this._isScrollingOnIe = false;
     this._highlightPosition = 0;
