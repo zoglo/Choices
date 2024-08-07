@@ -8,7 +8,9 @@ import { defaultState } from '../../../src/scripts/reducers';
 
 describe('reducers/items', () => {
   it('should return same state when no action matches', () => {
-    expect(items(defaultState.items, {} as any)).to.deep.equal(defaultState.items);
+    expect(items(defaultState.items, {} as any)).to.deep.equal(
+      defaultState.items,
+    );
   });
 
   describe('when items do not exist', () => {

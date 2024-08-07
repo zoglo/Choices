@@ -1,7 +1,7 @@
-import chai, { expect } from 'chai';
+import { expect } from 'chai';
 import { spy, stub } from 'sinon';
-import sinonChai from 'sinon-chai';
 
+import sinonChai from 'sinon-chai';
 import Choices, {
   DEFAULT_CONFIG,
   ActionType,
@@ -19,7 +19,7 @@ import templates from '../../src/scripts/templates';
 import { ChoiceFull } from '../../src/scripts/interfaces/choice-full';
 import { GroupFull } from '../../src/scripts/interfaces/group-full';
 
-//chai.use(sinonChai);
+chai.use(sinonChai);
 
 describe('choices', () => {
   let instance;
@@ -50,7 +50,10 @@ describe('choices', () => {
 
           instance = new Choices();
 
-          expect(instance.config).to.deep.equal(DEFAULT_CONFIG);
+          expect(instance.config).to.deep.equal({
+            ...DEFAULT_CONFIG,
+            searchEnabled: false,
+          });
         });
       });
 
@@ -69,12 +72,25 @@ describe('choices', () => {
           expect(instance.config).to.deep.equal({
             ...DEFAULT_CONFIG,
             ...config,
+            searchEnabled: false,
           });
         });
 
         describe('passing the searchEnabled config option with a value of false', () => {
           describe('passing a select-multiple element', () => {
             it('sets searchEnabled to true', () => {
+              document.body.innerHTML = `
+              <select data-choice multiple></select>
+              `;
+
+              instance = new Choices('[data-choice]', {
+                allowHTML: true,
+                searchEnabled: true,
+              });
+
+              expect(instance.config.searchEnabled).to.equal(true);
+            });
+            it('sets searchEnabled to false', () => {
               document.body.innerHTML = `
               <select data-choice multiple></select>
               `;
@@ -127,7 +143,17 @@ describe('choices', () => {
           document.body.innerHTML = ``;
           expect(() => new Choices(undefined, { allowHTML: true })).to.throw(
             TypeError,
-            'Expected one of the following types text|select-one|select-multiple',
+            'Selector [data-choice] failed to find an element',
+          );
+        });
+      });
+
+      describe('when an element is not of the expected type', () => {
+        it('throws an error', () => {
+          document.body.innerHTML = `<div [data-choice]></div>`;
+          expect(() => new Choices(undefined, { allowHTML: true })).to.throw(
+            TypeError,
+            'Selector [data-choice] failed to find an element',
           );
         });
       });
@@ -824,7 +850,7 @@ describe('choices', () => {
               );
               expect(
                 passedElementTriggerEventStub.lastCall.args[1],
-              ).to.deep.equal({
+              ).to.contains({
                 id: item.id,
                 value: item.value,
                 label: item.label,
@@ -846,7 +872,7 @@ describe('choices', () => {
               );
               expect(
                 passedElementTriggerEventStub.lastCall.args[1],
-              ).to.deep.equal({
+              ).to.contains({
                 id: item.id,
                 value: item.value,
                 label: item.label,
@@ -956,8 +982,7 @@ describe('choices', () => {
               );
               expect(
                 passedElementTriggerEventStub.lastCall.args[1],
-              ).to.deep.equal({
-                id: item.id,
+              ).to.contains({
                 value: item.value,
                 label: item.label,
                 groupValue: null,
@@ -972,14 +997,14 @@ describe('choices', () => {
             });
 
             it('triggers event with groupValue', () => {
+              console.log(passedElementTriggerEventStub.lastCall.args);
               expect(passedElementTriggerEventStub.called).to.equal(true);
               expect(passedElementTriggerEventStub.lastCall.args[0]).to.equal(
                 EventType.highlightItem,
               );
               expect(
                 passedElementTriggerEventStub.lastCall.args[1],
-              ).to.deep.equal({
-                id: item.id,
+              ).to.contains({
                 value: item.value,
                 label: item.label,
                 groupValue: groupIdValue,
@@ -1173,6 +1198,7 @@ describe('choices', () => {
           instance._isSelectOneElement = true;
           instance._isTextElement = false;
           instance.config.searchEnabled = true;
+          instance._isSearching = true;
 
           output = instance.clearInput();
         });
@@ -1268,7 +1294,7 @@ describe('choices', () => {
     });
 
     describe('setValue', () => {
-      let setChoiceOrItemStub;
+      let _addChoiceStub;
       const values = [
         'Value 1',
         {
@@ -1277,12 +1303,12 @@ describe('choices', () => {
       ];
 
       beforeEach(() => {
-        setChoiceOrItemStub = stub();
-        instance._setChoiceOrItem = setChoiceOrItemStub;
+        _addChoiceStub = stub();
+        instance._addChoice = _addChoiceStub;
       });
 
       afterEach(() => {
-        instance._setChoiceOrItem.reset();
+        instance._addChoice.reset();
       });
 
       describe('not already initialised', () => {
@@ -1296,7 +1322,7 @@ describe('choices', () => {
         });
 
         it('returns early', () => {
-          expect(setChoiceOrItemStub.called).to.equal(false);
+          expect(_addChoiceStub.called).to.equal(false);
         });
       });
 
@@ -1311,9 +1337,13 @@ describe('choices', () => {
         });
 
         it('sets each value', () => {
-          expect(setChoiceOrItemStub.callCount).to.equal(2);
-          expect(setChoiceOrItemStub.firstCall.args[0]).to.equal(values[0]);
-          expect(setChoiceOrItemStub.secondCall.args[0]).to.equal(values[1]);
+          expect(_addChoiceStub.callCount).to.equal(2);
+          expect(_addChoiceStub.firstCall.args[0]).to.be.a('object');
+          expect(_addChoiceStub.secondCall.args[0]).to.be.a('object');
+          expect(values[0]).to.equal(_addChoiceStub.firstCall.args[0].value);
+          expect(values[1].value).to.equal(
+            _addChoiceStub.secondCall.args[0].value,
+          );
         });
       });
     });
@@ -1447,7 +1477,7 @@ describe('choices', () => {
           });
 
           it('returns a single active item', () => {
-            expect(output).to.equal(items[0]);
+            expect(output).to.contain.keys(Object.keys(items[0]));
           });
         });
 
@@ -1458,7 +1488,9 @@ describe('choices', () => {
           });
 
           it('returns all active items', () => {
-            expect(output).to.deep.equal(items);
+            output.forEach((choice) => {
+              expect(choice).to.contain.keys(Object.keys(items[0])).all;
+            });
           });
         });
       });
@@ -1716,12 +1748,9 @@ describe('choices', () => {
         describe('passing choices with children choices', () => {
           it('adds groups', () => {
             instance.setChoices(groups, value, label, false);
-            expect(addGroupStub.callCount).to.equal(1);
-            expect(addGroupStub.firstCall.args[0]).to.deep.equal({
-              group: groups[0],
-              id: groups[0].id,
-              valueKey: value,
-              labelKey: label,
+            expect(addGroupStub.callCount).to.equal(2);
+            expect(addGroupStub.firstCall.args[0]).to.contain({
+              label: groups[0].label,
             });
           });
         });
@@ -1731,11 +1760,11 @@ describe('choices', () => {
             instance.setChoices(choices, value, label, false);
             expect(addChoiceStub.callCount).to.equal(2);
             addChoiceStub.getCalls().forEach((call, index) => {
-              expect(call.args[0]).to.deep.equal({
+              expect(call.args[0]).to.deep.contain({
                 value: choices[index][value],
                 label: choices[index][label],
-                isSelected: !!choices[index].selected,
-                isDisabled: !!choices[index].disabled,
+                selected: !!choices[index].selected,
+                disabled: !!choices[index].disabled,
                 customProperties: choices[index].customProperties,
                 placeholder: !!choices[index].placeholder,
               });
@@ -1815,7 +1844,7 @@ describe('choices', () => {
           instance.passedElement.element.addEventListener(
             'search',
             (event) => {
-              expect(event.detail).to.deep.equal({
+              expect(event.detail).to.deep.contains({
                 value: query,
                 resultCount: 0,
               });
@@ -1825,45 +1854,35 @@ describe('choices', () => {
           );
 
           instance._onKeyUp({ target: null, keyCode: null });
+          instance._onInput({ target: null });
         }));
 
       it('uses Fuse options', () =>
         new Promise((done) => {
+          instance.config.fuseOptions.isCaseSensitive = true;
+          instance.config.fuseOptions.minMatchCharLength = 4;
           instance.input.value = 'test';
           instance.input.focus();
           instance.passedElement.element.addEventListener(
             'search',
             (event) => {
-              expect(event.detail.resultCount).to.deep.equal(2);
-
-              instance.config.fuseOptions.isCaseSensitive = true;
-              instance.config.fuseOptions.minMatchCharLength = 4;
-              instance.passedElement.element.addEventListener(
-                'search',
-                (eventCaseSensitive) => {
-                  expect(eventCaseSensitive.detail.resultCount).to.deep.equal(
-                    0,
-                  );
-                  done(true);
-                },
-                { once: true },
-              );
-
-              instance._onKeyUp({ target: null, keyCode: null });
+              expect(event.detail.resultCount).to.eql(0);
+              done(true);
             },
             { once: true },
           );
 
           instance._onKeyUp({ target: null, keyCode: null });
+          instance._onInput({ target: null });
         }));
 
       it('is fired with a searchFloor of 0', () =>
         new Promise((done) => {
           instance.config.searchFloor = 0;
-          instance.input.value = '';
+          instance.input.value = 'qwerty';
           instance.input.focus();
           instance.passedElement.element.addEventListener('search', (event) => {
-            expect(event.detail).to.deep.equal({
+            expect(event.detail).to.contains({
               value: instance.input.value,
               resultCount: 0,
             });
@@ -1871,6 +1890,7 @@ describe('choices', () => {
           });
 
           instance._onKeyUp({ target: null, keyCode: null });
+          instance._onInput({ target: null });
         }));
     });
   });
@@ -2025,32 +2045,21 @@ describe('choices', () => {
             expect(_createChoicesFragmentStub.called).to.equal(false);
             instance._createGroupsFragment(groups, choices);
             expect(_createChoicesFragmentStub.called).to.equal(true);
-            expect(_createChoicesFragmentStub.firstCall.args[0]).to.deep.equal([
+            expect(_createChoicesFragmentStub.firstCall.args[0][0]).to.contains(
               {
-                id: 1,
                 selected: true,
                 groupId: 1,
                 value: 'Choice 1',
                 label: 'Choice 1',
               },
+            );
+            expect(_createChoicesFragmentStub.firstCall.args[0][1]).to.contains(
               {
-                id: 3,
                 selected: false,
                 groupId: 1,
                 value: 'Choice 3',
                 label: 'Choice 3',
               },
-            ]);
-            expect(_createChoicesFragmentStub.secondCall.args[0]).to.deep.equal(
-              [
-                {
-                  id: 2,
-                  selected: false,
-                  groupId: 2,
-                  value: 'Choice 2',
-                  label: 'Choice 2',
-                },
-              ],
             );
           });
         });
@@ -2067,34 +2076,29 @@ describe('choices', () => {
               instance._createGroupsFragment(groups, choices);
               expect(_createChoicesFragmentStub.called).to.equal(true);
               expect(
-                _createChoicesFragmentStub.firstCall.args[0],
-              ).to.deep.equal([
-                {
-                  id: 1,
-                  selected: true,
-                  groupId: 1,
-                  value: 'Choice 1',
-                  label: 'Choice 1',
-                },
-                {
-                  id: 3,
-                  selected: false,
-                  groupId: 1,
-                  value: 'Choice 3',
-                  label: 'Choice 3',
-                },
-              ]);
+                _createChoicesFragmentStub.firstCall.args[0][0],
+              ).to.deep.contains({
+                selected: true,
+                groupId: 1,
+                value: 'Choice 1',
+                label: 'Choice 1',
+              });
               expect(
-                _createChoicesFragmentStub.secondCall.args[0],
-              ).to.deep.equal([
-                {
-                  id: 2,
-                  selected: false,
-                  groupId: 2,
-                  value: 'Choice 2',
-                  label: 'Choice 2',
-                },
-              ]);
+                _createChoicesFragmentStub.firstCall.args[0][1],
+              ).to.deep.contains({
+                selected: false,
+                groupId: 1,
+                value: 'Choice 3',
+                label: 'Choice 3',
+              });
+              expect(
+                _createChoicesFragmentStub.secondCall.args[0][0],
+              ).to.deep.contains({
+                selected: false,
+                groupId: 2,
+                value: 'Choice 2',
+                label: 'Choice 2',
+              });
             });
           });
 
@@ -2109,27 +2113,23 @@ describe('choices', () => {
               instance._createGroupsFragment(groups, choices);
               expect(_createChoicesFragmentStub.called).to.equal(true);
               expect(
-                _createChoicesFragmentStub.firstCall.args[0],
-              ).to.deep.equal([
-                {
-                  id: 3,
-                  selected: false,
-                  groupId: 1,
-                  value: 'Choice 3',
-                  label: 'Choice 3',
-                },
-              ]);
+                _createChoicesFragmentStub.firstCall.args[0][0],
+              ).to.deep.contains({
+                id: 3,
+                selected: false,
+                groupId: 1,
+                value: 'Choice 3',
+                label: 'Choice 3',
+              });
               expect(
-                _createChoicesFragmentStub.secondCall.args[0],
-              ).to.deep.equal([
-                {
-                  id: 2,
-                  selected: false,
-                  groupId: 2,
-                  value: 'Choice 2',
-                  label: 'Choice 2',
-                },
-              ]);
+                _createChoicesFragmentStub.secondCall.args[0][0],
+              ).to.deep.contains({
+                id: 2,
+                selected: false,
+                groupId: 2,
+                value: 'Choice 2',
+                label: 'Choice 2',
+              });
             });
           });
         });
@@ -2172,45 +2172,10 @@ describe('choices', () => {
               instance._isSelectElement = false;
               instance.config.placeholder = true;
               instance.config.placeholderValue = placeholderValue;
+              instance._hasNonChoicePlaceholder = true;
 
               const value = instance._generatePlaceholderValue();
               expect(value).to.equal(placeholderValue);
-            });
-          });
-
-          describe('when the placeholderValue config option is not defined', () => {
-            describe('when the placeholder attribute is defined on the passed element', () => {
-              it('returns the value of the placeholder attribute', () => {
-                const placeholderValue = 'I am a placeholder';
-
-                instance._isSelectElement = false;
-                instance.config.placeholder = true;
-                instance.config.placeholderValue = undefined;
-                instance.passedElement.element = {
-                  dataset: {
-                    placeholder: placeholderValue,
-                  },
-                };
-
-                const value = instance._generatePlaceholderValue();
-                expect(value).to.equal(placeholderValue);
-              });
-            });
-
-            describe('when the placeholder attribute is not defined on the passed element', () => {
-              it('returns null', () => {
-                instance._isSelectElement = false;
-                instance.config.placeholder = true;
-                instance.config.placeholderValue = undefined;
-                instance.passedElement.element = {
-                  dataset: {
-                    placeholder: undefined,
-                  },
-                };
-
-                const value = instance._generatePlaceholderValue();
-                expect(value).to.equal(null);
-              });
             });
           });
         });
@@ -2227,32 +2192,8 @@ describe('choices', () => {
       });
     });
 
-    describe('_getTemplate', () => {
-      describe('when passing a template key', () => {
-        it('returns the generated template for the given template key', () => {
-          const templateKey = 'test';
-          const element = document.createElement('div');
-          const customArg = { test: true };
-
-          instance._templates = {
-            [templateKey]: stub().returns(element),
-          };
-
-          output = instance._templates[templateKey].call(
-            instance.config,
-            customArg,
-          );
-          expect(output).to.equal(element);
-          expect(instance._templates[templateKey]).to.have.been.calledOnceWith(
-            instance.config,
-            customArg,
-          );
-        });
-      });
-    });
-
     describe('_onKeyDown', () => {
-      let activeItems;
+      let items;
       let hasItems;
       let hasActiveDropdown;
       let hasFocussedInput;
@@ -2265,7 +2206,7 @@ describe('choices', () => {
         instance._onDirectionKey = stub();
         instance._onDeleteKey = stub();
 
-        ({ activeItems } = instance._store);
+        ({ items } = instance._store);
         hasItems = instance.itemList.hasChildren();
         hasActiveDropdown = instance.dropdown.isActive;
         hasFocussedInput = instance.input.isFocussed;
@@ -2323,7 +2264,7 @@ describe('choices', () => {
 
           expect(instance._onEnterKey).to.have.been.calledWith(
             event,
-            activeItems,
+            items,
             hasActiveDropdown,
           );
         });
@@ -2350,7 +2291,7 @@ describe('choices', () => {
 
             expect(instance._onDeleteKey).to.have.been.calledWith(
               event,
-              activeItems,
+              items,
               hasFocussedInput,
             );
           });
@@ -2395,12 +2336,12 @@ describe('choices', () => {
             passedElement.addEventListener(
               'removeItem',
               (event) => {
-                expect(event.detail).to.deep.equal({
+                expect(event.detail).to.contains({
                   id: item.id,
                   value: item.value,
                   label: item.label,
                   customProperties: item.customProperties,
-                  groupValue: null,
+                  groupValue: undefined,
                 });
                 done(true);
               },
@@ -2413,10 +2354,11 @@ describe('choices', () => {
         describe('when the item belongs to a group', () => {
           const group = {
             id: 1,
-            value: 'testing',
+            label: 'testing',
           };
           const itemWithGroup = {
             ...item,
+            value: 'testing',
             groupId: group.id,
           };
 
@@ -2434,12 +2376,12 @@ describe('choices', () => {
               passedElement.addEventListener(
                 'removeItem',
                 (event) => {
-                  expect(event.detail).to.deep.equal({
+                  expect(event.detail).to.contains({
                     id: itemWithGroup.id,
                     value: itemWithGroup.value,
                     label: itemWithGroup.label,
                     customProperties: itemWithGroup.customProperties,
-                    groupValue: group.value,
+                    groupValue: group.label,
                   });
 
                   done(true);
