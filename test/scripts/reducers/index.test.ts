@@ -36,7 +36,7 @@ describe('reducers/rootReducer', () => {
         items: [],
         groups: [],
         choices: [],
-        loading: false,
+        loading: 0,
       });
     });
   });

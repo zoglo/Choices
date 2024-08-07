@@ -46,7 +46,7 @@ describe('reducers/store', () => {
 
   describe('dispatch', () => {
     it('wraps redux dispatch method', () => {
-      const action = 'TEST_ACTION';
+      const action = { type: 'TEST_ACTION' };
       expect(dispatchStub.callCount).to.equal(0);
       instance.dispatch(action);
       expect(dispatchStub.callCount).to.equal(1);
@@ -56,54 +56,58 @@ describe('reducers/store', () => {
 
   describe('state getter', () => {
     it('returns state', () => {
-      const state = { items: [] };
-      getStateStub.returns(state);
+      const state: State = { items: [], choices: [], groups: [], loading: 0 };
+      getStateStub.returns(cloneObject(state));
 
       expect(instance.state).to.deep.equal(state);
     });
   });
 
   describe('store selectors', () => {
-    let state;
+    let state: State;
 
     beforeEach(() => {
       state = {
+        loading: 0,
         items: [
           {
             id: 1,
-            choiceId: 1,
             groupId: -1,
             value: 'Item one',
             label: 'Item one',
             active: false,
             highlighted: false,
-            customProperties: null,
+            customProperties: undefined,
             placeholder: false,
-            keyCode: null,
+            disabled: false,
+            selected: false,
+            score: 0,
           },
           {
             id: 2,
-            choiceId: 2,
             groupId: -1,
             value: 'Item two',
             label: 'Item two',
             active: true,
             highlighted: false,
-            customProperties: null,
+            customProperties: undefined,
             placeholder: false,
-            keyCode: null,
+            disabled: false,
+            selected: false,
+            score: 0,
           },
           {
             id: 3,
-            choiceId: 3,
             groupId: -1,
             value: 'Item three',
             label: 'Item three',
             active: true,
             highlighted: true,
-            customProperties: null,
+            customProperties: undefined,
             placeholder: false,
-            keyCode: null,
+            disabled: false,
+            selected: false,
+            score: 0,
           },
         ],
         choices: [
@@ -117,9 +121,9 @@ describe('reducers/store', () => {
             selected: false,
             active: true,
             score: 9999,
-            customProperties: null,
+            customProperties: undefined,
             placeholder: false,
-            keyCode: null,
+            highlighted: false,
           },
           {
             id: 2,
@@ -131,23 +135,25 @@ describe('reducers/store', () => {
             selected: true,
             active: false,
             score: 9999,
-            customProperties: null,
+            customProperties: undefined,
             placeholder: false,
-            keyCode: null,
+            highlighted: false,
           },
         ],
         groups: [
           {
             id: 1,
-            value: 'Group one',
+            label: 'Group one',
             active: true,
             disabled: false,
+            choices: [],
           },
           {
             id: 2,
-            value: 'Group two',
+            label: 'Group two',
             active: true,
             disabled: false,
+            choices: [],
           },
         ],
       };
@@ -199,9 +205,9 @@ describe('reducers/store', () => {
     describe('getChoiceById', () => {
       describe('passing id', () => {
         it('returns active choice by passed id', () => {
-          const id = '1';
+          const id: number = 1;
           const expectedResponse = state.choices.find(
-            (choice) => choice.id === parseInt(id, 10),
+            (choice) => choice.id === id,
           );
           const actualResponse = instance.getChoiceById(id);
           expect(actualResponse).to.deep.equal(expectedResponse);

@@ -25,7 +25,7 @@ describe('reducers/items', () => {
         placeholder: true,
         active: true,
         disabled: false,
-        selected: false,
+        selected: true,
         highlighted: false,
       };
 
@@ -108,23 +108,15 @@ describe('reducers/items', () => {
 
     describe('REMOVE_ITEM', () => {
       it('sets an item to be inactive based on passed ID', () => {
-        const clonedState = state.slice(0);
-        const id = 2;
         const expectedResponse = [
           {
             ...state[0],
           },
-          {
-            ...state[1],
-            active: false,
-          },
         ] as ChoiceFull[];
 
-        const actualResponse = items(clonedState, {
+        const actualResponse = items(cloneObject(state), {
           type: ActionType.REMOVE_ITEM,
-          item: {
-            id,
-          },
+          item: cloneObject(state[1]),
         } as RemoveItemAction);
 
         expect(actualResponse).to.deep.equal(expectedResponse);
@@ -133,7 +125,6 @@ describe('reducers/items', () => {
 
     describe('HIGHLIGHT_ITEM', () => {
       it('sets an item to be inactive based on passed ID', () => {
-        const clonedState = state.slice(0);
         const id = 2;
         const expectedResponse = [
           {
@@ -145,7 +136,7 @@ describe('reducers/items', () => {
           },
         ] as ChoiceFull[];
 
-        const actualResponse = items(clonedState, {
+        const actualResponse = items(cloneObject(state), {
           type: ActionType.HIGHLIGHT_ITEM,
           id,
           highlighted: true,

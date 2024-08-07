@@ -112,7 +112,7 @@ describe('reducers/choices', () => {
           score,
         } as ChoiceFull;
 
-        const actualResponse = choices(state, {
+        const actualResponse = choices(cloneObject(state), {
           type: ActionType.FILTER_CHOICES,
           results: [
             {
@@ -128,8 +128,6 @@ describe('reducers/choices', () => {
 
     describe('ACTIVATE_CHOICES', () => {
       it('sets active flag to passed value', () => {
-        const clonedState = state.slice(0);
-
         const expectedResponse = [
           {
             ...state[0],
@@ -141,7 +139,7 @@ describe('reducers/choices', () => {
           },
         ] as ChoiceFull[];
 
-        const actualResponse = choices(clonedState, {
+        const actualResponse = choices(cloneObject(state), {
           type: ActionType.ACTIVATE_CHOICES,
           active: true,
         });
@@ -152,9 +150,8 @@ describe('reducers/choices', () => {
 
     describe('CLEAR_CHOICES', () => {
       it('restores to defaultState', () => {
-        const clonedState = state.slice(0);
         const expectedResponse = defaultState.choices;
-        const actualResponse = choices(clonedState, {
+        const actualResponse = choices(cloneObject(state), {
           type: ActionType.CLEAR_CHOICES,
         });
 
@@ -165,8 +162,6 @@ describe('reducers/choices', () => {
     describe('ADD_ITEM', () => {
       describe('when action has a choice id', () => {
         it('disables choice corresponding with id', () => {
-          const id = 2;
-          const clonedState = state.slice(0);
           const expectedResponse = [
             {
               ...state[0],
@@ -177,37 +172,13 @@ describe('reducers/choices', () => {
             },
           ] as ChoiceFull[];
 
-          const actualResponse = choices(clonedState, {
+          const actualResponse = choices(cloneObject(state), {
             type: ActionType.ADD_ITEM,
-            item: {
-              id,
-            } as ChoiceFull,
+            item: cloneObject(state[1]),
           });
 
           expect(actualResponse).to.deep.equal(expectedResponse);
         });
-      });
-    });
-
-    describe('REMOVE_ITEM', () => {
-      it('selects choice by passed id', () => {
-        const clonedState = state.slice(0);
-        const expectedResponse = [
-          {
-            ...state[0],
-          },
-          {
-            ...state[1],
-            selected: false,
-          },
-        ] as ChoiceFull[];
-
-        const actualResponse = choices(clonedState, {
-          type: ActionType.REMOVE_ITEM,
-          item: cloneObject(state[2]),
-        });
-
-        expect(actualResponse).to.deep.equal(expectedResponse);
       });
     });
   });

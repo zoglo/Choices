@@ -59,9 +59,8 @@ describe('reducers/groups', () => {
 
     describe('CLEAR_CHOICES', () => {
       it('restores to defaultState', () => {
-        const clonedState = state.slice(0);
-        const expectedResponse = defaultState;
-        const actualResponse = groups(clonedState, {
+        const expectedResponse = defaultState.groups;
+        const actualResponse = groups(cloneObject(state), {
           type: ActionType.CLEAR_CHOICES,
         });
 

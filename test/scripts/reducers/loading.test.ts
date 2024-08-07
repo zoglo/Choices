@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import general from '../../../src/scripts/reducers/loading';
-import { ActionType } from '../../../src';
+import { ActionType, State } from '../../../src';
 import { defaultState } from '../../../src/scripts/reducers';
 
 describe('reducers/loading', () => {
@@ -12,7 +12,7 @@ describe('reducers/loading', () => {
 
   describe('SET_IS_LOADING', () => {
     it('sets loading state', () => {
-      const expectedState = true;
+      const expectedState: State['loading'] = 1;
 
       const actualState = general(undefined, {
         type: ActionType.SET_IS_LOADING,
