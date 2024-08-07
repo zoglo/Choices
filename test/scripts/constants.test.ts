@@ -19,6 +19,7 @@ describe('constants', () => {
           'itemSelectable',
           'itemDisabled',
           'itemChoice',
+          'description',
           'placeholder',
           'group',
           'groupHeading',
@@ -31,6 +32,7 @@ describe('constants', () => {
           'selectedState',
           'flippedState',
           'loadingState',
+          'addChoice',
           'noResults',
           'noChoices',
         ]);
@@ -49,7 +51,7 @@ describe('constants', () => {
         expect(DEFAULT_CONFIG.renderChoiceLimit).to.be.a('number');
         expect(DEFAULT_CONFIG.maxItemCount).to.be.a('number');
         expect(DEFAULT_CONFIG.addItems).to.be.a('boolean');
-        expect(DEFAULT_CONFIG.addItemFilter).to.equal(null);
+        expect(DEFAULT_CONFIG.addItemFilter).to.a('function');
         expect(DEFAULT_CONFIG.removeItems).to.be.a('boolean');
         expect(DEFAULT_CONFIG.removeItemButton).to.be.a('boolean');
         expect(DEFAULT_CONFIG.editItems).to.be.a('boolean');

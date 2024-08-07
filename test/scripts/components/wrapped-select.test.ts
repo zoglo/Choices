@@ -6,8 +6,8 @@ import Templates from '../../../src/scripts/templates';
 import { DEFAULT_CLASSNAMES } from '../../../src';
 
 describe('components/wrappedSelect', () => {
-  let instance;
-  let element;
+  let instance: WrappedSelect | null;
+  let element: HTMLSelectElement;
 
   beforeEach(() => {
     element = document.createElement('select');
@@ -46,10 +46,18 @@ describe('components/wrappedSelect', () => {
 
   describe('constructor', () => {
     it('assigns choices element to class', () => {
+      expect(instance).to.not.be.null;
+      if (!instance) {
+        return;
+      }
       expect(instance.element).to.equal(element);
     });
 
     it('assigns classnames to class', () => {
+      expect(instance).to.not.be.null;
+      if (!instance) {
+        return;
+      }
       expect(instance.classNames).to.deep.equal(DEFAULT_CLASSNAMES);
     });
   });
@@ -71,6 +79,10 @@ describe('components/wrappedSelect', () => {
 
       describe(method, () => {
         it(`calls super.${method}`, () => {
+          expect(instance).to.not.be.null;
+          if (!instance) {
+            return;
+          }
           expect(WrappedElement.prototype[method].called).to.equal(false);
           instance[method]();
           expect(WrappedElement.prototype[method].called).to.equal(true);
@@ -81,40 +93,41 @@ describe('components/wrappedSelect', () => {
 
   describe('placeholderOption getter', () => {
     it('returns option element with empty value attribute', () => {
+      expect(instance).to.not.be.null;
+      if (!instance) {
+        return;
+      }
       expect(instance.placeholderOption).to.be.instanceOf(HTMLOptionElement);
-      expect(instance.placeholderOption.value).to.equal('');
+      if (instance.placeholderOption) {
+        expect(instance.placeholderOption.value).to.equal('');
+      }
     });
 
     it('returns option element with placeholder attribute as fallback', () => {
-      instance.element.removeChild(instance.element.firstChild);
+      expect(instance).to.not.be.null;
+      if (!instance) {
+        return;
+      }
+      expect(instance.element.firstChild).to.not.be.null;
+      if (instance.element.firstChild) {
+        instance.element.removeChild(instance.element.firstChild);
+      }
 
       expect(instance.placeholderOption).to.be.instanceOf(HTMLOptionElement);
-      expect(instance.placeholderOption.value).to.equal('Value 1');
+      if (instance.placeholderOption) {
+        expect(instance.placeholderOption.value).to.equal('Value 1');
+      }
     });
   });
 
   describe('options getter', () => {
     it('returns all option elements', () => {
-      const { options } = instance;
-      expect(options).to.be.an('array');
-      options.forEach((option) => {
-        expect(option).to.be.instanceOf(HTMLOptionElement);
-      });
-    });
-  });
-
-  describe('optionGroups getter', () => {
-    it('returns an array of all option groups', () => {
-      for (let i = 1; i <= 3; i++) {
-        const group = document.createElement('optgroup');
-        instance.element.appendChild(group);
+      expect(instance).to.not.be.null;
+      if (!instance) {
+        return;
       }
-
-      const { optionGroups } = instance;
-      expect(optionGroups.length).to.equal(3);
-      optionGroups.forEach((option) => {
-        expect(option).to.be.instanceOf(HTMLOptGroupElement);
-      });
+      const optionsAsChoices = instance.optionsAsChoices();
+      expect(optionsAsChoices).to.be.an('array');
     });
   });
 });

@@ -32,7 +32,9 @@ describe('actions/choices', () => {
         choice,
       };
 
-      expect(actions.addChoice(cloneObject(choice))).to.deep.equal(expectedAction);
+      expect(actions.addChoice(cloneObject(choice))).to.deep.equal(
+        expectedAction,
+      );
     });
   });
 

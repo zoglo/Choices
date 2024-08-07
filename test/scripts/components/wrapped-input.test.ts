@@ -5,8 +5,8 @@ import WrappedElement from '../../../src/scripts/components/wrapped-element';
 import WrappedInput from '../../../src/scripts/components/wrapped-input';
 
 describe('components/wrappedInput', () => {
-  let instance;
-  let element;
+  let instance: WrappedInput | null;
+  let element: HTMLInputElement;
 
   beforeEach(() => {
     element = document.createElement('input');
@@ -23,10 +23,18 @@ describe('components/wrappedInput', () => {
 
   describe('constructor', () => {
     it('assigns choices element to class', () => {
+      expect(instance).to.not.be.null;
+      if (!instance) {
+        return;
+      }
       expect(instance.element).to.equal(element);
     });
 
     it('assigns classnames to class', () => {
+      expect(instance).to.not.be.null;
+      if (!instance) {
+        return;
+      }
       expect(instance.classNames).to.deep.equal(DEFAULT_CLASSNAMES);
     });
   });
@@ -48,6 +56,10 @@ describe('components/wrappedInput', () => {
         });
 
         it(`calls super.${method}`, () => {
+          expect(instance).to.not.be.null;
+          if (!instance) {
+            return;
+          }
           expect(WrappedElement.prototype[method].called).to.equal(false);
           instance[method]();
           expect(WrappedElement.prototype[method].called).to.equal(true);
@@ -58,6 +70,10 @@ describe('components/wrappedInput', () => {
 
   describe('value setter', () => {
     it('sets the value of the input to the given value', () => {
+      expect(instance).to.not.be.null;
+      if (!instance) {
+        return;
+      }
       const newValue = 'Value 1, Value 2, Value 3';
       expect(instance.element.value).to.equal('');
       instance.value = newValue;

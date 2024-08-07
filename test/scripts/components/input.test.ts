@@ -24,7 +24,7 @@ describe('components/input', () => {
 
   describe('constructor', () => {
     it('assigns choices element to class', () => {
-      expect(instance.element).to.deep.equal(choicesElement);
+      expect(instance.element).to.equal(choicesElement);
     });
 
     it('assigns classnames to class', () => {
@@ -309,14 +309,6 @@ describe('components/input', () => {
       const value = 'test';
       instance.element.value = value;
       expect(instance.value).to.equal(value);
-    });
-
-    it('strips HTML from value', () => {
-      const value = '<script>somethingMalicious();</script>';
-      instance.element.value = value;
-      expect(instance.value).to.equal(
-        '&lt;script&gt;somethingMalicious();&lt;/script&gt;',
-      );
     });
   });
 

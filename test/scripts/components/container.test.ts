@@ -38,12 +38,6 @@ describe('components/container', () => {
 
   describe('shouldFlip', () => {
     describe('passing dropdownPos', () => {
-      describe('position config option set to "auto"', () => {
-        beforeEach(() => {
-          instance.position = 'auto';
-        });
-      });
-
       describe('position config option set to "top"', () => {
         beforeEach(() => {
           instance.position = 'top';
