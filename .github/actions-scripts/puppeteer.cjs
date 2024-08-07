@@ -37,13 +37,15 @@ async function test() {
     await page.keyboard.press('ArrowDown');
 
     mkdirSync(artifactsPath, { recursive: true });
-    const imageBuffer = await page.screenshot({
+    await page.screenshot({
       path: path.join(artifactsPath, snapshotName),
       fullPage: true,
     });
 
     // compare with snapshot
-    const screenshot = PNG.sync.read(imageBuffer);
+    const screenshot = PNG.sync.read(
+      readFileSync(path.resolve(artifactsPath, snapshotName))
+    );
     const snapshot = PNG.sync.read(
       readFileSync(path.resolve(__dirname, `./__snapshots__/${snapshotName}`)),
     );
