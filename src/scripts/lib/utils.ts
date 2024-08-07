@@ -181,7 +181,8 @@ export const dispatchEvent = (
   return element.dispatchEvent(event);
 };
 
-export const cloneObject = <T>(obj: T): T => JSON.parse(JSON.stringify(obj));
+export const cloneObject = <T>(obj: T): T =>
+  obj !== undefined ? JSON.parse(JSON.stringify(obj)) : undefined;
 
 /**
  * Returns an array of keys present on the first but missing on the second object
