@@ -40,7 +40,7 @@
     "js:build": "rollup --bundleConfigAsCjs -c scripts/configs.mjs --environment WITH_D_TS_FILES:1 && mv public/assets/scripts/src public/types/",
     "js:build-dev": "rollup -w --bundleConfigAsCjs -c scripts/configs.mjs --environment OUTPUT_TYPES:umd",
     "js:build-dev:cjs": "rollup -w --bundleConfigAsCjs -c scripts/configs.mjs --environment OUTPUT_TYPES:cjs",
-    "js:build-dev:esm": "rollup -w --bundleConfigAsCjs -c scripts/configs.mjs --environment OUTPUT_TYPES:es",
+    "js:build-dev:esm": "rollup -w --bundleConfigAsCjs -c scripts/configs.mjs --environment OUTPUT_TYPES:mjs",
     "css:watch": "nodemon -e scss -x \"npm run css:build\"",
     "css:build": "run-s css:sass css:prefix css:min",
     "css:sass": "sass -I scss src/styles/base.scss public/assets/styles/base.css && sass -I scss src/styles/choices.scss public/assets/styles/choices.css",

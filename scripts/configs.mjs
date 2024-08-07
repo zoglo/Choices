@@ -9,7 +9,30 @@ import server from './server.mjs';
 // @ts-ignore
 const pckg = require('../package.json');
 
-const OUTPUT_TYPES = (process.env.OUTPUT_TYPES || 'umd,cjs,es').split(',')
+const outputTypes = {
+  js : {
+    prefix: 'iife',
+    ext: 'js',
+    format: 'iife',
+  },
+  umd : {
+    ext: 'js',
+    format: 'umd',
+    default: true,
+  },
+  cjs : {
+    ext: 'cjs',
+    format: 'cjs',
+    default: true,
+  },
+  mjs : {
+    ext: 'mjs',
+    format: 'es',
+    default: true,
+  },
+};
+
+const OUTPUT_TYPES = (process.env.OUTPUT_TYPES || Object.keys(outputTypes).filter(k => outputTypes[k].default).join(',')).split(',')
 
 const FILENAME = 'choices'
 const VERSION = process.env.VERSION || pckg.version
@@ -47,17 +70,13 @@ const builds = [
     }
   },
 ];
+
 const candidateBuilds = process.env.TARGET
   ? builds.filter((build) => build.name === process.env.TARGET)
   : builds;
 
-function formatToExt(format) {
-  switch (format) {
-    case 'umd': return 'js';
-    case 'cjs': return 'cjs';
-    case 'es': return 'mjs';
-    default: return '';
-  }
+const suffix = (s, suffix) => {
+  return s + (suffix ? '.' + suffix : '')
 }
 
 function genConfig(buildConfig) {
@@ -95,20 +114,28 @@ function genConfig(buildConfig) {
 
   const output = [false, true];
   output.forEach((minify) => {
-    OUTPUT_TYPES.forEach((format) => {
-      const ext = formatToExt(format);
-      if (!ext) {
+    OUTPUT_TYPES.forEach((t) => {
+      const type = outputTypes[t];
+      if (!type) {
         return;
       }
+
+      let f = `public/assets/scripts/${FILENAME}`;
+
+      f = suffix(f, buildConfig.name !== '.' ? buildConfig.name : '');
+      f = suffix(f, type.prefix ? type.prefix : '');
+      f = suffix(f, minify ? 'min' : '');
+      f = suffix(f, type.ext);
+
       const output = {
         banner,
-        file: `public/assets/scripts/${FILENAME}${minify ? '.min' : ''}${buildConfig.name !== '.' ? '.' + buildConfig.name : ''}.${ext}`,
-        format: format,
-        name: 'Choices.js',
+        file: f,
+        format: type.format,
+        name: 'Choices',
         exports: 'default',
         plugins: []
       };
-      if (format !== 'es') {
+      if (type.format !== 'es') {
         config.plugins.push(babel({ babelHelpers: 'bundled' }))
       }
 
@@ -136,9 +163,9 @@ buildConfig = buildConfig.filter((b) => !!b);
 if (buildConfig.length === 0) {
   console.log('No valid build targets or feature combinations.');
 } else {
-  const watch = server();
-  if (watch) {
-    buildConfig[0].output[0].plugins.push(watch)
+  const localServer = server();
+  if (localServer) {
+    buildConfig[0].output[0].plugins.push(localServer)
   }
 }
 

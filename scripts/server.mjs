@@ -1,6 +1,7 @@
-import dev from 'rollup-plugin-dev'
+import fp from 'fastify-plugin'
+import dev from 'rollup-plugin-dev';
 
-const server = () => {
+export default function server() {
   const WATCH_HOST = process.env.WATCH_HOST;
   const WATCH_PORT = process.env.WATCH_PORT || 3001;
 
@@ -12,7 +13,7 @@ const server = () => {
     dirs: ['public'],
     host: WATCH_HOST,
     port: WATCH_PORT,
-    extend: async (server) => {
+    extend: fp(async function (server) {
       server.get('/data', (req, res) => {
         // prevent endpoint from being cached
         res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
@@ -24,12 +25,9 @@ const server = () => {
           value: `Value ${index + 1}`,
         }));
 
-        setTimeout(() => {
-          res.status(200).send(fakeData);
-        }, 1000);
+        res.code(200);
+        res.send(JSON.stringify(fakeData));
       });
-    }
+    })
   });
 };
-
-export default server;
