@@ -13,7 +13,7 @@ const {
   logging,
 } = require('selenium-webdriver');
 
-const server = require('../../server');
+const server = require('server');
 
 async function test() {
   let pixelDifference;
