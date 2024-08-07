@@ -32,7 +32,7 @@ describe('actions/choices', () => {
         choice,
       };
 
-      expect(actions.addChoice(cloneObject(choice))).to.eql(expectedAction);
+      expect(actions.addChoice(cloneObject(choice))).to.deep.equal(expectedAction);
     });
   });
 
@@ -44,7 +44,7 @@ describe('actions/choices', () => {
         results,
       };
 
-      expect(actions.filterChoices(results)).to.eql(expectedAction);
+      expect(actions.filterChoices(results)).to.deep.equal(expectedAction);
     });
   });
 
@@ -56,7 +56,7 @@ describe('actions/choices', () => {
           active: true,
         };
 
-        expect(actions.activateChoices()).to.eql(expectedAction);
+        expect(actions.activateChoices()).to.deep.equal(expectedAction);
       });
     });
 
@@ -68,7 +68,7 @@ describe('actions/choices', () => {
           active,
         };
 
-        expect(actions.activateChoices(active)).to.eql(expectedAction);
+        expect(actions.activateChoices(active)).to.deep.equal(expectedAction);
       });
     });
   });
@@ -79,7 +79,7 @@ describe('actions/choices', () => {
         type: ActionType.CLEAR_CHOICES,
       };
 
-      expect(actions.clearChoices()).to.eql(expectedAction);
+      expect(actions.clearChoices()).to.deep.equal(expectedAction);
     });
   });
 });

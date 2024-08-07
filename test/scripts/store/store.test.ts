@@ -1,12 +1,15 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
+import { AnyAction, Unsubscribe } from 'redux';
 import Store from '../../../src/scripts/store/store';
+import { State } from '../../../src';
+import { cloneObject } from '../../../src/scripts/lib/utils';
 
 describe('reducers/store', () => {
-  let instance;
-  let subscribeStub;
-  let dispatchStub;
-  let getStateStub;
+  let instance: Store;
+  let subscribeStub: sinon.SinonStub<[listener: () => void], Unsubscribe>;
+  let dispatchStub: sinon.SinonStub<[action: AnyAction], AnyAction>;
+  let getStateStub: sinon.SinonStub<[], State>;
 
   beforeEach(() => {
     instance = new Store();
@@ -56,7 +59,7 @@ describe('reducers/store', () => {
       const state = { items: [] };
       getStateStub.returns(state);
 
-      expect(instance.state).to.equal(state);
+      expect(instance.state).to.deep.equal(state);
     });
   });
 
@@ -155,7 +158,7 @@ describe('reducers/store', () => {
     describe('items getter', () => {
       it('returns items', () => {
         const expectedResponse = state.items;
-        expect(instance.items).to.eql(expectedResponse);
+        expect(instance.items).to.deep.equal(expectedResponse);
       });
     });
 
@@ -164,14 +167,14 @@ describe('reducers/store', () => {
         const expectedResponse = state.items.filter(
           (item) => item.highlighted && item.active,
         );
-        expect(instance.highlightedActiveItems).to.eql(expectedResponse);
+        expect(instance.highlightedActiveItems).to.deep.equal(expectedResponse);
       });
     });
 
     describe('choices getter', () => {
       it('returns choices', () => {
         const expectedResponse = state.choices;
-        expect(instance.choices).to.eql(expectedResponse);
+        expect(instance.choices).to.deep.equal(expectedResponse);
       });
     });
 
@@ -180,7 +183,7 @@ describe('reducers/store', () => {
         const expectedResponse = state.choices.filter(
           (choice) => choice.active,
         );
-        expect(instance.activeChoices).to.eql(expectedResponse);
+        expect(instance.activeChoices).to.deep.equal(expectedResponse);
       });
     });
 
@@ -189,7 +192,7 @@ describe('reducers/store', () => {
         const expectedResponse = state.choices.filter(
           (choice) => !choice.disabled && !choice.placeholder,
         );
-        expect(instance.searchableChoices).to.eql(expectedResponse);
+        expect(instance.searchableChoices).to.deep.equal(expectedResponse);
       });
     });
 
@@ -201,7 +204,7 @@ describe('reducers/store', () => {
             (choice) => choice.id === parseInt(id, 10),
           );
           const actualResponse = instance.getChoiceById(id);
-          expect(actualResponse).to.eql(expectedResponse);
+          expect(actualResponse).to.deep.equal(expectedResponse);
         });
       });
     });
@@ -211,21 +214,21 @@ describe('reducers/store', () => {
         const expectedResponse = state.choices
           .reverse()
           .find((choice) => choice.placeholder);
-        expect(instance.getPlaceholderChoice).to.eql(expectedResponse);
+        expect(instance.placeholderChoice).to.deep.equal(expectedResponse);
       });
     });
 
     describe('groups getter', () => {
       it('returns groups', () => {
         const expectedResponse = state.groups;
-        expect(instance.groups).to.eql(expectedResponse);
+        expect(instance.groups).to.deep.equal(expectedResponse);
       });
     });
 
     describe('activeGroups getter', () => {
       it('returns active groups', () => {
         const expectedResponse = state.groups.filter((group) => group.active);
-        expect(instance.activeGroups).to.eql(expectedResponse);
+        expect(instance.activeGroups).to.deep.equal(expectedResponse);
       });
     });
 
@@ -234,7 +237,7 @@ describe('reducers/store', () => {
         const id = 1;
         const expectedResponse = state.groups.find((group) => group.id === id);
         const actualResponse = instance.getGroupById(id);
-        expect(actualResponse).to.eql(expectedResponse);
+        expect(actualResponse).to.deep.equal(expectedResponse);
       });
     });
   });

@@ -9,7 +9,7 @@ describe('actions/misc', () => {
         type: ActionType.CLEAR_ALL,
       };
 
-      expect(actions.clearAll()).to.eql(expectedAction);
+      expect(actions.clearAll()).to.deep.equal(expectedAction);
     });
   });
 
@@ -21,7 +21,7 @@ describe('actions/misc', () => {
           isLoading: true,
         };
 
-        expect(actions.setIsLoading(true)).to.eql(expectedAction);
+        expect(actions.setIsLoading(true)).to.deep.equal(expectedAction);
       });
     });
 
@@ -32,7 +32,7 @@ describe('actions/misc', () => {
           isLoading: false,
         };
 
-        expect(actions.setIsLoading(false)).to.eql(expectedAction);
+        expect(actions.setIsLoading(false)).to.deep.equal(expectedAction);
       });
     });
   });

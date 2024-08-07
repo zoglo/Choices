@@ -40,7 +40,7 @@ describe('reducers/choices', () => {
             choice: cloneObject(choice),
           });
 
-          expect(actualResponse).to.eql(expectedResponse);
+          expect(actualResponse).to.deep.equal(expectedResponse);
         });
       });
 
@@ -57,7 +57,7 @@ describe('reducers/choices', () => {
               choice: cloneObject(item),
             });
 
-            expect(actualResponse).to.eql(expectedResponse);
+            expect(actualResponse).to.deep.equal(expectedResponse);
           });
         });
       });
@@ -122,7 +122,7 @@ describe('reducers/choices', () => {
           ],
         }).find((choice) => choice.id === id);
 
-        expect(actualResponse).to.eql(expectedResponse);
+        expect(actualResponse).to.deep.equal(expectedResponse);
       });
     });
 
@@ -146,7 +146,7 @@ describe('reducers/choices', () => {
           active: true,
         });
 
-        expect(actualResponse).to.eql(expectedResponse);
+        expect(actualResponse).to.deep.equal(expectedResponse);
       });
     });
 
@@ -158,7 +158,7 @@ describe('reducers/choices', () => {
           type: ActionType.CLEAR_CHOICES,
         });
 
-        expect(actualResponse).to.eql(expectedResponse);
+        expect(actualResponse).to.deep.equal(expectedResponse);
       });
     });
 
@@ -184,7 +184,7 @@ describe('reducers/choices', () => {
             } as ChoiceFull,
           });
 
-          expect(actualResponse).to.eql(expectedResponse);
+          expect(actualResponse).to.deep.equal(expectedResponse);
         });
       });
     });
@@ -207,7 +207,7 @@ describe('reducers/choices', () => {
           item: cloneObject(state[2]),
         });
 
-        expect(actualResponse).to.eql(expectedResponse);
+        expect(actualResponse).to.deep.equal(expectedResponse);
       });
     });
   });

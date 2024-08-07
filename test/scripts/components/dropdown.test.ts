@@ -24,11 +24,11 @@ describe('components/dropdown', () => {
 
   describe('constructor', () => {
     it('assigns choices element to instance', () => {
-      expect(instance.element).to.eql(choicesElement);
+      expect(instance.element).to.deep.equal(choicesElement);
     });
 
     it('assigns classnames to instance', () => {
-      expect(instance.classNames).to.eql(DEFAULT_CLASSNAMES);
+      expect(instance.classNames).to.deep.equal(DEFAULT_CLASSNAMES);
     });
   });
 
@@ -90,7 +90,7 @@ describe('components/dropdown', () => {
     });
 
     it('returns instance', () => {
-      expect(actualResponse).to.eql(instance);
+      expect(actualResponse).to.deep.equal(instance);
     });
   });
 
@@ -120,7 +120,7 @@ describe('components/dropdown', () => {
     });
 
     it('returns instance', () => {
-      expect(actualResponse).to.eql(instance);
+      expect(actualResponse).to.deep.equal(instance);
     });
   });
 });

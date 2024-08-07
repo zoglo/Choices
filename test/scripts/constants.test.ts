@@ -6,7 +6,7 @@ describe('constants', () => {
     describe('DEFAULT_CLASSNAMES', () => {
       it('exports as an object with expected keys', () => {
         expect(DEFAULT_CLASSNAMES).to.be.an('object');
-        expect(Object.keys(DEFAULT_CLASSNAMES)).to.eql([
+        expect(Object.keys(DEFAULT_CLASSNAMES)).to.deep.equal([
           'containerOuter',
           'containerInner',
           'input',

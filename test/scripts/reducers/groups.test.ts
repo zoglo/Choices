@@ -30,7 +30,7 @@ describe('reducers/groups', () => {
           group: cloneObject(group),
         });
 
-        expect(actualResponse).to.eql(expectedResponse);
+        expect(actualResponse).to.deep.equal(expectedResponse);
       });
     });
   });
@@ -65,7 +65,7 @@ describe('reducers/groups', () => {
           type: ActionType.CLEAR_CHOICES,
         });
 
-        expect(actualResponse).to.eql(expectedResponse);
+        expect(actualResponse).to.deep.equal(expectedResponse);
       });
     });
   });

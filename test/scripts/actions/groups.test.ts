@@ -35,7 +35,7 @@ describe('actions/groups', () => {
             true,
           ),
         ),
-      ).to.eql(expectedAction);
+      ).to.deep.equal(expectedAction);
     });
   });
 });

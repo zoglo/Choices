@@ -20,11 +20,11 @@ describe('components/list', () => {
 
   describe('constructor', () => {
     it('assigns choices element to class', () => {
-      expect(instance.element).to.eql(choicesElement);
+      expect(instance.element).to.deep.equal(choicesElement);
     });
 
     it('sets the height of the element', () => {
-      expect(instance.height).to.eql(choicesElement.scrollTop);
+      expect(instance.height).to.deep.equal(choicesElement.scrollTop);
     });
   });
 

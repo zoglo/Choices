@@ -90,7 +90,7 @@ describe('utils', () => {
 
         const output = values.sort(sortByAlpha);
 
-        expect(output).to.eql([
+        expect(output).to.deep.equal([
           { value: 'Arctic Monkeys' },
           { value: 'Oasis' },
           { value: 'Tame Impala' },
@@ -108,7 +108,7 @@ describe('utils', () => {
 
         const output = values.sort(sortByAlpha);
 
-        expect(output).to.eql([
+        expect(output).to.deep.equal([
           { value: '0', label: 'Arctic Monkeys' },
           { value: '0', label: 'Oasis' },
           { value: '0', label: 'Tame Impala' },
@@ -130,7 +130,7 @@ describe('utils', () => {
 
         const output = values.sort(sortByScore);
 
-        expect(output).to.eql([
+        expect(output).to.deep.equal([
           { score: 10 },
           { score: 124 },
           { score: 400 },
@@ -181,7 +181,7 @@ describe('utils', () => {
       const output = cloneObject(object);
 
       expect(output).to.not.equal(object);
-      expect(output).to.eql(object);
+      expect(output).to.deep.equal(object);
     });
   });
 
@@ -208,7 +208,7 @@ describe('utils', () => {
         const result = { description: 'foo', bar: 'foo' };
 
         const value = parseCustomProperties(customProperties);
-        expect(value).to.eql(result);
+        expect(value).to.deep.equal(result);
       });
     });
     describe('when custom properties are undefined', () => {
@@ -217,7 +217,7 @@ describe('utils', () => {
         const result = {};
 
         const value = parseCustomProperties(customProperties);
-        expect(value).to.eql(result);
+        expect(value).to.deep.equal(result);
       });
     });
   });

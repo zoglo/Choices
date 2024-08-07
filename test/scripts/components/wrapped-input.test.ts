@@ -23,11 +23,11 @@ describe('components/wrappedInput', () => {
 
   describe('constructor', () => {
     it('assigns choices element to class', () => {
-      expect(instance.element).to.eql(element);
+      expect(instance.element).to.equal(element);
     });
 
     it('assigns classnames to class', () => {
-      expect(instance.classNames).to.eql(DEFAULT_CLASSNAMES);
+      expect(instance.classNames).to.deep.equal(DEFAULT_CLASSNAMES);
     });
   });
 

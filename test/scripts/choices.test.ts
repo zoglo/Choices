@@ -50,7 +50,7 @@ describe('choices', () => {
 
           instance = new Choices();
 
-          expect(instance.config).to.eql(DEFAULT_CONFIG);
+          expect(instance.config).to.deep.equal(DEFAULT_CONFIG);
         });
       });
 
@@ -66,7 +66,7 @@ describe('choices', () => {
           };
           instance = new Choices('[data-choice]', config);
 
-          expect(instance.config).to.eql({
+          expect(instance.config).to.deep.equal({
             ...DEFAULT_CONFIG,
             ...config,
           });
@@ -438,7 +438,7 @@ describe('choices', () => {
         });
 
         it('returns this', () => {
-          expect(output).to.eql(instance);
+          expect(output).to.deep.equal(instance);
         });
 
         it('returns early', () => {
@@ -498,7 +498,7 @@ describe('choices', () => {
         });
 
         it('returns this', () => {
-          expect(output).to.eql(instance);
+          expect(output).to.deep.equal(instance);
         });
 
         it('returns early', () => {
@@ -559,7 +559,7 @@ describe('choices', () => {
         });
 
         it('returns this', () => {
-          expect(output).to.eql(instance);
+          expect(output).to.deep.equal(instance);
         });
 
         it('returns early', () => {
@@ -577,7 +577,7 @@ describe('choices', () => {
         });
 
         it('returns this', () => {
-          expect(output).to.eql(instance);
+          expect(output).to.deep.equal(instance);
         });
 
         it('opens containerOuter', () =>
@@ -600,10 +600,10 @@ describe('choices', () => {
           new Promise((done) => {
             requestAnimationFrame(() => {
               expect(passedElementTriggerEventStub.called).to.equal(true);
-              expect(passedElementTriggerEventStub.lastCall.args[0]).to.eql(
+              expect(passedElementTriggerEventStub.lastCall.args[0]).to.deep.equal(
                 EventType.showDropdown,
               );
-              expect(passedElementTriggerEventStub.lastCall.args[1]).to.eql({});
+              expect(passedElementTriggerEventStub.lastCall.args[1]).to.deep.equal({});
               done(true);
             });
           }));
@@ -661,7 +661,7 @@ describe('choices', () => {
         });
 
         it('returns this', () => {
-          expect(output).to.eql(instance);
+          expect(output).to.deep.equal(instance);
         });
 
         it('returns early', () => {
@@ -679,7 +679,7 @@ describe('choices', () => {
         });
 
         it('returns this', () => {
-          expect(output).to.eql(instance);
+          expect(output).to.deep.equal(instance);
         });
 
         it('closes containerOuter', () =>
@@ -702,10 +702,10 @@ describe('choices', () => {
           new Promise((done) => {
             requestAnimationFrame(() => {
               expect(passedElementTriggerEventStub.called).to.equal(true);
-              expect(passedElementTriggerEventStub.lastCall.args[0]).to.eql(
+              expect(passedElementTriggerEventStub.lastCall.args[0]).to.deep.equal(
                 EventType.hideDropdown,
               );
-              expect(passedElementTriggerEventStub.lastCall.args[1]).to.eql({});
+              expect(passedElementTriggerEventStub.lastCall.args[1]).to.deep.equal({});
               done(true);
             });
           }));
@@ -765,7 +765,7 @@ describe('choices', () => {
         });
 
         it('returns this', () => {
-          expect(output).to.eql(instance);
+          expect(output).to.deep.equal(instance);
         });
 
         it('returns early', () => {
@@ -795,12 +795,12 @@ describe('choices', () => {
           });
 
           it('returns this', () => {
-            expect(output).to.eql(instance);
+            expect(output).to.deep.equal(instance);
           });
 
           it('dispatches highlightItem action with correct arguments', () => {
             expect(storeDispatchSpy.called).to.equal(true);
-            expect(storeDispatchSpy.lastCall.args[0]).to.eql({
+            expect(storeDispatchSpy.lastCall.args[0]).to.deep.equal({
               type: ActionType.HIGHLIGHT_ITEM,
               id: item.id,
               highlighted: true,
@@ -818,7 +818,7 @@ describe('choices', () => {
               expect(passedElementTriggerEventStub.lastCall.args[0]).to.equal(
                 EventType.highlightItem,
               );
-              expect(passedElementTriggerEventStub.lastCall.args[1]).to.eql({
+              expect(passedElementTriggerEventStub.lastCall.args[1]).to.deep.equal({
                 id: item.id,
                 value: item.value,
                 label: item.label,
@@ -838,7 +838,7 @@ describe('choices', () => {
               expect(passedElementTriggerEventStub.lastCall.args[0]).to.equal(
                 EventType.highlightItem,
               );
-              expect(passedElementTriggerEventStub.lastCall.args[1]).to.eql({
+              expect(passedElementTriggerEventStub.lastCall.args[1]).to.deep.equal({
                 id: item.id,
                 value: item.value,
                 label: item.label,
@@ -858,7 +858,7 @@ describe('choices', () => {
           });
 
           it('returns this', () => {
-            expect(output).to.eql(instance);
+            expect(output).to.deep.equal(instance);
           });
         });
       });
@@ -893,7 +893,7 @@ describe('choices', () => {
         });
 
         it('returns this', () => {
-          expect(output).to.eql(instance);
+          expect(output).to.deep.equal(instance);
         });
 
         it('returns early', () => {
@@ -923,12 +923,12 @@ describe('choices', () => {
           });
 
           it('returns this', () => {
-            expect(output).to.eql(instance);
+            expect(output).to.deep.equal(instance);
           });
 
           it('dispatches highlightItem action with correct arguments', () => {
             expect(storeDispatchSpy.called).to.equal(true);
-            expect(storeDispatchSpy.lastCall.args[0]).to.eql({
+            expect(storeDispatchSpy.lastCall.args[0]).to.deep.equal({
               type: ActionType.HIGHLIGHT_ITEM,
               id: item.id,
               highlighted: false,
@@ -946,7 +946,7 @@ describe('choices', () => {
               expect(passedElementTriggerEventStub.lastCall.args[0]).to.equal(
                 EventType.highlightItem,
               );
-              expect(passedElementTriggerEventStub.lastCall.args[1]).to.eql({
+              expect(passedElementTriggerEventStub.lastCall.args[1]).to.deep.equal({
                 id: item.id,
                 value: item.value,
                 label: item.label,
@@ -966,7 +966,7 @@ describe('choices', () => {
               expect(passedElementTriggerEventStub.lastCall.args[0]).to.equal(
                 EventType.highlightItem,
               );
-              expect(passedElementTriggerEventStub.lastCall.args[1]).to.eql({
+              expect(passedElementTriggerEventStub.lastCall.args[1]).to.deep.equal({
                 id: item.id,
                 value: item.value,
                 label: item.label,
@@ -986,7 +986,7 @@ describe('choices', () => {
           });
 
           it('returns this', () => {
-            expect(output).to.eql(instance);
+            expect(output).to.deep.equal(instance);
           });
         });
       });
@@ -1022,7 +1022,7 @@ describe('choices', () => {
       });
 
       it('returns this', () => {
-        expect(output).to.eql(instance);
+        expect(output).to.deep.equal(instance);
       });
 
       it('highlights each item in store', () => {
@@ -1062,7 +1062,7 @@ describe('choices', () => {
       });
 
       it('returns this', () => {
-        expect(output).to.eql(instance);
+        expect(output).to.deep.equal(instance);
       });
 
       it('unhighlights each item in store', () => {
@@ -1087,11 +1087,11 @@ describe('choices', () => {
       });
 
       it('returns this', () => {
-        expect(output).to.eql(instance);
+        expect(output).to.deep.equal(instance);
       });
 
       it('dispatches clearChoices action', () => {
-        expect(storeDispatchStub.lastCall.args[0]).to.eql({
+        expect(storeDispatchStub.lastCall.args[0]).to.deep.equal({
           type: ActionType.CLEAR_CHOICES,
         });
       });
@@ -1112,11 +1112,11 @@ describe('choices', () => {
       });
 
       it('returns this', () => {
-        expect(output).to.eql(instance);
+        expect(output).to.deep.equal(instance);
       });
 
       it('dispatches clearAll action', () => {
-        expect(storeDispatchStub.lastCall.args[0]).to.eql({
+        expect(storeDispatchStub.lastCall.args[0]).to.deep.equal({
           type: ActionType.CLEAR_ALL,
         });
       });
@@ -1139,7 +1139,7 @@ describe('choices', () => {
       });
 
       it('returns this', () => {
-        expect(output).to.eql(instance);
+        expect(output).to.deep.equal(instance);
       });
 
       describe('text element', () => {
@@ -1176,7 +1176,7 @@ describe('choices', () => {
 
         it('dispatches activateChoices action', () => {
           expect(storeDispatchStub.called).to.equal(true);
-          expect(storeDispatchStub.lastCall.args[0]).to.eql({
+          expect(storeDispatchStub.lastCall.args[0]).to.deep.equal({
             type: ActionType.ACTIVATE_CHOICES,
             active: true,
           });
@@ -1280,7 +1280,7 @@ describe('choices', () => {
         });
 
         it('returns this', () => {
-          expect(output).to.eql(instance);
+          expect(output).to.deep.equal(instance);
         });
 
         it('returns early', () => {
@@ -1295,7 +1295,7 @@ describe('choices', () => {
         });
 
         it('returns this', () => {
-          expect(output).to.eql(instance);
+          expect(output).to.deep.equal(instance);
         });
 
         it('sets each value', () => {
@@ -1325,7 +1325,7 @@ describe('choices', () => {
         });
 
         it('returns this', () => {
-          expect(output).to.eql(instance);
+          expect(output).to.deep.equal(instance);
         });
 
         it('returns early', () => {
@@ -1347,7 +1347,7 @@ describe('choices', () => {
           });
 
           it('returns this', () => {
-            expect(output).to.eql(instance);
+            expect(output).to.deep.equal(instance);
           });
 
           it('sets each choice with same value', () => {
@@ -1366,7 +1366,7 @@ describe('choices', () => {
           });
 
           it('returns this', () => {
-            expect(output).to.eql(instance);
+            expect(output).to.deep.equal(instance);
           });
 
           it('sets each choice with same value', () => {
@@ -1422,7 +1422,7 @@ describe('choices', () => {
           });
 
           it('returns all active item values', () => {
-            expect(output).to.eql(items.map((item) => item.value));
+            expect(output).to.deep.equal(items.map((item) => item.value));
           });
         });
       });
@@ -1446,7 +1446,7 @@ describe('choices', () => {
           });
 
           it('returns all active items', () => {
-            expect(output).to.eql(items);
+            expect(output).to.deep.equal(items);
           });
         });
       });
@@ -1588,7 +1588,7 @@ describe('choices', () => {
         });
 
         it('returns this', () => {
-          expect(output).to.eql(instance);
+          expect(output).to.deep.equal(instance);
         });
 
         it('removes each highlighted item in store', () => {
@@ -1602,7 +1602,7 @@ describe('choices', () => {
         });
 
         it('returns this', () => {
-          expect(output).to.eql(instance);
+          expect(output).to.deep.equal(instance);
         });
 
         it('triggers event with item value', () => {
@@ -1705,7 +1705,7 @@ describe('choices', () => {
           it('adds groups', () => {
             instance.setChoices(groups, value, label, false);
             expect(addGroupStub.callCount).to.equal(1);
-            expect(addGroupStub.firstCall.args[0]).to.eql({
+            expect(addGroupStub.firstCall.args[0]).to.deep.equal({
               group: groups[0],
               id: groups[0].id,
               valueKey: value,
@@ -1719,7 +1719,7 @@ describe('choices', () => {
             instance.setChoices(choices, value, label, false);
             expect(addChoiceStub.callCount).to.equal(2);
             addChoiceStub.getCalls().forEach((call, index) => {
-              expect(call.args[0]).to.eql({
+              expect(call.args[0]).to.deep.equal({
                 value: choices[index][value],
                 label: choices[index][label],
                 isSelected: !!choices[index].selected,
@@ -1803,7 +1803,7 @@ describe('choices', () => {
           instance.passedElement.element.addEventListener(
             'search',
             (event) => {
-              expect(event.detail).to.eql({
+              expect(event.detail).to.deep.equal({
                 value: query,
                 resultCount: 0,
               });
@@ -1822,14 +1822,14 @@ describe('choices', () => {
           instance.passedElement.element.addEventListener(
             'search',
             (event) => {
-              expect(event.detail.resultCount).to.eql(2);
+              expect(event.detail.resultCount).to.deep.equal(2);
 
               instance.config.fuseOptions.isCaseSensitive = true;
               instance.config.fuseOptions.minMatchCharLength = 4;
               instance.passedElement.element.addEventListener(
                 'search',
                 (eventCaseSensitive) => {
-                  expect(eventCaseSensitive.detail.resultCount).to.eql(0);
+                  expect(eventCaseSensitive.detail.resultCount).to.deep.equal(0);
                   done(true);
                 },
                 { once: true },
@@ -1849,7 +1849,7 @@ describe('choices', () => {
           instance.input.value = '';
           instance.input.focus();
           instance.passedElement.element.addEventListener('search', (event) => {
-            expect(event.detail).to.eql({
+            expect(event.detail).to.deep.equal({
               value: instance.input.value,
               resultCount: 0,
             });
@@ -1941,7 +1941,7 @@ describe('choices', () => {
             elementToWrapFragment.appendChild(output);
 
             expect(output).to.be.instanceOf(DocumentFragment);
-            expect(elementToWrapFragment.children[0]).to.eql(childElement);
+            expect(elementToWrapFragment.children[0]).to.deep.equal(childElement);
             expect(
               elementToWrapFragment.querySelectorAll('[data-group]').length,
             ).to.equal(2);
@@ -2009,7 +2009,7 @@ describe('choices', () => {
             expect(_createChoicesFragmentStub.called).to.equal(false);
             instance._createGroupsFragment(groups, choices);
             expect(_createChoicesFragmentStub.called).to.equal(true);
-            expect(_createChoicesFragmentStub.firstCall.args[0]).to.eql([
+            expect(_createChoicesFragmentStub.firstCall.args[0]).to.deep.equal([
               {
                 id: 1,
                 selected: true,
@@ -2025,7 +2025,7 @@ describe('choices', () => {
                 label: 'Choice 3',
               },
             ]);
-            expect(_createChoicesFragmentStub.secondCall.args[0]).to.eql([
+            expect(_createChoicesFragmentStub.secondCall.args[0]).to.deep.equal([
               {
                 id: 2,
                 selected: false,
@@ -2048,7 +2048,7 @@ describe('choices', () => {
               expect(_createChoicesFragmentStub.called).to.equal(false);
               instance._createGroupsFragment(groups, choices);
               expect(_createChoicesFragmentStub.called).to.equal(true);
-              expect(_createChoicesFragmentStub.firstCall.args[0]).to.eql([
+              expect(_createChoicesFragmentStub.firstCall.args[0]).to.deep.equal([
                 {
                   id: 1,
                   selected: true,
@@ -2064,7 +2064,7 @@ describe('choices', () => {
                   label: 'Choice 3',
                 },
               ]);
-              expect(_createChoicesFragmentStub.secondCall.args[0]).to.eql([
+              expect(_createChoicesFragmentStub.secondCall.args[0]).to.deep.equal([
                 {
                   id: 2,
                   selected: false,
@@ -2086,7 +2086,7 @@ describe('choices', () => {
               expect(_createChoicesFragmentStub.called).to.equal(false);
               instance._createGroupsFragment(groups, choices);
               expect(_createChoicesFragmentStub.called).to.equal(true);
-              expect(_createChoicesFragmentStub.firstCall.args[0]).to.eql([
+              expect(_createChoicesFragmentStub.firstCall.args[0]).to.deep.equal([
                 {
                   id: 3,
                   selected: false,
@@ -2095,7 +2095,7 @@ describe('choices', () => {
                   label: 'Choice 3',
                 },
               ]);
-              expect(_createChoicesFragmentStub.secondCall.args[0]).to.eql([
+              expect(_createChoicesFragmentStub.secondCall.args[0]).to.deep.equal([
                 {
                   id: 2,
                   selected: false,
@@ -2216,7 +2216,7 @@ describe('choices', () => {
             instance.config,
             customArg,
           );
-          expect(output).to.deep.equal(element);
+          expect(output).to.equal(element);
           expect(instance._templates[templateKey]).to.have.been.calledOnceWith(
             instance.config,
             customArg,
@@ -2369,7 +2369,7 @@ describe('choices', () => {
             passedElement.addEventListener(
               'removeItem',
               (event) => {
-                expect(event.detail).to.eql({
+                expect(event.detail).to.deep.equal({
                   id: item.id,
                   value: item.value,
                   label: item.label,
@@ -2408,7 +2408,7 @@ describe('choices', () => {
               passedElement.addEventListener(
                 'removeItem',
                 (event) => {
-                  expect(event.detail).to.eql({
+                  expect(event.detail).to.deep.equal({
                     id: itemWithGroup.id,
                     value: itemWithGroup.value,
                     label: itemWithGroup.label,

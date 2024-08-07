@@ -22,21 +22,21 @@ describe('components/wrappedElement', () => {
 
   describe('constructor', () => {
     it('assigns choices element to class', () => {
-      expect(instance.element).to.eql(element);
+      expect(instance.element).to.equal(element);
     });
 
     it('assigns classnames to class', () => {
-      expect(instance.classNames).to.eql(DEFAULT_CLASSNAMES);
+      expect(instance.classNames).to.deep.equal(DEFAULT_CLASSNAMES);
     });
 
     it('sets isDisabled flag to false', () => {
-      expect(instance.isDisabled).to.eql(false);
+      expect(instance.isDisabled).to.deep.equal(false);
     });
   });
 
   describe('value getter', () => {
     it('returns element value', () => {
-      expect(instance.value).to.eql(element.value);
+      expect(instance.value).to.deep.equal(element.value);
     });
   });
 
@@ -166,7 +166,7 @@ describe('components/wrappedElement', () => {
         };
 
         instance.element.addEventListener('testEvent', ({ detail }) => {
-          expect(detail).to.eql(data);
+          expect(detail).to.deep.equal(data);
           done(true);
         });
 

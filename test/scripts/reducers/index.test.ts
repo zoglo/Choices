@@ -13,10 +13,10 @@ describe('reducers/rootReducer', () => {
   it('returns expected reducers', () => {
     const state = store.getState();
 
-    expect(state.groups).to.equal(groups(undefined, {} as any));
-    expect(state.choices).to.equal(choices(undefined, {} as any));
-    expect(state.items).to.equal(items(undefined, {} as any));
-    expect(state.loading).to.equal(loading(undefined, {} as any));
+    expect(state.groups).to.deep.equal(groups(undefined, {} as any));
+    expect(state.choices).to.deep.equal(choices(undefined, {} as any));
+    expect(state.items).to.deep.equal(items(undefined, {} as any));
+    expect(state.loading).to.deep.equal(loading(undefined, {} as any));
   });
 
   describe('CLEAR_ALL', () => {
@@ -32,7 +32,7 @@ describe('reducers/rootReducer', () => {
         },
       );
 
-      expect(output).to.eql({
+      expect(output).to.deep.equal({
         items: [],
         groups: [],
         choices: [],

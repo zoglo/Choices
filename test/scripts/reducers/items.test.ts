@@ -8,7 +8,7 @@ import { defaultState } from '../../../src/scripts/reducers';
 
 describe('reducers/items', () => {
   it('should return same state when no action matches', () => {
-    expect(items(defaultState.items, {} as any)).to.equal(defaultState.items);
+    expect(items(defaultState.items, {} as any)).to.deep.equal(defaultState.items);
   });
 
   describe('when items do not exist', () => {
@@ -42,7 +42,7 @@ describe('reducers/items', () => {
         it('adds item', () => {
           const expectedResponse = [choice];
 
-          expect(actualResponse).to.eql(expectedResponse);
+          expect(actualResponse).to.deep.equal(expectedResponse);
         });
 
         it('unhighlights all highlighted items', () => {
@@ -65,7 +65,7 @@ describe('reducers/items', () => {
               item: cloneObject(item),
             });
 
-            expect(actualResponse).to.eql(expectedResponse);
+            expect(actualResponse).to.deep.equal(expectedResponse);
           });
         });
       });
@@ -127,7 +127,7 @@ describe('reducers/items', () => {
           },
         } as RemoveItemAction);
 
-        expect(actualResponse).to.eql(expectedResponse);
+        expect(actualResponse).to.deep.equal(expectedResponse);
       });
     });
 
@@ -151,7 +151,7 @@ describe('reducers/items', () => {
           highlighted: true,
         });
 
-        expect(actualResponse).to.eql(expectedResponse);
+        expect(actualResponse).to.deep.equal(expectedResponse);
       });
     });
   });

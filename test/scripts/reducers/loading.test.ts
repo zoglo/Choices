@@ -19,7 +19,7 @@ describe('reducers/loading', () => {
         isLoading: true,
       });
 
-      expect(expectedState).to.eql(actualState);
+      expect(expectedState).to.deep.equal(actualState);
     });
   });
 });

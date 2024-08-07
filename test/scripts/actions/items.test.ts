@@ -26,7 +26,7 @@ describe('actions/items', () => {
         item,
       };
 
-      expect(actions.addItem(cloneObject(item))).to.eql(expectedAction);
+      expect(actions.addItem(cloneObject(item))).to.deep.equal(expectedAction);
     });
   });
 
@@ -51,7 +51,7 @@ describe('actions/items', () => {
         item,
       };
 
-      expect(actions.removeItem(cloneObject(item))).to.eql(expectedAction);
+      expect(actions.removeItem(cloneObject(item))).to.deep.equal(expectedAction);
     });
   });
 
@@ -66,7 +66,7 @@ describe('actions/items', () => {
         highlighted,
       };
 
-      expect(actions.highlightItem(id, highlighted)).to.eql(expectedAction);
+      expect(actions.highlightItem(id, highlighted)).to.deep.equal(expectedAction);
     });
   });
 });

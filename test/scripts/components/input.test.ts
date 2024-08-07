@@ -24,11 +24,11 @@ describe('components/input', () => {
 
   describe('constructor', () => {
     it('assigns choices element to class', () => {
-      expect(instance.element).to.eql(choicesElement);
+      expect(instance.element).to.deep.equal(choicesElement);
     });
 
     it('assigns classnames to class', () => {
-      expect(instance.classNames).to.eql(DEFAULT_CLASSNAMES);
+      expect(instance.classNames).to.deep.equal(DEFAULT_CLASSNAMES);
     });
   });
 
@@ -260,7 +260,7 @@ describe('components/input', () => {
 
     it('returns instance', () => {
       const response = instance.clear();
-      expect(response).to.eql(instance);
+      expect(response).to.deep.equal(instance);
     });
   });
 
