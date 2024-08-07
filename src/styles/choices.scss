@@ -96,7 +96,7 @@ $choices-z-index: 1 !default;
       box-shadow: 0 0 0 2px $choices-highlight-color;
     }
   }
-  .#{$choices-selector}__item[data-value=''] .#{$choices-selector}__button {
+  .#{$choices-selector}__item[data-placeholder] .#{$choices-selector}__button {
     display: none;
   }
 
