@@ -6,7 +6,7 @@ const puppeteer = require('puppeteer');
 const pixelmatch = require('pixelmatch');
 const { PNG } = require('pngjs');
 
-const server = require('server');
+const server = require('../../server.cjs')
 
 async function test() {
   const browser = await puppeteer.launch();
