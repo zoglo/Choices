@@ -31,7 +31,7 @@ async function test() {
       waitUntil: 'networkidle2',
     });
     await page.setViewport({ width: 640, height: 1000 });
-    await page.waitForTimeout(500); // Wait for resize to complete
+    await page.evaluate(() => new Promise(r => setTimeout(r, 500))); // Wait for resize to complete
     await page.click('label[for="choices-single-custom-templates"]');
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowDown');
