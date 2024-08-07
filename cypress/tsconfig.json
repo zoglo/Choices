@@ -15,7 +15,7 @@
     "noUnusedParameters": true,
     "strictNullChecks": true,
     "newLine": "lf",
-    "types": ["cypress"],
+    "types": ["cypress", "node"],
     "declarationDir": "../public/types/cypress"
   },
   "include": ["."]
