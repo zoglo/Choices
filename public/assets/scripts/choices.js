@@ -3940,9 +3940,7 @@
             var _this = this;
             if (valueOnly === void 0) { valueOnly = false; }
             var values = this._store.items.reduce(function (selectedItems, item) {
-                var itemValue = valueOnly
-                    ? item.value
-                    : _this._getChoiceForOutput(item);
+                var itemValue = valueOnly ? item.value : _this._getChoiceForOutput(item);
                 selectedItems.push(itemValue);
                 return selectedItems;
             }, []);
@@ -5033,8 +5031,12 @@
             if (hasActiveDropdown || this._isSelectOneElement) {
                 this.showDropdown();
                 this._canSearch = false;
-                var directionInt = keyCode === 40 /* KeyCodeMap.DOWN_KEY */ || keyCode === 34 /* KeyCodeMap.PAGE_DOWN_KEY */ ? 1 : -1;
-                var skipKey = metaKey || keyCode === 34 /* KeyCodeMap.PAGE_DOWN_KEY */ || keyCode === 33 /* KeyCodeMap.PAGE_UP_KEY */;
+                var directionInt = keyCode === 40 /* KeyCodeMap.DOWN_KEY */ || keyCode === 34 /* KeyCodeMap.PAGE_DOWN_KEY */
+                    ? 1
+                    : -1;
+                var skipKey = metaKey ||
+                    keyCode === 34 /* KeyCodeMap.PAGE_DOWN_KEY */ ||
+                    keyCode === 33 /* KeyCodeMap.PAGE_UP_KEY */;
                 var selectableChoiceIdentifier = '[data-choice-selectable]';
                 var nextEl = void 0;
                 if (skipKey) {
@@ -5301,7 +5303,9 @@
             }
             (_a = passedEl.classList).add.apply(_a, getClassNames(this.config.classNames.highlightedState));
             passedEl.setAttribute('aria-selected', 'true');
-            this.passedElement.triggerEvent("highlightChoice" /* EventType.highlightChoice */, { el: passedEl });
+            this.passedElement.triggerEvent("highlightChoice" /* EventType.highlightChoice */, {
+                el: passedEl,
+            });
             if (this.dropdown.isActive) {
                 // IE11 ignores aria-label and blocks virtual keyboard
                 // if aria-activedescendant is set without a dropdown

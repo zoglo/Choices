@@ -20,11 +20,7 @@ import {
   WrappedInput,
   WrappedSelect,
 } from './components';
-import {
-  SELECT_MULTIPLE_TYPE,
-  SELECT_ONE_TYPE,
-  TEXT_TYPE,
-} from './constants';
+import { SELECT_MULTIPLE_TYPE, SELECT_ONE_TYPE, TEXT_TYPE } from './constants';
 import { DEFAULT_CONFIG } from './defaults';
 import { InputChoice } from './interfaces/input-choice';
 import { InputGroup } from './interfaces/input-group';
@@ -67,6 +63,7 @@ const parseDataSetId = (element?: HTMLElement): number | undefined => {
   }
 
   const { id } = element.dataset;
+
   return id ? parseInt(id, 10) : undefined;
 };
 
@@ -569,17 +566,12 @@ class Choices implements ChoicesInterface {
   }
 
   getValue(valueOnly = false): string[] | EventChoice[] | EventChoice | string {
-    const values = this._store.items.reduce<any[]>(
-      (selectedItems, item) => {
-        const itemValue = valueOnly
-          ? item.value
-          : this._getChoiceForOutput(item);
-        selectedItems.push(itemValue);
+    const values = this._store.items.reduce<any[]>((selectedItems, item) => {
+      const itemValue = valueOnly ? item.value : this._getChoiceForOutput(item);
+      selectedItems.push(itemValue);
 
-        return selectedItems;
-      },
-      [],
-    );
+      return selectedItems;
+    }, []);
 
     return this._isSelectOneElement || this.config.singleModeForMultiSelect
       ? values[0]
@@ -1223,13 +1215,18 @@ class Choices implements ChoicesInterface {
       this._hasNonChoicePlaceholder &&
       items.length === 0
     ) {
-      addItemToFragment(mapInputToChoice<InputChoice>({
-        selected: true,
-        value: '',
-        label: this.config.placeholderValue || '',
-        active: true,
-        placeholder: true,
-      }, false));
+      addItemToFragment(
+        mapInputToChoice<InputChoice>(
+          {
+            selected: true,
+            value: '',
+            label: this.config.placeholderValue || '',
+            active: true,
+            placeholder: true,
+          },
+          false,
+        ),
+      );
     }
 
     return fragment;
@@ -1306,7 +1303,7 @@ class Choices implements ChoicesInterface {
     this._triggerChange(itemToRemove.value);
 
     if (this._isSelectOneElement && !this._hasNonChoicePlaceholder) {
-      const placeholderChoice = this._store.placeholderChoice;
+      const { placeholderChoice } = this._store;
       if (placeholderChoice) {
         this._selectPlaceholderChoice(placeholderChoice);
       }
@@ -1471,9 +1468,10 @@ class Choices implements ChoicesInterface {
   }
 
   _handleLoadingState(setLoading = true): void {
-    let placeholderItem: HTMLElement | null = this.itemList.element.querySelector(
-      getClassNamesSelector(this.config.classNames.placeholder),
-    );
+    let placeholderItem: HTMLElement | null =
+      this.itemList.element.querySelector(
+        getClassNamesSelector(this.config.classNames.placeholder),
+      );
 
     if (setLoading) {
       this.disable();
@@ -1906,9 +1904,10 @@ class Choices implements ChoicesInterface {
 
     // add the highlighted item
     if (hasActiveDropdown) {
-      const highlightedChoice: HTMLElement | null = this.dropdown.element.querySelector(
-        getClassNamesSelector(this.config.classNames.highlightedState),
-      );
+      const highlightedChoice: HTMLElement | null =
+        this.dropdown.element.querySelector(
+          getClassNamesSelector(this.config.classNames.highlightedState),
+        );
 
       if (highlightedChoice) {
         addedItem = this._handleChoiceAction(
@@ -1995,9 +1994,13 @@ class Choices implements ChoicesInterface {
       this._canSearch = false;
 
       const directionInt =
-        keyCode === KeyCodeMap.DOWN_KEY || keyCode === KeyCodeMap.PAGE_DOWN_KEY ? 1 : -1;
+        keyCode === KeyCodeMap.DOWN_KEY || keyCode === KeyCodeMap.PAGE_DOWN_KEY
+          ? 1
+          : -1;
       const skipKey =
-        metaKey || keyCode === KeyCodeMap.PAGE_DOWN_KEY || keyCode === KeyCodeMap.PAGE_UP_KEY;
+        metaKey ||
+        keyCode === KeyCodeMap.PAGE_DOWN_KEY ||
+        keyCode === KeyCodeMap.PAGE_UP_KEY;
       const selectableChoiceIdentifier = '[data-choice-selectable]';
 
       let nextEl;
@@ -2220,7 +2223,9 @@ class Choices implements ChoicesInterface {
 
     if (blurWasWithinContainer && !this._isScrollingOnIe) {
       const { activeChoices } = this._store;
-      const hasHighlightedItems = activeChoices.some((item) => item.highlighted);
+      const hasHighlightedItems = activeChoices.some(
+        (item) => item.highlighted,
+      );
       const blurActions = {
         [TEXT_TYPE]: (): void => {
           if (target === this.input.element) {
@@ -2318,7 +2323,9 @@ class Choices implements ChoicesInterface {
       ...getClassNames(this.config.classNames.highlightedState),
     );
     passedEl.setAttribute('aria-selected', 'true');
-    this.passedElement.triggerEvent(EventType.highlightChoice, { el: passedEl });
+    this.passedElement.triggerEvent(EventType.highlightChoice, {
+      el: passedEl,
+    });
 
     if (this.dropdown.isActive) {
       // IE11 ignores aria-label and blocks virtual keyboard
