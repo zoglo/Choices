@@ -443,7 +443,7 @@ class Choices implements ChoicesInterface {
   }
 
   highlightItem(item: InputChoice, runEvent = true): this {
-    const { id } = item;
+    const { id } = item || {};
     if (!id) {
       return this;
     }
@@ -461,7 +461,7 @@ class Choices implements ChoicesInterface {
   }
 
   unhighlightItem(item: InputChoice): this {
-    const { id } = item;
+    const { id } = item || {};
     if (!id) {
       return this;
     }
@@ -586,7 +586,9 @@ class Choices implements ChoicesInterface {
 
     this._store.withDeferRendering(() => {
       items.forEach((value: string | InputChoice) => {
-        this._addChoice(mapInputToChoice(value, false));
+        if (value) {
+          this._addChoice(mapInputToChoice(value, false));
+        }
       });
     });
 
