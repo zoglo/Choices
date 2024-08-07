@@ -580,30 +580,33 @@ describe('choices', () => {
           expect(output).to.eql(instance);
         });
 
-        it('opens containerOuter', (done) => {
-          requestAnimationFrame(() => {
-            expect(containerOuterOpenSpy.called).to.equal(true);
-            done();
-          });
-        });
+        it('opens containerOuter', () =>
+          new Promise((done) => {
+            requestAnimationFrame(() => {
+              expect(containerOuterOpenSpy.called).to.equal(true);
+              done(true);
+            });
+          }));
 
-        it('shows dropdown with blurInput flag', (done) => {
-          requestAnimationFrame(() => {
-            expect(dropdownShowSpy.called).to.equal(true);
-            done();
-          });
-        });
+        it('shows dropdown with blurInput flag', () =>
+          new Promise((done) => {
+            requestAnimationFrame(() => {
+              expect(dropdownShowSpy.called).to.equal(true);
+              done(true);
+            });
+          }));
 
-        it('triggers event on passedElement', (done) => {
-          requestAnimationFrame(() => {
-            expect(passedElementTriggerEventStub.called).to.equal(true);
-            expect(passedElementTriggerEventStub.lastCall.args[0]).to.eql(
-              EventType.showDropdown,
-            );
-            expect(passedElementTriggerEventStub.lastCall.args[1]).to.eql({});
-            done();
-          });
-        });
+        it('triggers event on passedElement', () =>
+          new Promise((done) => {
+            requestAnimationFrame(() => {
+              expect(passedElementTriggerEventStub.called).to.equal(true);
+              expect(passedElementTriggerEventStub.lastCall.args[0]).to.eql(
+                EventType.showDropdown,
+              );
+              expect(passedElementTriggerEventStub.lastCall.args[1]).to.eql({});
+              done(true);
+            });
+          }));
 
         describe('passing true focusInput flag with canSearch set to true', () => {
           beforeEach(() => {
@@ -612,12 +615,13 @@ describe('choices', () => {
             output = instance.showDropdown(true);
           });
 
-          it('focuses input', (done) => {
-            requestAnimationFrame(() => {
-              expect(inputFocusSpy.called).to.equal(true);
-              done();
-            });
-          });
+          it('focuses input', () =>
+            new Promise((done) => {
+              requestAnimationFrame(() => {
+                expect(inputFocusSpy.called).to.equal(true);
+                done(true);
+              });
+            }));
         });
       });
     });
@@ -678,30 +682,33 @@ describe('choices', () => {
           expect(output).to.eql(instance);
         });
 
-        it('closes containerOuter', (done) => {
-          requestAnimationFrame(() => {
-            expect(containerOuterCloseSpy.called).to.equal(true);
-            done();
-          });
-        });
+        it('closes containerOuter', () =>
+          new Promise((done) => {
+            requestAnimationFrame(() => {
+              expect(containerOuterCloseSpy.called).to.equal(true);
+              done(true);
+            });
+          }));
 
-        it('hides dropdown with blurInput flag', (done) => {
-          requestAnimationFrame(() => {
-            expect(dropdownHideSpy.called).to.equal(true);
-            done();
-          });
-        });
+        it('hides dropdown with blurInput flag', () =>
+          new Promise((done) => {
+            requestAnimationFrame(() => {
+              expect(dropdownHideSpy.called).to.equal(true);
+              done(true);
+            });
+          }));
 
-        it('triggers event on passedElement', (done) => {
-          requestAnimationFrame(() => {
-            expect(passedElementTriggerEventStub.called).to.equal(true);
-            expect(passedElementTriggerEventStub.lastCall.args[0]).to.eql(
-              EventType.hideDropdown,
-            );
-            expect(passedElementTriggerEventStub.lastCall.args[1]).to.eql({});
-            done();
-          });
-        });
+        it('triggers event on passedElement', () =>
+          new Promise((done) => {
+            requestAnimationFrame(() => {
+              expect(passedElementTriggerEventStub.called).to.equal(true);
+              expect(passedElementTriggerEventStub.lastCall.args[0]).to.eql(
+                EventType.hideDropdown,
+              );
+              expect(passedElementTriggerEventStub.lastCall.args[1]).to.eql({});
+              done(true);
+            });
+          }));
 
         describe('passing true blurInput flag with canSearch set to true', () => {
           beforeEach(() => {
@@ -710,19 +717,21 @@ describe('choices', () => {
             output = instance.hideDropdown(true);
           });
 
-          it('removes active descendants', (done) => {
-            requestAnimationFrame(() => {
-              expect(inputRemoveActiveDescendantSpy.called).to.equal(true);
-              done();
-            });
-          });
+          it('removes active descendants', () =>
+            new Promise((done) => {
+              requestAnimationFrame(() => {
+                expect(inputRemoveActiveDescendantSpy.called).to.equal(true);
+                done(true);
+              });
+            }));
 
-          it('blurs input', (done) => {
-            requestAnimationFrame(() => {
-              expect(inputBlurSpy.called).to.equal(true);
-              done();
-            });
-          });
+          it('blurs input', () =>
+            new Promise((done) => {
+              requestAnimationFrame(() => {
+                expect(inputBlurSpy.called).to.equal(true);
+                done(true);
+              });
+            }));
         });
       });
     });
@@ -1784,68 +1793,71 @@ describe('choices', () => {
         });
       });
 
-      it('details are passed', (done) => {
-        const query =
-          'This is a <search> query & a "test" with characters that should not be sanitised.';
+      it('details are passed', () =>
+        new Promise((done) => {
+          const query =
+            'This is a <search> query & a "test" with characters that should not be sanitised.';
 
-        instance.input.value = query;
-        instance.input.focus();
-        instance.passedElement.element.addEventListener(
-          'search',
-          (event) => {
+          instance.input.value = query;
+          instance.input.focus();
+          instance.passedElement.element.addEventListener(
+            'search',
+            (event) => {
+              expect(event.detail).to.eql({
+                value: query,
+                resultCount: 0,
+              });
+              done(true);
+            },
+            { once: true },
+          );
+
+          instance._onKeyUp({ target: null, keyCode: null });
+        }));
+
+      it('uses Fuse options', () =>
+        new Promise((done) => {
+          instance.input.value = 'test';
+          instance.input.focus();
+          instance.passedElement.element.addEventListener(
+            'search',
+            (event) => {
+              expect(event.detail.resultCount).to.eql(2);
+
+              instance.config.fuseOptions.isCaseSensitive = true;
+              instance.config.fuseOptions.minMatchCharLength = 4;
+              instance.passedElement.element.addEventListener(
+                'search',
+                (eventCaseSensitive) => {
+                  expect(eventCaseSensitive.detail.resultCount).to.eql(0);
+                  done(true);
+                },
+                { once: true },
+              );
+
+              instance._onKeyUp({ target: null, keyCode: null });
+            },
+            { once: true },
+          );
+
+          instance._onKeyUp({ target: null, keyCode: null });
+        }));
+
+      it('is fired with a searchFloor of 0', () =>
+        new Promise((done) => {
+          instance.config.searchFloor = 0;
+          instance.input.value = '';
+          instance.input.focus();
+          instance.passedElement.element.addEventListener('search', (event) => {
             expect(event.detail).to.eql({
-              value: query,
+              value: instance.input.value,
               resultCount: 0,
             });
-            done();
-          },
-          { once: true },
-        );
-
-        instance._onKeyUp({ target: null, keyCode: null });
-      });
-
-      it('uses Fuse options', (done) => {
-        instance.input.value = 'test';
-        instance.input.focus();
-        instance.passedElement.element.addEventListener(
-          'search',
-          (event) => {
-            expect(event.detail.resultCount).to.eql(2);
-
-            instance.config.fuseOptions.isCaseSensitive = true;
-            instance.config.fuseOptions.minMatchCharLength = 4;
-            instance.passedElement.element.addEventListener(
-              'search',
-              (eventCaseSensitive) => {
-                expect(eventCaseSensitive.detail.resultCount).to.eql(0);
-                done();
-              },
-              { once: true },
-            );
-
-            instance._onKeyUp({ target: null, keyCode: null });
-          },
-          { once: true },
-        );
-
-        instance._onKeyUp({ target: null, keyCode: null });
-      });
-
-      it('is fired with a searchFloor of 0', (done) => {
-        instance.config.searchFloor = 0;
-        instance.input.value = '';
-        instance.input.focus();
-        instance.passedElement.element.addEventListener('search', (event) => {
-          expect(event.detail).to.eql({
-            value: instance.input.value,
-            resultCount: 0,
+            done(true);
           });
-          done();
-        });
 
-        instance._onKeyUp({ target: null, keyCode: null });
-      });
+          instance._onKeyUp({ target: null, keyCode: null });
+        }));
     });
   });
 
@@ -2352,24 +2364,25 @@ describe('choices', () => {
           );
         });
 
-        it('triggers a REMOVE_ITEM event on the passed element', (done) => {
-          passedElement.addEventListener(
-            'removeItem',
-            (event) => {
-              expect(event.detail).to.eql({
-                id: item.id,
-                value: item.value,
-                label: item.label,
-                customProperties: item.customProperties,
-                groupValue: null,
-              });
-              done();
-            },
-            false,
-          );
+        it('triggers a REMOVE_ITEM event on the passed element', () =>
+          new Promise((done) => {
+            passedElement.addEventListener(
+              'removeItem',
+              (event) => {
+                expect(event.detail).to.eql({
+                  id: item.id,
+                  value: item.value,
+                  label: item.label,
+                  customProperties: item.customProperties,
+                  groupValue: null,
+                });
+                done(true);
+              },
+              false,
+            );
 
-          instance._removeItem(item);
-        });
+            instance._removeItem(item);
+          }));
 
         describe('when the item belongs to a group', () => {
           const group = {
@@ -2390,25 +2403,26 @@ describe('choices', () => {
             instance._store.getGroupById.reset();
           });
 
-          it("includes the group's value in the triggered event", (done) => {
-            passedElement.addEventListener(
-              'removeItem',
-              (event) => {
-                expect(event.detail).to.eql({
-                  id: itemWithGroup.id,
-                  value: itemWithGroup.value,
-                  label: itemWithGroup.label,
-                  customProperties: itemWithGroup.customProperties,
-                  groupValue: group.value,
-                });
+          it("includes the group's value in the triggered event", () =>
+            new Promise((done) => {
+              passedElement.addEventListener(
+                'removeItem',
+                (event) => {
+                  expect(event.detail).to.eql({
+                    id: itemWithGroup.id,
+                    value: itemWithGroup.value,
+                    label: itemWithGroup.label,
+                    customProperties: itemWithGroup.customProperties,
+                    groupValue: group.value,
+                  });
 
-                done();
-              },
-              false,
-            );
+                  done(true);
+                },
+                false,
+              );
 
-            instance._removeItem(itemWithGroup);
-          });
+              instance._removeItem(itemWithGroup);
+            }));
         });
       });
     });

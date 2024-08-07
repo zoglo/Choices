@@ -14,10 +14,9 @@
     "noUnusedParameters": true,
     "strictNullChecks": true,
     "newLine": "lf",
-    "types": ["vitest/globals"],
     "declaration": false,
     "declarationMap": false
   },
-  "include": [".", "../src"],
+  "include": ["."],
   "exclude": ["**/node_modules", "**/public"]
 }

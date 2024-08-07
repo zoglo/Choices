@@ -159,17 +159,18 @@ describe('components/wrappedElement', () => {
   });
 
   describe('triggerEvent', () => {
-    it('fires event on element using passed eventType and data', (done) => {
-      const data = {
-        test: true,
-      };
+    it('fires event on element using passed eventType and data', () =>
+      new Promise((done) => {
+        const data = {
+          test: true,
+        };
 
-      instance.element.addEventListener('testEvent', ({ detail }) => {
-        expect(detail).to.eql(data);
-        done();
-      });
+        instance.element.addEventListener('testEvent', ({ detail }) => {
+          expect(detail).to.eql(data);
+          done(true);
+        });
 
-      instance.triggerEvent('testEvent', data);
-    });
+        instance.triggerEvent('testEvent', data);
+      }));
   });
 });

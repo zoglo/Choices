@@ -1,9 +1,23 @@
 {
-  "extends": "../tsconfig.base.json",
   "compilerOptions": {
-    "composite": false,
+    "module": "es6",
+    "lib": ["es2017", "dom"],
+    "target": "es5",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "strict": false,
     "noImplicitAny": false,
-    "types": ["vitest/globals"],
+    "allowJs": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strictNullChecks": true,
+    "newLine": "lf",
+    "declaration": false,
+    "declarationMap": false,
+    "types": ["vitest/globals", "vitest/jsdom"],
   },
-  "include": [".", "../src"]
+  "include": [".", "../src"],
+  "exclude": ["**/node_modules", "**/public"]
 }
