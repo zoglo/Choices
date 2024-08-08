@@ -8,7 +8,6 @@
 * Provide "fuse full" (default `choices.js`, ~20.36KB), or "fuse basic" (`choices.search-basic.js` ~19.31KB) or "prefix filter" (`choices.search-filter.js` ~15.27KB) based on how much Fuse.js is included.
 
 ### Bug Fixes (from 10.2.0)
-* Fix `aria-describedby` was being assigned when it shouldn't be
 * Fix `select-one` placeholder could ignore the non-option placeholder configuration
 * Remove typescript types for tests from distribution
 
@@ -18,6 +17,7 @@
 * Switch test framework from `mocha` to `vitest`
 
 ### Bug Fixes (from 11.0.0RC4)
+* Fix `aria-describedby` was being assigned when it shouldn't be
 * Fix check to ensure search was fully enabled for multiple select mode, as this functionality is hard-coded enabled elsewhere in the code base.
 
 ## [11.0.0 RC3] (2024-08-04)
