@@ -1,6 +1,11 @@
 # Changelog
 
-## [11.0.0 RCx] (2024-08-xx)
+## [11.0.0-rc5] (2024-08-08)
+
+### ⚠ BREAKING CHANGES
+* Update to using Fuse.js v7.0.0
+* Update choices.js package to be an ES module, and use '[subpath exports](https://nodejs.org/api/packages.html#subpath-exports)' to expose multiple versions (UMD, CJS or MTS bundles).
+* Provide "fuse full" (default `choices.js`, ~20.36KB), or "fuse basic" (`choices.search-basic.js` ~19.31KB) or "prefix filter" (`choices.search-filter.js` ~15.27KB) based on how much Fuse.js is included.
 
 ### Bug Fixes (from 10.2.0)
 * Fix `aria-describedby` was being assigned when it shouldn't be
@@ -8,7 +13,12 @@
 * Remove typescript types for tests from distribution
 
 ### Chore
-* Reduce bundle size from ~24KB to ~20.4KB
+* Reduce bundle size from ~24KB to ~20.36KB
+* Switch bundler from `webpack` to `rollup`
+* Switch test framework from `mocha` to `vitest`
+
+### Bug Fixes (from 11.0.0RC4)
+* Fix check to ensure search was fully enabled for multiple select mode, as this functionality is hard-coded enabled elsewhere in the code base.
 
 ## [11.0.0 RC3] (2024-08-04)
 
