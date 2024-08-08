@@ -770,12 +770,27 @@ describe('choices', () => {
       let passedElementTriggerEventStub;
       let storeDispatchSpy;
       let storeGetGroupByIdStub;
+      let choicesStub;
       const groupIdValue = 'Test';
+      const item: ChoiceFull = {
+        groupId: -1,
+        highlighted: false,
+        active: false,
+        disabled: false,
+        placeholder: false,
+        selected: false,
+        id: 1234,
+        value: 'Test',
+        label: 'Test',
+        score: 0,
+      };
 
       beforeEach(() => {
+        choicesStub = stub(instance._store, 'choices').get(() => [item]);
         passedElementTriggerEventStub = stub();
         storeGetGroupByIdStub = stub().returns({
-          value: groupIdValue,
+          id: 4321,
+          label: groupIdValue,
         });
         storeDispatchSpy = spy(instance._store, 'dispatch');
 
@@ -784,6 +799,7 @@ describe('choices', () => {
       });
 
       afterEach(() => {
+        choicesStub.reset();
         storeDispatchSpy.restore();
         instance._store.getGroupById.reset();
         instance.passedElement.triggerEvent.reset();
@@ -806,19 +822,6 @@ describe('choices', () => {
       });
 
       describe('item passed', () => {
-        const item: ChoiceFull = {
-          groupId: -1,
-          highlighted: false,
-          active: false,
-          disabled: false,
-          placeholder: false,
-          selected: false,
-          id: 1234,
-          value: 'Test',
-          label: 'Test',
-          score: 0,
-        };
-
         describe('passing truthy second paremeter', () => {
           beforeEach(() => {
             output = instance.highlightItem(item, true);
@@ -832,52 +835,48 @@ describe('choices', () => {
             expect(storeDispatchSpy.called).to.equal(true);
             expect(storeDispatchSpy.lastCall.args[0]).to.deep.equal({
               type: ActionType.HIGHLIGHT_ITEM,
-              id: item.id,
+              item,
               highlighted: true,
             });
           });
+        });
 
-          describe('item with negative groupId', () => {
-            beforeEach(() => {
-              item.groupId = -1;
-              output = instance.highlightItem(item);
-            });
-
-            it('triggers event with null groupValue', () => {
-              expect(passedElementTriggerEventStub.called).to.equal(true);
-              expect(passedElementTriggerEventStub.lastCall.args[0]).to.equal(
-                EventType.highlightItem,
-              );
-              expect(
-                passedElementTriggerEventStub.lastCall.args[1],
-              ).to.contains({
-                id: item.id,
-                value: item.value,
-                label: item.label,
-                groupValue: null,
-              });
-            });
+        describe('item with negative groupId', () => {
+          beforeEach(() => {
+            item.groupId = -1;
+            output = instance.highlightItem(item);
           });
 
-          describe('item without groupId', () => {
-            beforeEach(() => {
-              item.groupId = 1;
-              output = instance.highlightItem(item);
+          it('triggers event with null groupValue', () => {
+            expect(passedElementTriggerEventStub.called).to.equal(true);
+            expect(passedElementTriggerEventStub.lastCall.args[0]).to.equal(
+              EventType.highlightItem,
+            );
+            expect(passedElementTriggerEventStub.lastCall.args[1]).to.contains({
+              id: item.id,
+              value: item.value,
+              label: item.label,
+              groupValue: undefined,
             });
+          });
+        });
 
-            it('triggers event with groupValue', () => {
-              expect(passedElementTriggerEventStub.called).to.equal(true);
-              expect(passedElementTriggerEventStub.lastCall.args[0]).to.equal(
-                EventType.highlightItem,
-              );
-              expect(
-                passedElementTriggerEventStub.lastCall.args[1],
-              ).to.contains({
-                id: item.id,
-                value: item.value,
-                label: item.label,
-                groupValue: groupIdValue,
-              });
+        describe('item without groupId', () => {
+          beforeEach(() => {
+            item.groupId = 4321;
+            output = instance.highlightItem(item);
+          });
+
+          it('triggers event with groupValue', () => {
+            expect(passedElementTriggerEventStub.called).to.equal(true);
+            expect(passedElementTriggerEventStub.lastCall.args[0]).to.equal(
+              EventType.highlightItem,
+            );
+            expect(passedElementTriggerEventStub.lastCall.args[1]).to.contains({
+              id: item.id,
+              value: item.value,
+              label: item.label,
+              groupValue: groupIdValue,
             });
           });
         });
@@ -899,15 +898,30 @@ describe('choices', () => {
     });
 
     describe('unhighlightItem', () => {
+      let choicesStub;
       let passedElementTriggerEventStub;
       let storeDispatchSpy;
       let storeGetGroupByIdStub;
       const groupIdValue = 'Test';
+      const item: ChoiceFull = {
+        groupId: 0,
+        highlighted: true,
+        active: false,
+        disabled: false,
+        placeholder: false,
+        selected: false,
+        id: 1234,
+        value: 'Test',
+        label: 'Test',
+        score: 0,
+      };
 
       beforeEach(() => {
+        choicesStub = stub(instance._store, 'choices').get(() => [item]);
         passedElementTriggerEventStub = stub();
         storeGetGroupByIdStub = stub().returns({
-          value: groupIdValue,
+          id: 4321,
+          label: groupIdValue,
         });
         storeDispatchSpy = spy(instance._store, 'dispatch');
 
@@ -916,6 +930,7 @@ describe('choices', () => {
       });
 
       afterEach(() => {
+        choicesStub.reset();
         storeDispatchSpy.restore();
         instance._store.getGroupById.reset();
         instance.passedElement.triggerEvent.reset();
@@ -938,19 +953,6 @@ describe('choices', () => {
       });
 
       describe('item passed', () => {
-        const item: ChoiceFull = {
-          groupId: 0,
-          highlighted: false,
-          active: false,
-          disabled: false,
-          placeholder: false,
-          selected: false,
-          id: 1234,
-          value: 'Test',
-          label: 'Test',
-          score: 0,
-        };
-
         describe('passing truthy second paremeter', () => {
           beforeEach(() => {
             output = instance.unhighlightItem(item, true);
@@ -962,59 +964,55 @@ describe('choices', () => {
 
           it('dispatches highlightItem action with correct arguments', () => {
             expect(storeDispatchSpy.called).to.equal(true);
-            expect(storeDispatchSpy.lastCall.args[0]).to.deep.equal({
+            expect(storeDispatchSpy.lastCall.args[0]).to.deep.contains({
               type: ActionType.HIGHLIGHT_ITEM,
-              id: item.id,
+              item,
               highlighted: false,
             });
           });
+        });
 
-          describe('item with negative groupId', () => {
-            beforeEach(() => {
-              item.groupId = -1;
-              output = instance.unhighlightItem(item);
-            });
-
-            it('triggers event with null groupValue', () => {
-              expect(passedElementTriggerEventStub.called).to.equal(true);
-              expect(passedElementTriggerEventStub.lastCall.args[0]).to.equal(
-                EventType.highlightItem,
-              );
-              expect(
-                passedElementTriggerEventStub.lastCall.args[1],
-              ).to.contains({
-                value: item.value,
-                label: item.label,
-                groupValue: null,
-              });
-            });
+        describe('item with negative groupId', () => {
+          beforeEach(() => {
+            item.groupId = -1;
+            output = instance.unhighlightItem(item);
           });
 
-          describe('item without groupId', () => {
-            beforeEach(() => {
-              item.groupId = 1;
-              output = instance.highlightItem(item);
+          it('triggers event with null groupValue', () => {
+            expect(passedElementTriggerEventStub.called).to.equal(true);
+            expect(passedElementTriggerEventStub.lastCall.args[0]).to.equal(
+              EventType.highlightItem,
+            );
+            expect(passedElementTriggerEventStub.lastCall.args[1]).to.contains({
+              value: item.value,
+              label: item.label,
+              groupValue: undefined,
             });
+          });
+        });
 
-            it('triggers event with groupValue', () => {
-              expect(passedElementTriggerEventStub.called).to.equal(true);
-              expect(passedElementTriggerEventStub.lastCall.args[0]).to.equal(
-                EventType.highlightItem,
-              );
-              expect(
-                passedElementTriggerEventStub.lastCall.args[1],
-              ).to.contains({
-                value: item.value,
-                label: item.label,
-                groupValue: groupIdValue,
-              });
+        describe('item without groupId', () => {
+          beforeEach(() => {
+            item.groupId = 4321;
+            output = instance.unhighlightItem(item);
+          });
+
+          it('triggers event with groupValue', () => {
+            expect(passedElementTriggerEventStub.called).to.equal(true);
+            expect(passedElementTriggerEventStub.lastCall.args[0]).to.equal(
+              EventType.highlightItem,
+            );
+            expect(passedElementTriggerEventStub.lastCall.args[1]).to.contains({
+              value: item.value,
+              label: item.label,
+              groupValue: groupIdValue,
             });
           });
         });
 
         describe('passing falsey second paremeter', () => {
           beforeEach(() => {
-            output = instance.highlightItem(item, false);
+            output = instance.unhighlightItem(item, false);
           });
 
           it("doesn't trigger event", () => {
@@ -1339,7 +1337,9 @@ describe('choices', () => {
           expect(_addChoiceStub.firstCall.args[0]).to.be.a('object');
           expect(_addChoiceStub.secondCall.args[0]).to.be.a('object');
           expect(value1).to.equal(_addChoiceStub.firstCall.args[0].value);
-          expect(value2).to.equal(_addChoiceStub.secondCall.args[0].value);
+          expect(value2.value).to.equal(
+            _addChoiceStub.secondCall.args[0].value,
+          );
         });
       });
     });

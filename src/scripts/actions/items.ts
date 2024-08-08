@@ -13,7 +13,7 @@ export interface RemoveItemAction {
 
 export interface HighlightItemAction {
   type: ActionType.HIGHLIGHT_ITEM;
-  id: number;
+  item: ChoiceFull;
   highlighted: boolean;
 }
 
@@ -28,10 +28,10 @@ export const removeItem = (item: ChoiceFull): RemoveItemAction => ({
 });
 
 export const highlightItem = (
-  id: number,
+  item: ChoiceFull,
   highlighted: boolean,
 ): HighlightItemAction => ({
   type: ActionType.HIGHLIGHT_ITEM,
-  id,
+  item,
   highlighted,
 });

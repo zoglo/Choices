@@ -443,35 +443,43 @@ class Choices implements ChoicesInterface {
   }
 
   highlightItem(item: InputChoice, runEvent = true): this {
-    const { id } = item || {};
-    if (!id) {
+    if (!item || !item.id) {
+      return this;
+    }
+    const choice = this._store.choices.find((c) => c.id === item.id);
+    if (!choice || choice.highlighted) {
       return this;
     }
 
-    this._store.dispatch(highlightItem(id, true));
+    this._store.dispatch(highlightItem(choice, true));
 
     if (runEvent) {
       this.passedElement.triggerEvent(
         EventType.highlightItem,
-        this._getChoiceForOutput(id),
+        this._getChoiceForOutput(choice),
       );
     }
 
     return this;
   }
 
-  unhighlightItem(item: InputChoice): this {
-    const { id } = item || {};
-    if (!id) {
+  unhighlightItem(item: InputChoice, runEvent = true): this {
+    if (!item || !item.id) {
+      return this;
+    }
+    const choice = this._store.choices.find((c) => c.id === item.id);
+    if (!choice || !choice.highlighted) {
       return this;
     }
 
-    this._store.dispatch(highlightItem(id, false));
+    this._store.dispatch(highlightItem(choice, false));
 
-    this.passedElement.triggerEvent(
-      EventType.highlightItem,
-      this._getChoiceForOutput(id),
-    );
+    if (runEvent) {
+      this.passedElement.triggerEvent(
+        EventType.highlightItem,
+        this._getChoiceForOutput(choice),
+      );
+    }
 
     return this;
   }
@@ -1247,14 +1255,9 @@ class Choices implements ChoicesInterface {
   }
 
   _getChoiceForOutput(
-    id: number | ChoiceFull,
+    choice?: ChoiceFull,
     keyCode?: number,
   ): EventChoice | undefined {
-    const choice =
-      typeof id === 'object'
-        ? id
-        : this._store.choices.find((obj) => obj.id === id);
-
     if (!choice) {
       return undefined;
     }

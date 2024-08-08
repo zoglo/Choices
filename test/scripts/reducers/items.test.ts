@@ -141,7 +141,6 @@ describe('reducers/items', () => {
 
     describe('HIGHLIGHT_ITEM', () => {
       it('sets an item to be inactive based on passed ID', () => {
-        const id = 2;
         const expectedResponse = [
           {
             ...state[0],
@@ -154,7 +153,7 @@ describe('reducers/items', () => {
 
         const actualResponse = items(cloneObject(state), {
           type: ActionType.HIGHLIGHT_ITEM,
-          id,
+          item: cloneObject(state[1]),
           highlighted: true,
         });
 

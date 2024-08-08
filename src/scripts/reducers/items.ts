@@ -68,7 +68,7 @@ export default function items(
 
       return state.map((obj) => {
         const item = obj;
-        if (item.id === highlightItemAction.id) {
+        if (item.id === highlightItemAction.item.id) {
           item.highlighted = highlightItemAction.highlighted;
         }
 
