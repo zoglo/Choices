@@ -1,4 +1,4 @@
-import Fuse from 'fuse.js';
+import { IFuseOptions } from 'fuse.js';
 import { InputChoice } from './input-choice';
 import { ClassNames } from './class-names';
 import { PositionOptionsType } from './position-options-type';
@@ -551,7 +551,7 @@ export interface Options {
   /**
    * Choices uses the great Fuse library for searching. You can find more options here: https://fusejs.io/api/options.html
    */
-  fuseOptions: Fuse.IFuseOptions<unknown>; // Fuse.IFuseOptions<Choices>;
+  fuseOptions: IFuseOptions<unknown>; // IFuseOptions<Choices>;
 
   /**
    * ID of the connected label to improve a11y. If set, aria-labelledby will be added.

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Fuse from 'fuse.js';
+import Fuse, { IFuseOptions } from 'fuse.js';
 
 import {
   activateChoices,
@@ -1631,7 +1631,7 @@ class Choices implements ChoicesInterface {
     const options = Object.assign(this.config.fuseOptions, {
       keys: [...this.config.searchFields],
       includeMatches: true,
-    }) as Fuse.IFuseOptions<ChoiceFull>;
+    }) as IFuseOptions<ChoiceFull>;
     const fuse = new Fuse(haystack, options);
     const results: Result<ChoiceFull>[] = fuse.search(needle) as any[]; // see https://github.com/krisk/Fuse/issues/303
 
