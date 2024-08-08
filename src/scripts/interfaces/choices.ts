@@ -13,6 +13,7 @@ import { Templates } from './templates';
 import { ChoiceFull } from './choice-full';
 import { GroupFull } from './group-full';
 import { Options } from './options';
+import { SearchHandler } from './search';
 
 export interface Choices {
   initialised: boolean;
@@ -82,4 +83,6 @@ export interface Choices {
   _presetItems: (InputChoice | string)[];
 
   _initialItems: string[];
+
+  _searchFn: SearchHandler;
 }

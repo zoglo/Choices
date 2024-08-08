@@ -48,6 +48,7 @@ import { EventType, KeyCodeMap, PassedElementType } from './interfaces';
 import { Choices as ChoicesInterface } from './interfaces/choices';
 import { EventChoice } from './interfaces/event-choice';
 import { Templates } from './interfaces/templates';
+import { SearchHandler } from './interfaces/search';
 
 /** @see {@link http://browserhacks.com/#hack-acea075d0ac6954f275a70023906050c} */
 const IS_IE11 =
@@ -164,6 +165,8 @@ class Choices implements ChoicesInterface {
   _presetItems: ChoiceFull[];
 
   _initialItems: string[];
+
+  _searchFn: SearchHandler;
 
   constructor(
     element:
@@ -304,6 +307,7 @@ class Choices implements ChoicesInterface {
     this._wasTap = true;
     this._placeholderValue = this._generatePlaceholderValue();
     this._baseId = generateId(this.passedElement.element, 'choices-');
+    this._searchFn = search;
 
     /**
      * setting direction in cases where it's explicitly set on passedElement
@@ -1626,7 +1630,7 @@ class Choices implements ChoicesInterface {
 
     // If new value matches the desired length and is not the same as the current value with a space
     const haystack = this._store.searchableChoices;
-    const results = search<ChoiceFull>(this.config, haystack, newValue);
+    const results = this._searchFn<ChoiceFull>(this.config, haystack, newValue);
 
     this._currentValue = newValue;
     this._highlightPosition = 0;

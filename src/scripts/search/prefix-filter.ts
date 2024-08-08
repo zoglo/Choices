@@ -1,5 +1,5 @@
 import { Options } from '../interfaces';
-import { SearchResult } from './search-results';
+import { SearchResult } from '../interfaces/search';
 
 export function searchByPrefixFilter<T extends object>(
   config: Options,

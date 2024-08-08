@@ -1,6 +1,6 @@
 import { ChoiceFull } from '../interfaces/choice-full';
 import { ActionType } from '../interfaces';
-import { SearchResult } from '../search/search-results';
+import { SearchResult } from '../interfaces/search';
 
 export interface AddChoiceAction {
   type: ActionType.ADD_CHOICE;
