@@ -441,7 +441,7 @@ export interface Options {
    *
    * @default null
    */
-  prependValue: string | null; // @todo reimplement
+  prependValue: string | null;
 
   /**
    * Append a value to each item added/selected.
@@ -450,7 +450,7 @@ export interface Options {
    *
    * @default null
    */
-  appendValue: string | null; // @todo reimplement
+  appendValue: string | null;
 
   /**
    * Whether selected choices should be removed from the list. By default choices are removed when they are selected in multiple select box. To always render choices pass `always`.
