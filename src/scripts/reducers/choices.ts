@@ -36,9 +36,9 @@ export default function choices(
     }
 
     case ActionType.REMOVE_CHOICE: {
-      const { value } = action as RemoveChoiceAction;
+      const { choice } = action as RemoveChoiceAction;
 
-      return state.filter((choice) => choice.value !== value);
+      return state.filter((obj) => obj.id !== choice.id);
     }
 
     case ActionType.ADD_ITEM: {

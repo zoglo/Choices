@@ -148,6 +148,20 @@ describe('reducers/choices', () => {
       });
     });
 
+    describe('REMOVE_CHOICE', () => {
+      it('the choice is removed', () => {
+        const choice = state[0];
+        const expectedResponse = state.filter((s) => s.id !== choice.id);
+
+        const actualResponse = choices(cloneObject(state), {
+          type: ActionType.REMOVE_CHOICE,
+          choice: cloneObject(choice),
+        });
+
+        expect(actualResponse).to.deep.equal(expectedResponse);
+      });
+    });
+
     describe('CLEAR_CHOICES', () => {
       it('restores to defaultState', () => {
         const expectedResponse = defaultState.choices;

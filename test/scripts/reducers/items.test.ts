@@ -125,6 +125,20 @@ describe('reducers/items', () => {
       });
     });
 
+    describe('REMOVE_CHOICE', () => {
+      it('the item is removed', () => {
+        const choice = state[0];
+        const expectedResponse = state.filter((s) => s.id !== choice.id);
+
+        const actualResponse = items(cloneObject(state), {
+          type: ActionType.REMOVE_CHOICE,
+          choice: cloneObject(choice),
+        });
+
+        expect(actualResponse).to.deep.equal(expectedResponse);
+      });
+    });
+
     describe('HIGHLIGHT_ITEM', () => {
       it('sets an item to be inactive based on passed ID', () => {
         const id = 2;

@@ -860,7 +860,18 @@ class Choices implements ChoicesInterface {
   }
 
   removeChoice(value: string): this {
-    this._store.dispatch(removeChoice(value));
+    const choice = this._store.choices.find((c) => c.value === value);
+    if (!choice) {
+      return this;
+    }
+    this._store.dispatch(removeChoice(choice));
+
+    if (choice.selected) {
+      this.passedElement.triggerEvent(
+        EventType.removeItem,
+        this._getChoiceForOutput(choice),
+      );
+    }
 
     return this;
   }

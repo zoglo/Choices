@@ -6,27 +6,27 @@ import { ActionType } from '../../../src';
 import { stringToHtmlClass } from '../../../src/scripts/lib/choice-input';
 
 describe('actions/choices', () => {
+  const choice: ChoiceFull = {
+    highlighted: false,
+    value: 'test',
+    label: 'test',
+    id: 1,
+    groupId: 1,
+    score: 0,
+    disabled: false,
+    elementId: '1',
+    labelClass: stringToHtmlClass('test foo--bar'),
+    labelDescription: 'test',
+    customProperties: {
+      test: true,
+    },
+    placeholder: true,
+    active: false,
+    selected: false,
+  };
+
   describe('addChoice action', () => {
     it('returns ADD_CHOICE action', () => {
-      const choice: ChoiceFull = {
-        highlighted: false,
-        value: 'test',
-        label: 'test',
-        id: 1,
-        groupId: 1,
-        score: 0,
-        disabled: false,
-        elementId: '1',
-        labelClass: stringToHtmlClass('test foo--bar'),
-        labelDescription: 'test',
-        customProperties: {
-          test: true,
-        },
-        placeholder: true,
-        active: false,
-        selected: false,
-      };
-
       const expectedAction: actions.AddChoiceAction = {
         type: ActionType.ADD_CHOICE,
         choice,
@@ -72,6 +72,19 @@ describe('actions/choices', () => {
 
         expect(actions.activateChoices(active)).to.deep.equal(expectedAction);
       });
+    });
+  });
+
+  describe('removeChoice action', () => {
+    it('returns REMOVE_CHOICE action', () => {
+      const expectedAction: actions.RemoveChoiceAction = {
+        type: ActionType.REMOVE_CHOICE,
+        choice,
+      };
+
+      expect(actions.removeChoice(cloneObject(choice))).to.deep.equal(
+        expectedAction,
+      );
     });
   });
 

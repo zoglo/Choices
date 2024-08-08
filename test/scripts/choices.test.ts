@@ -1295,12 +1295,11 @@ describe('choices', () => {
 
     describe('setValue', () => {
       let _addChoiceStub;
-      const values = [
-        'Value 1',
-        {
-          value: 'Value 2',
-        },
-      ];
+      const value1 = 'Value 1';
+      const value2 = {
+        value: 'Value 2',
+      };
+      const values = [value1, value2];
 
       beforeEach(() => {
         _addChoiceStub = stub();
@@ -1340,10 +1339,8 @@ describe('choices', () => {
           expect(_addChoiceStub.callCount).to.equal(2);
           expect(_addChoiceStub.firstCall.args[0]).to.be.a('object');
           expect(_addChoiceStub.secondCall.args[0]).to.be.a('object');
-          expect(values[0]).to.equal(_addChoiceStub.firstCall.args[0].value);
-          expect(values[1].value).to.equal(
-            _addChoiceStub.secondCall.args[0].value,
-          );
+          expect(value1).to.equal(_addChoiceStub.firstCall.args[0].value);
+          expect(value2).to.equal(_addChoiceStub.secondCall.args[0].value);
         });
       });
     });
@@ -1588,6 +1585,88 @@ describe('choices', () => {
           expect(removeItemStub.callCount).to.equal(2);
           expect(removeItemStub.firstCall.args[0]).to.equal(items[0]);
           expect(removeItemStub.secondCall.args[0]).to.equal(items[2]);
+        });
+      });
+    });
+
+    describe('removeChoice', () => {
+      let choicesStub;
+      let itemsStub;
+      let dispatchStub;
+      let triggerEventStub;
+
+      const items = [
+        {
+          id: 1,
+          value: 'Test 1',
+          selected: true,
+        },
+        {
+          id: 2,
+          value: 'Test 2',
+          selected: false,
+        },
+      ];
+
+      beforeEach(() => {
+        choicesStub = stub(instance._store, 'choices').get(() => items);
+        itemsStub = stub(instance._store, 'items').get(() => items);
+        triggerEventStub = stub();
+        dispatchStub = stub();
+
+        instance._store.dispatch = dispatchStub;
+        instance.passedElement.triggerEvent = triggerEventStub;
+      });
+
+      afterEach(() => {
+        choicesStub.reset();
+        itemsStub.reset();
+        instance._store.dispatch.reset();
+        instance.passedElement.triggerEvent.reset();
+      });
+
+      describe('remove a selected choice from the store', () => {
+        beforeEach(() => {
+          output = instance.removeChoice('Test 1');
+        });
+
+        it('returns this', () => {
+          expect(output).to.deep.equal(instance);
+        });
+
+        it('removes an active item in store', () => {
+          expect(instance._store.dispatch).callCount(1);
+          expect(instance.passedElement.triggerEvent).callCount(1);
+        });
+      });
+
+      describe('remove a non-selected choice from the store', () => {
+        beforeEach(() => {
+          output = instance.removeChoice('Test 2');
+        });
+
+        it('returns this', () => {
+          expect(output).to.deep.equal(instance);
+        });
+
+        it('removes a choice in store', () => {
+          expect(instance._store.dispatch).callCount(1);
+          expect(instance.passedElement.triggerEvent).callCount(0);
+        });
+      });
+
+      describe('remove an non-existent choice from the store', () => {
+        beforeEach(() => {
+          output = instance.removeChoice('xxxx');
+        });
+
+        it('returns this', () => {
+          expect(output).to.deep.equal(instance);
+        });
+
+        it('removes no choices from store', () => {
+          expect(instance._store.dispatch).callCount(0);
+          expect(instance.passedElement.triggerEvent).callCount(0);
         });
       });
     });

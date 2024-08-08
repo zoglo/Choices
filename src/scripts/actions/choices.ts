@@ -8,7 +8,7 @@ export interface AddChoiceAction {
 
 export interface RemoveChoiceAction {
   type: ActionType.REMOVE_CHOICE;
-  value: string;
+  choice: ChoiceFull;
 }
 
 export interface Result<T> {
@@ -35,9 +35,9 @@ export const addChoice = (choice: ChoiceFull): AddChoiceAction => ({
   choice,
 });
 
-export const removeChoice = (value): RemoveChoiceAction => ({
+export const removeChoice = (choice: ChoiceFull): RemoveChoiceAction => ({
   type: ActionType.REMOVE_CHOICE,
-  value,
+  choice,
 });
 
 export const filterChoices = (
