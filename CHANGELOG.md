@@ -8,7 +8,7 @@
 * Remove typescript types for tests from distribution
 
 ### Chore
-* Reduce bundle size from ~24KB to ~22.4KB
+* Reduce bundle size from ~24KB to ~20.4KB
 
 ## [11.0.0 RC3] (2024-08-04)
 
