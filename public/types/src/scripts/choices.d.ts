@@ -66,7 +66,7 @@ declare class Choices implements ChoicesInterface {
     enable(): this;
     disable(): this;
     highlightItem(item: InputChoice, runEvent?: boolean): this;
-    unhighlightItem(item: InputChoice): this;
+    unhighlightItem(item: InputChoice, runEvent?: boolean): this;
     highlightAll(): this;
     unhighlightAll(): this;
     removeActiveItemsByValue(value: string): this;
@@ -152,7 +152,7 @@ declare class Choices implements ChoicesInterface {
     _createGroupsFragment(groups: GroupFull[], choices: ChoiceFull[], fragment?: DocumentFragment): DocumentFragment;
     _createChoicesFragment(choices: ChoiceFull[], fragment?: DocumentFragment, withinGroup?: boolean): DocumentFragment;
     _createItemsFragment(items: InputChoice[], fragment?: DocumentFragment): DocumentFragment;
-    _getChoiceForOutput(id: number | ChoiceFull, keyCode?: number): EventChoice | undefined;
+    _getChoiceForOutput(choice?: ChoiceFull, keyCode?: number): EventChoice | undefined;
     _triggerChange(value: any): void;
     _selectPlaceholderChoice(placeholderChoice: ChoiceFull): void;
     _handleButtonAction(items: ChoiceFull[], element?: HTMLElement): void;

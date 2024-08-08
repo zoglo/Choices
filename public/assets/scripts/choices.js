@@ -1695,9 +1695,9 @@
         type: "ADD_CHOICE" /* ActionType.ADD_CHOICE */,
         choice: choice,
     }); };
-    var removeChoice = function (value) { return ({
+    var removeChoice = function (choice) { return ({
         type: "REMOVE_CHOICE" /* ActionType.REMOVE_CHOICE */,
-        value: value,
+        choice: choice,
     }); };
     var filterChoices = function (results) { return ({
         type: "FILTER_CHOICES" /* ActionType.FILTER_CHOICES */,
@@ -1726,9 +1726,9 @@
         type: "REMOVE_ITEM" /* ActionType.REMOVE_ITEM */,
         item: item,
     }); };
-    var highlightItem = function (id, highlighted) { return ({
+    var highlightItem = function (item, highlighted) { return ({
         type: "HIGHLIGHT_ITEM" /* ActionType.HIGHLIGHT_ITEM */,
-        id: id,
+        item: item,
         highlighted: highlighted,
     }); };
 
@@ -1810,8 +1810,7 @@
     var strToEl = (function () {
         var tmpEl = document.createElement('div');
         return function (str) {
-            var cleanedInput = str.trim();
-            tmpEl.innerHTML = cleanedInput;
+            tmpEl.innerHTML = str.trim();
             var firldChild = tmpEl.children[0];
             while (tmpEl.firstChild) {
                 tmpEl.removeChild(tmpEl.firstChild);
@@ -1868,7 +1867,9 @@
         });
         return element.dispatchEvent(event);
     };
-    var cloneObject = function (obj) { return JSON.parse(JSON.stringify(obj)); };
+    var cloneObject = function (obj) {
+        return obj !== undefined ? JSON.parse(JSON.stringify(obj)) : undefined;
+    };
     /**
      * Returns an array of keys present on the first but missing on the second object
      */
@@ -2999,14 +3000,14 @@
                 return state.filter(function (choice) { return choice.id !== item_1.id; });
             }
             case "REMOVE_CHOICE" /* ActionType.REMOVE_CHOICE */: {
-                var value_1 = action.value;
-                return state.filter(function (choice) { return choice.value !== value_1; });
+                var choice_1 = action.choice;
+                return state.filter(function (item) { return item.id !== choice_1.id; });
             }
             case "HIGHLIGHT_ITEM" /* ActionType.HIGHLIGHT_ITEM */: {
                 var highlightItemAction_1 = action;
                 return state.map(function (obj) {
                     var item = obj;
-                    if (item.id === highlightItemAction_1.id) {
+                    if (item.id === highlightItemAction_1.item.id) {
                         item.highlighted = highlightItemAction_1.highlighted;
                     }
                     return item;
@@ -3049,8 +3050,8 @@
                 return __spreadArray(__spreadArray([], state, true), [choice], false);
             }
             case "REMOVE_CHOICE" /* ActionType.REMOVE_CHOICE */: {
-                var value_1 = action.value;
-                return state.filter(function (choice) { return choice.value !== value_1; });
+                var choice_1 = action.choice;
+                return state.filter(function (obj) { return obj.id !== choice_1.id; });
             }
             case "ADD_ITEM" /* ActionType.ADD_ITEM */: {
                 var item = action.item;
@@ -3708,7 +3709,8 @@
             this._prevState = defaultState;
             this._currentValue = '';
             this.config.searchEnabled =
-                !this._isTextElement && this.config.searchEnabled;
+                (!this._isTextElement && this.config.searchEnabled) ||
+                    this._elementType === SELECT_MULTIPLE_TYPE;
             this._canSearch = this.config.searchEnabled;
             this._isScrollingOnIe = false;
             this._highlightPosition = 0;
@@ -3836,23 +3838,32 @@
         };
         Choices.prototype.highlightItem = function (item, runEvent) {
             if (runEvent === void 0) { runEvent = true; }
-            var id = item.id;
-            if (!id) {
+            if (!item || !item.id) {
                 return this;
             }
-            this._store.dispatch(highlightItem(id, true));
+            var choice = this._store.choices.find(function (c) { return c.id === item.id; });
+            if (!choice || choice.highlighted) {
+                return this;
+            }
+            this._store.dispatch(highlightItem(choice, true));
             if (runEvent) {
-                this.passedElement.triggerEvent("highlightItem" /* EventType.highlightItem */, this._getChoiceForOutput(id));
+                this.passedElement.triggerEvent("highlightItem" /* EventType.highlightItem */, this._getChoiceForOutput(choice));
             }
             return this;
         };
-        Choices.prototype.unhighlightItem = function (item) {
-            var id = item.id;
-            if (!id) {
+        Choices.prototype.unhighlightItem = function (item, runEvent) {
+            if (runEvent === void 0) { runEvent = true; }
+            if (!item || !item.id) {
                 return this;
             }
-            this._store.dispatch(highlightItem(id, false));
-            this.passedElement.triggerEvent("highlightItem" /* EventType.highlightItem */, this._getChoiceForOutput(id));
+            var choice = this._store.choices.find(function (c) { return c.id === item.id; });
+            if (!choice || !choice.highlighted) {
+                return this;
+            }
+            this._store.dispatch(highlightItem(choice, false));
+            if (runEvent) {
+                this.passedElement.triggerEvent("highlightItem" /* EventType.highlightItem */, this._getChoiceForOutput(choice));
+            }
             return this;
         };
         Choices.prototype.highlightAll = function () {
@@ -3955,7 +3966,9 @@
             }
             this._store.withDeferRendering(function () {
                 items.forEach(function (value) {
-                    _this._addChoice(mapInputToChoice(value, false));
+                    if (value) {
+                        _this._addChoice(mapInputToChoice(value, false));
+                    }
                 });
             });
             return this;
@@ -4169,7 +4182,14 @@
             return this;
         };
         Choices.prototype.removeChoice = function (value) {
-            this._store.dispatch(removeChoice(value));
+            var choice = this._store.choices.find(function (c) { return c.value === value; });
+            if (!choice) {
+                return this;
+            }
+            this._store.dispatch(removeChoice(choice));
+            if (choice.selected) {
+                this.passedElement.triggerEvent("removeItem" /* EventType.removeItem */, this._getChoiceForOutput(choice));
+            }
             return this;
         };
         Choices.prototype.clearChoices = function () {
@@ -4432,10 +4452,7 @@
             }
             return fragment;
         };
-        Choices.prototype._getChoiceForOutput = function (id, keyCode) {
-            var choice = typeof id === 'object'
-                ? id
-                : this._store.choices.find(function (obj) { return obj.id === id; });
+        Choices.prototype._getChoiceForOutput = function (choice, keyCode) {
             if (!choice) {
                 return undefined;
             }
@@ -5116,10 +5133,10 @@
                 // check if click was on a scrollbar area
                 var firstChoice = this.choiceList.element
                     .firstElementChild;
-                var isOnScrollbar = this._direction === 'ltr'
-                    ? event.offsetX >= firstChoice.offsetWidth
-                    : event.offsetX < firstChoice.offsetLeft;
-                this._isScrollingOnIe = isOnScrollbar;
+                this._isScrollingOnIe =
+                    this._direction === 'ltr'
+                        ? event.offsetX >= firstChoice.offsetWidth
+                        : event.offsetX < firstChoice.offsetLeft;
             }
             if (target === this.input.element) {
                 return;

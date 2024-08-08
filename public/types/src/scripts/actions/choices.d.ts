@@ -6,7 +6,7 @@ export interface AddChoiceAction {
 }
 export interface RemoveChoiceAction {
     type: ActionType.REMOVE_CHOICE;
-    value: string;
+    choice: ChoiceFull;
 }
 export interface Result<T> {
     item: T;
@@ -24,7 +24,7 @@ export interface ClearChoicesAction {
     type: ActionType.CLEAR_CHOICES;
 }
 export declare const addChoice: (choice: ChoiceFull) => AddChoiceAction;
-export declare const removeChoice: (value: any) => RemoveChoiceAction;
+export declare const removeChoice: (choice: ChoiceFull) => RemoveChoiceAction;
 export declare const filterChoices: (results: Result<ChoiceFull>[]) => FilterChoicesAction;
 export declare const activateChoices: (active?: boolean) => ActivateChoicesAction;
 export declare const clearChoices: () => ClearChoicesAction;

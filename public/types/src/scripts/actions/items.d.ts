@@ -10,9 +10,9 @@ export interface RemoveItemAction {
 }
 export interface HighlightItemAction {
     type: ActionType.HIGHLIGHT_ITEM;
-    id: number;
+    item: ChoiceFull;
     highlighted: boolean;
 }
 export declare const addItem: (item: ChoiceFull) => AddItemAction;
 export declare const removeItem: (item: ChoiceFull) => RemoveItemAction;
-export declare const highlightItem: (id: number, highlighted: boolean) => HighlightItemAction;
+export declare const highlightItem: (item: ChoiceFull, highlighted: boolean) => HighlightItemAction;
