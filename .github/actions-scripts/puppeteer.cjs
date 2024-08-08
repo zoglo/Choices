@@ -28,11 +28,13 @@ async function test() {
     });
 
     await page.goto(`http://127.0.0.1:${server.address().port}`, {
-      waitUntil: 'networkidle2',
+      waitUntil: 'domcontentloaded',
     });
+    await page.waitForSelector('#reset-simple.choices__input');
+    await page.waitForSelector('#choices-single-custom-templates.choices__input');
+    await page.waitForNetworkIdle();
     await page.setViewport({ width: 640, height: 1000 });
-    await page.waitForSelector('#reset-simple.choices__input'); // should be the last element on the page
-    await page.evaluate(() => new Promise(r => setTimeout(r, 500))); // Wait for resize to complete
+    await page.evaluate(() => new Promise(r => setTimeout(r, 1000))); // Wait for resize to complete
     await page.click('label[for="choices-single-custom-templates"]');
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowDown');
