@@ -18,6 +18,8 @@ import { removeItem } from '../../src/scripts/actions/items';
 import templates from '../../src/scripts/templates';
 import { ChoiceFull } from '../../src/scripts/interfaces/choice-full';
 import { GroupFull } from '../../src/scripts/interfaces/group-full';
+import { searchByFuse } from '../../src/scripts/search/fuse';
+import { searchByPrefixFilter } from '../../src/scripts/search/prefix-filter';
 
 chai.use(sinonChai);
 
@@ -1916,64 +1918,121 @@ describe('choices', () => {
         });
       });
 
-      it('details are passed', () =>
-        new Promise((done) => {
-          const query =
-            'This is a <search> query & a "test" with characters that should not be sanitised.';
+      describe('fuse', () => {
+        beforeEach(() => {
+          process.env.SEARCH_FUSE = 'full';
+          instance._searchFn = searchByFuse;
+        });
+        it('details are passed', () =>
+          new Promise((done) => {
+            const query =
+              'This is a <search> query & a "test" with characters that should not be sanitised.';
 
-          instance.input.value = query;
-          instance.input.focus();
-          instance.passedElement.element.addEventListener(
-            'search',
-            (event) => {
-              expect(event.detail).to.deep.contains({
-                value: query,
-                resultCount: 0,
-              });
-              done(true);
-            },
-            { once: true },
-          );
+            instance.input.value = query;
+            instance.input.focus();
+            instance.passedElement.element.addEventListener(
+              'search',
+              (event) => {
+                expect(event.detail).to.contains({
+                  value: query,
+                  resultCount: 0,
+                });
+                done(true);
+              },
+              { once: true },
+            );
 
-          instance._onKeyUp({ target: null, keyCode: null });
-          instance._onInput({ target: null });
-        }));
+            instance._onKeyUp({ target: null, keyCode: null });
+            instance._onInput({ target: null });
+          }));
 
-      it('uses Fuse options', () =>
-        new Promise((done) => {
-          instance.config.fuseOptions.isCaseSensitive = true;
-          instance.config.fuseOptions.minMatchCharLength = 4;
-          instance.input.value = 'test';
-          instance.input.focus();
-          instance.passedElement.element.addEventListener(
-            'search',
-            (event) => {
-              expect(event.detail.resultCount).to.eql(0);
-              done(true);
-            },
-            { once: true },
-          );
+        it('uses Fuse options', () =>
+          new Promise((done) => {
+            instance.config.fuseOptions.isCaseSensitive = true;
+            instance.config.fuseOptions.minMatchCharLength = 4;
+            instance.input.value = 'test';
+            instance.input.focus();
+            instance.passedElement.element.addEventListener(
+              'search',
+              (event) => {
+                expect(event.detail.resultCount).to.eql(0);
+                done(true);
+              },
+              { once: true },
+            );
 
-          instance._onKeyUp({ target: null, keyCode: null });
-          instance._onInput({ target: null });
-        }));
+            instance._onKeyUp({ target: null, keyCode: null });
+            instance._onInput({ target: null });
+          }));
 
-      it('is fired with a searchFloor of 0', () =>
-        new Promise((done) => {
-          instance.config.searchFloor = 0;
-          instance.input.value = 'qwerty';
-          instance.input.focus();
-          instance.passedElement.element.addEventListener('search', (event) => {
-            expect(event.detail).to.contains({
-              value: instance.input.value,
-              resultCount: 0,
-            });
-            done(true);
-          });
+        it('is fired with a searchFloor of 0', () =>
+          new Promise((done) => {
+            instance.config.searchFloor = 0;
+            instance.input.value = 'qwerty';
+            instance.input.focus();
+            instance.passedElement.element.addEventListener(
+              'search',
+              (event) => {
+                expect(event.detail).to.contains({
+                  value: instance.input.value,
+                  resultCount: 0,
+                });
+                done(true);
+              },
+            );
 
-          instance._onKeyUp({ target: null, keyCode: null });
-          instance._onInput({ target: null });
-        }));
+            instance._onKeyUp({ target: null, keyCode: null });
+            instance._onInput({ target: null });
+          }));
+      });
+
+      describe('prefix-filter', () => {
+        beforeEach(() => {
+          instance._searchFn = searchByPrefixFilter;
+        });
+        it('details are passed', () =>
+          new Promise((done) => {
+            const query =
+              'This is a <search> query & a "test" with characters that should not be sanitised.';
+
+            instance.input.value = query;
+            instance.input.focus();
+            instance.passedElement.element.addEventListener(
+              'search',
+              (event) => {
+                expect(event.detail).to.contains({
+                  value: query,
+                  resultCount: 0,
+                });
+                done(true);
+              },
+              { once: true },
+            );
+
+            instance._onKeyUp({ target: null, keyCode: null });
+            instance._onInput({ target: null });
+          }));
+
+        it('is fired with a searchFloor of 0', () =>
+          new Promise((done) => {
+            instance.config.searchFloor = 0;
+            instance.input.value = 'qwerty';
+            instance.input.focus();
+            instance.passedElement.element.addEventListener(
+              'search',
+              (event) => {
+                expect(event.detail).to.contains({
+                  value: instance.input.value,
+                  resultCount: 0,
+                });
+                done(true);
+              },
+            );
+
+            instance._onKeyUp({ target: null, keyCode: null });
+            instance._onInput({ target: null });
+          }));
+      });
     });
   });
 
