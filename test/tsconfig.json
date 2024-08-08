@@ -3,7 +3,7 @@
     "module": "es6",
     "lib": ["es2017", "dom"],
     "target": "es5",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,

@@ -25,6 +25,20 @@ const builds = [
     name: ".",
     features: defaultBuild
   },
+  {
+    name: "search-basic",
+    features: {
+      ...buildFeatures,
+      SEARCH_FUSE: "basic"
+    }
+  },
+  {
+    name: "search-prefix",
+    features: {
+      ...buildFeatures,
+      SEARCH_FUSE: "null"
+    }
+  },
 ];
 
 const outputTypes = {
@@ -32,6 +46,7 @@ const outputTypes = {
     prefix: 'iife',
     ext: 'js',
     format: 'iife',
+    default: false,
   },
   umd : {
     ext: 'js',

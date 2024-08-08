@@ -1,4 +1,7 @@
-import Fuse from 'fuse.js';
+// eslint-disable-next-line import/no-named-default
+import { default as FuseFull } from 'fuse.js';
+// eslint-disable-next-line import/no-named-default
+import { default as FuseBasic } from 'fuse.js/basic';
 import { Options } from '../interfaces/options';
 import { SearchResult } from './search-results';
 
@@ -7,15 +10,23 @@ export function searchByFuse<T extends object>(
   haystack: T[],
   needle: string,
 ): SearchResult<T>[] {
-  // todo figure out how to use; `process.env.SEARCH_FUSE === 'full'` to control how it imports from 'fuse.mjs' or 'fuse.basic.mjs'
-
   // Need to use an object literal for options argument
   // see https://github.com/krisk/Fuse/issues/303#issuecomment-506940824
-  const fuse = new Fuse<T>(haystack, {
-    ...config.fuseOptions,
-    keys: [...config.searchFields],
-    includeMatches: true,
-  });
+  let fuse;
+  if (process.env.SEARCH_FUSE === 'full') {
+    fuse = new FuseFull<T>(haystack, {
+      ...config.fuseOptions,
+      keys: [...config.searchFields],
+      includeMatches: true,
+    });
+  } else {
+    fuse = new FuseBasic<T>(haystack, {
+      ...config.fuseOptions,
+      keys: [...config.searchFields],
+      includeMatches: true,
+    });
+  }
+
   const results = fuse.search(needle);
 
   return results as SearchResult<T>[];

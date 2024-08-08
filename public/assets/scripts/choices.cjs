@@ -1687,10 +1687,12 @@ Fuse.config = Config;
 }
 
 function searchByFuse(config, haystack, needle) {
-    // todo figure out how to use; `"full" === 'full'` to control how it imports from 'fuse.mjs' or 'fuse.basic.mjs'
     // Need to use an object literal for options argument
     // see https://github.com/krisk/Fuse/issues/303#issuecomment-506940824
-    var fuse = new Fuse(haystack, __assign(__assign({}, config.fuseOptions), { keys: __spreadArray([], config.searchFields, true), includeMatches: true }));
+    var fuse;
+    {
+        fuse = new Fuse(haystack, __assign(__assign({}, config.fuseOptions), { keys: __spreadArray([], config.searchFields, true), includeMatches: true }));
+    }
     var results = fuse.search(needle);
     return results;
 }

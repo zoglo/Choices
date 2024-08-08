@@ -3,7 +3,7 @@
   "version": "11.0.0RC4",
   "description": "A vanilla JS customisable text input/select box plugin",
   "type": "module",
-  "main": "./public/assets/scripts/choices.cjs",
+  "main": "./public/assets/scripts/choices.js",
   "module": "./public/assets/scripts/choices.mjs",
   "unpkg": "./public/assets/scripts/choices.js",
   "jsdelivr": "./public/assets/scripts/choices.js",
@@ -14,10 +14,15 @@
       "import": "./public/assets/scripts/choices.mjs",
       "require": "./public/assets/scripts/choices.cjs"
     },
-    "./min": {
+    "./search-basic": {
       "types": "./public/types/src/index.d.ts",
-      "import": "./public/assets/scripts/choices.min.mjs",
-      "require": "./public/assets/scripts/choices.min.cjs"
+      "import": "./public/assets/scripts/choices.search-basic.min.mjs",
+      "require": "./public/assets/scripts/choices.search-basic.min.cjs"
+    },
+    "./search-none": {
+      "types": "./public/types/src/index.d.ts",
+      "import": "./public/assets/scripts/choices.search-none.min.mjs",
+      "require": "./public/assets/scripts/choices.search-none.min.cjs"
     }
   },
   "sideEffects": false,
@@ -143,7 +148,7 @@
   ],
   "bundlesize": [
     {
-      "path": "public/assets/scripts/choices.min.js",
+      "path": "public/assets/scripts/choices*.min.js",
       "maxSize": "25 kB"
     },
     {
