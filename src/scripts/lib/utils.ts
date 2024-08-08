@@ -100,8 +100,7 @@ export const strToEl = ((): ((str: string) => Element) => {
   const tmpEl = document.createElement('div');
 
   return (str): Element => {
-    const cleanedInput = str.trim();
-    tmpEl.innerHTML = cleanedInput;
+    tmpEl.innerHTML = str.trim();
     const firldChild = tmpEl.children[0];
 
     while (tmpEl.firstChild) {

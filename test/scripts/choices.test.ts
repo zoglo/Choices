@@ -997,7 +997,6 @@ describe('choices', () => {
             });
 
             it('triggers event with groupValue', () => {
-              console.log(passedElementTriggerEventStub.lastCall.args);
               expect(passedElementTriggerEventStub.called).to.equal(true);
               expect(passedElementTriggerEventStub.lastCall.args[0]).to.equal(
                 EventType.highlightItem,
@@ -1842,10 +1841,10 @@ describe('choices', () => {
               expect(call.args[0]).to.deep.contain({
                 value: choices[index][value],
                 label: choices[index][label],
-                selected: !!choices[index].selected,
-                disabled: !!choices[index].disabled,
+                selected: choices[index].selected,
+                disabled: choices[index].disabled,
                 customProperties: choices[index].customProperties,
-                placeholder: !!choices[index].placeholder,
+                placeholder: choices[index].placeholder,
               });
             });
           });

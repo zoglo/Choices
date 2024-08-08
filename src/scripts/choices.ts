@@ -2125,11 +2125,10 @@ class Choices implements ChoicesInterface {
       const firstChoice = this.choiceList.element
         .firstElementChild as HTMLElement;
 
-      const isOnScrollbar =
+      this._isScrollingOnIe =
         this._direction === 'ltr'
           ? event.offsetX >= firstChoice.offsetWidth
           : event.offsetX < firstChoice.offsetLeft;
-      this._isScrollingOnIe = isOnScrollbar;
     }
 
     if (target === this.input.element) {
