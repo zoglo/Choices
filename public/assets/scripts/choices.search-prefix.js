@@ -64,22 +64,20 @@
       return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
     };
 
-    function searchByPrefixFilter(config, _haystack, _needle) {
+    function searchByPrefixFilter(config, haystack, _needle) {
         var fields = config.searchFields;
-        if (!fields || fields.length === 0) {
+        if (!fields || fields.length === 0 || _needle === '') {
             return [];
         }
-        var haystack = _haystack;
-        if (_needle !== '') {
-            var needle_1 = _needle.toLowerCase();
-            haystack = haystack.filter(function (obj) {
-                return fields.some(function (field) {
-                    return field in obj &&
-                        obj[field].toLowerCase().startsWith(needle_1);
-                });
+        var needle = _needle.toLowerCase();
+        return haystack
+            .filter(function (obj) {
+            return fields.some(function (field) {
+                return field in obj &&
+                    obj[field].toLowerCase().startsWith(needle);
             });
-        }
-        return haystack.map(function (value, index) {
+        })
+            .map(function (value, index) {
             return {
                 item: value,
                 score: index,
@@ -2120,6 +2118,7 @@
             this._wasTap = true;
             this._placeholderValue = this._generatePlaceholderValue();
             this._baseId = generateId(this.passedElement.element, 'choices-');
+            this._searchFn = search$1;
             /**
              * setting direction in cases where it's explicitly set on passedElement
              * or when calculated direction is different from the document
@@ -3159,7 +3158,7 @@
             }
             // If new value matches the desired length and is not the same as the current value with a space
             var haystack = this._store.searchableChoices;
-            var results = search$1(this.config, haystack, newValue);
+            var results = this._searchFn(this.config, haystack, newValue);
             this._currentValue = newValue;
             this._highlightPosition = 0;
             this._isSearching = true;
@@ -3969,8 +3968,6 @@
         Choices.version = 'git';
         return Choices;
     }());
-
-    Choices.version = '11.0.0-rc5';
 
     return Choices;
 

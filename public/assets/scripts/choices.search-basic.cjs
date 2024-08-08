@@ -3248,6 +3248,7 @@ var Choices = /** @class */ (function () {
         this._wasTap = true;
         this._placeholderValue = this._generatePlaceholderValue();
         this._baseId = generateId(this.passedElement.element, 'choices-');
+        this._searchFn = search$1;
         /**
          * setting direction in cases where it's explicitly set on passedElement
          * or when calculated direction is different from the document
@@ -4287,7 +4288,7 @@ var Choices = /** @class */ (function () {
         }
         // If new value matches the desired length and is not the same as the current value with a space
         var haystack = this._store.searchableChoices;
-        var results = search$1(this.config, haystack, newValue);
+        var results = this._searchFn(this.config, haystack, newValue);
         this._currentValue = newValue;
         this._highlightPosition = 0;
         this._isSearching = true;
@@ -5097,7 +5098,5 @@ var Choices = /** @class */ (function () {
     Choices.version = 'git';
     return Choices;
 }());
-
-Choices.version = '11.0.0-rc5';
 
 module.exports = Choices;

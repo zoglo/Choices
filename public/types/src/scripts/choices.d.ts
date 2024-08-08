@@ -11,6 +11,7 @@ import { PassedElementType } from './interfaces';
 import { Choices as ChoicesInterface } from './interfaces/choices';
 import { EventChoice } from './interfaces/event-choice';
 import { Templates } from './interfaces/templates';
+import { SearchHandler } from './interfaces/search';
 /**
  * Choices
  * @author Josh Johnson<josh@joshuajohnson.co.uk>
@@ -60,6 +61,7 @@ declare class Choices implements ChoicesInterface {
     _presetChoices: (ChoiceFull | GroupFull)[];
     _presetItems: ChoiceFull[];
     _initialItems: string[];
+    _searchFn: SearchHandler;
     constructor(element?: string | Element | HTMLInputElement | HTMLSelectElement, userConfig?: Partial<Options>);
     init(): void;
     destroy(): void;
