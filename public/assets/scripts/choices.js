@@ -1,4 +1,4 @@
-/*! choices.js v11.0.0RC4 | © 2024 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
+/*! choices.js v11.0.0-rc5 | © 2024 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
 
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -5584,7 +5584,7 @@
         return Choices;
     }());
 
-    Choices.version = '11.0.0RC4';
+    Choices.version = '11.0.0-rc5';
 
     return Choices;
 

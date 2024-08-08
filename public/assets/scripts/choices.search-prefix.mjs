@@ -1,4 +1,4 @@
-/*! choices.js v11.0.0RC4 | © 2024 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
+/*! choices.js v11.0.0-rc5 | © 2024 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
 
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -3964,6 +3964,6 @@ var Choices = /** @class */ (function () {
     return Choices;
 }());
 
-Choices.version = '11.0.0RC4';
+Choices.version = '11.0.0-rc5';
 
 export { Choices as default };
