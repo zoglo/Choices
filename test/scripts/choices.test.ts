@@ -1833,6 +1833,9 @@ describe('choices', () => {
           });
         });
 
+        const coerceBool = (arg: unknown, defaultValue: boolean = true) =>
+          typeof arg === 'undefined' ? defaultValue : !!arg;
+
         describe('passing choices without children choices', () => {
           it('adds passed choices', () => {
             instance.setChoices(choices, value, label, false);
@@ -1841,10 +1844,11 @@ describe('choices', () => {
               expect(call.args[0]).to.deep.contain({
                 value: choices[index][value],
                 label: choices[index][label],
-                selected: choices[index].selected,
-                disabled: choices[index].disabled,
+                active: coerceBool(choices[index].active),
+                selected: coerceBool(choices[index].selected, false),
+                disabled: coerceBool(choices[index].disabled, false),
                 customProperties: choices[index].customProperties,
-                placeholder: choices[index].placeholder,
+                placeholder: coerceBool(choices[index].placeholder, false),
               });
             });
           });
