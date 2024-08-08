@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Fuse, { IFuseOptions } from 'fuse.js';
+import search from './search';
 
 import {
   activateChoices,
@@ -7,7 +7,6 @@ import {
   removeChoice,
   clearChoices,
   filterChoices,
-  Result,
 } from './actions/choices';
 import { addGroup } from './actions/groups';
 import { addItem, highlightItem, removeItem } from './actions/items';
@@ -1627,13 +1626,7 @@ class Choices implements ChoicesInterface {
 
     // If new value matches the desired length and is not the same as the current value with a space
     const haystack = this._store.searchableChoices;
-    const needle = newValue;
-    const options = Object.assign(this.config.fuseOptions, {
-      keys: [...this.config.searchFields],
-      includeMatches: true,
-    }) as IFuseOptions<ChoiceFull>;
-    const fuse = new Fuse(haystack, options);
-    const results: Result<ChoiceFull>[] = fuse.search(needle) as any[]; // see https://github.com/krisk/Fuse/issues/303
+    const results = search<ChoiceFull>(this.config, haystack, newValue);
 
     this._currentValue = newValue;
     this._highlightPosition = 0;

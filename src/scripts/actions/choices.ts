@@ -1,5 +1,6 @@
 import { ChoiceFull } from '../interfaces/choice-full';
 import { ActionType } from '../interfaces';
+import { SearchResult } from '../search/search-results';
 
 export interface AddChoiceAction {
   type: ActionType.ADD_CHOICE;
@@ -11,14 +12,9 @@ export interface RemoveChoiceAction {
   choice: ChoiceFull;
 }
 
-export interface Result<T> {
-  item: T;
-  score: number;
-}
-
 export interface FilterChoicesAction {
   type: ActionType.FILTER_CHOICES;
-  results: Result<ChoiceFull>[];
+  results: SearchResult<ChoiceFull>[];
 }
 
 export interface ActivateChoicesAction {
@@ -41,7 +37,7 @@ export const removeChoice = (choice: ChoiceFull): RemoveChoiceAction => ({
 });
 
 export const filterChoices = (
-  results: Result<ChoiceFull>[],
+  results: SearchResult<ChoiceFull>[],
 ): FilterChoicesAction => ({
   type: ActionType.FILTER_CHOICES,
   results,

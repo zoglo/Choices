@@ -570,7 +570,7 @@
 
     // Machine word size
     const MAX_BITS = 32;
-    function search(text, pattern, patternAlphabet, {
+    function search$2(text, pattern, patternAlphabet, {
       location = Config.location,
       distance = Config.distance,
       threshold = Config.threshold,
@@ -824,7 +824,7 @@
             isMatch,
             score,
             indices
-          } = search(text, pattern, alphabet, {
+          } = search$2(text, pattern, alphabet, {
             location: location + startIndex,
             distance,
             threshold,
@@ -1689,6 +1689,22 @@
     {
       register(ExtendedSearch);
     }
+
+    function searchByFuse(config, haystack, needle) {
+        // todo figure out how to use; `"full" === 'full'` to control how it imports from 'fuse.mjs' or 'fuse.basic.mjs'
+        // Need to use an object literal for options argument
+        // see https://github.com/krisk/Fuse/issues/303#issuecomment-506940824
+        var fuse = new Fuse(haystack, __assign(__assign({}, config.fuseOptions), { keys: __spreadArray([], config.searchFields, true), includeMatches: true }));
+        var results = fuse.search(needle);
+        return results;
+    }
+
+    // eslint-disable-next-line import/no-mutable-exports
+    var search;
+    {
+        search = searchByFuse;
+    }
+    var search$1 = search;
 
     var addChoice = function (choice) { return ({
         type: "ADD_CHOICE" /* ActionType.ADD_CHOICE */,
@@ -4755,13 +4771,7 @@
             }
             // If new value matches the desired length and is not the same as the current value with a space
             var haystack = this._store.searchableChoices;
-            var needle = newValue;
-            var options = Object.assign(this.config.fuseOptions, {
-                keys: __spreadArray([], this.config.searchFields, true),
-                includeMatches: true,
-            });
-            var fuse = new Fuse(haystack, options);
-            var results = fuse.search(needle); // see https://github.com/krisk/Fuse/issues/303
+            var results = search$1(this.config, haystack, newValue);
             this._currentValue = newValue;
             this._highlightPosition = 0;
             this._isSearching = true;

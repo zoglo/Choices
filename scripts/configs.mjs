@@ -9,6 +9,24 @@ import server from './server.mjs';
 // @ts-ignore
 const pckg = require('../package.json');
 
+const buildFeatures = {
+  SEARCH_FUSE: "full", // "basic" / "null"
+}
+
+// Allow the following to manual set feature flags;
+// npm run js:build-dev -- --environment SEARCH_FUSE:null
+let defaultBuild = {};
+Object.keys(buildFeatures).forEach((k) => {
+  defaultBuild[k] = process.env[k] || buildFeatures[k];
+})
+
+const builds = [
+  {
+    name: ".",
+    features: defaultBuild
+  },
+];
+
 const outputTypes = {
   js : {
     prefix: 'iife',
@@ -54,23 +72,6 @@ if (withDeclarations) {
   });
 }
 
-
-const buildFeatures = {
-  SEARCH: "fuse-full", // "fuse-basic" / ""
-}
-
-const builds = [
-  {
-    name: ".",
-    features: {
-      ...buildFeatures,
-//      ... {
-//        SEARCH: "fuse-full"
-//      }
-    }
-  },
-];
-
 const candidateBuilds = process.env.TARGET
   ? builds.filter((build) => build.name === process.env.TARGET)
   : builds;
@@ -87,9 +88,13 @@ function genConfig(buildConfig) {
     'process.env.NODE_ENV': JSON.stringify('production')
   }
 
-  if ('featureFlags' in buildConfig) {
-    Object.keys(buildConfig.featureFlags).forEach((key) => {
-      vars[`process.env.${key}`] = JSON.stringify(buildConfig.featureFlags[key])
+  if ('features' in buildConfig) {
+    Object.keys(buildConfig.features).forEach((key) => {
+      if (buildConfig.features[key] === 'undefined' || buildConfig.features[key] === 'null') {
+        vars[`process.env.${key}`] = false;
+      } else {
+        vars[`process.env.${key}`] = JSON.stringify(buildConfig.features[key])
+      }
     })
   }
 
