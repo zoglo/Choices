@@ -3322,9 +3322,6 @@ var Choices = /** @class */ (function () {
         this._render();
         this._addEventListeners();
         var shouldDisable = (this._isTextElement && !this.config.addItems) ||
-            (this._isSelectElement &&
-                !this.config.addChoices &&
-                this._store.choices.length === 0) ||
             this.passedElement.element.hasAttribute('disabled') ||
             !!this.passedElement.element.closest('fieldset:disabled');
         if (shouldDisable) {
