@@ -119,6 +119,17 @@
           />
         </div>
 
+        <div data-test-hook="disabled-via-fieldset">
+          <label for="choices-disabled-via-fieldset">Disabled via fieldset</label>
+          <fieldset disabled>
+            <input
+              class="form-control"
+              id="choices-disabled-via-fieldset"
+              type="text"
+            />
+          </fieldset>
+        </div>
+
         <div data-test-hook="disabled-via-attr">
           <label for="choices-disabled-via-attr">Disabled via attribute</label>
           <input
@@ -231,6 +242,10 @@
         new Choices('#choices-adding-items-disabled', {
           allowHTML: true,
           addItems: false,
+        });
+
+        new Choices('#choices-disabled-via-fieldset', {
+          allowHTML: true,
         });
 
         new Choices('#choices-disabled-via-attr', {

@@ -388,8 +388,12 @@ class Choices implements ChoicesInterface {
     this._addEventListeners();
 
     const shouldDisable =
-      !this.config.addItems ||
-      this.passedElement.element.hasAttribute('disabled');
+      (this._isTextElement && !this.config.addItems) ||
+      (this._isSelectElement &&
+        !this.config.addChoices &&
+        this._store.choices.length === 0) ||
+      this.passedElement.element.hasAttribute('disabled') ||
+      !!this.passedElement.element.closest('fieldset:disabled');
 
     if (shouldDisable) {
       this.disable();
