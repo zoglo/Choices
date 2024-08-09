@@ -1836,7 +1836,9 @@
                     className: getClassNames(button).join(' '),
                     innerHTML: REMOVE_ITEM_ICON,
                 });
-                removeButton.setAttribute('aria-label', REMOVE_ITEM_LABEL);
+                if (REMOVE_ITEM_LABEL) {
+                    removeButton.setAttribute('aria-label', REMOVE_ITEM_LABEL);
+                }
                 removeButton.dataset.button = '';
                 if (removeItemButtonAlignLeft) {
                     div.insertAdjacentElement('afterbegin', removeButton);
