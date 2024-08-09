@@ -10,6 +10,7 @@ import { InputGroup } from './interfaces/input-group';
 import { Options, ObjectsInConfig } from './interfaces/options';
 import { StateChangeSet } from './interfaces/state';
 import {
+  canUseDom,
   diff,
   escapeForTemplate,
   generateId,
@@ -40,7 +41,9 @@ import { default as defaultTemplates } from './templates';
 
 /** @see {@link http://browserhacks.com/#hack-acea075d0ac6954f275a70023906050c} */
 const IS_IE11 =
-  '-ms-scroll-limit' in document.documentElement.style && '-ms-ime-align' in document.documentElement.style;
+  canUseDom &&
+  '-ms-scroll-limit' in document.documentElement.style &&
+  '-ms-ime-align' in document.documentElement.style;
 
 const USER_DEFAULTS: Partial<Options> = {};
 
@@ -266,7 +269,7 @@ class Choices {
      */
     this._direction = this.passedElement.dir;
 
-    if (!this._direction) {
+    if (!this._direction && canUseDom) {
       const { direction: elementDirection } = window.getComputedStyle(this.passedElement.element);
       const { direction: documentDirection } = window.getComputedStyle(document.documentElement);
       if (elementDirection !== documentDirection) {

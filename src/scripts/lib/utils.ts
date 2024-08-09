@@ -6,6 +6,8 @@ import { StringPreEscaped } from '../interfaces/string-pre-escaped';
 import { ChoiceFull } from '../interfaces/choice-full';
 import { Types } from '../interfaces/types';
 
+export const canUseDom = !!(typeof document !== 'undefined' && document.createElement);
+
 const getRandomNumber = (min: number, max: number): number => Math.floor(Math.random() * (max - min) + min);
 
 const generateChars = (length: number): string =>
@@ -74,6 +76,11 @@ export const sanitise = <T>(value: T | StringUntrusted | StringPreEscaped | stri
 };
 
 export const strToEl = ((): ((str: string) => Element) => {
+  if (!canUseDom) {
+    // @ts-expect-error Do not run strToEl in non-browser environment
+    return (): void => {};
+  }
+
   const tmpEl = document.createElement('div');
 
   return (str): Element => {

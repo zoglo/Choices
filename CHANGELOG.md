@@ -8,6 +8,7 @@
 
 ### Features
 * Add closeDropdownOnSelect option, controls how the dropdown is close after selection is made. [#636](https://github.com/Choices-js/Choices/issues/636) [#973](https://github.com/Choices-js/Choices/issues/873) [#1012](https://github.com/Choices-js/Choices/issues/1012)
+* Allow choices.js to be imported on nodejs, useful for tests and also server side rendering. As windows.document is by default not defined, the default template rendering will not function. The `callbackOnCreateTemplates` callback must be used. [#861](https://github.com/Choices-js/Choices/issues/861)
 
 ### Bug Fixes (from 10.2.0)
 * Improve various `[aria-*]` attribute handling for better lighthouse accessibility scores [#1169](https://github.com/Choices-js/Choices/issues/1169)
