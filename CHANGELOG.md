@@ -1,5 +1,10 @@
 # Changelog
 
+## [11.0.0-rc6] (2024-08-)
+
+### Bug Fixes (from 10.2.0)
+* Fix Choices does not accept an element from an iframe [#1057](https://github.com/Choices-js/Choices/issues/1057)
+
 ## [11.0.0-rc5] (2024-08-08)
 
 ### ⚠ BREAKING CHANGES

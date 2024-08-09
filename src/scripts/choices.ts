@@ -49,6 +49,10 @@ import { Choices as ChoicesInterface } from './interfaces/choices';
 import { EventChoice } from './interfaces/event-choice';
 import { Templates } from './interfaces/templates';
 import { SearchHandler } from './interfaces/search';
+import {
+  isHtmlInputElement,
+  isHtmlSelectElement,
+} from './lib/html-guard-statements';
 
 /** @see {@link http://browserhacks.com/#hack-acea075d0ac6954f275a70023906050c} */
 const IS_IE11 =
@@ -221,10 +225,9 @@ class Choices implements ChoicesInterface {
         : element;
 
     if (
-      !(
-        passedElement instanceof HTMLInputElement ||
-        passedElement instanceof HTMLSelectElement
-      )
+      !passedElement ||
+      typeof passedElement !== 'object' ||
+      !(isHtmlInputElement(passedElement) || isHtmlSelectElement(passedElement))
     ) {
       if (!passedElement && typeof element === 'string') {
         throw TypeError(`Selector ${element} failed to find an element`);

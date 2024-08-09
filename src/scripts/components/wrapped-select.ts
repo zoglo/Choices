@@ -4,12 +4,7 @@ import WrappedElement from './wrapped-element';
 import { GroupFull } from '../interfaces/group-full';
 import { ChoiceFull } from '../interfaces/choice-full';
 import { stringToHtmlClass } from '../lib/choice-input';
-
-const isHtmlOption = (e: Element): e is HTMLOptionElement =>
-  e.tagName === 'OPTION';
-
-const isHtmlOptgroup = (e: Element): e is HTMLOptGroupElement =>
-  e.tagName === 'OPTGROUP';
+import { isHtmlOptgroup, isHtmlOption } from '../lib/html-guard-statements';
 
 export default class WrappedSelect extends WrappedElement<HTMLSelectElement> {
   classNames: ClassNames;

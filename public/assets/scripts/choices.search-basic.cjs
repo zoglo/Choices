@@ -1943,12 +1943,19 @@ var mapInputToChoice = function (value, allowGroup) {
     return result;
 };
 
+var isHtmlInputElement = function (e) {
+    return e.tagName === 'INPUT';
+};
+var isHtmlSelectElement = function (e) {
+    return e.tagName === 'SELECT';
+};
 var isHtmlOption = function (e) {
     return e.tagName === 'OPTION';
 };
 var isHtmlOptgroup = function (e) {
     return e.tagName === 'OPTGROUP';
 };
+
 var WrappedSelect = /** @class */ (function (_super) {
     __extends(WrappedSelect, _super);
     function WrappedSelect(_a) {
@@ -3175,8 +3182,9 @@ var Choices = /** @class */ (function () {
         var passedElement = typeof element === 'string'
             ? documentElement.querySelector(element)
             : element;
-        if (!(passedElement instanceof HTMLInputElement ||
-            passedElement instanceof HTMLSelectElement)) {
+        if (!passedElement ||
+            typeof passedElement !== 'object' ||
+            !(isHtmlInputElement(passedElement) || isHtmlSelectElement(passedElement))) {
             if (!passedElement && typeof element === 'string') {
                 throw TypeError("Selector ".concat(element, " failed to find an element"));
             }
