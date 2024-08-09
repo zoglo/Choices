@@ -748,9 +748,9 @@ classNames: {
 
 **Usage:** Function to run once Choices initialises.
 
-### callbackOnCreateTemplates
+### callbackOnCreateTemplates(strToEl: (str: string) => HTMLElement, escapeForTemplate: (allowHTML: boolean, s: StringUntrusted | StringPreEscaped | string) => string)
 
-**Type:** `Function` **Default:** `null` **Arguments:** `template`
+**Type:** `Function` **Default:** `null` **Arguments:** `strToEl`, `escapeForTemplate`
 
 **Input types affected:** `text`, `select-one`, `select-multiple`
 
@@ -764,7 +764,7 @@ Templates receive the full Choices config as the first argument to any template,
 
 ```js
 const example = new Choices(element, {
-  callbackOnCreateTemplates: () => ({
+  callbackOnCreateTemplates: (strToEl, escapeForTemplate) => ({
     input: (...args) =>
       Object.assign(Choices.defaults.templates.input.call(this, ...args), {
         type: 'email',
@@ -777,7 +777,7 @@ or more complex:
 
 ```js
 const example = new Choices(element, {
-  callbackOnCreateTemplates: function(template) {
+  callbackOnCreateTemplates: function(strToEl, escapeForTemplate) {
     return {
       item: ({ classNames }, data) => {
         return template(`
@@ -991,13 +991,13 @@ choices.disable();
 
 **Usage:** Un-highlight each chosen item.
 
-### removeActiveItemsByValue(value);
+### removeActiveItemsByValue(value: string);
 
 **Input types affected:** `text`, `select-multiple`
 
 **Usage:** Remove each item by a given value.
 
-### removeActiveItems(excludedId);
+### removeActiveItems(excludedId: number);
 
 **Input types affected:** `text`, `select-multiple`
 
@@ -1009,25 +1009,25 @@ choices.disable();
 
 **Usage:** Remove an option/item by value
 
-### removeHighlightedItems();
+### removeHighlightedItems(runEvent?: boolean);
 
 **Input types affected:** `text`, `select-multiple`
 
 **Usage:** Remove each item the user has selected.
 
-### showDropdown();
+### showDropdown(preventInputFocus?: boolean);
 
 **Input types affected:** `select-one`, `select-multiple`
 
-**Usage:** Show option list dropdown (only affects select inputs).
+**Usage:** Show choices list dropdown.
 
-### hideDropdown();
+### hideDropdown(preventInputFocus?: boolean);
 
-**Input types affected:** `text`, `select-multiple`
+**Input types affected:** ``select-one`, `select-multiple`
 
-**Usage:** Hide option list dropdown (only affects select inputs).
+**Usage:** Hide choices list dropdown.
 
-### setChoices(choices, value, label, replaceChoices);
+### setChoices(choicesArrayOrFetcher?: (InputChoice | InputGroup)[] | ((instance: Choices) => (InputChoice | InputGroup)[] | Promise<(InputChoice | InputGroup)[]>), value?: string | null, label?: string, replaceChoices?: boolean): this | Promise<this>;
 
 **Input types affected:** `select-one`, `select-multiple`
 
@@ -1115,7 +1115,7 @@ example.setChoices(
 
 **Usage:** Clear all choices from select
 
-### getValue(valueOnly)
+### getValue(valueOnly?: boolean): string[] | EventChoice[] | EventChoice | string;
 
 **Input types affected:** `text`, `select-one`, `select-multiple`
 
@@ -1129,9 +1129,9 @@ const values = example.getValue(true); // returns ['value 1', 'value 2'];
 const valueArray = example.getValue(); // returns [{ active: true, choiceId: 1, highlighted: false, id: 1, label: 'Label 1', value: 'Value 1'},  { active: true, choiceId: 2, highlighted: false, id: 2, label: 'Label 2', value: 'Value 2'}];
 ```
 
-### setValue(items);
+### setValue(items: string[] | InputChoice[]): this;
 
-**Input types affected:** `text`
+**Input types affected:** `text`, `select-one`, `select-multiple`
 
 **Usage:** Set value of input based on an array of objects or strings. This behaves exactly the same as passing items via the `items` option but can be called after initialising Choices.
 
@@ -1151,7 +1151,7 @@ example.setValue([
 example.setValue(['Four', 'Five', 'Six']);
 ```
 
-### setChoiceByValue(value);
+### setChoiceByValue(value: string | string[]);
 
 **Input types affected:** `select-one`, `select-multiple`
 
