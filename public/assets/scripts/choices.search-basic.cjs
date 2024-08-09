@@ -3164,19 +3164,8 @@ var Choices = /** @class */ (function () {
         ObjectsInConfig.forEach(function (key) {
             _this.config[key] = __assign(__assign(__assign({}, Choices.defaults.allOptions[key]), Choices.defaults.options[key]), userConfig[key]);
         });
-        var invalidConfigOptions = diff(this.config, DEFAULT_CONFIG);
-        if (invalidConfigOptions.length) {
-            console.warn('Unknown config option(s) passed', invalidConfigOptions.join(', '));
-        }
-        if (!this.config.silent &&
-            this.config.allowHTML &&
-            this.config.allowHtmlUserInput) {
-            if (this.config.addItems) {
-                console.warn('Warning: allowHTML/allowHtmlUserInput/addItems all being true is strongly not recommended and may lead to XSS attacks');
-            }
-            if (this.config.addChoices) {
-                console.warn('Warning: allowHTML/allowHtmlUserInput/addChoices all being true is strongly not recommended and may lead to XSS attacks');
-            }
+        if (!this.config.silent) {
+            this._validateConfig();
         }
         var documentElement = this.config.shadowRoot || document.documentElement;
         var passedElement = typeof element === 'string'
@@ -3753,6 +3742,20 @@ var Choices = /** @class */ (function () {
             this._stopSearch();
         }
         return this;
+    };
+    Choices.prototype._validateConfig = function () {
+        var invalidConfigOptions = diff(this.config, DEFAULT_CONFIG);
+        if (invalidConfigOptions.length) {
+            console.warn('Unknown config option(s) passed', invalidConfigOptions.join(', '));
+        }
+        if (this.config.allowHTML && this.config.allowHtmlUserInput) {
+            if (this.config.addItems) {
+                console.warn('Warning: allowHTML/allowHtmlUserInput/addItems all being true is strongly not recommended and may lead to XSS attacks');
+            }
+            if (this.config.addChoices) {
+                console.warn('Warning: allowHTML/allowHtmlUserInput/addChoices all being true is strongly not recommended and may lead to XSS attacks');
+            }
+        }
     };
     Choices.prototype._render = function () {
         if (this._store.isLoading()) {

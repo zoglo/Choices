@@ -148,6 +148,7 @@ declare class Choices implements ChoicesInterface {
     clearChoices(): this;
     clearStore(): this;
     clearInput(): this;
+    _validateConfig(): void;
     _render(): void;
     _renderChoices(): void;
     _renderItems(): void;
