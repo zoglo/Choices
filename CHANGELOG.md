@@ -7,6 +7,9 @@
 * Fix Choices was not disable in a `<fieldset disabled>` [#1132](https://github.com/Choices-js/Choices/issues/1132)
 * Fix `silent` option does not silence warnings about unknown options [#1119](https://github.com/Choices-js/Choices/issues/1119)
 
+### Bug Fixes (from 11.0.0RC1)
+* Fix possible empty `aria-label` generation on remove item button
+
 ## [11.0.0-rc5] (2024-08-08)
 
 ### ⚠ BREAKING CHANGES
