@@ -1112,13 +1112,18 @@ class Choices implements ChoicesInterface {
     withinGroup = false,
   ): DocumentFragment {
     // Create a fragment to store our list items (so we don't have to update the DOM for each item)
-    const {
-      renderSelectedChoices,
-      searchResultLimit,
-      renderChoiceLimit,
-      appendGroupInSearch,
-    } = this.config;
+    const { renderSelectedChoices, searchResultLimit, renderChoiceLimit } =
+      this.config;
     const filter = this._isSearching ? sortByScore : this.config.sorter;
+    const groupLookup: string[] = [];
+    const appendGroupInSearch =
+      this.config.appendGroupInSearch && this._isSearching;
+    if (appendGroupInSearch) {
+      this._store.groups.forEach((group) => {
+        groupLookup[group.id] = group.label;
+      });
+    }
+
     const appendChoice = (choice: ChoiceFull): void => {
       const shouldRender =
         renderSelectedChoices === 'auto'
@@ -1131,18 +1136,9 @@ class Choices implements ChoicesInterface {
           choice,
           this.config.itemSelectText,
         );
-        if (appendGroupInSearch) {
-          let groupName: string = '';
-          this._store.groups.every((group) => {
-            if (group.id === choice.groupId) {
-              groupName = group.label;
-
-              return false;
-            }
-
-            return true;
-          });
-          if (groupName && this._isSearching) {
+        if (appendGroupInSearch && choice.groupId > 0) {
+          const groupName: string | undefined = groupLookup[choice.groupId];
+          if (groupName) {
             dropdownItem.innerHTML += ` (${groupName})`;
           }
         }
