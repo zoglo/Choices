@@ -31,7 +31,7 @@ export const DEFAULT_CLASSNAMES: ClassNames = {
   addChoice: ['choices__item', 'choices__item--selectable', 'add-choice'],
   noResults: ['has-no-results'],
   noChoices: ['has-no-choices'],
-};
+} as const;
 
 export const DEFAULT_CONFIG: Options = {
   items: [],
@@ -88,4 +88,4 @@ export const DEFAULT_CONFIG: Options = {
   callbackOnCreateTemplates: null,
   classNames: DEFAULT_CLASSNAMES,
   appendGroupInSearch: false,
-};
+} as const;
