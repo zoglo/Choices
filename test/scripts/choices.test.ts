@@ -323,6 +323,7 @@ describe('choices', () => {
           addEventListenersSpy = spy(instance, '_addEventListeners');
 
           instance.initialised = false;
+          instance.initialisedOK = undefined;
           instance.init();
         });
 
@@ -378,6 +379,7 @@ describe('choices', () => {
       describe('not already initialised', () => {
         beforeEach(() => {
           instance.initialised = false;
+          instance.initialisedOK = undefined;
           instance.destroy();
         });
 
@@ -1225,10 +1227,22 @@ describe('choices', () => {
       describe('not initialised', () => {
         beforeEach(() => {
           instance.initialised = false;
+          instance.initialisedOK = undefined;
         });
 
         it('should throw', () => {
-          expect(() => instance.setChoices(null)).Throw(ReferenceError);
+          expect(() => instance.setChoices(null)).Throw(TypeError);
+        });
+      });
+
+      describe('initialised twice', () => {
+        it('throws', () => {
+          instance.initialised = true;
+          instance.initialisedOK = false;
+          expect(() => instance.setChoices(null)).to.throw(
+            TypeError,
+            'setChoices called for an element which has multiple instances of Choices initialised on it',
+          );
         });
       });
 
@@ -1310,17 +1324,24 @@ describe('choices', () => {
       });
 
       describe('not already initialised', () => {
-        beforeEach(() => {
+        it('throws', () => {
           instance.initialised = false;
-          output = instance.setValue(values);
+          instance.initialisedOK = undefined;
+          expect(() => instance.setValue(values)).to.throw(
+            TypeError,
+            'setValue called on a non-initialised instance of Choices',
+          );
         });
+      });
 
-        it('returns this', () => {
-          expect(output).to.deep.equal(instance);
-        });
-
-        it('returns early', () => {
-          expect(_addChoiceStub.called).to.equal(false);
+      describe('initialised twice', () => {
+        it('throws', () => {
+          instance.initialised = true;
+          instance.initialisedOK = false;
+          expect(() => instance.setValue(values)).to.throw(
+            TypeError,
+            'setValue called for an element which has multiple instances of Choices initialised on it',
+          );
         });
       });
 
@@ -1359,17 +1380,24 @@ describe('choices', () => {
       });
 
       describe('not already initialised', () => {
-        beforeEach(() => {
+        it('throws', () => {
           instance.initialised = false;
-          output = instance.setChoiceByValue([]);
+          instance.initialisedOK = undefined;
+          expect(() => instance.setChoiceByValue([])).to.throw(
+            TypeError,
+            'setChoiceByValue called on a non-initialised instance of Choices',
+          );
         });
+      });
 
-        it('returns this', () => {
-          expect(output).to.deep.equal(instance);
-        });
-
-        it('returns early', () => {
-          expect(findAndSelectChoiceByValueStub.called).to.equal(false);
+      describe('initialised twice', () => {
+        it('throws', () => {
+          instance.initialised = true;
+          instance.initialisedOK = false;
+          expect(() => instance.setChoiceByValue([])).to.throw(
+            TypeError,
+            'setChoiceByValue called for an element which has multiple instances of Choices initialised on it',
+          );
         });
       });
 

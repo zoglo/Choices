@@ -98,6 +98,8 @@ class Choices implements ChoicesInterface {
 
   initialised: boolean;
 
+  initialisedOK?: boolean = undefined;
+
   config: Options;
 
   passedElement: WrappedInput | WrappedSelect;
@@ -341,6 +343,7 @@ class Choices implements ChoicesInterface {
       }
 
       this.initialised = true;
+      this.initialisedOK = false;
 
       return;
     }
@@ -352,7 +355,7 @@ class Choices implements ChoicesInterface {
   }
 
   init(): void {
-    if (this.initialised) {
+    if (this.initialised || this.initialisedOK !== undefined) {
       return;
     }
 
@@ -376,6 +379,7 @@ class Choices implements ChoicesInterface {
     }
 
     this.initialised = true;
+    this.initialisedOK = true;
 
     const { callbackOnInit } = this.config;
     // Run callback if it is a function
@@ -398,6 +402,7 @@ class Choices implements ChoicesInterface {
 
     this._templates = templates;
     this.initialised = false;
+    this.initialisedOK = undefined;
   }
 
   enable(): this {
@@ -574,7 +579,9 @@ class Choices implements ChoicesInterface {
   }
 
   setValue(items: string[] | InputChoice[]): this {
-    if (!this.initialised) {
+    if (!this.initialisedOK) {
+      this._warnChoicesInitFailed('setValue');
+
       return this;
     }
 
@@ -590,7 +597,12 @@ class Choices implements ChoicesInterface {
   }
 
   setChoiceByValue(value: string | string[]): this {
-    if (!this.initialised || this._isTextElement) {
+    if (!this.initialisedOK) {
+      this._warnChoicesInitFailed('setChoiceByValue');
+
+      return this;
+    }
+    if (this._isTextElement) {
       return this;
     }
     this._store.withDeferRendering(() => {
@@ -679,10 +691,10 @@ class Choices implements ChoicesInterface {
     label = 'label',
     replaceChoices = false,
   ): this | Promise<this> {
-    if (!this.initialised) {
-      throw new ReferenceError(
-        `setChoices was called on a non-initialized instance of Choices`,
-      );
+    if (!this.initialisedOK) {
+      this._warnChoicesInitFailed('setChoices');
+
+      return this;
     }
     if (!this._isSelectElement) {
       throw new TypeError(`setChoices can't be used with INPUT based Choices`);
@@ -2657,6 +2669,21 @@ class Choices implements ChoicesInterface {
     }
 
     return null;
+  }
+
+  _warnChoicesInitFailed(caller: string) {
+    if (this.config.silent) {
+      return;
+    }
+    if (!this.initialised) {
+      throw new TypeError(
+        `${caller} called on a non-initialised instance of Choices`,
+      );
+    } else if (!this.initialisedOK) {
+      throw new TypeError(
+        `${caller} called for an element which has multiple instances of Choices initialised on it`,
+      );
+    }
   }
 }
 
