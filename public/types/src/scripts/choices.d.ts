@@ -24,6 +24,7 @@ declare class Choices implements ChoicesInterface {
         templates: Templates;
     };
     initialised: boolean;
+    initialisedOK?: boolean;
     config: Options;
     passedElement: WrappedInput | WrappedSelect;
     containerOuter: Container;
@@ -214,5 +215,6 @@ declare class Choices implements ChoicesInterface {
     _addPredefinedItems(items: ChoiceFull[]): void;
     _findAndSelectChoiceByValue(value: string): boolean;
     _generatePlaceholderValue(): string | null;
+    _warnChoicesInitFailed(caller: string): void;
 }
 export default Choices;

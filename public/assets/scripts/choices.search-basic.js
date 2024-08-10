@@ -3163,6 +3163,7 @@
             if (element === void 0) { element = '[data-choice]'; }
             if (userConfig === void 0) { userConfig = {}; }
             var _this = this;
+            this.initialisedOK = undefined;
             this._hasNonChoicePlaceholder = false;
             this._lastAddedChoiceId = 0;
             this._lastAddedGroupId = 0;
@@ -3290,6 +3291,7 @@
                     console.warn('Trying to initialise Choices on element already initialised', { element: element });
                 }
                 this.initialised = true;
+                this.initialisedOK = false;
                 return;
             }
             // Let's go
@@ -3315,7 +3317,7 @@
             configurable: true
         });
         Choices.prototype.init = function () {
-            if (this.initialised) {
+            if (this.initialised || this.initialisedOK !== undefined) {
                 return;
             }
             this._loadChoices();
@@ -3332,6 +3334,7 @@
                 this.disable();
             }
             this.initialised = true;
+            this.initialisedOK = true;
             var callbackOnInit = this.config.callbackOnInit;
             // Run callback if it is a function
             if (callbackOnInit && typeof callbackOnInit === 'function') {
@@ -3349,6 +3352,7 @@
             this._stopSearch();
             this._templates = templates;
             this.initialised = false;
+            this.initialisedOK = undefined;
         };
         Choices.prototype.enable = function () {
             if (this.passedElement.isDisabled) {
@@ -3497,7 +3501,8 @@
         };
         Choices.prototype.setValue = function (items) {
             var _this = this;
-            if (!this.initialised) {
+            if (!this.initialisedOK) {
+                this._warnChoicesInitFailed('setValue');
                 return this;
             }
             this._store.withDeferRendering(function () {
@@ -3511,7 +3516,11 @@
         };
         Choices.prototype.setChoiceByValue = function (value) {
             var _this = this;
-            if (!this.initialised || this._isTextElement) {
+            if (!this.initialisedOK) {
+                this._warnChoicesInitFailed('setChoiceByValue');
+                return this;
+            }
+            if (this._isTextElement) {
                 return this;
             }
             this._store.withDeferRendering(function () {
@@ -3591,8 +3600,9 @@
             if (value === void 0) { value = 'value'; }
             if (label === void 0) { label = 'label'; }
             if (replaceChoices === void 0) { replaceChoices = false; }
-            if (!this.initialised) {
-                throw new ReferenceError("setChoices was called on a non-initialized instance of Choices");
+            if (!this.initialisedOK) {
+                this._warnChoicesInitFailed('setChoices');
+                return this;
             }
             if (!this._isSelectElement) {
                 throw new TypeError("setChoices can't be used with INPUT based Choices");
@@ -3894,25 +3904,25 @@
             if (fragment === void 0) { fragment = document.createDocumentFragment(); }
             if (withinGroup === void 0) { withinGroup = false; }
             // Create a fragment to store our list items (so we don't have to update the DOM for each item)
-            var _a = this.config, renderSelectedChoices = _a.renderSelectedChoices, searchResultLimit = _a.searchResultLimit, renderChoiceLimit = _a.renderChoiceLimit, appendGroupInSearch = _a.appendGroupInSearch;
+            var _a = this.config, renderSelectedChoices = _a.renderSelectedChoices, searchResultLimit = _a.searchResultLimit, renderChoiceLimit = _a.renderChoiceLimit;
             var filter = this._isSearching ? sortByScore : this.config.sorter;
+            var groupLookup = [];
+            var appendGroupInSearch = this.config.appendGroupInSearch && this._isSearching;
+            if (appendGroupInSearch) {
+                this._store.groups.forEach(function (group) {
+                    groupLookup[group.id] = group.label;
+                });
+            }
             var appendChoice = function (choice) {
                 var shouldRender = renderSelectedChoices === 'auto'
                     ? _this._isSelectOneElement || !choice.selected
                     : true;
                 if (shouldRender) {
                     var dropdownItem = _this._templates.choice(_this.config, choice, _this.config.itemSelectText);
-                    if (appendGroupInSearch) {
-                        var groupName_1 = '';
-                        _this._store.groups.every(function (group) {
-                            if (group.id === choice.groupId) {
-                                groupName_1 = group.label;
-                                return false;
-                            }
-                            return true;
-                        });
-                        if (groupName_1 && _this._isSearching) {
-                            dropdownItem.innerHTML += " (".concat(groupName_1, ")");
+                    if (appendGroupInSearch && choice.groupId > 0) {
+                        var groupName = groupLookup[choice.groupId];
+                        if (groupName) {
+                            dropdownItem.innerHTML += " (".concat(groupName, ")");
                         }
                     }
                     fragment.appendChild(dropdownItem);
@@ -5113,9 +5123,22 @@
             }
             return null;
         };
+        Choices.prototype._warnChoicesInitFailed = function (caller) {
+            if (this.config.silent) {
+                return;
+            }
+            if (!this.initialised) {
+                throw new TypeError("".concat(caller, " called on a non-initialised instance of Choices"));
+            }
+            else if (!this.initialisedOK) {
+                throw new TypeError("".concat(caller, " called for an element which has multiple instances of Choices initialised on it"));
+            }
+        };
         Choices.version = 'git';
         return Choices;
     }());
+
+    Choices.version = '11.0.0-rc5';
 
     return Choices;
 
