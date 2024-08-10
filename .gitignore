@@ -4,6 +4,7 @@ npm-debug.log
 .idea
 .rollup.cache
 tsconfig.tsbuildinfo
+.npmrc
 
 # Test
 tests/reports
