@@ -56,7 +56,7 @@ const outputTypes = {
   cjs : {
     ext: 'cjs',
     format: 'cjs',
-    default: true,
+    default: false,
   },
   mjs : {
     ext: 'mjs',

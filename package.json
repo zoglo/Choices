@@ -12,17 +12,17 @@
     ".": {
       "types": "./public/types/src/index.d.ts",
       "import": "./public/assets/scripts/choices.mjs",
-      "require": "./public/assets/scripts/choices.cjs"
+      "require": "./public/assets/scripts/choices.js"
     },
     "./search-basic": {
       "types": "./public/types/src/index.d.ts",
       "import": "./public/assets/scripts/choices.search-basic.min.mjs",
-      "require": "./public/assets/scripts/choices.search-basic.min.cjs"
+      "require": "./public/assets/scripts/choices.search-basic.min.js"
     },
     "./search-none": {
       "types": "./public/types/src/index.d.ts",
       "import": "./public/assets/scripts/choices.search-none.min.mjs",
-      "require": "./public/assets/scripts/choices.search-none.min.cjs"
+      "require": "./public/assets/scripts/choices.search-none.min.js"
     }
   },
   "sideEffects": false,
@@ -44,7 +44,6 @@
     "js:watch": "rollup -w --bundleConfigAsCjs -c scripts/configs.mjs --environment OUTPUT_TYPES:umd --environment WATCH_HOST:localhost",
     "js:build": "rollup --bundleConfigAsCjs -c scripts/configs.mjs --environment WITH_D_TS_FILES:1 && mv public/assets/scripts/src public/types/",
     "js:build-dev": "rollup --bundleConfigAsCjs -c scripts/configs.mjs --environment TARGET:. --environment OUTPUT_TYPES:umd",
-    "js:build-dev:cjs": "rollup --bundleConfigAsCjs -c scripts/configs.mjs --environment TARGET:. --environment OUTPUT_TYPES:cjs",
     "js:build-dev:esm": "rollup --bundleConfigAsCjs -c scripts/configs.mjs --environment TARGET:. --environment OUTPUT_TYPES:mjs",
     "css:watch": "nodemon -e scss -x \"npm run css:build\"",
     "css:build": "run-s css:sass css:prefix css:min",
