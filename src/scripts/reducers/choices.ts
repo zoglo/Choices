@@ -64,19 +64,22 @@ export default function choices(
     case ActionType.FILTER_CHOICES: {
       const { results } = action as FilterChoicesAction;
 
+      // avoid O(n^2) algorithm complexity when searching/filtering choices
+      const scoreLookup: number[] = [];
+      results.forEach((result) => {
+        scoreLookup[result.item.id] = result.score;
+      });
+
       return state.map((obj) => {
         const choice = obj;
-        // Set active state based on whether choice is
-        // within filtered results
-        choice.active = results.some(({ item, score }) => {
-          if (item.id === choice.id) {
-            choice.score = score;
 
-            return true;
-          }
-
-          return false;
-        });
+        if (choice.id in scoreLookup) {
+          choice.score = scoreLookup[choice.id];
+          choice.active = true;
+        } else {
+          choice.score = 0;
+          choice.active = false;
+        }
 
         return choice;
       });
