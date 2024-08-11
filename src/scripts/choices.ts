@@ -971,16 +971,18 @@ class Choices implements ChoicesInterface {
 
     // If we have grouped options
     if (activeGroups.length >= 1 && !this._isSearching) {
-      // If we have a placeholder choice along with groups
-      const activePlaceholders = activeChoices.filter(
-        (activeChoice) =>
-          activeChoice.placeholder && activeChoice.groupId === -1,
-      );
-      if (activePlaceholders.length >= 1) {
-        choiceListFragment = this._createChoicesFragment(
-          activePlaceholders,
-          choiceListFragment,
+      if (!this._hasNonChoicePlaceholder) {
+        // If we have a placeholder choice along with groups
+        const activePlaceholders = activeChoices.filter(
+          (activeChoice) =>
+            activeChoice.placeholder && activeChoice.groupId === -1,
         );
+        if (activePlaceholders.length >= 1) {
+          choiceListFragment = this._createChoicesFragment(
+            activePlaceholders,
+            choiceListFragment,
+          );
+        }
       }
       choiceListFragment = this._createGroupsFragment(
         activeGroups,
@@ -1171,22 +1173,20 @@ class Choices implements ChoicesInterface {
       }
     }
 
-    // Split array into placeholders and "normal" choices
-    const { placeholderChoices, normalChoices } = rendererableChoices.reduce(
-      (acc, choice: ChoiceFull) => {
+    const placeholderChoices: ChoiceFull[] = [];
+    let normalChoices: ChoiceFull[] = [];
+    if (this._hasNonChoicePlaceholder) {
+      normalChoices = rendererableChoices;
+    } else {
+      // Split array into placeholders and "normal" choices
+      rendererableChoices.forEach((choice) => {
         if (choice.placeholder) {
-          acc.placeholderChoices.push(choice);
+          placeholderChoices.push(choice);
         } else {
-          acc.normalChoices.push(choice);
+          normalChoices.push(choice);
         }
-
-        return acc;
-      },
-      {
-        placeholderChoices: [] as ChoiceFull[],
-        normalChoices: [] as ChoiceFull[],
-      },
-    );
+      });
+    }
 
     // If sorting is enabled or the user is searching, filter choices
     if (this.config.shouldSort || this._isSearching) {
@@ -1195,10 +1195,10 @@ class Choices implements ChoicesInterface {
 
     let choiceLimit = rendererableChoices.length;
 
-    // Prepend placeholeder
-    const sortedChoices = this._isSelectOneElement
-      ? [...placeholderChoices, ...normalChoices]
-      : normalChoices;
+    const sortedChoices =
+      this._isSelectOneElement && placeholderChoices.length !== 0
+        ? [...placeholderChoices, ...normalChoices]
+        : normalChoices;
 
     if (this._isSearching) {
       choiceLimit = searchResultLimit;
