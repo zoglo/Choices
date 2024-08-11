@@ -14,8 +14,6 @@ export default class Store implements IStore {
      * Dispatch event to store (wrapped Redux method)
      */
     dispatch(action: AnyAction): void;
-    startDeferRendering(): void;
-    stopDeferRendering(): void;
     withDeferRendering(func: () => void): void;
     /**
      * Get store object (wrapping Redux method)
@@ -41,10 +39,6 @@ export default class Store implements IStore {
      * Get choices that can be searched (excluding placeholders)
      */
     get searchableChoices(): ChoiceFull[];
-    /**
-     * Get placeholder choice from store
-     */
-    get placeholderChoice(): ChoiceFull | undefined;
     /**
      * Get groups from store
      */

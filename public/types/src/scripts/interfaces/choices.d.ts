@@ -1,6 +1,5 @@
 import { WrappedInput, WrappedSelect, Container, List, Input, Dropdown } from '../components';
 import { Store } from './store';
-import { InputChoice } from './input-choice';
 import { State } from './state';
 import { Templates } from './templates';
 import { ChoiceFull } from './choice-full';
@@ -41,7 +40,6 @@ export interface Choices {
         itemChoice: string;
     };
     _presetChoices: (ChoiceFull | GroupFull)[];
-    _presetItems: (InputChoice | string)[];
     _initialItems: string[];
     _searcher: Searcher<ChoiceFull>;
 }

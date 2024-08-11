@@ -7,7 +7,6 @@ import {
   Dropdown,
 } from '../components';
 import { Store } from './store';
-import { InputChoice } from './input-choice';
 import { State } from './state';
 import { Templates } from './templates';
 import { ChoiceFull } from './choice-full';
@@ -79,8 +78,6 @@ export interface Choices {
   };
 
   _presetChoices: (ChoiceFull | GroupFull)[];
-
-  _presetItems: (InputChoice | string)[];
 
   _initialItems: string[];
 

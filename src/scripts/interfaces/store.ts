@@ -3,10 +3,6 @@ import { ChoiceFull } from './choice-full';
 import { GroupFull } from './group-full';
 
 export interface Store {
-  startDeferRendering(): void;
-
-  stopDeferRendering(): void;
-
   withDeferRendering(func: () => void): void;
 
   /**
@@ -38,11 +34,6 @@ export interface Store {
    * Get choices that can be searched (excluding placeholders)
    */
   get searchableChoices(): ChoiceFull[];
-
-  /**
-   * Get placeholder choice from store
-   */
-  get placeholderChoice(): ChoiceFull | undefined;
 
   /**
    * Get groups from store

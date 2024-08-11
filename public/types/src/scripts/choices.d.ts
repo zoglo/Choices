@@ -60,7 +60,6 @@ declare class Choices implements ChoicesInterface {
         itemChoice: string;
     };
     _presetChoices: (ChoiceFull | GroupFull)[];
-    _presetItems: ChoiceFull[];
     _initialItems: string[];
     _searcher: Searcher<ChoiceFull>;
     constructor(element?: string | Element | HTMLInputElement | HTMLSelectElement, userConfig?: Partial<Options>);
@@ -158,14 +157,11 @@ declare class Choices implements ChoicesInterface {
     _createItemsFragment(items: InputChoice[], fragment?: DocumentFragment): DocumentFragment;
     _getChoiceForOutput(choice?: ChoiceFull, keyCode?: number): EventChoice | undefined;
     _triggerChange(value: any): void;
-    _selectPlaceholderChoice(placeholderChoice: ChoiceFull): void;
     _handleButtonAction(items: ChoiceFull[], element?: HTMLElement): void;
     _handleItemAction(items: InputChoice[], element?: HTMLElement, hasShiftKey?: boolean): void;
     _handleChoiceAction(items: ChoiceFull[], element?: HTMLElement, keyCode?: number): boolean;
     _handleBackspace(items: ChoiceFull[]): void;
     _loadChoices(): void;
-    _startLoading(): void;
-    _stopLoading(): void;
     _handleLoadingState(setLoading?: boolean): void;
     _handleSearch(value?: string): void;
     _canAddItem(items: InputChoice[], value: string): Notice;
@@ -202,17 +198,10 @@ declare class Choices implements ChoicesInterface {
     _removeItem(item: ChoiceFull): void;
     _addChoice(choice: ChoiceFull, withEvents?: boolean): void;
     _addGroup(group: GroupFull, withEvents?: boolean): void;
-    /**
-     * @deprecated call this._templates.{template}(this.config, ...) instead
-     * @param template
-     * @param args
-     */
-    _getTemplate(template: string, ...args: any): any;
     _createTemplates(): void;
     _createElements(): void;
     _createStructure(): void;
     _addPredefinedChoices(choices: (ChoiceFull | GroupFull)[], selectFirstOption?: boolean, withEvents?: boolean): void;
-    _addPredefinedItems(items: ChoiceFull[]): void;
     _findAndSelectChoiceByValue(value: string): boolean;
     _generatePlaceholderValue(): string | null;
     _warnChoicesInitFailed(caller: string): void;

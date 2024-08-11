@@ -167,8 +167,6 @@ class Choices implements ChoicesInterface {
 
   _presetChoices: (ChoiceFull | GroupFull)[];
 
-  _presetItems: ChoiceFull[];
-
   _initialItems: string[];
 
   _searcher: Searcher<ChoiceFull>;
@@ -1325,14 +1323,6 @@ class Choices implements ChoicesInterface {
     });
   }
 
-  _selectPlaceholderChoice(placeholderChoice: ChoiceFull): void {
-    this._addItem(placeholderChoice);
-
-    if (placeholderChoice.value) {
-      this._triggerChange(placeholderChoice.value);
-    }
-  }
-
   _handleButtonAction(items: ChoiceFull[], element?: HTMLElement): void {
     if (
       items.length === 0 ||
@@ -1353,9 +1343,14 @@ class Choices implements ChoicesInterface {
     this._triggerChange(itemToRemove.value);
 
     if (this._isSelectOneElement && !this._hasNonChoicePlaceholder) {
-      const { placeholderChoice } = this._store;
+      const placeholderChoice = this._store.choices
+        .reverse()
+        .find((choice) => !choice.disabled && choice.placeholder)
       if (placeholderChoice) {
-        this._selectPlaceholderChoice(placeholderChoice);
+        this._addItem(placeholderChoice);
+        if (placeholderChoice.value) {
+          this._triggerChange(placeholderChoice.value);
+        }
       }
     }
   }
@@ -1477,7 +1472,7 @@ class Choices implements ChoicesInterface {
   _loadChoices(): void {
     if (this._isTextElement) {
       // Assign preset items from passed object first
-      this._presetItems = this.config.items.map((e: InputChoice | string) =>
+      this._presetChoices = this.config.items.map((e: InputChoice | string) =>
         mapInputToChoice(e, false),
       );
       // Add any values passed from attribute
@@ -1486,9 +1481,9 @@ class Choices implements ChoicesInterface {
         const elementItems: ChoiceFull[] = value
           .split(this.config.delimiter)
           .map((e: InputChoice | string) => mapInputToChoice(e, false));
-        this._presetItems = this._presetItems.concat(elementItems);
+        this._presetChoices = this._presetChoices.concat(elementItems);
       }
-      this._presetItems.forEach((obj) => {
+      this._presetChoices.forEach((obj: ChoiceFull) => {
         // eslint-disable-next-line no-param-reassign
         obj.selected = true;
       });
@@ -1505,16 +1500,6 @@ class Choices implements ChoicesInterface {
         this._presetChoices.push(...choicesFromOptions);
       }
     }
-  }
-
-  // noinspection JSUnusedGlobalSymbols
-  _startLoading(): void {
-    this._store.startDeferRendering();
-  }
-
-  // noinspection JSUnusedGlobalSymbols
-  _stopLoading(): void {
-    this._store.stopDeferRendering();
   }
 
   _handleLoadingState(setLoading = true): void {
@@ -2478,15 +2463,6 @@ class Choices implements ChoicesInterface {
     });
   }
 
-  /**
-   * @deprecated call this._templates.{template}(this.config, ...) instead
-   * @param template
-   * @param args
-   */
-  _getTemplate(template: string, ...args: any): any {
-    return this._templates[template].call(this, this.config, ...args);
-  }
-
   _createTemplates(): void {
     const { callbackOnCreateTemplates } = this.config;
     let userTemplates = {};
@@ -2596,14 +2572,7 @@ class Choices implements ChoicesInterface {
     this._highlightPosition = 0;
     this._isSearching = false;
     this._store.withDeferRendering(() => {
-      if (this._isSelectElement) {
-        this._addPredefinedChoices(
-          this._presetChoices,
-          this._isSelectOneElement && !this._hasNonChoicePlaceholder,
-        );
-      } else if (this._isTextElement) {
-        this._addPredefinedItems(this._presetItems);
-      }
+      this._addPredefinedChoices(this._presetChoices, this._isSelectOneElement && !this._hasNonChoicePlaceholder, false);
     });
   }
 
@@ -2647,12 +2616,6 @@ class Choices implements ChoicesInterface {
       } else {
         this._addChoice(item, withEvents);
       }
-    });
-  }
-
-  _addPredefinedItems(items: ChoiceFull[]): void {
-    items.forEach((item) => {
-      this._addChoice(item);
     });
   }
 

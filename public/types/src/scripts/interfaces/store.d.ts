@@ -2,8 +2,6 @@ import { State } from './state';
 import { ChoiceFull } from './choice-full';
 import { GroupFull } from './group-full';
 export interface Store {
-    startDeferRendering(): void;
-    stopDeferRendering(): void;
     withDeferRendering(func: () => void): void;
     /**
      * Get store object (wrapping Redux method)
@@ -29,10 +27,6 @@ export interface Store {
      * Get choices that can be searched (excluding placeholders)
      */
     get searchableChoices(): ChoiceFull[];
-    /**
-     * Get placeholder choice from store
-     */
-    get placeholderChoice(): ChoiceFull | undefined;
     /**
      * Get groups from store
      */

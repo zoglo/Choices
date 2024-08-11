@@ -32,20 +32,12 @@ export default class Store implements IStore {
     this._store.dispatch(action);
   }
 
-  startDeferRendering(): void {
-    this._store.dispatch(setIsLoading(true));
-  }
-
-  stopDeferRendering(): void {
-    this._store.dispatch(setIsLoading(false));
-  }
-
   withDeferRendering(func: () => void): void {
-    this.startDeferRendering();
+    this._store.dispatch(setIsLoading(true));
     try {
       func();
     } finally {
-      this.stopDeferRendering();
+      this._store.dispatch(setIsLoading(false));
     }
   }
 
@@ -93,15 +85,6 @@ export default class Store implements IStore {
     return this.choices.filter(
       (choice) => !choice.disabled && !choice.placeholder,
     );
-  }
-
-  /**
-   * Get placeholder choice from store
-   */
-  get placeholderChoice(): ChoiceFull | undefined {
-    return [...this.choices]
-      .reverse()
-      .find((choice) => !choice.disabled && choice.placeholder);
   }
 
   /**

@@ -1534,6 +1534,7 @@
         return appReducer(state, action);
     };
 
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     var Store = /** @class */ (function () {
         function Store() {
             this._store = createStore(rootReducer, window.__REDUX_DEVTOOLS_EXTENSION__ &&
@@ -1551,19 +1552,13 @@
         Store.prototype.dispatch = function (action) {
             this._store.dispatch(action);
         };
-        Store.prototype.startDeferRendering = function () {
-            this._store.dispatch(setIsLoading(true));
-        };
-        Store.prototype.stopDeferRendering = function () {
-            this._store.dispatch(setIsLoading(false));
-        };
         Store.prototype.withDeferRendering = function (func) {
-            this.startDeferRendering();
+            this._store.dispatch(setIsLoading(true));
             try {
                 func();
             }
             finally {
-                this.stopDeferRendering();
+                this._store.dispatch(setIsLoading(false));
             }
         };
         Object.defineProperty(Store.prototype, "state", {
@@ -1622,17 +1617,6 @@
              */
             get: function () {
                 return this.choices.filter(function (choice) { return !choice.disabled && !choice.placeholder; });
-            },
-            enumerable: false,
-            configurable: true
-        });
-        Object.defineProperty(Store.prototype, "placeholderChoice", {
-            /**
-             * Get placeholder choice from store
-             */
-            get: function () {
-                return __spreadArray([], this.choices, true).reverse()
-                    .find(function (choice) { return !choice.disabled && choice.placeholder; });
             },
             enumerable: false,
             configurable: true
@@ -4574,12 +4558,6 @@
                 value: value,
             });
         };
-        Choices.prototype._selectPlaceholderChoice = function (placeholderChoice) {
-            this._addItem(placeholderChoice);
-            if (placeholderChoice.value) {
-                this._triggerChange(placeholderChoice.value);
-            }
-        };
         Choices.prototype._handleButtonAction = function (items, element) {
             if (items.length === 0 ||
                 !this.config.removeItems ||
@@ -4595,9 +4573,14 @@
             this._removeItem(itemToRemove);
             this._triggerChange(itemToRemove.value);
             if (this._isSelectOneElement && !this._hasNonChoicePlaceholder) {
-                var placeholderChoice = this._store.placeholderChoice;
+                var placeholderChoice = this._store.choices
+                    .reverse()
+                    .find(function (choice) { return !choice.disabled && choice.placeholder; });
                 if (placeholderChoice) {
-                    this._selectPlaceholderChoice(placeholderChoice);
+                    this._addItem(placeholderChoice);
+                    if (placeholderChoice.value) {
+                        this._triggerChange(placeholderChoice.value);
+                    }
                 }
             }
         };
@@ -4693,7 +4676,7 @@
             var _a;
             if (this._isTextElement) {
                 // Assign preset items from passed object first
-                this._presetItems = this.config.items.map(function (e) {
+                this._presetChoices = this.config.items.map(function (e) {
                     return mapInputToChoice(e, false);
                 });
                 // Add any values passed from attribute
@@ -4702,9 +4685,9 @@
                     var elementItems = value
                         .split(this.config.delimiter)
                         .map(function (e) { return mapInputToChoice(e, false); });
-                    this._presetItems = this._presetItems.concat(elementItems);
+                    this._presetChoices = this._presetChoices.concat(elementItems);
                 }
-                this._presetItems.forEach(function (obj) {
+                this._presetChoices.forEach(function (obj) {
                     // eslint-disable-next-line no-param-reassign
                     obj.selected = true;
                 });
@@ -4720,14 +4703,6 @@
                     (_a = this._presetChoices).push.apply(_a, choicesFromOptions);
                 }
             }
-        };
-        // noinspection JSUnusedGlobalSymbols
-        Choices.prototype._startLoading = function () {
-            this._store.startDeferRendering();
-        };
-        // noinspection JSUnusedGlobalSymbols
-        Choices.prototype._stopLoading = function () {
-            this._store.stopDeferRendering();
         };
         Choices.prototype._handleLoadingState = function (setLoading) {
             if (setLoading === void 0) { setLoading = true; }
@@ -5491,19 +5466,6 @@
                 _this._addChoice(item, withEvents);
             });
         };
-        /**
-         * @deprecated call this._templates.{template}(this.config, ...) instead
-         * @param template
-         * @param args
-         */
-        Choices.prototype._getTemplate = function (template) {
-            var _a;
-            var args = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                args[_i - 1] = arguments[_i];
-            }
-            return (_a = this._templates[template]).call.apply(_a, __spreadArray([this, this.config], args, false));
-        };
         Choices.prototype._createTemplates = function () {
             var _this = this;
             var callbackOnCreateTemplates = this.config.callbackOnCreateTemplates;
@@ -5584,12 +5546,7 @@
             this._highlightPosition = 0;
             this._isSearching = false;
             this._store.withDeferRendering(function () {
-                if (_this._isSelectElement) {
-                    _this._addPredefinedChoices(_this._presetChoices, _this._isSelectOneElement && !_this._hasNonChoicePlaceholder);
-                }
-                else if (_this._isTextElement) {
-                    _this._addPredefinedItems(_this._presetItems);
-                }
+                _this._addPredefinedChoices(_this._presetChoices, _this._isSelectOneElement && !_this._hasNonChoicePlaceholder, false);
             });
         };
         Choices.prototype._addPredefinedChoices = function (choices, selectFirstOption, withEvents) {
@@ -5625,12 +5582,6 @@
                 else {
                     _this._addChoice(item, withEvents);
                 }
-            });
-        };
-        Choices.prototype._addPredefinedItems = function (items) {
-            var _this = this;
-            items.forEach(function (item) {
-                _this._addChoice(item);
             });
         };
         Choices.prototype._findAndSelectChoiceByValue = function (value) {
