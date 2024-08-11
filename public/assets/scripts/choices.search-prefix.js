@@ -64,34 +64,6 @@
       return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
     };
 
-    function searchByPrefixFilter(config, haystack, _needle) {
-        var fields = config.searchFields;
-        if (!fields || fields.length === 0 || _needle === '') {
-            return [];
-        }
-        var needle = _needle.toLowerCase();
-        return haystack
-            .filter(function (obj) {
-            return fields.some(function (field) {
-                return field in obj &&
-                    obj[field].toLowerCase().startsWith(needle);
-            });
-        })
-            .map(function (value, index) {
-            return {
-                item: value,
-                score: index,
-            };
-        });
-    }
-
-    // eslint-disable-next-line import/no-mutable-exports
-    var search;
-    {
-        search = searchByPrefixFilter;
-    }
-    var search$1 = search;
-
     var addChoice = function (choice) { return ({
         type: "ADD_CHOICE" /* ActionType.ADD_CHOICE */,
         choice: choice,
@@ -256,8 +228,8 @@
             numeric: true,
         });
     };
-    var sortByScore = function (a, b) {
-        return a.score - b.score;
+    var sortByRank = function (a, b) {
+        return a.rank - b.rank;
     };
     var dispatchEvent = function (element, type, customArgs) {
         if (customArgs === void 0) { customArgs = null; }
@@ -799,6 +771,7 @@
             id: 0, // actual ID will be assigned during _addChoice
             groupId: 0, // actual ID will be assigned during _addGroup but before _addChoice
             score: 0, // used in search
+            rank: 0, // used in search, stable sort order
             value: choice.value,
             label: choice.label || choice.value,
             active: coerceBool(choice.active),
@@ -878,6 +851,7 @@
                 id: 0,
                 groupId: 0,
                 score: 0,
+                rank: 0,
                 value: option.value,
                 label: option.innerHTML,
                 element: option,
@@ -1478,19 +1452,25 @@
                 return state;
             }
             case "FILTER_CHOICES" /* ActionType.FILTER_CHOICES */: {
-                var results_1 = action.results;
+                var results = action.results;
+                // avoid O(n^2) algorithm complexity when searching/filtering choices
+                var scoreLookup_1 = [];
+                results.forEach(function (result) {
+                    scoreLookup_1[result.item.id] = result;
+                });
                 return state.map(function (obj) {
                     var choice = obj;
-                    // Set active state based on whether choice is
-                    // within filtered results
-                    choice.active = results_1.some(function (_a) {
-                        var item = _a.item, score = _a.score;
-                        if (item.id === choice.id) {
-                            choice.score = score;
-                            return true;
-                        }
-                        return false;
-                    });
+                    var result = scoreLookup_1[choice.id];
+                    if (result !== undefined) {
+                        choice.score = result.score;
+                        choice.rank = result.rank;
+                        choice.active = true;
+                    }
+                    else {
+                        choice.score = 0;
+                        choice.rank = 0;
+                        choice.active = false;
+                    }
                     return choice;
                 });
             }
@@ -2009,6 +1989,48 @@
         },
     };
 
+    var SearchByPrefixFilter = /** @class */ (function () {
+        function SearchByPrefixFilter(config) {
+            this._haystack = [];
+            this._fields = config.searchFields;
+        }
+        SearchByPrefixFilter.prototype.index = function (data) {
+            this._haystack = data;
+        };
+        SearchByPrefixFilter.prototype.reset = function () {
+            this._haystack = [];
+        };
+        SearchByPrefixFilter.prototype.isEmptyIndex = function () {
+            return this._haystack.length === 0;
+        };
+        SearchByPrefixFilter.prototype.search = function (_needle) {
+            var fields = this._fields;
+            if (!fields || fields.length === 0 || _needle === '') {
+                return [];
+            }
+            var needle = _needle.toLowerCase();
+            return this._haystack
+                .filter(function (obj) {
+                return fields.some(function (field) {
+                    return field in obj &&
+                        obj[field].toLowerCase().startsWith(needle);
+                });
+            })
+                .map(function (value, index) {
+                return {
+                    item: value,
+                    score: index,
+                    rank: index,
+                };
+            });
+        };
+        return SearchByPrefixFilter;
+    }());
+
+    function getSearcher(config) {
+        return new SearchByPrefixFilter(config);
+    }
+
     /** @see {@link http://browserhacks.com/#hack-acea075d0ac6954f275a70023906050c} */
     var IS_IE11 = '-ms-scroll-limit' in document.documentElement.style &&
         '-ms-ime-align' in document.documentElement.style;
@@ -2118,7 +2140,6 @@
             this._wasTap = true;
             this._placeholderValue = this._generatePlaceholderValue();
             this._baseId = generateId(this.passedElement.element, 'choices-');
-            this._searchFn = search$1;
             /**
              * setting direction in cases where it's explicitly set on passedElement
              * or when calculated direction is different from the document
@@ -2186,6 +2207,7 @@
             if (this.initialised || this.initialisedOK !== undefined) {
                 return;
             }
+            this._searcher = getSearcher(this.config);
             this._loadChoices();
             this._createTemplates();
             this._createElements();
@@ -2378,6 +2400,8 @@
                     }
                 });
             });
+            // @todo integrate with Store
+            this._searcher.reset();
             return this;
         };
         Choices.prototype.setChoiceByValue = function (value) {
@@ -2395,6 +2419,8 @@
                 // Loop through each value and
                 choiceValue.forEach(function (val) { return _this._findAndSelectChoiceByValue(val); });
             });
+            // @todo integrate with Store
+            this._searcher.reset();
             return this;
         };
         /**
@@ -2531,6 +2557,8 @@
                     }
                 });
             });
+            // @todo integrate with Store
+            this._searcher.reset();
             return this;
         };
         Choices.prototype.refresh = function (withEvents, selectFirstOption, deselectAll) {
@@ -2599,6 +2627,8 @@
                 return this;
             }
             this._store.dispatch(removeChoice(choice));
+            // @todo integrate with Store
+            this._searcher.reset();
             if (choice.selected) {
                 this.passedElement.triggerEvent("removeItem" /* EventType.removeItem */, this._getChoiceForOutput(choice));
             }
@@ -2606,12 +2636,16 @@
         };
         Choices.prototype.clearChoices = function () {
             this._store.dispatch(clearChoices());
+            // @todo integrate with Store
+            this._searcher.reset();
             return this;
         };
         Choices.prototype.clearStore = function () {
             this._store.dispatch(clearAll());
             this._lastAddedChoiceId = 0;
             this._lastAddedGroupId = 0;
+            // @todo integrate with Store
+            this._searcher.reset();
             return this;
         };
         Choices.prototype.clearInput = function () {
@@ -2666,12 +2700,14 @@
             }
             // If we have grouped options
             if (activeGroups.length >= 1 && !this._isSearching) {
-                // If we have a placeholder choice along with groups
-                var activePlaceholders = activeChoices.filter(function (activeChoice) {
-                    return activeChoice.placeholder && activeChoice.groupId === -1;
-                });
-                if (activePlaceholders.length >= 1) {
-                    choiceListFragment = this._createChoicesFragment(activePlaceholders, choiceListFragment);
+                if (!this._hasNonChoicePlaceholder) {
+                    // If we have a placeholder choice along with groups
+                    var activePlaceholders = activeChoices.filter(function (activeChoice) {
+                        return activeChoice.placeholder && activeChoice.groupId === -1;
+                    });
+                    if (activePlaceholders.length >= 1) {
+                        choiceListFragment = this._createChoicesFragment(activePlaceholders, choiceListFragment);
+                    }
                 }
                 choiceListFragment = this._createGroupsFragment(activeGroups, activeChoices, choiceListFragment);
             }
@@ -2771,7 +2807,6 @@
             if (withinGroup === void 0) { withinGroup = false; }
             // Create a fragment to store our list items (so we don't have to update the DOM for each item)
             var _a = this.config, renderSelectedChoices = _a.renderSelectedChoices, searchResultLimit = _a.searchResultLimit, renderChoiceLimit = _a.renderChoiceLimit;
-            var filter = this._isSearching ? sortByScore : this.config.sorter;
             var groupLookup = [];
             var appendGroupInSearch = this.config.appendGroupInSearch && this._isSearching;
             if (appendGroupInSearch) {
@@ -2804,26 +2839,32 @@
                     this.passedElement.addOptions(backingOptions);
                 }
             }
-            // Split array into placeholders and "normal" choices
-            var _b = rendererableChoices.reduce(function (acc, choice) {
-                if (choice.placeholder) {
-                    acc.placeholderChoices.push(choice);
-                }
-                else {
-                    acc.normalChoices.push(choice);
-                }
-                return acc;
-            }, {
-                placeholderChoices: [],
-                normalChoices: [],
-            }), placeholderChoices = _b.placeholderChoices, normalChoices = _b.normalChoices;
-            // If sorting is enabled or the user is searching, filter choices
-            if (this.config.shouldSort || this._isSearching) {
-                normalChoices.sort(filter);
+            var placeholderChoices = [];
+            var normalChoices = [];
+            if (this._hasNonChoicePlaceholder) {
+                normalChoices = rendererableChoices;
+            }
+            else {
+                // Split array into placeholders and "normal" choices
+                rendererableChoices.forEach(function (choice) {
+                    if (choice.placeholder) {
+                        placeholderChoices.push(choice);
+                    }
+                    else {
+                        normalChoices.push(choice);
+                    }
+                });
+            }
+            if (this._isSearching) {
+                // sortByRank is used to ensure stable sorting, as scores are non-unique
+                // this additionally ensures fuseOptions.sortFn is not ignored
+                normalChoices.sort(sortByRank);
+            }
+            else if (this.config.shouldSort) {
+                normalChoices.sort(this.config.sorter);
             }
             var choiceLimit = rendererableChoices.length;
-            // Prepend placeholeder
-            var sortedChoices = this._isSelectOneElement
+            var sortedChoices = this._isSelectOneElement && placeholderChoices.length !== 0
                 ? __spreadArray(__spreadArray([], placeholderChoices, true), normalChoices, true) : normalChoices;
             if (this._isSearching) {
                 choiceLimit = searchResultLimit;
@@ -3180,9 +3221,12 @@
             if (newValue.length === 0 || newValue === this._currentValue) {
                 return null;
             }
+            var searcher = this._searcher;
+            if (searcher.isEmptyIndex()) {
+                searcher.index(this._store.searchableChoices);
+            }
             // If new value matches the desired length and is not the same as the current value with a space
-            var haystack = this._store.searchableChoices;
-            var results = this._searchFn(this.config, haystack, newValue);
+            var results = searcher.search(newValue);
             this._currentValue = newValue;
             this._highlightPosition = 0;
             this._isSearching = true;

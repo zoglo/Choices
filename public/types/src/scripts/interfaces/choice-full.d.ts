@@ -16,4 +16,5 @@ export interface ChoiceFull {
     selected: boolean;
     value: string;
     score: number;
+    rank: number;
 }

@@ -6,7 +6,7 @@ import { Templates } from './templates';
 import { ChoiceFull } from './choice-full';
 import { GroupFull } from './group-full';
 import { Options } from './options';
-import { SearchHandler } from './search';
+import { Searcher } from './search';
 export interface Choices {
     initialised: boolean;
     config: Options;
@@ -43,5 +43,5 @@ export interface Choices {
     _presetChoices: (ChoiceFull | GroupFull)[];
     _presetItems: (InputChoice | string)[];
     _initialItems: string[];
-    _searchFn: SearchHandler;
+    _searcher: Searcher<ChoiceFull>;
 }

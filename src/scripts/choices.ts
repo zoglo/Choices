@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import search from './search';
-
 import {
   activateChoices,
   addChoice,
@@ -48,11 +46,12 @@ import { EventType, KeyCodeMap, PassedElementType } from './interfaces';
 import { Choices as ChoicesInterface } from './interfaces/choices';
 import { EventChoice } from './interfaces/event-choice';
 import { Templates } from './interfaces/templates';
-import { SearchHandler } from './interfaces/search';
 import {
   isHtmlInputElement,
   isHtmlSelectElement,
 } from './lib/html-guard-statements';
+import { Searcher } from './interfaces/search';
+import { getSearcher } from './search';
 
 /** @see {@link http://browserhacks.com/#hack-acea075d0ac6954f275a70023906050c} */
 const IS_IE11 =
@@ -172,7 +171,7 @@ class Choices implements ChoicesInterface {
 
   _initialItems: string[];
 
-  _searchFn: SearchHandler;
+  _searcher: Searcher<ChoiceFull>;
 
   constructor(
     element:
@@ -291,7 +290,6 @@ class Choices implements ChoicesInterface {
     this._wasTap = true;
     this._placeholderValue = this._generatePlaceholderValue();
     this._baseId = generateId(this.passedElement.element, 'choices-');
-    this._searchFn = search;
 
     /**
      * setting direction in cases where it's explicitly set on passedElement
@@ -359,6 +357,7 @@ class Choices implements ChoicesInterface {
       return;
     }
 
+    this._searcher = getSearcher<ChoiceFull>(this.config);
     this._loadChoices();
     this._createTemplates();
     this._createElements();
@@ -593,6 +592,9 @@ class Choices implements ChoicesInterface {
       });
     });
 
+    // @todo integrate with Store
+    this._searcher.reset();
+
     return this;
   }
 
@@ -612,6 +614,9 @@ class Choices implements ChoicesInterface {
       // Loop through each value and
       choiceValue.forEach((val) => this._findAndSelectChoiceByValue(val));
     });
+
+    // @todo integrate with Store
+    this._searcher.reset();
 
     return this;
   }
@@ -783,6 +788,9 @@ class Choices implements ChoicesInterface {
       );
     });
 
+    // @todo integrate with Store
+    this._searcher.reset();
+
     return this;
   }
 
@@ -871,6 +879,8 @@ class Choices implements ChoicesInterface {
       return this;
     }
     this._store.dispatch(removeChoice(choice));
+    // @todo integrate with Store
+    this._searcher.reset();
 
     if (choice.selected) {
       this.passedElement.triggerEvent(
@@ -884,6 +894,8 @@ class Choices implements ChoicesInterface {
 
   clearChoices(): this {
     this._store.dispatch(clearChoices());
+    // @todo integrate with Store
+    this._searcher.reset();
 
     return this;
   }
@@ -892,6 +904,8 @@ class Choices implements ChoicesInterface {
     this._store.dispatch(clearAll());
     this._lastAddedChoiceId = 0;
     this._lastAddedGroupId = 0;
+    // @todo integrate with Store
+    this._searcher.reset();
 
     return this;
   }
@@ -1644,9 +1658,12 @@ class Choices implements ChoicesInterface {
       return null;
     }
 
+    const searcher = this._searcher;
+    if (searcher.isEmptyIndex()) {
+      searcher.index(this._store.searchableChoices);
+    }
     // If new value matches the desired length and is not the same as the current value with a space
-    const haystack = this._store.searchableChoices;
-    const results = this._searchFn<ChoiceFull>(this.config, haystack, newValue);
+    const results = searcher.search(newValue);
 
     this._currentValue = newValue;
     this._highlightPosition = 0;

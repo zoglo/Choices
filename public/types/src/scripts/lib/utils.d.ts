@@ -12,6 +12,7 @@ export declare const unwrapStringForRaw: (s?: StringUntrusted | StringPreEscaped
 export declare const unwrapStringForEscaped: (s?: StringUntrusted | StringPreEscaped | string) => string;
 export declare const sortByAlpha: ({ value, label }: Types.RecordToCompare, { value: value2, label: label2 }: Types.RecordToCompare) => number;
 export declare const sortByScore: (a: Pick<ChoiceFull, "score">, b: Pick<ChoiceFull, "score">) => number;
+export declare const sortByRank: (a: Pick<ChoiceFull, "rank">, b: Pick<ChoiceFull, "rank">) => number;
 export declare const dispatchEvent: (element: HTMLElement, type: EventType, customArgs?: object | null) => boolean;
 export declare const cloneObject: <T>(obj: T) => T;
 /**

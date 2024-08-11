@@ -1,3 +1,11 @@
 import { Options } from '../interfaces';
-import { SearchResult } from '../interfaces/search';
-export declare function searchByPrefixFilter<T extends object>(config: Options, haystack: T[], _needle: string): SearchResult<T>[];
+import { Searcher, SearchResult } from '../interfaces/search';
+export declare class SearchByPrefixFilter<T extends object> implements Searcher<T> {
+    _fields: string[];
+    _haystack: T[];
+    constructor(config: Options);
+    index(data: T[]): void;
+    reset(): void;
+    isEmptyIndex(): boolean;
+    search(_needle: string): SearchResult<T>[];
+}

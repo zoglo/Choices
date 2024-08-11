@@ -18,8 +18,8 @@ import { removeItem } from '../../src/scripts/actions/items';
 import templates from '../../src/scripts/templates';
 import { ChoiceFull } from '../../src/scripts/interfaces/choice-full';
 import { GroupFull } from '../../src/scripts/interfaces/group-full';
-import { searchByFuse } from '../../src/scripts/search/fuse';
-import { searchByPrefixFilter } from '../../src/scripts/search/prefix-filter';
+import { SearchByFuse } from '../../src/scripts/search/fuse';
+import { SearchByPrefixFilter } from '../../src/scripts/search/prefix-filter';
 
 chai.use(sinonChai);
 
@@ -1951,7 +1951,7 @@ describe('choices', () => {
       describe('fuse', () => {
         beforeEach(() => {
           process.env.SEARCH_FUSE = 'full';
-          instance._searchFn = searchByFuse;
+          instance._searcher = new SearchByFuse(instance.config);
         });
         it('details are passed', () =>
           new Promise((done) => {
@@ -1980,6 +1980,8 @@ describe('choices', () => {
           new Promise((done) => {
             instance.config.fuseOptions.isCaseSensitive = true;
             instance.config.fuseOptions.minMatchCharLength = 4;
+            instance._searcher = new SearchByFuse(instance.config);
+
             instance.input.value = 'test';
             instance.input.focus();
             instance.passedElement.element.addEventListener(
@@ -2018,7 +2020,7 @@ describe('choices', () => {
 
       describe('prefix-filter', () => {
         beforeEach(() => {
-          instance._searchFn = searchByPrefixFilter;
+          instance._searcher = new SearchByPrefixFilter(instance.config);
         });
         it('details are passed', () =>
           new Promise((done) => {

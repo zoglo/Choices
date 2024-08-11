@@ -1,6 +1,11 @@
-import { Options } from './options';
 export interface SearchResult<T extends object> {
     item: T;
     score: number;
+    rank: number;
 }
-export type SearchHandler = <T extends object>(config: Options, haystack: T[], needle: string) => SearchResult<T>[];
+export interface Searcher<T extends object> {
+    reset(): void;
+    isEmptyIndex(): boolean;
+    index(data: T[]): void;
+    search(needle: string): SearchResult<T>[];
+}

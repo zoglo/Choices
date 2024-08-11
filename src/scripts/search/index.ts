@@ -1,14 +1,12 @@
-import { searchByFuse } from './fuse';
-import { searchByPrefixFilter } from './prefix-filter';
-import { SearchHandler } from '../interfaces/search';
+import { Options } from '../interfaces';
+import { Searcher } from '../interfaces/search';
+import { SearchByPrefixFilter } from './prefix-filter';
+import { SearchByFuse } from './fuse';
 
-// eslint-disable-next-line import/no-mutable-exports
-let search: SearchHandler;
+export function getSearcher<T extends object>(config: Options): Searcher<T> {
+  if (process.env.SEARCH_FUSE) {
+    return new SearchByFuse<T>(config);
+  }
 
-if (process.env.SEARCH_FUSE) {
-  search = searchByFuse;
-} else {
-  search = searchByPrefixFilter;
+  return new SearchByPrefixFilter<T>(config);
 }
-
-export default search;

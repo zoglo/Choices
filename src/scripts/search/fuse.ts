@@ -1,39 +1,58 @@
 // eslint-disable-next-line import/no-named-default
-import { default as FuseFull } from 'fuse.js';
+import { default as FuseFull, IFuseOptions } from 'fuse.js';
 // eslint-disable-next-line import/no-named-default
 import { default as FuseBasic } from 'fuse.js/basic';
 import { Options } from '../interfaces/options';
-import { SearchResult } from '../interfaces/search';
+import { Searcher, SearchResult } from '../interfaces/search';
 
-export function searchByFuse<T extends object>(
-  config: Options,
-  haystack: T[],
-  needle: string,
-): SearchResult<T>[] {
-  // Need to use an object literal for options argument
-  // see https://github.com/krisk/Fuse/issues/303#issuecomment-506940824
-  let fuse: FuseFull<T> | FuseBasic<T>;
-  if (process.env.SEARCH_FUSE === 'full') {
-    fuse = new FuseFull<T>(haystack, {
+export class SearchByFuse<T extends object> implements Searcher<T> {
+  _fuseOptions: IFuseOptions<T>;
+
+  _haystack: T[] = [];
+
+  _fuse: FuseFull<T> | FuseBasic<T> | undefined;
+
+  constructor(config: Options) {
+    this._fuseOptions = {
       ...config.fuseOptions,
       keys: [...config.searchFields],
       includeMatches: true,
-    });
-  } else {
-    fuse = new FuseBasic<T>(haystack, {
-      ...config.fuseOptions,
-      keys: [...config.searchFields],
-      includeMatches: true,
-    });
+    };
   }
 
-  const results = fuse.search(needle);
+  index(data: T[]): void {
+    this._haystack = data;
+    if (this._fuse) {
+      this._fuse.setCollection(data);
+    }
+  }
 
-  return results.map((value, i): SearchResult<T> => {
-    return {
-      item: value.item,
-      score: value.score || 0,
-      rank: i, // If value.score is used for sorting, this can create non-stable sorts!
-    };
-  });
+  reset(): void {
+    this._haystack = [];
+    this._fuse = undefined;
+  }
+
+  isEmptyIndex(): boolean {
+    return this._haystack.length === 0;
+  }
+
+  search(needle: string) {
+    if (!this._fuse) {
+      if (process.env.SEARCH_FUSE === 'full') {
+        this._fuse = new FuseFull<T>(this._haystack, this._fuseOptions);
+      } else {
+        this._fuse = new FuseBasic<T>(this._haystack, this._fuseOptions);
+      }
+    }
+
+    const results = this._fuse.search(needle);
+
+    return results.map((value, i): SearchResult<T> => {
+      return {
+        item: value.item,
+        score: value.score || 0,
+        rank: i, // If value.score is used for sorting, this can create non-stable sorts!
+      };
+    });
+  }
 }

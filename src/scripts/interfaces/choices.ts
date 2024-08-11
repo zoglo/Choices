@@ -13,7 +13,7 @@ import { Templates } from './templates';
 import { ChoiceFull } from './choice-full';
 import { GroupFull } from './group-full';
 import { Options } from './options';
-import { SearchHandler } from './search';
+import { Searcher } from './search';
 
 export interface Choices {
   initialised: boolean;
@@ -84,5 +84,5 @@ export interface Choices {
 
   _initialItems: string[];
 
-  _searchFn: SearchHandler;
+  _searcher: Searcher<ChoiceFull>;
 }
