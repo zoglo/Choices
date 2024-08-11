@@ -4038,10 +4038,8 @@ var Choices = /** @class */ (function () {
             throw new TypeError("".concat(caller, " called for an element which has multiple instances of Choices initialised on it"));
         }
     };
-    Choices.version = 'git';
+    Choices.version = '11.0.0-rc5';
     return Choices;
 }());
-
-Choices.version = '11.0.0-rc5';
 
 export { Choices as default };

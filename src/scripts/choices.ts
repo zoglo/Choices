@@ -75,7 +75,7 @@ const parseDataSetId = (element?: HTMLElement): number | undefined => {
  * @author Josh Johnson<josh@joshuajohnson.co.uk>
  */
 class Choices implements ChoicesInterface {
-  static version: string = 'git';
+  static version: string = '__VERSION__';
 
   static get defaults(): {
     options: Partial<Options>;
