@@ -29,6 +29,7 @@ describe('reducers/choices', () => {
           test: true,
         },
         score: 0,
+        rank: 0,
       };
 
       describe('passing expected values', () => {
@@ -79,6 +80,7 @@ describe('reducers/choices', () => {
           selected: false,
           active: false,
           score: 9999,
+          rank: 9999,
           customProperties: {},
           placeholder: false,
           highlighted: false,
@@ -93,6 +95,7 @@ describe('reducers/choices', () => {
           selected: true,
           active: false,
           score: 9999,
+          rank: 9999,
           customProperties: {},
           placeholder: false,
           highlighted: false,
@@ -104,12 +107,14 @@ describe('reducers/choices', () => {
       it('sets active flag based on whether choice is in passed results', () => {
         const id = 1;
         const score = 10;
+        const rank = 10;
         const active = true;
 
         const expectedResponse = {
           ...state[0],
           active,
           score,
+          rank,
         } as ChoiceFull;
 
         const actualResponse = choices(cloneObject(state), {
@@ -118,6 +123,7 @@ describe('reducers/choices', () => {
             {
               item: { id } as ChoiceFull,
               score,
+              rank,
             },
           ],
         }).find((choice) => choice.id === id);

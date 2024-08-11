@@ -21,6 +21,7 @@ describe('reducers/items', () => {
         id: 1234,
         groupId: 1,
         score: 0,
+        rank: 0,
         customProperties: {
           property: 'value',
         },
@@ -83,6 +84,7 @@ describe('reducers/items', () => {
           id: 1,
           groupId: -1,
           score: 0,
+          rank: 0,
           value: 'Item one',
           label: 'Item one',
           active: false,
@@ -96,6 +98,7 @@ describe('reducers/items', () => {
           id: 2,
           groupId: -1,
           score: 0,
+          rank: 0,
           value: 'Item one',
           label: 'Item one',
           active: true,

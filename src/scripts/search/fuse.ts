@@ -29,5 +29,11 @@ export function searchByFuse<T extends object>(
 
   const results = fuse.search(needle);
 
-  return results as SearchResult<T>[];
+  return results.map((value, i): SearchResult<T> => {
+    return {
+      item: value.item,
+      score: value.score || 0,
+      rank: i, // If value.score is used for sorting, this can create non-stable sorts!
+    };
+  });
 }

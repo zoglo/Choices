@@ -15,6 +15,7 @@ describe('actions/items', () => {
     id: 1,
     groupId: 1,
     score: 0,
+    rank: 0,
     customProperties: { test: true },
     placeholder: true,
   };

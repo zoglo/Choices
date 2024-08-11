@@ -73,6 +73,7 @@ export default class WrappedSelect extends WrappedElement<HTMLSelectElement> {
       id: 0,
       groupId: 0,
       score: 0,
+      rank: 0,
       value: option.value,
       label: option.innerHTML,
       element: option,

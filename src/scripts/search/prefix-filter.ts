@@ -25,6 +25,7 @@ export function searchByPrefixFilter<T extends object>(
       return {
         item: value,
         score: index,
+        rank: index,
       };
     });
 }

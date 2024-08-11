@@ -787,6 +787,7 @@ describe('choices', () => {
         value: 'Test',
         label: 'Test',
         score: 0,
+        rank: 0,
       };
 
       beforeEach(() => {
@@ -918,6 +919,7 @@ describe('choices', () => {
         value: 'Test',
         label: 'Test',
         score: 0,
+        rank: 0,
       };
 
       beforeEach(() => {
@@ -2079,6 +2081,7 @@ describe('choices', () => {
           placeholder: false,
           highlighted: false,
           score: 0,
+          rank: 0,
         },
         {
           id: 2,
@@ -2091,6 +2094,7 @@ describe('choices', () => {
           placeholder: false,
           highlighted: false,
           score: 0,
+          rank: 0,
         },
         {
           id: 3,
@@ -2103,6 +2107,7 @@ describe('choices', () => {
           placeholder: false,
           highlighted: false,
           score: 0,
+          rank: 0,
         },
       ];
 
@@ -2490,6 +2495,7 @@ describe('choices', () => {
           groupId: 3333,
           customProperties: {},
           score: 0,
+          rank: 0,
         };
 
         it('dispatches a REMOVE_ITEM action to the store', () => {

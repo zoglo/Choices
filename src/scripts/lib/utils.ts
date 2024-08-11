@@ -166,6 +166,13 @@ export const sortByScore = (
   return a.score - b.score;
 };
 
+export const sortByRank = (
+  a: Pick<ChoiceFull, 'rank'>,
+  b: Pick<ChoiceFull, 'rank'>,
+): number => {
+  return a.rank - b.rank;
+};
+
 export const dispatchEvent = (
   element: HTMLElement,
   type: EventType,

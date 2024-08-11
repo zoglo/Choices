@@ -8,6 +8,7 @@ import {
 import { AddItemAction, RemoveItemAction } from '../actions/items';
 import { ChoiceFull } from '../interfaces/choice-full';
 import { ActionType } from '../interfaces';
+import { SearchResult } from '../interfaces/search';
 
 type ActionTypes =
   | AddChoiceAction
@@ -65,19 +66,21 @@ export default function choices(
       const { results } = action as FilterChoicesAction;
 
       // avoid O(n^2) algorithm complexity when searching/filtering choices
-      const scoreLookup: number[] = [];
+      const scoreLookup: SearchResult<ChoiceFull>[] = [];
       results.forEach((result) => {
-        scoreLookup[result.item.id] = result.score;
+        scoreLookup[result.item.id] = result;
       });
 
       return state.map((obj) => {
         const choice = obj;
-
-        if (choice.id in scoreLookup) {
-          choice.score = scoreLookup[choice.id];
+        const result = scoreLookup[choice.id];
+        if (result !== undefined) {
+          choice.score = result.score;
+          choice.rank = result.rank;
           choice.active = true;
         } else {
           choice.score = 0;
+          choice.rank = 0;
           choice.active = false;
         }
 

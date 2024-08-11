@@ -9,6 +9,7 @@
 * Fix mutation APIs `setChoiceByValue`/`setChoices`/`setValue` now throw an error the Choices instance was not initialized or multiple choices instances where initialized on the same element. Prevents bad internal states from triggering unexpected errors [#1129](https://github.com/Choices-js/Choices/issues/1129)
 * Fix documentation that suggests duplicateItemsAllowed works with select-multiple, when it only works for text. [#1123](https://github.com/Choices-js/Choices/issues/1123)
 * Fix quadratic algorithm complexity (aka O(N^2) ) when filtering/search choices.
+* Fix search results could be unexpectedly unstable, and that `fuseOptions.sortFn` was effectively ignored [#1106](https://github.com/Choices-js/Choices/issues/1106)
 
 ### Bug Fixes (from 11.0.0RC1)
 * Fix possible empty `aria-label` generation on remove item button

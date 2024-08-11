@@ -35,7 +35,7 @@ import {
   getClassNamesSelector,
   isScrolledIntoView,
   sanitise,
-  sortByScore,
+  sortByRank,
   strToEl,
 } from './lib/utils';
 import { defaultState } from './reducers';
@@ -1128,7 +1128,6 @@ class Choices implements ChoicesInterface {
     // Create a fragment to store our list items (so we don't have to update the DOM for each item)
     const { renderSelectedChoices, searchResultLimit, renderChoiceLimit } =
       this.config;
-    const filter = this._isSearching ? sortByScore : this.config.sorter;
     const groupLookup: string[] = [];
     const appendGroupInSearch =
       this.config.appendGroupInSearch && this._isSearching;
@@ -1188,9 +1187,12 @@ class Choices implements ChoicesInterface {
       });
     }
 
-    // If sorting is enabled or the user is searching, filter choices
-    if (this.config.shouldSort || this._isSearching) {
-      normalChoices.sort(filter);
+    if (this._isSearching) {
+      // sortByRank is used to ensure stable sorting, as scores are non-unique
+      // this additionally ensures fuseOptions.sortFn is not ignored
+      normalChoices.sort(sortByRank);
+    } else if (this.config.shouldSort) {
+      normalChoices.sort(this.config.sorter);
     }
 
     let choiceLimit = rendererableChoices.length;

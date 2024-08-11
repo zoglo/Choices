@@ -11,6 +11,7 @@ import {
   parseCustomProperties,
   sortByAlpha,
   sortByScore,
+  sortByRank,
 } from '../../../src/scripts/lib/utils';
 import { EventType } from '../../../src';
 
@@ -135,6 +136,28 @@ describe('utils', () => {
           { score: 124 },
           { score: 400 },
           { score: 3001 },
+        ]);
+      });
+    });
+  });
+
+  describe('sortByRank', () => {
+    describe('sorting an array', () => {
+      it('sorts by rank ascending', () => {
+        const values = [
+          { rank: 10 },
+          { rank: 3001 },
+          { rank: 124 },
+          { rank: 400 },
+        ];
+
+        const output = values.sort(sortByRank);
+
+        expect(output).to.deep.equal([
+          { rank: 10 },
+          { rank: 124 },
+          { rank: 400 },
+          { rank: 3001 },
         ]);
       });
     });

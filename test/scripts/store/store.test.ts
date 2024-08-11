@@ -82,6 +82,7 @@ describe('reducers/store', () => {
             disabled: false,
             selected: false,
             score: 0,
+            rank: 0,
           },
           {
             id: 2,
@@ -95,6 +96,7 @@ describe('reducers/store', () => {
             disabled: false,
             selected: false,
             score: 0,
+            rank: 0,
           },
           {
             id: 3,
@@ -108,6 +110,7 @@ describe('reducers/store', () => {
             disabled: false,
             selected: false,
             score: 0,
+            rank: 0,
           },
         ],
         choices: [
@@ -121,6 +124,7 @@ describe('reducers/store', () => {
             selected: false,
             active: true,
             score: 9999,
+            rank: 9999,
             customProperties: undefined,
             placeholder: false,
             highlighted: false,
@@ -135,6 +139,7 @@ describe('reducers/store', () => {
             selected: true,
             active: false,
             score: 9999,
+            rank: 9998,
             customProperties: undefined,
             placeholder: false,
             highlighted: false,

@@ -3,6 +3,7 @@ import { Options } from './options';
 export interface SearchResult<T extends object> {
   item: T;
   score: number;
+  rank: number;
 }
 
 export type SearchHandler = <T extends object>(
