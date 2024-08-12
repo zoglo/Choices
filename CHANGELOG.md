@@ -16,6 +16,7 @@
 
 ### Bug Fixes (from 11.0.0RC1)
 * Fix possible empty `aria-label` generation on remove item button
+* Fix `clearChoices()` did not remove the actual selection options
 
 ## [11.0.0-rc5] (2024-08-08)
 

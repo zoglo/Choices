@@ -2616,6 +2616,7 @@
             return this;
         };
         Choices.prototype.clearChoices = function () {
+            this.passedElement.element.innerHTML = '';
             this._store.dispatch(clearChoices());
             // @todo integrate with Store
             this._searcher.reset();
