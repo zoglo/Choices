@@ -8,7 +8,6 @@ import Store from './store/store';
 import { ChoiceFull } from './interfaces/choice-full';
 import { GroupFull } from './interfaces/group-full';
 import { PassedElementType } from './interfaces';
-import { Choices as ChoicesInterface } from './interfaces/choices';
 import { EventChoice } from './interfaces/event-choice';
 import { Templates } from './interfaces/templates';
 import { Searcher } from './interfaces/search';
@@ -16,7 +15,7 @@ import { Searcher } from './interfaces/search';
  * Choices
  * @author Josh Johnson<josh@joshuajohnson.co.uk>
  */
-declare class Choices implements ChoicesInterface {
+declare class Choices {
     static version: string;
     static get defaults(): {
         options: Partial<Options>;

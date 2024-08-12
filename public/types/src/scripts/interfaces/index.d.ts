@@ -1,5 +1,4 @@
 export * from './action-type';
-export * from './choices';
 export * from './input-choice';
 export * from './input-group';
 export * from './event-choice';

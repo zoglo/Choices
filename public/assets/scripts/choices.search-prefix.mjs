@@ -708,7 +708,7 @@ var WrappedElement = /** @class */ (function () {
         this.isDisabled = true;
     };
     WrappedElement.prototype.triggerEvent = function (eventType, data) {
-        dispatchEvent(this.element, eventType, data);
+        dispatchEvent(this.element, eventType, data || {});
     };
     return WrappedElement;
 }());
@@ -2330,7 +2330,7 @@ var Choices = /** @class */ (function () {
             if (!preventInputFocus && _this._canSearch) {
                 _this.input.focus();
             }
-            _this.passedElement.triggerEvent("showDropdown" /* EventType.showDropdown */, {});
+            _this.passedElement.triggerEvent("showDropdown" /* EventType.showDropdown */);
         });
         return this;
     };
@@ -2346,7 +2346,7 @@ var Choices = /** @class */ (function () {
                 _this.input.removeActiveDescendant();
                 _this.input.blur();
             }
-            _this.passedElement.triggerEvent("hideDropdown" /* EventType.hideDropdown */, {});
+            _this.passedElement.triggerEvent("hideDropdown" /* EventType.hideDropdown */);
         });
         return this;
     };
