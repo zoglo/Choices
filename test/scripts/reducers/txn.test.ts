@@ -3,11 +3,9 @@ import general from '../../../src/scripts/reducers/txn';
 import { ActionType, State } from '../../../src';
 import { defaultState } from '../../../src/scripts/reducers';
 
-describe('reducers/loading', () => {
+describe('reducers/txn', () => {
   it('should return same state when no action matches', () => {
-    expect(general(defaultState.txn, {} as any)).to.equal(
-      defaultState.txn,
-    );
+    expect(general(defaultState.txn, {} as any)).to.equal(defaultState.txn);
   });
 
   describe('SET_TRANSACTION', () => {
