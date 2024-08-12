@@ -1898,16 +1898,15 @@ class Choices {
     const target = event.target as HTMLElement | null;
     const targetWasRemoveButton = target && target.hasAttribute('data-button');
     let addedItem = false;
+    event.preventDefault();
 
     if (targetWasRemoveButton) {
-      event.preventDefault();
       this._handleButtonAction(items, target);
 
       return;
     }
 
     if (!hasActiveDropdown && this._isSelectOneElement) {
-      event.preventDefault();
       this.showDropdown();
 
       return;
@@ -1928,7 +1927,6 @@ class Choices {
         );
 
         if (addedItem) {
-          event.preventDefault();
           this.unhighlightAll();
 
           return;
