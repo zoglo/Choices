@@ -23,7 +23,6 @@ import { InputChoice } from './interfaces/input-choice';
 import { InputGroup } from './interfaces/input-group';
 import { Notice } from './interfaces/notice';
 import { Options, ObjectsInConfig } from './interfaces/options';
-import { PassedElement } from './interfaces/passed-element';
 import { State } from './interfaces/state';
 import {
   diff,
@@ -536,7 +535,7 @@ class Choices implements ChoicesInterface {
         this.input.focus();
       }
 
-      this.passedElement.triggerEvent(EventType.showDropdown, {});
+      this.passedElement.triggerEvent(EventType.showDropdown);
     });
 
     return this;
@@ -556,7 +555,7 @@ class Choices implements ChoicesInterface {
         this.input.blur();
       }
 
-      this.passedElement.triggerEvent(EventType.hideDropdown, {});
+      this.passedElement.triggerEvent(EventType.hideDropdown);
     });
 
     return this;
@@ -1345,7 +1344,7 @@ class Choices implements ChoicesInterface {
     if (this._isSelectOneElement && !this._hasNonChoicePlaceholder) {
       const placeholderChoice = this._store.choices
         .reverse()
-        .find((choice) => !choice.disabled && choice.placeholder)
+        .find((choice) => !choice.disabled && choice.placeholder);
       if (placeholderChoice) {
         this._addItem(placeholderChoice);
         if (placeholderChoice.value) {
@@ -2502,21 +2501,21 @@ class Choices implements ChoicesInterface {
         this.config.labelId,
       ),
       classNames: this.config.classNames,
-      type: this._elementType as PassedElement['type'],
+      type: this._elementType,
       position: this.config.position,
     });
 
     this.containerInner = new Container({
       element: this._templates.containerInner(this.config),
       classNames: this.config.classNames,
-      type: this._elementType as PassedElement['type'],
+      type: this._elementType,
       position: this.config.position,
     });
 
     this.input = new Input({
       element: this._templates.input(this.config, this._placeholderValue),
       classNames: this.config.classNames,
-      type: this._elementType as PassedElement['type'],
+      type: this._elementType,
       preventPaste: !this.config.paste,
     });
 
@@ -2534,7 +2533,7 @@ class Choices implements ChoicesInterface {
     this.dropdown = new Dropdown({
       element: this._templates.dropdown(this.config),
       classNames: this.config.classNames,
-      type: this._elementType as PassedElement['type'],
+      type: this._elementType,
     });
   }
 
@@ -2572,7 +2571,11 @@ class Choices implements ChoicesInterface {
     this._highlightPosition = 0;
     this._isSearching = false;
     this._store.withTxn(() => {
-      this._addPredefinedChoices(this._presetChoices, this._isSelectOneElement && !this._hasNonChoicePlaceholder, false);
+      this._addPredefinedChoices(
+        this._presetChoices,
+        this._isSelectOneElement && !this._hasNonChoicePlaceholder,
+        false,
+      );
     });
   }
 
