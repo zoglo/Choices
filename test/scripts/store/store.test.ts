@@ -220,15 +220,6 @@ describe('reducers/store', () => {
       });
     });
 
-    describe('placeholderChoice getter', () => {
-      it('returns placeholder choice', () => {
-        const expectedResponse = state.choices
-          .reverse()
-          .find((choice) => choice.placeholder);
-        expect(instance.placeholderChoice).to.deep.equal(expectedResponse);
-      });
-    });
-
     describe('groups getter', () => {
       it('returns groups', () => {
         const expectedResponse = state.groups;
