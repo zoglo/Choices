@@ -551,15 +551,14 @@ const example = new Choices(element, {
 **Note:** For select boxes, the recommended way of adding a placeholder is as follows:
 
 ```html
-<select>
-  <option value="">This is a placeholder</option>
+<select data-placeholder="This is a placeholder">
   <option>...</option>
   <option>...</option>
   <option>...</option>
 </select>
 ```
 
-For backward compatibility, `<option placeholder>This is a placeholder</option>` is also supported.
+For backward compatibility, `<option value="">This is a placeholder</option>` and `<option placeholder>This is a placeholder</option>` are also supported.
 
 ### placeholderValue
 
