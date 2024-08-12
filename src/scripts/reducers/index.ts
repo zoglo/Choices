@@ -1,8 +1,8 @@
-import { combineReducers } from 'redux';
+import { AnyAction, combineReducers } from 'redux';
 import items from './items';
 import groups from './groups';
 import choices from './choices';
-import loading from './loading';
+import txn from './txn';
 import { cloneObject } from '../lib/utils';
 import { ActionType, State } from '../interfaces';
 
@@ -10,27 +10,27 @@ export const defaultState: State = {
   groups: [],
   items: [],
   choices: [],
-  loading: 0,
+  txn: 0,
 };
 
 const appReducer = combineReducers({
   items,
   groups,
   choices,
-  loading,
+  txn,
 });
 
-const rootReducer = (passedState, action): object => {
+const rootReducer = (passedState: State, action: AnyAction): object => {
   let state = passedState;
   // If we are clearing all items, groups and options we reassign
   // state and then pass that state to our proper reducer. This isn't
   // mutating our actual state
   // See: http://stackoverflow.com/a/35641992
   if (action.type === ActionType.CLEAR_ALL) {
-    // preserve the loading state as to allow withDeferRendering to work
-    const isLoading = state.loading;
+    // preserve the txn state as to allow withTxn to work
+    const paused = state.txn;
     state = cloneObject(defaultState);
-    state.loading = isLoading;
+    state.txn = paused;
   }
 
   return appReducer(state, action);

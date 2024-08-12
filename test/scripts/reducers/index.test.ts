@@ -4,7 +4,7 @@ import rootReducer from '../../../src/scripts/reducers';
 import groups from '../../../src/scripts/reducers/groups';
 import choices from '../../../src/scripts/reducers/choices';
 import items from '../../../src/scripts/reducers/items';
-import loading from '../../../src/scripts/reducers/loading';
+import txn from '../../../src/scripts/reducers/txn';
 import { ActionType } from '../../../src';
 
 describe('reducers/rootReducer', () => {
@@ -16,7 +16,7 @@ describe('reducers/rootReducer', () => {
     expect(state.groups).to.deep.equal(groups(undefined, {} as any));
     expect(state.choices).to.deep.equal(choices(undefined, {} as any));
     expect(state.items).to.deep.equal(items(undefined, {} as any));
-    expect(state.loading).to.deep.equal(loading(undefined, {} as any));
+    expect(state.txn).to.deep.equal(txn(undefined, {} as any));
   });
 
   describe('CLEAR_ALL', () => {
@@ -36,7 +36,7 @@ describe('reducers/rootReducer', () => {
         items: [],
         groups: [],
         choices: [],
-        loading: 0,
+        txn: 0,
       });
     });
   });

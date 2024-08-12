@@ -1,16 +1,16 @@
-import { SetIsLoadingAction } from '../actions/misc';
+import { SetTransactionStateAction } from '../actions/misc';
 import { State } from '../interfaces/state';
 import { ActionType } from '../interfaces';
 
-type ActionTypes = SetIsLoadingAction | Record<string, never>;
+type ActionTypes = SetTransactionStateAction | Record<string, never>;
 
 const general = (
   state: number = 0,
   action: ActionTypes = {},
-): State['loading'] => {
+): State['txn'] => {
   switch (action.type) {
-    case ActionType.SET_IS_LOADING: {
-      if (action.isLoading) {
+    case ActionType.SET_TRANSACTION: {
+      if (action.txn) {
         return state + 1;
       }
 

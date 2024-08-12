@@ -2,9 +2,9 @@ import { ActionType } from '../interfaces';
 export interface ClearAllAction {
     type: ActionType.CLEAR_ALL;
 }
-export interface SetIsLoadingAction {
-    type: ActionType.SET_IS_LOADING;
-    isLoading: boolean;
+export interface SetTransactionStateAction {
+    type: ActionType.SET_TRANSACTION;
+    txn: boolean;
 }
 export declare const clearAll: () => ClearAllAction;
-export declare const setIsLoading: (isLoading: boolean) => SetIsLoadingAction;
+export declare const setTxn: (txn: boolean) => SetTransactionStateAction;

@@ -56,7 +56,7 @@ describe('reducers/store', () => {
 
   describe('state getter', () => {
     it('returns state', () => {
-      const state: State = { items: [], choices: [], groups: [], loading: 0 };
+      const state: State = { items: [], choices: [], groups: [], txn: 0 };
       getStateStub.returns(cloneObject(state));
 
       expect(instance.state).to.deep.equal(state);
@@ -68,7 +68,7 @@ describe('reducers/store', () => {
 
     beforeEach(() => {
       state = {
-        loading: 0,
+        txn: 0,
         items: [
           {
             id: 1,

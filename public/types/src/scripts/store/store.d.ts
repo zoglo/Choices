@@ -14,7 +14,7 @@ export default class Store implements IStore {
      * Dispatch event to store (wrapped Redux method)
      */
     dispatch(action: AnyAction): void;
-    withDeferRendering(func: () => void): void;
+    withTxn(func: () => void): void;
     /**
      * Get store object (wrapping Redux method)
      */
@@ -47,10 +47,7 @@ export default class Store implements IStore {
      * Get active groups from store
      */
     get activeGroups(): GroupFull[];
-    /**
-     * Get loading state from store
-     */
-    isLoading(): boolean;
+    inTxn(): boolean;
     /**
      * Get single choice by it's ID
      */

@@ -3,7 +3,7 @@ import { createStore, Store as ReduxStore, AnyAction } from 'redux';
 import { Store as IStore } from '../interfaces/store';
 import { State } from '../interfaces/state';
 import rootReducer from '../reducers/index';
-import { setIsLoading } from '../actions/misc';
+import { setTxn } from '../actions/misc';
 import { ChoiceFull } from '../interfaces/choice-full';
 import { GroupFull } from '../interfaces/group-full';
 
@@ -32,12 +32,12 @@ export default class Store implements IStore {
     this._store.dispatch(action);
   }
 
-  withDeferRendering(func: () => void): void {
-    this._store.dispatch(setIsLoading(true));
+  withTxn(func: () => void): void {
+    this._store.dispatch(setTxn(true));
     try {
       func();
     } finally {
-      this._store.dispatch(setIsLoading(false));
+      this._store.dispatch(setTxn(false));
     }
   }
 
@@ -110,11 +110,8 @@ export default class Store implements IStore {
     }, []);
   }
 
-  /**
-   * Get loading state from store
-   */
-  isLoading(): boolean {
-    return this.state.loading > 0;
+  inTxn(): boolean {
+    return this.state.txn > 0;
   }
 
   /**

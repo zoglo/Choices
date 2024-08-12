@@ -13,26 +13,26 @@ describe('actions/misc', () => {
     });
   });
 
-  describe('setIsLoading action', () => {
-    describe('setting loading state to true', () => {
+  describe('setTxn action', () => {
+    describe('setting paused state to true', () => {
       it('returns expected action', () => {
-        const expectedAction: actions.SetIsLoadingAction = {
-          type: ActionType.SET_IS_LOADING,
-          isLoading: true,
+        const expectedAction: actions.SetTransactionStateAction = {
+          type: ActionType.SET_TRANSACTION,
+          txn: true,
         };
 
-        expect(actions.setIsLoading(true)).to.deep.equal(expectedAction);
+        expect(actions.setTxn(true)).to.deep.equal(expectedAction);
       });
     });
 
-    describe('setting loading state to false', () => {
+    describe('setting paused state to false', () => {
       it('returns expected action', () => {
-        const expectedAction: actions.SetIsLoadingAction = {
-          type: ActionType.SET_IS_LOADING,
-          isLoading: false,
+        const expectedAction: actions.SetTransactionStateAction = {
+          type: ActionType.SET_TRANSACTION,
+          txn: false,
         };
 
-        expect(actions.setIsLoading(false)).to.deep.equal(expectedAction);
+        expect(actions.setTxn(false)).to.deep.equal(expectedAction);
       });
     });
   });

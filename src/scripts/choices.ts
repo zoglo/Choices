@@ -473,7 +473,7 @@ class Choices implements ChoicesInterface {
   }
 
   highlightAll(): this {
-    this._store.withDeferRendering(() => {
+    this._store.withTxn(() => {
       this._store.items.forEach((item) => this.highlightItem(item));
     });
 
@@ -481,7 +481,7 @@ class Choices implements ChoicesInterface {
   }
 
   unhighlightAll(): this {
-    this._store.withDeferRendering(() => {
+    this._store.withTxn(() => {
       this._store.items.forEach((item) => this.unhighlightItem(item));
     });
 
@@ -489,7 +489,7 @@ class Choices implements ChoicesInterface {
   }
 
   removeActiveItemsByValue(value: string): this {
-    this._store.withDeferRendering(() => {
+    this._store.withTxn(() => {
       this._store.items
         .filter((item) => item.value === value)
         .forEach((item) => this._removeItem(item));
@@ -499,7 +499,7 @@ class Choices implements ChoicesInterface {
   }
 
   removeActiveItems(excludedId: number): this {
-    this._store.withDeferRendering(() => {
+    this._store.withTxn(() => {
       this._store.items
         .filter(({ id }) => id !== excludedId)
         .forEach((item) => this._removeItem(item));
@@ -509,7 +509,7 @@ class Choices implements ChoicesInterface {
   }
 
   removeHighlightedItems(runEvent = false): this {
-    this._store.withDeferRendering(() => {
+    this._store.withTxn(() => {
       this._store.highlightedActiveItems.forEach((item) => {
         this._removeItem(item);
         // If this action was performed by the user
@@ -582,7 +582,7 @@ class Choices implements ChoicesInterface {
       return this;
     }
 
-    this._store.withDeferRendering(() => {
+    this._store.withTxn(() => {
       items.forEach((value: string | InputChoice) => {
         if (value) {
           this._addChoice(mapInputToChoice(value, false));
@@ -605,7 +605,7 @@ class Choices implements ChoicesInterface {
     if (this._isTextElement) {
       return this;
     }
-    this._store.withDeferRendering(() => {
+    this._store.withTxn(() => {
       // If only one value has been passed, convert to array
       const choiceValue = Array.isArray(value) ? value : [value];
 
@@ -755,7 +755,7 @@ class Choices implements ChoicesInterface {
 
     this.containerOuter.removeLoadingState();
 
-    this._store.withDeferRendering(() => {
+    this._store.withTxn(() => {
       const isDefaultValue = value === 'value';
       const isDefaultLabel = label === 'label';
 
@@ -807,7 +807,7 @@ class Choices implements ChoicesInterface {
       return this;
     }
 
-    this._store.withDeferRendering(() => {
+    this._store.withTxn(() => {
       const choicesFromOptions = (
         this.passedElement as WrappedSelect
       ).optionsAsChoices();
@@ -943,7 +943,7 @@ class Choices implements ChoicesInterface {
   }
 
   _render(): void {
-    if (this._store.isLoading()) {
+    if (this._store.inTxn()) {
       return;
     }
 
@@ -1404,7 +1404,7 @@ class Choices implements ChoicesInterface {
     const hasActiveDropdown = this.dropdown.isActive;
 
     let addedItem = false;
-    this._store.withDeferRendering(() => {
+    this._store.withTxn(() => {
       if (!choice.selected && !choice.disabled) {
         const canAddItem = this._canAddItem(items, choice.value);
 
@@ -1969,7 +1969,7 @@ class Choices implements ChoicesInterface {
     if (!canAdd.response) {
       return;
     }
-    this._store.withDeferRendering(() => {
+    this._store.withTxn(() => {
       if (this._isSelectOneElement || this.config.singleModeForMultiSelect) {
         if (items.length !== 0) {
           const lastItem = items[items.length - 1];
@@ -2298,7 +2298,7 @@ class Choices implements ChoicesInterface {
   }
 
   _onFormReset(): void {
-    this._store.withDeferRendering(() => {
+    this._store.withTxn(() => {
       this.clearInput();
       this.hideDropdown();
       this.refresh(false, false, true);
@@ -2571,7 +2571,7 @@ class Choices implements ChoicesInterface {
 
     this._highlightPosition = 0;
     this._isSearching = false;
-    this._store.withDeferRendering(() => {
+    this._store.withTxn(() => {
       this._addPredefinedChoices(this._presetChoices, this._isSelectOneElement && !this._hasNonChoicePlaceholder, false);
     });
   }

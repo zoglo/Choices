@@ -9,5 +9,5 @@ export declare const enum ActionType {
     REMOVE_ITEM = "REMOVE_ITEM",
     HIGHLIGHT_ITEM = "HIGHLIGHT_ITEM",
     CLEAR_ALL = "CLEAR_ALL",
-    SET_IS_LOADING = "SET_IS_LOADING"
+    SET_TRANSACTION = "SET_TRANSACTION"
 }

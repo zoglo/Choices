@@ -108,9 +108,9 @@
     var clearAll = function () { return ({
         type: "CLEAR_ALL" /* ActionType.CLEAR_ALL */,
     }); };
-    var setIsLoading = function (isLoading) { return ({
-        type: "SET_IS_LOADING" /* ActionType.SET_IS_LOADING */,
-        isLoading: isLoading,
+    var setTxn = function (txn) { return ({
+        type: "SET_TRANSACTION" /* ActionType.SET_TRANSACTION */,
+        txn: txn,
     }); };
 
     /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -1495,8 +1495,8 @@
         if (state === void 0) { state = 0; }
         if (action === void 0) { action = {}; }
         switch (action.type) {
-            case "SET_IS_LOADING" /* ActionType.SET_IS_LOADING */: {
-                if (action.isLoading) {
+            case "SET_TRANSACTION" /* ActionType.SET_TRANSACTION */: {
+                if (action.txn) {
                     return state + 1;
                 }
                 return Math.max(0, state - 1);
@@ -1511,13 +1511,13 @@
         groups: [],
         items: [],
         choices: [],
-        loading: 0,
+        txn: 0,
     };
     var appReducer = combineReducers({
         items: items,
         groups: groups,
         choices: choices,
-        loading: general,
+        txn: general,
     });
     var rootReducer = function (passedState, action) {
         var state = passedState;
@@ -1526,10 +1526,10 @@
         // mutating our actual state
         // See: http://stackoverflow.com/a/35641992
         if (action.type === "CLEAR_ALL" /* ActionType.CLEAR_ALL */) {
-            // preserve the loading state as to allow withDeferRendering to work
-            var isLoading = state.loading;
+            // preserve the txn state as to allow withTxn to work
+            var paused = state.txn;
             state = cloneObject(defaultState);
-            state.loading = isLoading;
+            state.txn = paused;
         }
         return appReducer(state, action);
     };
@@ -1552,13 +1552,13 @@
         Store.prototype.dispatch = function (action) {
             this._store.dispatch(action);
         };
-        Store.prototype.withDeferRendering = function (func) {
-            this._store.dispatch(setIsLoading(true));
+        Store.prototype.withTxn = function (func) {
+            this._store.dispatch(setTxn(true));
             try {
                 func();
             }
             finally {
-                this._store.dispatch(setIsLoading(false));
+                this._store.dispatch(setTxn(false));
             }
         };
         Object.defineProperty(Store.prototype, "state", {
@@ -1646,11 +1646,8 @@
             enumerable: false,
             configurable: true
         });
-        /**
-         * Get loading state from store
-         */
-        Store.prototype.isLoading = function () {
-            return this.state.loading > 0;
+        Store.prototype.inTxn = function () {
+            return this.state.txn > 0;
         };
         /**
          * Get single choice by it's ID
@@ -2280,21 +2277,21 @@
         };
         Choices.prototype.highlightAll = function () {
             var _this = this;
-            this._store.withDeferRendering(function () {
+            this._store.withTxn(function () {
                 _this._store.items.forEach(function (item) { return _this.highlightItem(item); });
             });
             return this;
         };
         Choices.prototype.unhighlightAll = function () {
             var _this = this;
-            this._store.withDeferRendering(function () {
+            this._store.withTxn(function () {
                 _this._store.items.forEach(function (item) { return _this.unhighlightItem(item); });
             });
             return this;
         };
         Choices.prototype.removeActiveItemsByValue = function (value) {
             var _this = this;
-            this._store.withDeferRendering(function () {
+            this._store.withTxn(function () {
                 _this._store.items
                     .filter(function (item) { return item.value === value; })
                     .forEach(function (item) { return _this._removeItem(item); });
@@ -2303,7 +2300,7 @@
         };
         Choices.prototype.removeActiveItems = function (excludedId) {
             var _this = this;
-            this._store.withDeferRendering(function () {
+            this._store.withTxn(function () {
                 _this._store.items
                     .filter(function (_a) {
                     var id = _a.id;
@@ -2316,7 +2313,7 @@
         Choices.prototype.removeHighlightedItems = function (runEvent) {
             var _this = this;
             if (runEvent === void 0) { runEvent = false; }
-            this._store.withDeferRendering(function () {
+            this._store.withTxn(function () {
                 _this._store.highlightedActiveItems.forEach(function (item) {
                     _this._removeItem(item);
                     // If this action was performed by the user
@@ -2377,7 +2374,7 @@
                 this._warnChoicesInitFailed('setValue');
                 return this;
             }
-            this._store.withDeferRendering(function () {
+            this._store.withTxn(function () {
                 items.forEach(function (value) {
                     if (value) {
                         _this._addChoice(mapInputToChoice(value, false));
@@ -2397,7 +2394,7 @@
             if (this._isTextElement) {
                 return this;
             }
-            this._store.withDeferRendering(function () {
+            this._store.withTxn(function () {
                 // If only one value has been passed, convert to array
                 var choiceValue = Array.isArray(value) ? value : [value];
                 // Loop through each value and
@@ -2521,7 +2518,7 @@
                 throw new TypeError(".setChoices must be called either with array of choices with a function resulting into Promise of array of choices");
             }
             this.containerOuter.removeLoadingState();
-            this._store.withDeferRendering(function () {
+            this._store.withTxn(function () {
                 var isDefaultValue = value === 'value';
                 var isDefaultLabel = label === 'label';
                 choicesArrayOrFetcher.forEach(function (groupOrChoice) {
@@ -2556,7 +2553,7 @@
                 }
                 return this;
             }
-            this._store.withDeferRendering(function () {
+            this._store.withTxn(function () {
                 var choicesFromOptions = _this.passedElement.optionsAsChoices();
                 var items = _this._store.items;
                 // Build the list of items which require preserving
@@ -2655,7 +2652,7 @@
             }
         };
         Choices.prototype._render = function () {
-            if (this._store.isLoading()) {
+            if (this._store.inTxn()) {
                 return;
             }
             this._currentState = this._store.state;
@@ -2995,7 +2992,7 @@
             }
             var hasActiveDropdown = this.dropdown.isActive;
             var addedItem = false;
-            this._store.withDeferRendering(function () {
+            this._store.withTxn(function () {
                 if (!choice.selected && !choice.disabled) {
                     var canAddItem = _this._canAddItem(items, choice.value);
                     if (canAddItem.response) {
@@ -3444,7 +3441,7 @@
             if (!canAdd.response) {
                 return;
             }
-            this._store.withDeferRendering(function () {
+            this._store.withTxn(function () {
                 if (_this._isSelectOneElement || _this.config.singleModeForMultiSelect) {
                     if (items.length !== 0) {
                         var lastItem = items[items.length - 1];
@@ -3715,7 +3712,7 @@
         };
         Choices.prototype._onFormReset = function () {
             var _this = this;
-            this._store.withDeferRendering(function () {
+            this._store.withTxn(function () {
                 _this.clearInput();
                 _this.hideDropdown();
                 _this.refresh(false, false, true);
@@ -3919,7 +3916,7 @@
             }
             this._highlightPosition = 0;
             this._isSearching = false;
-            this._store.withDeferRendering(function () {
+            this._store.withTxn(function () {
                 _this._addPredefinedChoices(_this._presetChoices, _this._isSelectOneElement && !_this._hasNonChoicePlaceholder, false);
             });
         };

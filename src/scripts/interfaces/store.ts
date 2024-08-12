@@ -3,7 +3,7 @@ import { ChoiceFull } from './choice-full';
 import { GroupFull } from './group-full';
 
 export interface Store {
-  withDeferRendering(func: () => void): void;
+  withTxn(func: () => void): void;
 
   /**
    * Get store object (wrapping Redux method)
@@ -48,7 +48,7 @@ export interface Store {
   /**
    * Get loading state from store
    */
-  isLoading(): boolean;
+  inTxn(): boolean;
 
   /**
    * Get single choice by it's ID

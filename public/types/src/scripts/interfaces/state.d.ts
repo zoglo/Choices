@@ -4,5 +4,5 @@ export interface State {
     choices: ChoiceFull[];
     groups: GroupFull[];
     items: ChoiceFull[];
-    loading: number;
+    txn: number;
 }

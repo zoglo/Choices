@@ -4,16 +4,16 @@ export interface ClearAllAction {
   type: ActionType.CLEAR_ALL;
 }
 
-export interface SetIsLoadingAction {
-  type: ActionType.SET_IS_LOADING;
-  isLoading: boolean;
+export interface SetTransactionStateAction {
+  type: ActionType.SET_TRANSACTION;
+  txn: boolean;
 }
 
 export const clearAll = (): ClearAllAction => ({
   type: ActionType.CLEAR_ALL,
 });
 
-export const setIsLoading = (isLoading: boolean): SetIsLoadingAction => ({
-  type: ActionType.SET_IS_LOADING,
-  isLoading,
+export const setTxn = (txn: boolean): SetTransactionStateAction => ({
+  type: ActionType.SET_TRANSACTION,
+  txn,
 });
