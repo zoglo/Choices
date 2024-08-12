@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
+import { beforeEach } from 'vitest';
 import Store from '../../../src/scripts/store/store';
 import { ActionType, State } from '../../../src';
 import { cloneObject } from '../../../src/scripts/lib/utils';
@@ -13,12 +14,109 @@ describe('reducers/store', () => {
   let subscribeStub: sinon.SinonStub<[listener: StoreListener], void>;
   let dispatchStub: sinon.SinonStub<[action: AnyAction], void>;
   let getStateStub: sinon.SinonStub<any[], State>;
+  let emptyState: State;
+  let state: State;
 
   beforeEach(() => {
     instance = new Store();
     subscribeStub = sinon.stub(instance, 'subscribe');
     dispatchStub = sinon.stub(instance, 'dispatch');
     getStateStub = sinon.stub(instance, 'state');
+    emptyState = instance.defaultState;
+    state = {
+      items: [
+        {
+          id: 1,
+          groupId: -1,
+          value: 'Item one',
+          label: 'Item one',
+          active: false,
+          highlighted: false,
+          customProperties: {},
+          placeholder: false,
+          disabled: false,
+          selected: false,
+          score: 0,
+          rank: 0,
+        },
+        {
+          id: 2,
+          groupId: -1,
+          value: 'Item two',
+          label: 'Item two',
+          active: true,
+          highlighted: false,
+          customProperties: {},
+          placeholder: false,
+          disabled: false,
+          selected: false,
+          score: 0,
+          rank: 0,
+        },
+        {
+          id: 3,
+          groupId: -1,
+          value: 'Item three',
+          label: 'Item three',
+          active: true,
+          highlighted: true,
+          customProperties: {},
+          placeholder: false,
+          disabled: false,
+          selected: false,
+          score: 0,
+          rank: 0,
+        },
+      ],
+      choices: [
+        {
+          id: 1,
+          elementId: 'choices-test-1',
+          groupId: -1,
+          value: 'Choice 1',
+          label: 'Choice 1',
+          disabled: false,
+          selected: false,
+          active: true,
+          score: 9999,
+          rank: 9999,
+          customProperties: {},
+          placeholder: false,
+          highlighted: false,
+        },
+        {
+          id: 2,
+          elementId: 'choices-test-2',
+          groupId: -1,
+          value: 'Choice 2',
+          label: 'Choice 2',
+          disabled: false,
+          selected: true,
+          active: false,
+          score: 9999,
+          rank: 9998,
+          customProperties: {},
+          placeholder: false,
+          highlighted: false,
+        },
+      ],
+      groups: [
+        {
+          id: 1,
+          label: 'Group one',
+          active: true,
+          disabled: false,
+          choices: [],
+        },
+        {
+          id: 2,
+          label: 'Group two',
+          active: true,
+          disabled: false,
+          choices: [],
+        },
+      ],
+    };
   });
 
   afterEach(() => {
@@ -55,113 +153,93 @@ describe('reducers/store', () => {
 
   describe('state getter', () => {
     it('returns state', () => {
-      const state: State = { items: [], choices: [], groups: [] };
-      getStateStub.value(cloneObject(state));
+      getStateStub.value(cloneObject(emptyState));
 
-      expect(instance.state).to.deep.equal(state);
+      expect(instance.state).to.deep.equal(emptyState);
+    });
+  });
+
+  describe('txn', () => {
+    let listenerStub: sinon.SinonStub;
+
+    beforeEach(() => {
+      subscribeStub.restore();
+      dispatchStub.restore();
+      getStateStub.restore();
+
+      instance._store = cloneObject(state);
+      listenerStub = sinon.stub();
+      instance.subscribe(listenerStub);
+    });
+
+    it('coalesce listener events', () => {
+      const emptyChoicesState = cloneObject(state);
+      emptyChoicesState.choices = [];
+      emptyChoicesState.groups = [];
+
+      instance.withTxn(() => {
+        const action: AnyAction = { type: ActionType.CLEAR_CHOICES };
+        instance.dispatch(action);
+        instance.dispatch(action);
+      });
+
+      expect(listenerStub.callCount).eq(1);
+      expect(instance.state).to.deep.equal(emptyChoicesState);
+    });
+
+    it('coalesce listener events with reset', () => {
+      instance.withTxn(() => {
+        const action: AnyAction = { type: ActionType.CLEAR_CHOICES };
+        instance.dispatch(action);
+        instance.dispatch(action);
+        instance.reset();
+      });
+
+      expect(listenerStub.callCount).eq(1);
+      expect(instance.state).to.deep.equal(emptyState);
+    });
+  });
+
+  describe('without txn', () => {
+    let listenerStub: sinon.SinonStub;
+
+    beforeEach(() => {
+      subscribeStub.restore();
+      dispatchStub.restore();
+      getStateStub.restore();
+
+      instance._store = cloneObject(state);
+      listenerStub = sinon.stub();
+      instance.subscribe(listenerStub);
+    });
+
+    it('multiple listener events', () => {
+      const emptyChoicesState = cloneObject(state);
+      emptyChoicesState.choices = [];
+      emptyChoicesState.groups = [];
+
+      const action: AnyAction = { type: ActionType.CLEAR_CHOICES };
+      instance.dispatch(action);
+      instance.dispatch(action);
+
+      expect(listenerStub.callCount).eq(2);
+      expect(instance.state).to.deep.equal(emptyChoicesState);
+    });
+
+    it('multiple listener events with reset', () => {
+      const action: AnyAction = { type: ActionType.CLEAR_CHOICES };
+      instance.dispatch(action);
+      instance.dispatch(action);
+      instance.reset();
+
+      expect(listenerStub.callCount).eq(3);
+      expect(instance.state).to.deep.equal(emptyState);
     });
   });
 
   describe('store selectors', () => {
-    let state: State;
-
     beforeEach(() => {
-      state = {
-        items: [
-          {
-            id: 1,
-            groupId: -1,
-            value: 'Item one',
-            label: 'Item one',
-            active: false,
-            highlighted: false,
-            customProperties: undefined,
-            placeholder: false,
-            disabled: false,
-            selected: false,
-            score: 0,
-            rank: 0,
-          },
-          {
-            id: 2,
-            groupId: -1,
-            value: 'Item two',
-            label: 'Item two',
-            active: true,
-            highlighted: false,
-            customProperties: undefined,
-            placeholder: false,
-            disabled: false,
-            selected: false,
-            score: 0,
-            rank: 0,
-          },
-          {
-            id: 3,
-            groupId: -1,
-            value: 'Item three',
-            label: 'Item three',
-            active: true,
-            highlighted: true,
-            customProperties: undefined,
-            placeholder: false,
-            disabled: false,
-            selected: false,
-            score: 0,
-            rank: 0,
-          },
-        ],
-        choices: [
-          {
-            id: 1,
-            elementId: 'choices-test-1',
-            groupId: -1,
-            value: 'Choice 1',
-            label: 'Choice 1',
-            disabled: false,
-            selected: false,
-            active: true,
-            score: 9999,
-            rank: 9999,
-            customProperties: undefined,
-            placeholder: false,
-            highlighted: false,
-          },
-          {
-            id: 2,
-            elementId: 'choices-test-2',
-            groupId: -1,
-            value: 'Choice 2',
-            label: 'Choice 2',
-            disabled: false,
-            selected: true,
-            active: false,
-            score: 9999,
-            rank: 9998,
-            customProperties: undefined,
-            placeholder: false,
-            highlighted: false,
-          },
-        ],
-        groups: [
-          {
-            id: 1,
-            label: 'Group one',
-            active: true,
-            disabled: false,
-            choices: [],
-          },
-          {
-            id: 2,
-            label: 'Group two',
-            active: true,
-            disabled: false,
-            choices: [],
-          },
-        ],
-      };
-
-      getStateStub.value(state);
+      getStateStub.value(cloneObject(state));
     });
 
     describe('items getter', () => {

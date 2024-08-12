@@ -23,6 +23,8 @@ export interface Store {
 
   withTxn(func: () => void): void;
 
+  reset(): void;
+
   get defaultState(): State;
 
   /**

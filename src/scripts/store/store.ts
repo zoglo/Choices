@@ -46,10 +46,14 @@ export default class Store implements IStore {
     };
   }
 
-  resetStore(): void {
+  reset(): void {
     this._store = this.defaultState;
     const changes = this.changeSet(true);
-    this._listeners.forEach((l) => l(changes));
+    if (this._txn) {
+      this._outstandingChanges = changes;
+    } else {
+      this._listeners.forEach((l) => l(changes));
+    }
   }
 
   subscribe(onChange: StoreListener): void {

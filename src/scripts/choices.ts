@@ -885,7 +885,7 @@ class Choices {
   }
 
   clearStore(): this {
-    this._store.resetStore();
+    this._store.reset();
     this._lastAddedChoiceId = 0;
     this._lastAddedGroupId = 0;
     // @todo integrate with Store
