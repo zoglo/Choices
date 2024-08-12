@@ -42,7 +42,6 @@ import { mapInputToChoice } from './lib/choice-input';
 import { ChoiceFull } from './interfaces/choice-full';
 import { GroupFull } from './interfaces/group-full';
 import { EventType, KeyCodeMap, PassedElementType } from './interfaces';
-import { Choices as ChoicesInterface } from './interfaces/choices';
 import { EventChoice } from './interfaces/event-choice';
 import { Templates } from './interfaces/templates';
 import {
@@ -73,7 +72,7 @@ const parseDataSetId = (element?: HTMLElement): number | undefined => {
  * Choices
  * @author Josh Johnson<josh@joshuajohnson.co.uk>
  */
-class Choices implements ChoicesInterface {
+class Choices {
   static version: string = '__VERSION__';
 
   static get defaults(): {
