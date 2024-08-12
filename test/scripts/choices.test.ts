@@ -635,7 +635,7 @@ describe('choices', () => {
               ).to.deep.equal(EventType.showDropdown);
               expect(
                 passedElementTriggerEventStub.lastCall.args[1],
-              ).to.deep.equal({});
+              ).to.undefined;
               done(true);
             });
           }));
@@ -739,7 +739,7 @@ describe('choices', () => {
               ).to.deep.equal(EventType.hideDropdown);
               expect(
                 passedElementTriggerEventStub.lastCall.args[1],
-              ).to.deep.equal({});
+              ).to.undefined;
               done(true);
             });
           }));

@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { getClassNames } from '../../../src/scripts/lib/utils';
-import { DEFAULT_CLASSNAMES, EventType } from '../../../src';
+import { DEFAULT_CLASSNAMES, EventMap, EventType } from '../../../src';
 import WrappedElement from '../../../src/scripts/components/wrapped-element';
 
 describe('components/wrappedElement', () => {
@@ -233,8 +233,8 @@ describe('components/wrappedElement', () => {
   describe('triggerEvent', () => {
     it('fires event on element using passed eventType and data', () =>
       new Promise((done) => {
-        const data = {
-          test: true,
+        const data: EventMap[EventType.change]['detail'] = {
+          value: '',
         };
         expect(instance).to.not.be.null;
         if (!instance) {
