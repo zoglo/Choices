@@ -1,6 +1,6 @@
 # Changelog
 
-## [11.0.0-rc6] (2024-08-)
+## [11.0.0-rc6] (2024-08-12)
 
 ### Features
 * Improve performance of search/filtering with large number of choices.

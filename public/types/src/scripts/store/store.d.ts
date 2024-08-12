@@ -9,7 +9,7 @@ export default class Store implements IStore {
     _outstandingChanges?: StateChangeSet;
     get defaultState(): State;
     changeSet(init: boolean): StateChangeSet;
-    resetStore(): void;
+    reset(): void;
     subscribe(onChange: StoreListener): void;
     dispatch(action: AnyAction): void;
     withTxn(func: () => void): void;

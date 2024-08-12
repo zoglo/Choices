@@ -15,6 +15,7 @@ export interface Store {
     dispatch(action: AnyAction): void;
     subscribe(onChange: StoreListener): void;
     withTxn(func: () => void): void;
+    reset(): void;
     get defaultState(): State;
     /**
      * Get store object

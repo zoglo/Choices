@@ -1,4 +1,4 @@
-/*! choices.js v11.0.0-rc5 | © 2024 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
+/*! choices.js v11.0.0-rc6 | © 2024 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
 
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -1150,10 +1150,15 @@ var Store = /** @class */ (function () {
             choices: init,
         };
     };
-    Store.prototype.resetStore = function () {
+    Store.prototype.reset = function () {
         this._store = this.defaultState;
         var changes = this.changeSet(true);
-        this._listeners.forEach(function (l) { return l(changes); });
+        if (this._txn) {
+            this._outstandingChanges = changes;
+        }
+        else {
+            this._listeners.forEach(function (l) { return l(changes); });
+        }
     };
     Store.prototype.subscribe = function (onChange) {
         this._listeners.push(onChange);
@@ -2254,7 +2259,7 @@ var Choices = /** @class */ (function () {
         return this;
     };
     Choices.prototype.clearStore = function () {
-        this._store.resetStore();
+        this._store.reset();
         this._lastAddedChoiceId = 0;
         this._lastAddedGroupId = 0;
         // @todo integrate with Store
@@ -3037,13 +3042,12 @@ var Choices = /** @class */ (function () {
         var target = event.target;
         var targetWasRemoveButton = target && target.hasAttribute('data-button');
         var addedItem = false;
+        event.preventDefault();
         if (targetWasRemoveButton) {
-            event.preventDefault();
             this._handleButtonAction(items, target);
             return;
         }
         if (!hasActiveDropdown && this._isSelectOneElement) {
-            event.preventDefault();
             this.showDropdown();
             return;
         }
@@ -3053,7 +3057,6 @@ var Choices = /** @class */ (function () {
             if (highlightedChoice) {
                 addedItem = this._handleChoiceAction(items, highlightedChoice, 13 /* KeyCodeMap.ENTER_KEY */);
                 if (addedItem) {
-                    event.preventDefault();
                     this.unhighlightAll();
                     return;
                 }
@@ -3623,7 +3626,7 @@ var Choices = /** @class */ (function () {
             throw new TypeError("".concat(caller, " called for an element which has multiple instances of Choices initialised on it"));
         }
     };
-    Choices.version = '11.0.0-rc5';
+    Choices.version = '11.0.0-rc6';
     return Choices;
 }());
 
