@@ -2560,6 +2560,10 @@ class Choices {
         false,
       );
     });
+
+    if (this._isSelectOneElement && this._hasNonChoicePlaceholder) {
+      this._render({ choices: false, groups: false, items: true });
+    }
   }
 
   _addPredefinedChoices(
