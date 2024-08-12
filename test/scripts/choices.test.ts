@@ -352,8 +352,8 @@ describe('choices', () => {
           expect(storeSubscribeSpy.lastCall.args[0]).to.equal(instance._render);
         });
 
-        it('fires initial render', () => {
-          expect(renderSpy.called).to.equal(true);
+        it('does not fire initial render with no items or choices', () => {
+          expect(renderSpy.called).to.equal(false);
         });
 
         it('adds event listeners', () => {
@@ -633,9 +633,8 @@ describe('choices', () => {
               expect(
                 passedElementTriggerEventStub.lastCall.args[0],
               ).to.deep.equal(EventType.showDropdown);
-              expect(
-                passedElementTriggerEventStub.lastCall.args[1],
-              ).to.undefined;
+              expect(passedElementTriggerEventStub.lastCall.args[1]).to
+                .undefined;
               done(true);
             });
           }));
@@ -737,9 +736,8 @@ describe('choices', () => {
               expect(
                 passedElementTriggerEventStub.lastCall.args[0],
               ).to.deep.equal(EventType.hideDropdown);
-              expect(
-                passedElementTriggerEventStub.lastCall.args[1],
-              ).to.undefined;
+              expect(passedElementTriggerEventStub.lastCall.args[1]).to
+                .undefined;
               done(true);
             });
           }));
@@ -1133,31 +1131,6 @@ describe('choices', () => {
       it('dispatches clearChoices action', () => {
         expect(storeDispatchStub.lastCall.args[0]).to.deep.equal({
           type: ActionType.CLEAR_CHOICES,
-        });
-      });
-    });
-
-    describe('clearStore', () => {
-      let storeDispatchStub;
-
-      beforeEach(() => {
-        storeDispatchStub = stub();
-        instance._store.dispatch = storeDispatchStub;
-
-        output = instance.clearStore();
-      });
-
-      afterEach(() => {
-        instance._store.dispatch.reset();
-      });
-
-      it('returns this', () => {
-        expect(output).to.deep.equal(instance);
-      });
-
-      it('dispatches clearAll action', () => {
-        expect(storeDispatchStub.lastCall.args[0]).to.deep.equal({
-          type: ActionType.CLEAR_ALL,
         });
       });
     });

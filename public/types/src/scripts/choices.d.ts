@@ -3,7 +3,7 @@ import { InputChoice } from './interfaces/input-choice';
 import { InputGroup } from './interfaces/input-group';
 import { Notice } from './interfaces/notice';
 import { Options } from './interfaces/options';
-import { State } from './interfaces/state';
+import { StateChangeSet } from './interfaces/state';
 import Store from './store/store';
 import { ChoiceFull } from './interfaces/choice-full';
 import { GroupFull } from './interfaces/group-full';
@@ -41,9 +41,6 @@ declare class Choices {
     _canAddUserChoices: boolean;
     _store: Store;
     _templates: Templates;
-    _initialState: State;
-    _currentState: State;
-    _prevState: State;
     _lastAddedChoiceId: number;
     _lastAddedGroupId: number;
     _currentValue: string;
@@ -148,7 +145,7 @@ declare class Choices {
     clearStore(): this;
     clearInput(): this;
     _validateConfig(): void;
-    _render(): void;
+    _render(changes?: StateChangeSet): void;
     _renderChoices(): void;
     _renderItems(): void;
     _createGroupsFragment(groups: GroupFull[], choices: ChoiceFull[], fragment?: DocumentFragment): DocumentFragment;
@@ -200,6 +197,7 @@ declare class Choices {
     _createTemplates(): void;
     _createElements(): void;
     _createStructure(): void;
+    _initStore(): void;
     _addPredefinedChoices(choices: (ChoiceFull | GroupFull)[], selectFirstOption?: boolean, withEvents?: boolean): void;
     _findAndSelectChoiceByValue(value: string): boolean;
     _generatePlaceholderValue(): string | null;

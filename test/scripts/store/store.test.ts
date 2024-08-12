@@ -1,21 +1,24 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { AnyAction, Unsubscribe } from 'redux';
 import Store from '../../../src/scripts/store/store';
-import { State } from '../../../src';
+import { ActionType, State } from '../../../src';
 import { cloneObject } from '../../../src/scripts/lib/utils';
+import {
+  AnyAction,
+  StoreListener,
+} from '../../../src/scripts/interfaces/store';
 
 describe('reducers/store', () => {
   let instance: Store;
-  let subscribeStub: sinon.SinonStub<[listener: () => void], Unsubscribe>;
-  let dispatchStub: sinon.SinonStub<[action: AnyAction], AnyAction>;
-  let getStateStub: sinon.SinonStub<[], State>;
+  let subscribeStub: sinon.SinonStub<[listener: StoreListener], void>;
+  let dispatchStub: sinon.SinonStub<[action: AnyAction], void>;
+  let getStateStub: sinon.SinonStub<any[], State>;
 
   beforeEach(() => {
     instance = new Store();
-    subscribeStub = sinon.stub(instance._store, 'subscribe');
-    dispatchStub = sinon.stub(instance._store, 'dispatch');
-    getStateStub = sinon.stub(instance._store, 'getState');
+    subscribeStub = sinon.stub(instance, 'subscribe');
+    dispatchStub = sinon.stub(instance, 'dispatch');
+    getStateStub = sinon.stub(instance, 'state');
   });
 
   afterEach(() => {
@@ -25,17 +28,13 @@ describe('reducers/store', () => {
   });
 
   describe('constructor', () => {
-    it('creates redux store', () => {
-      expect(instance._store).to.contain.keys([
-        'subscribe',
-        'dispatch',
-        'getState',
-      ]);
+    it('creates redux-like store', () => {
+      expect(instance).to.contain.keys(['_store', '_listeners', '_txn']);
     });
   });
 
   describe('subscribe', () => {
-    it('wraps redux subscribe method', () => {
+    it('wraps redux-like subscribe method', () => {
       const onChange = (): void => {};
       expect(subscribeStub.callCount).to.equal(0);
       instance.subscribe(onChange);
@@ -45,8 +44,8 @@ describe('reducers/store', () => {
   });
 
   describe('dispatch', () => {
-    it('wraps redux dispatch method', () => {
-      const action = { type: 'TEST_ACTION' };
+    it('wraps redux-like dispatch method', () => {
+      const action: AnyAction = { type: ActionType.CLEAR_CHOICES };
       expect(dispatchStub.callCount).to.equal(0);
       instance.dispatch(action);
       expect(dispatchStub.callCount).to.equal(1);
@@ -56,8 +55,8 @@ describe('reducers/store', () => {
 
   describe('state getter', () => {
     it('returns state', () => {
-      const state: State = { items: [], choices: [], groups: [], txn: 0 };
-      getStateStub.returns(cloneObject(state));
+      const state: State = { items: [], choices: [], groups: [] };
+      getStateStub.value(cloneObject(state));
 
       expect(instance.state).to.deep.equal(state);
     });
@@ -68,7 +67,6 @@ describe('reducers/store', () => {
 
     beforeEach(() => {
       state = {
-        txn: 0,
         items: [
           {
             id: 1,
@@ -163,7 +161,7 @@ describe('reducers/store', () => {
         ],
       };
 
-      getStateStub.returns(state);
+      getStateStub.value(state);
     });
 
     describe('items getter', () => {

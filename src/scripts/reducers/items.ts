@@ -1,83 +1,82 @@
-import {
-  AddItemAction,
-  RemoveItemAction,
-  HighlightItemAction,
-} from '../actions/items';
+import { ItemActions } from '../actions/items';
 import { State } from '../interfaces/state';
-import { RemoveChoiceAction } from '../actions/choices';
-import { ChoiceFull } from '../interfaces/choice-full';
+import { ChoiceActions } from '../actions/choices';
 import { ActionType } from '../interfaces';
+import { StateUpdate } from '../interfaces/store';
 
-type ActionTypes =
-  | AddItemAction
-  | RemoveChoiceAction
-  | RemoveItemAction
-  | HighlightItemAction
-  | Record<string, never>;
+type ActionTypes = ChoiceActions | ItemActions;
+type StateType = State['items'];
 
 export default function items(
-  state: ChoiceFull[] = [],
-  action: ActionTypes = {},
-): State['items'] {
+  s: StateType,
+  action: ActionTypes,
+): StateUpdate<StateType> {
+  let state = s;
+  let update = false;
+
   switch (action.type) {
     case ActionType.ADD_ITEM: {
-      const { item } = action as AddItemAction;
-      if (!item.id) {
-        return state;
+      const { item } = action;
+      if (item.id) {
+        item.selected = true;
+        const el = item.element as HTMLOptionElement | undefined;
+        if (el) {
+          el.selected = true;
+          el.setAttribute('selected', '');
+        }
+
+        update = true;
+        state.push(item);
+        state.forEach((obj) => {
+          // eslint-disable-next-line no-param-reassign
+          obj.highlighted = false;
+        });
       }
 
-      item.selected = true;
-      const el = item.element as HTMLOptionElement;
-      if (el) {
-        el.selected = true;
-        el.setAttribute('selected', '');
-      }
-
-      return [...state, item].map((obj) => {
-        const choice = obj;
-        choice.highlighted = false;
-
-        return choice;
-      });
+      break;
     }
 
     case ActionType.REMOVE_ITEM: {
-      const { item } = action as RemoveItemAction;
-      if (!item.id) {
-        return state;
-      }
+      const { item } = action;
+      if (item.id) {
+        item.selected = false;
+        const el = item.element as HTMLOptionElement | undefined;
+        if (el) {
+          el.selected = false;
+          el.removeAttribute('selected');
+        }
 
-      item.selected = false;
-      const el = item.element as HTMLOptionElement;
-      if (el) {
-        el.selected = false;
-        el.removeAttribute('selected');
+        update = true;
+        state = state.filter((choice) => choice.id !== item.id);
       }
-
-      return state.filter((choice) => choice.id !== item.id);
+      break;
     }
 
     case ActionType.REMOVE_CHOICE: {
-      const { choice } = action as RemoveChoiceAction;
+      const { choice } = action;
 
-      return state.filter((item) => item.id !== choice.id);
+      update = true;
+      state = state.filter((item) => item.id !== choice.id);
+      break;
     }
 
     case ActionType.HIGHLIGHT_ITEM: {
-      const highlightItemAction = action as HighlightItemAction;
+      const highlightItemAction = action;
 
-      return state.map((obj) => {
+      update = true;
+      state.forEach((obj) => {
         const item = obj;
         if (item.id === highlightItemAction.item.id) {
           item.highlighted = highlightItemAction.highlighted;
         }
-
-        return item;
       });
+
+      break;
     }
 
-    default: {
-      return state;
-    }
+    default:
+      break;
   }
+
+  return { state, update };
 }

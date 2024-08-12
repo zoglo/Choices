@@ -1,51 +1,109 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { createStore, Store as ReduxStore, AnyAction } from 'redux';
-import { Store as IStore } from '../interfaces/store';
-import { State } from '../interfaces/state';
-import rootReducer from '../reducers/index';
-import { setTxn } from '../actions/misc';
+import {
+  AnyAction,
+  Reducer,
+  Store as IStore,
+  StoreListener,
+} from '../interfaces/store';
+import { StateChangeSet, State } from '../interfaces/state';
 import { ChoiceFull } from '../interfaces/choice-full';
 import { GroupFull } from '../interfaces/group-full';
+import items from '../reducers/items';
+import groups from '../reducers/groups';
+import choices from '../reducers/choices';
+
+type ReducerList = { [K in keyof State]: Reducer<State[K]> };
+
+const reducers: ReducerList = {
+  groups,
+  items,
+  choices,
+} as const;
 
 export default class Store implements IStore {
-  _store: ReduxStore;
+  _store: State = this.defaultState;
 
-  constructor() {
-    this._store = createStore(
-      rootReducer,
-      (window as any).__REDUX_DEVTOOLS_EXTENSION__ &&
-        (window as any).__REDUX_DEVTOOLS_EXTENSION__(),
-    );
+  _listeners: StoreListener[] = [];
+
+  _txn: number = 0;
+
+  _outstandingChanges?: StateChangeSet;
+
+  // eslint-disable-next-line class-methods-use-this
+  get defaultState(): State {
+    return {
+      groups: [],
+      items: [],
+      choices: [],
+    };
   }
 
-  /**
-   * Subscribe store to function call (wrapped Redux method)
-   */
-  subscribe(onChange: () => void): void {
-    this._store.subscribe(onChange);
+  // eslint-disable-next-line class-methods-use-this
+  changeSet(init: boolean): StateChangeSet {
+    return {
+      groups: init,
+      items: init,
+      choices: init,
+    };
   }
 
-  /**
-   * Dispatch event to store (wrapped Redux method)
-   */
+  resetStore(): void {
+    this._store = this.defaultState;
+    const changes = this.changeSet(true);
+    this._listeners.forEach((l) => l(changes));
+  }
+
+  subscribe(onChange: StoreListener): void {
+    this._listeners.push(onChange);
+  }
+
   dispatch(action: AnyAction): void {
-    this._store.dispatch(action);
+    const state = this._store;
+    let hasChanges = false;
+    const changes = this._outstandingChanges || this.changeSet(false);
+
+    Object.keys(reducers).forEach((key: string) => {
+      const stateUpdate = (reducers[key] as Reducer<unknown>)(
+        state[key],
+        action,
+      );
+      if (stateUpdate.update) {
+        hasChanges = true;
+        changes[key] = true;
+        state[key] = stateUpdate.state;
+      }
+    });
+
+    if (hasChanges) {
+      if (this._txn) {
+        this._outstandingChanges = changes;
+      } else {
+        this._listeners.forEach((l) => l(changes));
+      }
+    }
   }
 
   withTxn(func: () => void): void {
-    this._store.dispatch(setTxn(true));
+    this._txn++;
     try {
       func();
     } finally {
-      this._store.dispatch(setTxn(false));
+      this._txn = Math.max(0, this._txn - 1);
+
+      if (!this._txn) {
+        const changeSet = this._outstandingChanges;
+        if (changeSet) {
+          this._outstandingChanges = undefined;
+          this._listeners.forEach((l) => l(changeSet));
+        }
+      }
     }
   }
 
   /**
-   * Get store object (wrapping Redux method)
+   * Get store object
    */
   get state(): State {
-    return this._store.getState();
+    return this._store;
   }
 
   /**
@@ -98,11 +156,9 @@ export default class Store implements IStore {
    * Get active groups from store
    */
   get activeGroups(): GroupFull[] {
-    const { groups, choices } = this;
-
-    return groups.filter((group) => {
+    return this.state.groups.filter((group) => {
       const isActive = group.active && !group.disabled;
-      const hasActiveOptions = choices.some(
+      const hasActiveOptions = this.state.choices.some(
         (choice) => choice.active && !choice.disabled,
       );
 
@@ -111,7 +167,7 @@ export default class Store implements IStore {
   }
 
   inTxn(): boolean {
-    return this.state.txn > 0;
+    return this._txn > 0;
   }
 
   /**

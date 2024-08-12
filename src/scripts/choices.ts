@@ -8,7 +8,6 @@ import {
 } from './actions/choices';
 import { addGroup } from './actions/groups';
 import { addItem, highlightItem, removeItem } from './actions/items';
-import { clearAll } from './actions/misc';
 import {
   Container,
   Dropdown,
@@ -23,7 +22,7 @@ import { InputChoice } from './interfaces/input-choice';
 import { InputGroup } from './interfaces/input-group';
 import { Notice } from './interfaces/notice';
 import { Options, ObjectsInConfig } from './interfaces/options';
-import { State } from './interfaces/state';
+import { StateChangeSet } from './interfaces/state';
 import {
   diff,
   generateId,
@@ -35,7 +34,6 @@ import {
   sortByRank,
   strToEl,
 } from './lib/utils';
-import { defaultState } from './reducers';
 import Store from './store/store';
 import templates, { escapeForTemplate } from './templates';
 import { mapInputToChoice } from './lib/choice-input';
@@ -130,12 +128,6 @@ class Choices {
   _store: Store;
 
   _templates: Templates;
-
-  _initialState: State;
-
-  _currentState: State;
-
-  _prevState: State;
 
   _lastAddedChoiceId: number = 0;
 
@@ -273,9 +265,6 @@ class Choices {
     this.initialised = false;
 
     this._store = new Store();
-    this._initialState = defaultState;
-    this._currentState = defaultState;
-    this._prevState = defaultState;
     this._currentValue = '';
     this.config.searchEnabled =
       (!this._isTextElement && this.config.searchEnabled) ||
@@ -358,10 +347,7 @@ class Choices {
     this._createTemplates();
     this._createElements();
     this._createStructure();
-
-    this._store.subscribe(this._render);
-
-    this._render();
+    this._initStore();
     this._addEventListeners();
 
     const shouldDisable =
@@ -393,6 +379,7 @@ class Choices {
     this.containerOuter.unwrap(this.passedElement.element);
 
     this.clearStore();
+    this._store._listeners = [];
     this._stopSearch();
 
     this._templates = templates;
@@ -898,7 +885,7 @@ class Choices {
   }
 
   clearStore(): this {
-    this._store.dispatch(clearAll());
+    this._store.resetStore();
     this._lastAddedChoiceId = 0;
     this._lastAddedGroupId = 0;
     // @todo integrate with Store
@@ -941,19 +928,14 @@ class Choices {
     }
   }
 
-  _render(): void {
+  _render(changes?: StateChangeSet): void {
     if (this._store.inTxn()) {
       return;
     }
 
-    this._currentState = this._store.state;
-
-    const shouldRenderItems =
-      this._currentState.items !== this._prevState.items;
+    const shouldRenderItems = changes?.items;
     const stateChanged =
-      this._currentState.choices !== this._prevState.choices ||
-      this._currentState.groups !== this._prevState.groups ||
-      shouldRenderItems;
+      changes?.choices || changes?.groups || shouldRenderItems;
 
     if (!stateChanged) {
       return;
@@ -966,8 +948,6 @@ class Choices {
     if (shouldRenderItems) {
       this._renderItems();
     }
-
-    this._prevState = this._currentState;
   }
 
   _renderChoices(): void {
@@ -2570,6 +2550,11 @@ class Choices {
 
     this._highlightPosition = 0;
     this._isSearching = false;
+  }
+
+  _initStore(): void {
+    this._store.subscribe(this._render);
+
     this._store.withTxn(() => {
       this._addPredefinedChoices(
         this._presetChoices,

@@ -1,8 +1,10 @@
 import { GroupFull } from '../interfaces/group-full';
 import { ActionType } from '../interfaces';
+import { AnyAction } from '../interfaces/store';
 
-export interface AddGroupAction {
-  type: ActionType.ADD_GROUP;
+export type GroupActions = AddGroupAction;
+
+export interface AddGroupAction extends AnyAction<ActionType.ADD_GROUP> {
   group: GroupFull;
 }
 

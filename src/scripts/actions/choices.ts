@@ -1,30 +1,36 @@
 import { ChoiceFull } from '../interfaces/choice-full';
 import { ActionType } from '../interfaces';
 import { SearchResult } from '../interfaces/search';
+import { AnyAction } from '../interfaces/store';
 
-export interface AddChoiceAction {
-  type: ActionType.ADD_CHOICE;
+export type ChoiceActions =
+  | AddChoiceAction
+  | RemoveChoiceAction
+  | FilterChoicesAction
+  | ActivateChoicesAction
+  | ClearChoicesAction;
+
+export interface AddChoiceAction extends AnyAction<ActionType.ADD_CHOICE> {
   choice: ChoiceFull;
 }
 
-export interface RemoveChoiceAction {
-  type: ActionType.REMOVE_CHOICE;
+export interface RemoveChoiceAction
+  extends AnyAction<ActionType.REMOVE_CHOICE> {
   choice: ChoiceFull;
 }
 
-export interface FilterChoicesAction {
-  type: ActionType.FILTER_CHOICES;
+export interface FilterChoicesAction
+  extends AnyAction<ActionType.FILTER_CHOICES> {
   results: SearchResult<ChoiceFull>[];
 }
 
-export interface ActivateChoicesAction {
-  type: ActionType.ACTIVATE_CHOICES;
+export interface ActivateChoicesAction
+  extends AnyAction<ActionType.ACTIVATE_CHOICES> {
   active: boolean;
 }
 
-export interface ClearChoicesAction {
-  type: ActionType.CLEAR_CHOICES;
-}
+export interface ClearChoicesAction
+  extends AnyAction<ActionType.CLEAR_CHOICES> {}
 
 export const addChoice = (choice: ChoiceFull): AddChoiceAction => ({
   type: ActionType.ADD_CHOICE,

@@ -105,14 +105,6 @@
         highlighted: highlighted,
     }); };
 
-    var clearAll = function () { return ({
-        type: "CLEAR_ALL" /* ActionType.CLEAR_ALL */,
-    }); };
-    var setTxn = function (txn) { return ({
-        type: "SET_TRANSACTION" /* ActionType.SET_TRANSACTION */,
-        txn: txn,
-    }); };
-
     /* eslint-disable @typescript-eslint/no-explicit-any */
     var getRandomNumber = function (min, max) {
         return Math.floor(Math.random() * (max - min) + min);
@@ -239,9 +231,6 @@
             cancelable: true,
         });
         return element.dispatchEvent(event);
-    };
-    var cloneObject = function (obj) {
-        return obj !== undefined ? JSON.parse(JSON.stringify(obj)) : undefined;
     };
     /**
      * Returns an array of keys present on the first but missing on the second object
@@ -980,447 +969,85 @@
 
     var ObjectsInConfig = ['fuseOptions', 'classNames'];
 
-    /**
-     * Adapted from React: https://github.com/facebook/react/blob/master/packages/shared/formatProdErrorMessage.js
-     *
-     * Do not require this module directly! Use normal throw error calls. These messages will be replaced with error codes
-     * during build.
-     * @param {number} code
-     */
-    function formatProdErrorMessage(code) {
-      return "Minified Redux error #" + code + "; visit https://redux.js.org/Errors?code=" + code + " for the full message or " + 'use the non-minified dev environment for full errors. ';
-    }
-
-    // Inlined version of the `symbol-observable` polyfill
-    var $$observable = function () {
-      return typeof Symbol === 'function' && Symbol.observable || '@@observable';
-    }();
-
-    /**
-     * These are private action types reserved by Redux.
-     * For any unknown actions, you must return the current state.
-     * If the current state is undefined, you must return the initial state.
-     * Do not reference these action types directly in your code.
-     */
-    var randomString = function randomString() {
-      return Math.random().toString(36).substring(7).split('').join('.');
-    };
-    var ActionTypes = {
-      INIT: "@@redux/INIT" + randomString(),
-      REPLACE: "@@redux/REPLACE" + randomString(),
-      PROBE_UNKNOWN_ACTION: function PROBE_UNKNOWN_ACTION() {
-        return "@@redux/PROBE_UNKNOWN_ACTION" + randomString();
-      }
-    };
-
-    /**
-     * @param {any} obj The object to inspect.
-     * @returns {boolean} True if the argument appears to be a plain object.
-     */
-    function isPlainObject(obj) {
-      if (typeof obj !== 'object' || obj === null) return false;
-      var proto = obj;
-      while (Object.getPrototypeOf(proto) !== null) {
-        proto = Object.getPrototypeOf(proto);
-      }
-      return Object.getPrototypeOf(obj) === proto;
-    }
-
-    /**
-     * @deprecated
-     *
-     * **We recommend using the `configureStore` method
-     * of the `@reduxjs/toolkit` package**, which replaces `createStore`.
-     *
-     * Redux Toolkit is our recommended approach for writing Redux logic today,
-     * including store setup, reducers, data fetching, and more.
-     *
-     * **For more details, please read this Redux docs page:**
-     * **https://redux.js.org/introduction/why-rtk-is-redux-today**
-     *
-     * `configureStore` from Redux Toolkit is an improved version of `createStore` that
-     * simplifies setup and helps avoid common bugs.
-     *
-     * You should not be using the `redux` core package by itself today, except for learning purposes.
-     * The `createStore` method from the core `redux` package will not be removed, but we encourage
-     * all users to migrate to using Redux Toolkit for all Redux code.
-     *
-     * If you want to use `createStore` without this visual deprecation warning, use
-     * the `legacy_createStore` import instead:
-     *
-     * `import { legacy_createStore as createStore} from 'redux'`
-     *
-     */
-
-    function createStore(reducer, preloadedState, enhancer) {
-      var _ref2;
-      if (typeof preloadedState === 'function' && typeof enhancer === 'function' || typeof enhancer === 'function' && typeof arguments[3] === 'function') {
-        throw new Error(formatProdErrorMessage(0) );
-      }
-      if (typeof preloadedState === 'function' && typeof enhancer === 'undefined') {
-        enhancer = preloadedState;
-        preloadedState = undefined;
-      }
-      if (typeof enhancer !== 'undefined') {
-        if (typeof enhancer !== 'function') {
-          throw new Error(formatProdErrorMessage(1) );
-        }
-        return enhancer(createStore)(reducer, preloadedState);
-      }
-      if (typeof reducer !== 'function') {
-        throw new Error(formatProdErrorMessage(2) );
-      }
-      var currentReducer = reducer;
-      var currentState = preloadedState;
-      var currentListeners = [];
-      var nextListeners = currentListeners;
-      var isDispatching = false;
-      /**
-       * This makes a shallow copy of currentListeners so we can use
-       * nextListeners as a temporary list while dispatching.
-       *
-       * This prevents any bugs around consumers calling
-       * subscribe/unsubscribe in the middle of a dispatch.
-       */
-
-      function ensureCanMutateNextListeners() {
-        if (nextListeners === currentListeners) {
-          nextListeners = currentListeners.slice();
-        }
-      }
-      /**
-       * Reads the state tree managed by the store.
-       *
-       * @returns {any} The current state tree of your application.
-       */
-
-      function getState() {
-        if (isDispatching) {
-          throw new Error(formatProdErrorMessage(3) );
-        }
-        return currentState;
-      }
-      /**
-       * Adds a change listener. It will be called any time an action is dispatched,
-       * and some part of the state tree may potentially have changed. You may then
-       * call `getState()` to read the current state tree inside the callback.
-       *
-       * You may call `dispatch()` from a change listener, with the following
-       * caveats:
-       *
-       * 1. The subscriptions are snapshotted just before every `dispatch()` call.
-       * If you subscribe or unsubscribe while the listeners are being invoked, this
-       * will not have any effect on the `dispatch()` that is currently in progress.
-       * However, the next `dispatch()` call, whether nested or not, will use a more
-       * recent snapshot of the subscription list.
-       *
-       * 2. The listener should not expect to see all state changes, as the state
-       * might have been updated multiple times during a nested `dispatch()` before
-       * the listener is called. It is, however, guaranteed that all subscribers
-       * registered before the `dispatch()` started will be called with the latest
-       * state by the time it exits.
-       *
-       * @param {Function} listener A callback to be invoked on every dispatch.
-       * @returns {Function} A function to remove this change listener.
-       */
-
-      function subscribe(listener) {
-        if (typeof listener !== 'function') {
-          throw new Error(formatProdErrorMessage(4) );
-        }
-        if (isDispatching) {
-          throw new Error(formatProdErrorMessage(5) );
-        }
-        var isSubscribed = true;
-        ensureCanMutateNextListeners();
-        nextListeners.push(listener);
-        return function unsubscribe() {
-          if (!isSubscribed) {
-            return;
-          }
-          if (isDispatching) {
-            throw new Error(formatProdErrorMessage(6) );
-          }
-          isSubscribed = false;
-          ensureCanMutateNextListeners();
-          var index = nextListeners.indexOf(listener);
-          nextListeners.splice(index, 1);
-          currentListeners = null;
-        };
-      }
-      /**
-       * Dispatches an action. It is the only way to trigger a state change.
-       *
-       * The `reducer` function, used to create the store, will be called with the
-       * current state tree and the given `action`. Its return value will
-       * be considered the **next** state of the tree, and the change listeners
-       * will be notified.
-       *
-       * The base implementation only supports plain object actions. If you want to
-       * dispatch a Promise, an Observable, a thunk, or something else, you need to
-       * wrap your store creating function into the corresponding middleware. For
-       * example, see the documentation for the `redux-thunk` package. Even the
-       * middleware will eventually dispatch plain object actions using this method.
-       *
-       * @param {Object} action A plain object representing “what changed”. It is
-       * a good idea to keep actions serializable so you can record and replay user
-       * sessions, or use the time travelling `redux-devtools`. An action must have
-       * a `type` property which may not be `undefined`. It is a good idea to use
-       * string constants for action types.
-       *
-       * @returns {Object} For convenience, the same action object you dispatched.
-       *
-       * Note that, if you use a custom middleware, it may wrap `dispatch()` to
-       * return something else (for example, a Promise you can await).
-       */
-
-      function dispatch(action) {
-        if (!isPlainObject(action)) {
-          throw new Error(formatProdErrorMessage(7) );
-        }
-        if (typeof action.type === 'undefined') {
-          throw new Error(formatProdErrorMessage(8) );
-        }
-        if (isDispatching) {
-          throw new Error(formatProdErrorMessage(9) );
-        }
-        try {
-          isDispatching = true;
-          currentState = currentReducer(currentState, action);
-        } finally {
-          isDispatching = false;
-        }
-        var listeners = currentListeners = nextListeners;
-        for (var i = 0; i < listeners.length; i++) {
-          var listener = listeners[i];
-          listener();
-        }
-        return action;
-      }
-      /**
-       * Replaces the reducer currently used by the store to calculate the state.
-       *
-       * You might need this if your app implements code splitting and you want to
-       * load some of the reducers dynamically. You might also need this if you
-       * implement a hot reloading mechanism for Redux.
-       *
-       * @param {Function} nextReducer The reducer for the store to use instead.
-       * @returns {void}
-       */
-
-      function replaceReducer(nextReducer) {
-        if (typeof nextReducer !== 'function') {
-          throw new Error(formatProdErrorMessage(10) );
-        }
-        currentReducer = nextReducer; // This action has a similiar effect to ActionTypes.INIT.
-        // Any reducers that existed in both the new and old rootReducer
-        // will receive the previous state. This effectively populates
-        // the new state tree with any relevant data from the old one.
-
-        dispatch({
-          type: ActionTypes.REPLACE
-        });
-      }
-      /**
-       * Interoperability point for observable/reactive libraries.
-       * @returns {observable} A minimal observable of state changes.
-       * For more information, see the observable proposal:
-       * https://github.com/tc39/proposal-observable
-       */
-
-      function observable() {
-        var _ref;
-        var outerSubscribe = subscribe;
-        return _ref = {
-          /**
-           * The minimal observable subscription method.
-           * @param {Object} observer Any object that can be used as an observer.
-           * The observer object should have a `next` method.
-           * @returns {subscription} An object with an `unsubscribe` method that can
-           * be used to unsubscribe the observable from the store, and prevent further
-           * emission of values from the observable.
-           */
-          subscribe: function subscribe(observer) {
-            if (typeof observer !== 'object' || observer === null) {
-              throw new Error(formatProdErrorMessage(11) );
-            }
-            function observeState() {
-              if (observer.next) {
-                observer.next(getState());
-              }
-            }
-            observeState();
-            var unsubscribe = outerSubscribe(observeState);
-            return {
-              unsubscribe: unsubscribe
-            };
-          }
-        }, _ref[$$observable] = function () {
-          return this;
-        }, _ref;
-      } // When a store is created, an "INIT" action is dispatched so that every
-      // reducer returns their initial state. This effectively populates
-      // the initial state tree.
-
-      dispatch({
-        type: ActionTypes.INIT
-      });
-      return _ref2 = {
-        dispatch: dispatch,
-        subscribe: subscribe,
-        getState: getState,
-        replaceReducer: replaceReducer
-      }, _ref2[$$observable] = observable, _ref2;
-    }
-    function assertReducerShape(reducers) {
-      Object.keys(reducers).forEach(function (key) {
-        var reducer = reducers[key];
-        var initialState = reducer(undefined, {
-          type: ActionTypes.INIT
-        });
-        if (typeof initialState === 'undefined') {
-          throw new Error(formatProdErrorMessage(12) );
-        }
-        if (typeof reducer(undefined, {
-          type: ActionTypes.PROBE_UNKNOWN_ACTION()
-        }) === 'undefined') {
-          throw new Error(formatProdErrorMessage(13) );
-        }
-      });
-    }
-    /**
-     * Turns an object whose values are different reducer functions, into a single
-     * reducer function. It will call every child reducer, and gather their results
-     * into a single state object, whose keys correspond to the keys of the passed
-     * reducer functions.
-     *
-     * @param {Object} reducers An object whose values correspond to different
-     * reducer functions that need to be combined into one. One handy way to obtain
-     * it is to use ES6 `import * as reducers` syntax. The reducers may never return
-     * undefined for any action. Instead, they should return their initial state
-     * if the state passed to them was undefined, and the current state for any
-     * unrecognized action.
-     *
-     * @returns {Function} A reducer function that invokes every reducer inside the
-     * passed object, and builds a state object with the same shape.
-     */
-
-    function combineReducers(reducers) {
-      var reducerKeys = Object.keys(reducers);
-      var finalReducers = {};
-      for (var i = 0; i < reducerKeys.length; i++) {
-        var key = reducerKeys[i];
-        if (typeof reducers[key] === 'function') {
-          finalReducers[key] = reducers[key];
-        }
-      }
-      var finalReducerKeys = Object.keys(finalReducers); // This is used to make sure we don't warn about the same
-      var shapeAssertionError;
-      try {
-        assertReducerShape(finalReducers);
-      } catch (e) {
-        shapeAssertionError = e;
-      }
-      return function combination(state, action) {
-        if (state === void 0) {
-          state = {};
-        }
-        if (shapeAssertionError) {
-          throw shapeAssertionError;
-        }
-        var hasChanged = false;
-        var nextState = {};
-        for (var _i = 0; _i < finalReducerKeys.length; _i++) {
-          var _key = finalReducerKeys[_i];
-          var reducer = finalReducers[_key];
-          var previousStateForKey = state[_key];
-          var nextStateForKey = reducer(previousStateForKey, action);
-          if (typeof nextStateForKey === 'undefined') {
-            action && action.type;
-            throw new Error(formatProdErrorMessage(14) );
-          }
-          nextState[_key] = nextStateForKey;
-          hasChanged = hasChanged || nextStateForKey !== previousStateForKey;
-        }
-        hasChanged = hasChanged || finalReducerKeys.length !== Object.keys(state).length;
-        return hasChanged ? nextState : state;
-      };
-    }
-
-    function items(state, action) {
-        if (state === void 0) { state = []; }
-        if (action === void 0) { action = {}; }
+    function items(s, action) {
+        var state = s;
+        var update = false;
         switch (action.type) {
             case "ADD_ITEM" /* ActionType.ADD_ITEM */: {
                 var item = action.item;
-                if (!item.id) {
-                    return state;
+                if (item.id) {
+                    item.selected = true;
+                    var el = item.element;
+                    if (el) {
+                        el.selected = true;
+                        el.setAttribute('selected', '');
+                    }
+                    update = true;
+                    state.push(item);
+                    state.forEach(function (obj) {
+                        // eslint-disable-next-line no-param-reassign
+                        obj.highlighted = false;
+                    });
                 }
-                item.selected = true;
-                var el = item.element;
-                if (el) {
-                    el.selected = true;
-                    el.setAttribute('selected', '');
-                }
-                return __spreadArray(__spreadArray([], state, true), [item], false).map(function (obj) {
-                    var choice = obj;
-                    choice.highlighted = false;
-                    return choice;
-                });
+                break;
             }
             case "REMOVE_ITEM" /* ActionType.REMOVE_ITEM */: {
                 var item_1 = action.item;
-                if (!item_1.id) {
-                    return state;
+                if (item_1.id) {
+                    item_1.selected = false;
+                    var el = item_1.element;
+                    if (el) {
+                        el.selected = false;
+                        el.removeAttribute('selected');
+                    }
+                    update = true;
+                    state = state.filter(function (choice) { return choice.id !== item_1.id; });
                 }
-                item_1.selected = false;
-                var el = item_1.element;
-                if (el) {
-                    el.selected = false;
-                    el.removeAttribute('selected');
-                }
-                return state.filter(function (choice) { return choice.id !== item_1.id; });
+                break;
             }
             case "REMOVE_CHOICE" /* ActionType.REMOVE_CHOICE */: {
                 var choice_1 = action.choice;
-                return state.filter(function (item) { return item.id !== choice_1.id; });
+                update = true;
+                state = state.filter(function (item) { return item.id !== choice_1.id; });
+                break;
             }
             case "HIGHLIGHT_ITEM" /* ActionType.HIGHLIGHT_ITEM */: {
                 var highlightItemAction_1 = action;
-                return state.map(function (obj) {
+                update = true;
+                state.forEach(function (obj) {
                     var item = obj;
                     if (item.id === highlightItemAction_1.item.id) {
                         item.highlighted = highlightItemAction_1.highlighted;
                     }
-                    return item;
                 });
-            }
-            default: {
-                return state;
+                break;
             }
         }
+        return { state: state, update: update };
     }
 
-    function groups(state, action) {
-        if (state === void 0) { state = []; }
-        if (action === void 0) { action = {}; }
+    function groups(s, action) {
+        var state = s;
+        var update = false;
         switch (action.type) {
             case "ADD_GROUP" /* ActionType.ADD_GROUP */: {
                 var addGroupAction = action;
-                return __spreadArray(__spreadArray([], state, true), [addGroupAction.group], false);
+                update = true;
+                state.push(addGroupAction.group);
+                break;
             }
             case "CLEAR_CHOICES" /* ActionType.CLEAR_CHOICES */: {
-                return [];
-            }
-            default: {
-                return state;
+                update = true;
+                state = [];
+                break;
             }
         }
+        return { state: state, update: update };
     }
 
-    function choices(state, action) {
-        if (state === void 0) { state = []; }
-        if (action === void 0) { action = {}; }
+    function choices(s, action) {
+        var state = s;
+        var update = false;
         switch (action.type) {
             case "ADD_CHOICE" /* ActionType.ADD_CHOICE */: {
                 var choice = action.choice;
@@ -1429,36 +1056,41 @@
                   A selected choice has been added to the passed input's value (added as an item)
                   An active choice appears within the choice dropdown
                 */
-                return __spreadArray(__spreadArray([], state, true), [choice], false);
+                state.push(choice);
+                update = true;
+                break;
             }
             case "REMOVE_CHOICE" /* ActionType.REMOVE_CHOICE */: {
                 var choice_1 = action.choice;
-                return state.filter(function (obj) { return obj.id !== choice_1.id; });
+                update = true;
+                state = state.filter(function (obj) { return obj.id !== choice_1.id; });
+                break;
             }
             case "ADD_ITEM" /* ActionType.ADD_ITEM */: {
                 var item = action.item;
                 // trigger a rebuild of the choices list as the item can not be added multiple times
                 if (item.id && item.selected) {
-                    return __spreadArray([], state, true);
+                    update = true;
                 }
-                return state;
+                break;
             }
             case "REMOVE_ITEM" /* ActionType.REMOVE_ITEM */: {
                 var item = action.item;
                 // trigger a rebuild of the choices list as the item can be added
                 if (item.id && !item.selected) {
-                    return __spreadArray([], state, true);
+                    update = true;
                 }
-                return state;
+                break;
             }
             case "FILTER_CHOICES" /* ActionType.FILTER_CHOICES */: {
                 var results = action.results;
+                update = true;
                 // avoid O(n^2) algorithm complexity when searching/filtering choices
                 var scoreLookup_1 = [];
                 results.forEach(function (result) {
                     scoreLookup_1[result.item.id] = result;
                 });
-                return state.map(function (obj) {
+                state.forEach(function (obj) {
                     var choice = obj;
                     var result = scoreLookup_1[choice.id];
                     if (result !== undefined) {
@@ -1471,102 +1103,110 @@
                         choice.rank = 0;
                         choice.active = false;
                     }
-                    return choice;
                 });
+                break;
             }
             case "ACTIVATE_CHOICES" /* ActionType.ACTIVATE_CHOICES */: {
                 var active_1 = action.active;
-                return state.map(function (obj) {
+                update = true;
+                state.forEach(function (obj) {
                     var choice = obj;
                     choice.active = active_1;
                     return choice;
                 });
+                break;
             }
             case "CLEAR_CHOICES" /* ActionType.CLEAR_CHOICES */: {
-                return [];
-            }
-            default: {
-                return state;
+                update = true;
+                state = [];
+                break;
             }
         }
+        return { state: state, update: update };
     }
 
-    var general = function (state, action) {
-        if (state === void 0) { state = 0; }
-        if (action === void 0) { action = {}; }
-        switch (action.type) {
-            case "SET_TRANSACTION" /* ActionType.SET_TRANSACTION */: {
-                if (action.txn) {
-                    return state + 1;
-                }
-                return Math.max(0, state - 1);
-            }
-            default: {
-                return state;
-            }
-        }
-    };
-
-    var defaultState = {
-        groups: [],
-        items: [],
-        choices: [],
-        txn: 0,
-    };
-    var appReducer = combineReducers({
-        items: items,
+    var reducers = {
         groups: groups,
+        items: items,
         choices: choices,
-        txn: general,
-    });
-    var rootReducer = function (passedState, action) {
-        var state = passedState;
-        // If we are clearing all items, groups and options we reassign
-        // state and then pass that state to our proper reducer. This isn't
-        // mutating our actual state
-        // See: http://stackoverflow.com/a/35641992
-        if (action.type === "CLEAR_ALL" /* ActionType.CLEAR_ALL */) {
-            // preserve the txn state as to allow withTxn to work
-            var paused = state.txn;
-            state = cloneObject(defaultState);
-            state.txn = paused;
-        }
-        return appReducer(state, action);
     };
-
-    /* eslint-disable @typescript-eslint/no-explicit-any */
     var Store = /** @class */ (function () {
         function Store() {
-            this._store = createStore(rootReducer, window.__REDUX_DEVTOOLS_EXTENSION__ &&
-                window.__REDUX_DEVTOOLS_EXTENSION__());
+            this._store = this.defaultState;
+            this._listeners = [];
+            this._txn = 0;
         }
-        /**
-         * Subscribe store to function call (wrapped Redux method)
-         */
-        Store.prototype.subscribe = function (onChange) {
-            this._store.subscribe(onChange);
+        Object.defineProperty(Store.prototype, "defaultState", {
+            // eslint-disable-next-line class-methods-use-this
+            get: function () {
+                return {
+                    groups: [],
+                    items: [],
+                    choices: [],
+                };
+            },
+            enumerable: false,
+            configurable: true
+        });
+        // eslint-disable-next-line class-methods-use-this
+        Store.prototype.changeSet = function (init) {
+            return {
+                groups: init,
+                items: init,
+                choices: init,
+            };
         };
-        /**
-         * Dispatch event to store (wrapped Redux method)
-         */
+        Store.prototype.resetStore = function () {
+            this._store = this.defaultState;
+            var changes = this.changeSet(true);
+            this._listeners.forEach(function (l) { return l(changes); });
+        };
+        Store.prototype.subscribe = function (onChange) {
+            this._listeners.push(onChange);
+        };
         Store.prototype.dispatch = function (action) {
-            this._store.dispatch(action);
+            var state = this._store;
+            var hasChanges = false;
+            var changes = this._outstandingChanges || this.changeSet(false);
+            Object.keys(reducers).forEach(function (key) {
+                var stateUpdate = reducers[key](state[key], action);
+                if (stateUpdate.update) {
+                    hasChanges = true;
+                    changes[key] = true;
+                    state[key] = stateUpdate.state;
+                }
+            });
+            if (hasChanges) {
+                if (this._txn) {
+                    this._outstandingChanges = changes;
+                }
+                else {
+                    this._listeners.forEach(function (l) { return l(changes); });
+                }
+            }
         };
         Store.prototype.withTxn = function (func) {
-            this._store.dispatch(setTxn(true));
+            this._txn++;
             try {
                 func();
             }
             finally {
-                this._store.dispatch(setTxn(false));
+                this._txn = Math.max(0, this._txn - 1);
+                if (!this._txn) {
+                    var changeSet_1 = this._outstandingChanges;
+                    if (changeSet_1) {
+                        this._outstandingChanges = undefined;
+                        this._listeners.forEach(function (l) { return l(changeSet_1); });
+                    }
+                }
             }
         };
         Object.defineProperty(Store.prototype, "state", {
             /**
-             * Get store object (wrapping Redux method)
+             * Get store object
              */
             get: function () {
-                return this._store.getState();
+                return this._store;
             },
             enumerable: false,
             configurable: true
@@ -1636,10 +1276,10 @@
              * Get active groups from store
              */
             get: function () {
-                var _a = this, groups = _a.groups, choices = _a.choices;
-                return groups.filter(function (group) {
+                var _this = this;
+                return this.state.groups.filter(function (group) {
                     var isActive = group.active && !group.disabled;
-                    var hasActiveOptions = choices.some(function (choice) { return choice.active && !choice.disabled; });
+                    var hasActiveOptions = _this.state.choices.some(function (choice) { return choice.active && !choice.disabled; });
                     return isActive && hasActiveOptions;
                 }, []);
             },
@@ -1647,7 +1287,7 @@
             configurable: true
         });
         Store.prototype.inTxn = function () {
-            return this.state.txn > 0;
+            return this._txn > 0;
         };
         /**
          * Get single choice by it's ID
@@ -3734,9 +3374,6 @@
             }
             this.initialised = false;
             this._store = new Store();
-            this._initialState = defaultState;
-            this._currentState = defaultState;
-            this._prevState = defaultState;
             this._currentValue = '';
             this.config.searchEnabled =
                 (!this._isTextElement && this.config.searchEnabled) ||
@@ -3819,8 +3456,7 @@
             this._createTemplates();
             this._createElements();
             this._createStructure();
-            this._store.subscribe(this._render);
-            this._render();
+            this._initStore();
             this._addEventListeners();
             var shouldDisable = (this._isTextElement && !this.config.addItems) ||
                 this.passedElement.element.hasAttribute('disabled') ||
@@ -3844,6 +3480,7 @@
             this.passedElement.reveal();
             this.containerOuter.unwrap(this.passedElement.element);
             this.clearStore();
+            this._store._listeners = [];
             this._stopSearch();
             this._templates = templates;
             this.initialised = false;
@@ -4249,7 +3886,7 @@
             return this;
         };
         Choices.prototype.clearStore = function () {
-            this._store.dispatch(clearAll());
+            this._store.resetStore();
             this._lastAddedChoiceId = 0;
             this._lastAddedGroupId = 0;
             // @todo integrate with Store
@@ -4278,15 +3915,12 @@
                 }
             }
         };
-        Choices.prototype._render = function () {
+        Choices.prototype._render = function (changes) {
             if (this._store.inTxn()) {
                 return;
             }
-            this._currentState = this._store.state;
-            var shouldRenderItems = this._currentState.items !== this._prevState.items;
-            var stateChanged = this._currentState.choices !== this._prevState.choices ||
-                this._currentState.groups !== this._prevState.groups ||
-                shouldRenderItems;
+            var shouldRenderItems = changes === null || changes === void 0 ? void 0 : changes.items;
+            var stateChanged = (changes === null || changes === void 0 ? void 0 : changes.choices) || (changes === null || changes === void 0 ? void 0 : changes.groups) || shouldRenderItems;
             if (!stateChanged) {
                 return;
             }
@@ -4296,7 +3930,6 @@
             if (shouldRenderItems) {
                 this._renderItems();
             }
-            this._prevState = this._currentState;
         };
         Choices.prototype._renderChoices = function () {
             var _this = this;
@@ -5515,7 +5148,6 @@
             });
         };
         Choices.prototype._createStructure = function () {
-            var _this = this;
             // Hide original element
             this.passedElement.conceal();
             // Wrap input in container preserving DOM ordering
@@ -5543,6 +5175,10 @@
             }
             this._highlightPosition = 0;
             this._isSearching = false;
+        };
+        Choices.prototype._initStore = function () {
+            var _this = this;
+            this._store.subscribe(this._render);
             this._store.withTxn(function () {
                 _this._addPredefinedChoices(_this._presetChoices, _this._isSelectOneElement && !_this._hasNonChoicePlaceholder, false);
             });

@@ -1,10 +1,23 @@
-import { State } from './state';
+import { StateChangeSet, State } from './state';
 import { ChoiceFull } from './choice-full';
 import { GroupFull } from './group-full';
+import { ActionType } from './action-type';
+export interface AnyAction<A extends ActionType = ActionType> {
+    type: A;
+}
+export interface StateUpdate<T> {
+    update: boolean;
+    state: T;
+}
+export type Reducer<T> = (state: T, action: AnyAction) => StateUpdate<T>;
+export type StoreListener = (changes: StateChangeSet) => void;
 export interface Store {
+    dispatch(action: AnyAction): void;
+    subscribe(onChange: StoreListener): void;
     withTxn(func: () => void): void;
+    get defaultState(): State;
     /**
-     * Get store object (wrapping Redux method)
+     * Get store object
      */
     get state(): State;
     /**

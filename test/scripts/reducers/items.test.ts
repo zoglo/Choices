@@ -4,15 +4,9 @@ import { RemoveItemAction } from '../../../src/scripts/actions/items';
 import { cloneObject } from '../../../src/scripts/lib/utils';
 import { ChoiceFull } from '../../../src/scripts/interfaces/choice-full';
 import { ActionType } from '../../../src';
-import { defaultState } from '../../../src/scripts/reducers';
+import { StateUpdate } from '../../../src/scripts/interfaces/store';
 
 describe('reducers/items', () => {
-  it('should return same state when no action matches', () => {
-    expect(items(defaultState.items, {} as any)).to.deep.equal(
-      defaultState.items,
-    );
-  });
-
   describe('when items do not exist', () => {
     describe('ADD_ITEM', () => {
       const choice: ChoiceFull = {
@@ -36,10 +30,10 @@ describe('reducers/items', () => {
         let actualResponse: ChoiceFull[];
 
         beforeEach(() => {
-          actualResponse = items(undefined, {
+          actualResponse = items([], {
             type: ActionType.ADD_ITEM,
             item: cloneObject(choice),
-          });
+          }).state;
         });
 
         it('adds item', () => {
@@ -61,9 +55,12 @@ describe('reducers/items', () => {
             placeholder: false,
           });
           it('adds item with placeholder set to false', () => {
-            const expectedResponse = [item];
+            const expectedResponse: StateUpdate<ChoiceFull[]> = {
+              update: true,
+              state: [item],
+            };
 
-            const actualResponse = items(undefined, {
+            const actualResponse = items([], {
               type: ActionType.ADD_ITEM,
               item: cloneObject(item),
             });
@@ -113,11 +110,14 @@ describe('reducers/items', () => {
 
     describe('REMOVE_ITEM', () => {
       it('sets an item to be inactive based on passed ID', () => {
-        const expectedResponse = [
-          {
-            ...state[0],
-          },
-        ] as ChoiceFull[];
+        const expectedResponse: StateUpdate<ChoiceFull[]> = {
+          update: true,
+          state: [
+            {
+              ...state[0],
+            },
+          ],
+        };
 
         const actualResponse = items(cloneObject(state), {
           type: ActionType.REMOVE_ITEM,
@@ -131,7 +131,10 @@ describe('reducers/items', () => {
     describe('REMOVE_CHOICE', () => {
       it('the item is removed', () => {
         const choice = state[0];
-        const expectedResponse = state.filter((s) => s.id !== choice.id);
+        const expectedResponse: StateUpdate<ChoiceFull[]> = {
+          update: true,
+          state: state.filter((s) => s.id !== choice.id),
+        };
 
         const actualResponse = items(cloneObject(state), {
           type: ActionType.REMOVE_CHOICE,
@@ -144,15 +147,18 @@ describe('reducers/items', () => {
 
     describe('HIGHLIGHT_ITEM', () => {
       it('sets an item to be inactive based on passed ID', () => {
-        const expectedResponse = [
-          {
-            ...state[0],
-          },
-          {
-            ...state[1],
-            highlighted: true,
-          },
-        ] as ChoiceFull[];
+        const expectedResponse: StateUpdate<ChoiceFull[]> = {
+          update: true,
+          state: [
+            {
+              ...state[0],
+            },
+            {
+              ...state[1],
+              highlighted: true,
+            },
+          ],
+        };
 
         const actualResponse = items(cloneObject(state), {
           type: ActionType.HIGHLIGHT_ITEM,

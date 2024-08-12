@@ -1,28 +1,37 @@
-import { AddGroupAction } from '../actions/groups';
-import { ClearChoicesAction } from '../actions/choices';
+import { GroupActions } from '../actions/groups';
 import { State } from '../interfaces/state';
-import { GroupFull } from '../interfaces/group-full';
 import { ActionType } from '../interfaces';
+import { StateUpdate } from '../interfaces/store';
+import { ChoiceActions } from '../actions/choices';
 
-type ActionTypes = AddGroupAction | ClearChoicesAction | Record<string, never>;
+type ActionTypes = ChoiceActions | GroupActions;
+type StateType = State['groups'];
 
 export default function groups(
-  state: GroupFull[] = [],
-  action: ActionTypes = {},
-): State['groups'] {
+  s: StateType,
+  action: ActionTypes,
+): StateUpdate<StateType> {
+  let state = s;
+  let update = false;
+
   switch (action.type) {
     case ActionType.ADD_GROUP: {
-      const addGroupAction = action as AddGroupAction;
+      const addGroupAction = action;
 
-      return [...state, addGroupAction.group];
+      update = true;
+      state.push(addGroupAction.group);
+      break;
     }
 
     case ActionType.CLEAR_CHOICES: {
-      return [];
+      update = true;
+      state = [];
+      break;
     }
 
-    default: {
-      return state;
-    }
+    default:
+      break;
   }
+
+  return { state, update };
 }

@@ -1,18 +1,22 @@
 import { ChoiceFull } from '../interfaces/choice-full';
 import { ActionType } from '../interfaces';
+import { AnyAction } from '../interfaces/store';
 
-export interface AddItemAction {
-  type: ActionType.ADD_ITEM;
+export type ItemActions =
+  | AddItemAction
+  | RemoveItemAction
+  | HighlightItemAction;
+
+export interface AddItemAction extends AnyAction<ActionType.ADD_ITEM> {
   item: ChoiceFull;
 }
 
-export interface RemoveItemAction {
-  type: ActionType.REMOVE_ITEM;
+export interface RemoveItemAction extends AnyAction<ActionType.REMOVE_ITEM> {
   item: ChoiceFull;
 }
 
-export interface HighlightItemAction {
-  type: ActionType.HIGHLIGHT_ITEM;
+export interface HighlightItemAction
+  extends AnyAction<ActionType.HIGHLIGHT_ITEM> {
   item: ChoiceFull;
   highlighted: boolean;
 }

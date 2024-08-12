@@ -5,5 +5,8 @@ export interface State {
   choices: ChoiceFull[];
   groups: GroupFull[];
   items: ChoiceFull[];
-  txn: number;
 }
+
+export type StateChangeSet = {
+  [K in keyof State]: boolean;
+};

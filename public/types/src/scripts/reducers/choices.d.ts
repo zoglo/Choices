@@ -1,6 +1,8 @@
-import { AddChoiceAction, RemoveChoiceAction, FilterChoicesAction, ActivateChoicesAction, ClearChoicesAction } from '../actions/choices';
-import { AddItemAction, RemoveItemAction } from '../actions/items';
-import { ChoiceFull } from '../interfaces/choice-full';
-type ActionTypes = AddChoiceAction | RemoveChoiceAction | FilterChoicesAction | ActivateChoicesAction | ClearChoicesAction | AddItemAction | RemoveItemAction | Record<string, never>;
-export default function choices(state?: ChoiceFull[], action?: ActionTypes): ChoiceFull[];
+import { State } from '../interfaces';
+import { StateUpdate } from '../interfaces/store';
+import { ChoiceActions } from '../actions/choices';
+import { ItemActions } from '../actions/items';
+type ActionTypes = ChoiceActions | ItemActions;
+type StateType = State['choices'];
+export default function choices(s: StateType, action: ActionTypes): StateUpdate<StateType>;
 export {};

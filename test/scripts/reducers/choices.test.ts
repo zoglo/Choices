@@ -3,15 +3,9 @@ import choices from '../../../src/scripts/reducers/choices';
 import { cloneObject } from '../../../src/scripts/lib/utils';
 import { ChoiceFull } from '../../../src/scripts/interfaces/choice-full';
 import { ActionType } from '../../../src';
-import { defaultState } from '../../../src/scripts/reducers';
+import { StateUpdate } from '../../../src/scripts/interfaces/store';
 
 describe('reducers/choices', () => {
-  it('should return same state when no action matches', () => {
-    expect(choices(defaultState.choices, {} as any)).to.equal(
-      defaultState.choices,
-    );
-  });
-
   describe('when choices do not exist', () => {
     describe('ADD_CHOICE', () => {
       const choice: ChoiceFull = {
@@ -34,9 +28,12 @@ describe('reducers/choices', () => {
 
       describe('passing expected values', () => {
         it('adds choice', () => {
-          const expectedResponse = [choice];
+          const expectedResponse: StateUpdate<ChoiceFull[]> = {
+            update: true,
+            state: [choice],
+          };
 
-          const actualResponse = choices(undefined, {
+          const actualResponse = choices([], {
             type: ActionType.ADD_CHOICE,
             choice: cloneObject(choice),
           });
@@ -51,9 +48,12 @@ describe('reducers/choices', () => {
             const item = Object.assign(cloneObject(choice), {
               placeholder: false,
             });
-            const expectedResponse = [item];
+            const expectedResponse: StateUpdate<ChoiceFull[]> = {
+              update: true,
+              state: [item],
+            };
 
-            const actualResponse = choices(undefined, {
+            const actualResponse = choices([], {
               type: ActionType.ADD_CHOICE,
               choice: cloneObject(item),
             });
@@ -126,7 +126,7 @@ describe('reducers/choices', () => {
               rank,
             },
           ],
-        }).find((choice) => choice.id === id);
+        }).state.find((choice) => choice.id === id);
 
         expect(actualResponse).to.deep.equal(expectedResponse);
       });
@@ -134,16 +134,19 @@ describe('reducers/choices', () => {
 
     describe('ACTIVATE_CHOICES', () => {
       it('sets active flag to passed value', () => {
-        const expectedResponse = [
-          {
-            ...state[0],
-            active: true,
-          },
-          {
-            ...state[1],
-            active: true,
-          },
-        ] as ChoiceFull[];
+        const expectedResponse: StateUpdate<ChoiceFull[]> = {
+          update: true,
+          state: [
+            {
+              ...state[0],
+              active: true,
+            },
+            {
+              ...state[1],
+              active: true,
+            },
+          ],
+        };
 
         const actualResponse = choices(cloneObject(state), {
           type: ActionType.ACTIVATE_CHOICES,
@@ -154,43 +157,21 @@ describe('reducers/choices', () => {
       });
     });
 
-    describe('REMOVE_CHOICE', () => {
-      it('the choice is removed', () => {
-        const choice = state[0];
-        const expectedResponse = state.filter((s) => s.id !== choice.id);
-
-        const actualResponse = choices(cloneObject(state), {
-          type: ActionType.REMOVE_CHOICE,
-          choice: cloneObject(choice),
-        });
-
-        expect(actualResponse).to.deep.equal(expectedResponse);
-      });
-    });
-
-    describe('CLEAR_CHOICES', () => {
-      it('restores to defaultState', () => {
-        const expectedResponse = defaultState.choices;
-        const actualResponse = choices(cloneObject(state), {
-          type: ActionType.CLEAR_CHOICES,
-        });
-
-        expect(actualResponse).to.deep.equal(expectedResponse);
-      });
-    });
-
     describe('ADD_ITEM', () => {
       describe('when action has a choice id', () => {
         it('disables choice corresponding with id', () => {
-          const expectedResponse = [
-            {
-              ...state[0],
-            },
-            {
-              ...state[1],
-              selected: true,
-            },
-          ] as ChoiceFull[];
+          const expectedResponse: StateUpdate<ChoiceFull[]> = {
+            update: true,
+            state: [
+              {
+                ...state[0],
+              },
+              {
+                ...state[1],
+                selected: true,
+              },
+            ],
+          };
 
           const actualResponse = choices(cloneObject(state), {
             type: ActionType.ADD_ITEM,

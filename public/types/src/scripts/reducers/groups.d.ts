@@ -1,7 +1,8 @@
-import { AddGroupAction } from '../actions/groups';
-import { ClearChoicesAction } from '../actions/choices';
+import { GroupActions } from '../actions/groups';
 import { State } from '../interfaces/state';
-import { GroupFull } from '../interfaces/group-full';
-type ActionTypes = AddGroupAction | ClearChoicesAction | Record<string, never>;
-export default function groups(state?: GroupFull[], action?: ActionTypes): State['groups'];
+import { StateUpdate } from '../interfaces/store';
+import { ChoiceActions } from '../actions/choices';
+type ActionTypes = ChoiceActions | GroupActions;
+type StateType = State['groups'];
+export default function groups(s: StateType, action: ActionTypes): StateUpdate<StateType>;
 export {};

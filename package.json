@@ -131,8 +131,7 @@
     "vitest": "^2.0.5"
   },
   "dependencies": {
-    "fuse.js": "^7.0.0",
-    "redux": "^4.2.0"
+    "fuse.js": "^7.0.0"
   },
   "npmName": "choices.js",
   "npmFileMap": [

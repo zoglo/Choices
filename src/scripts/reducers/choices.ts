@@ -1,77 +1,73 @@
-import {
-  AddChoiceAction,
-  RemoveChoiceAction,
-  FilterChoicesAction,
-  ActivateChoicesAction,
-  ClearChoicesAction,
-} from '../actions/choices';
-import { AddItemAction, RemoveItemAction } from '../actions/items';
-import { ChoiceFull } from '../interfaces/choice-full';
-import { ActionType } from '../interfaces';
+import { ActionType, State } from '../interfaces';
+import { StateUpdate } from '../interfaces/store';
+import { ChoiceActions } from '../actions/choices';
+import { ItemActions } from '../actions/items';
 import { SearchResult } from '../interfaces/search';
+import { ChoiceFull } from '../interfaces/choice-full';
 
-type ActionTypes =
-  | AddChoiceAction
-  | RemoveChoiceAction
-  | FilterChoicesAction
-  | ActivateChoicesAction
-  | ClearChoicesAction
-  | AddItemAction
-  | RemoveItemAction
-  | Record<string, never>;
+type ActionTypes = ChoiceActions | ItemActions;
+type StateType = State['choices'];
 
 export default function choices(
-  state: ChoiceFull[] = [],
-  action: ActionTypes = {},
-): ChoiceFull[] {
+  s: StateType,
+  action: ActionTypes,
+): StateUpdate<StateType> {
+  let state = s;
+  let update = false;
+
   switch (action.type) {
     case ActionType.ADD_CHOICE: {
-      const { choice } = action as AddChoiceAction;
+      const { choice } = action;
 
       /*
         A disabled choice appears in the choice dropdown but cannot be selected
         A selected choice has been added to the passed input's value (added as an item)
         An active choice appears within the choice dropdown
       */
-      return [...state, choice];
+      state.push(choice);
+      update = true;
+      break;
     }
 
     case ActionType.REMOVE_CHOICE: {
-      const { choice } = action as RemoveChoiceAction;
+      const { choice } = action;
 
-      return state.filter((obj) => obj.id !== choice.id);
+      update = true;
+      state = state.filter((obj) => obj.id !== choice.id);
+      break;
     }
 
     case ActionType.ADD_ITEM: {
-      const { item } = action as AddItemAction;
+      const { item } = action;
       // trigger a rebuild of the choices list as the item can not be added multiple times
       if (item.id && item.selected) {
-        return [...state];
+        update = true;
       }
 
-      return state;
+      break;
     }
 
     case ActionType.REMOVE_ITEM: {
-      const { item } = action as RemoveItemAction;
+      const { item } = action;
       // trigger a rebuild of the choices list as the item can be added
       if (item.id && !item.selected) {
-        return [...state];
+        update = true;
       }
 
-      return state;
+      break;
     }
 
     case ActionType.FILTER_CHOICES: {
-      const { results } = action as FilterChoicesAction;
+      const { results } = action;
 
+      update = true;
       // avoid O(n^2) algorithm complexity when searching/filtering choices
       const scoreLookup: SearchResult<ChoiceFull>[] = [];
       results.forEach((result) => {
         scoreLookup[result.item.id] = result;
       });
 
-      return state.map((obj) => {
+      state.forEach((obj) => {
         const choice = obj;
         const result = scoreLookup[choice.id];
         if (result !== undefined) {
@@ -83,28 +79,33 @@ export default function choices(
           choice.rank = 0;
           choice.active = false;
         }
-
-        return choice;
       });
+
+      break;
     }
 
     case ActionType.ACTIVATE_CHOICES: {
-      const { active } = action as ActivateChoicesAction;
+      const { active } = action;
 
-      return state.map((obj) => {
+      update = true;
+      state.forEach((obj) => {
         const choice = obj;
         choice.active = active;
 
         return choice;
       });
+      break;
     }
 
     case ActionType.CLEAR_CHOICES: {
-      return [];
+      update = true;
+      state = [];
+      break;
     }
 
-    default: {
-      return state;
-    }
+    default:
+      break;
   }
+
+  return { state, update };
 }
