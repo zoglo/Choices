@@ -41,7 +41,7 @@
     "test:unit:watch": "npm run test:unit -- --watch --inspect=5556",
     "test:unit:coverage": "vitest --config test/vitest.config.ts run --coverage",
     "test:e2e": "run-p --race start cypress:run",
-    "js:watch": "rollup -w --bundleConfigAsCjs -c scripts/configs.mjs --environment OUTPUT_TYPES:umd --environment WATCH_HOST:localhost",
+    "js:watch": "rollup -w --bundleConfigAsCjs -c scripts/configs.mjs --environment TARGET:. --environment OUTPUT_TYPES:umd --environment WATCH_HOST:localhost",
     "js:build": "rollup --bundleConfigAsCjs -c scripts/configs.mjs --environment WITH_D_TS_FILES:1 && mv public/assets/scripts/src public/types/",
     "js:build-dev": "rollup --bundleConfigAsCjs -c scripts/configs.mjs --environment TARGET:. --environment OUTPUT_TYPES:umd",
     "js:build-dev:esm": "rollup --bundleConfigAsCjs -c scripts/configs.mjs --environment TARGET:. --environment OUTPUT_TYPES:mjs",
