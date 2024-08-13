@@ -185,7 +185,7 @@ if (buildConfig.length === 0) {
 } else {
   const localServer = server();
   if (localServer) {
-    buildConfig[0].output[0].plugins.push(localServer)
+    buildConfig[0].plugins.push(localServer)
   }
 }
 
