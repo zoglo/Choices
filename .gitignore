@@ -11,5 +11,7 @@ tests/reports
 tests/results
 .nyc_output
 coverage
-cypress/videos
-cypress/screenshots
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

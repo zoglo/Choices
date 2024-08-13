@@ -38,11 +38,6 @@
   "npm.fetchOnlinePackageInfo": true,
   "eslint.packageManager": "npm",
   "json.schemas": [
-    // Cypress related settings - https://docs.cypress.io/guides/tooling/intelligent-code-completion.html#Features-1
-    {
-      "fileMatch": ["cypress.json"],
-      "url": "https://on.cypress.io/cypress.schema.json"
-    },
     // Husky config file
     {
       "fileMatch": [".huskyrc"],

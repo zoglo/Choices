@@ -19,6 +19,9 @@
 * Restructure end-to-end tests so html/script blocks are co-located to improve debugability
 * Enable `@typescript-eslint/explicit-function-return-type` eslint rule
 
+### Chore
+* Switch e2e tests from `puppeteer`/`selenium`/`cypress` `playwright`
+
 ## [11.0.0-rc6] (2024-08-12)
 
 ### Features

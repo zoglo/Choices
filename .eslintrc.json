@@ -11,8 +11,7 @@
   "env": {
     "es6": true,
     "node": true,
-    "browser": true,
-    "cypress/globals": true
+    "browser": true
   },
   "parserOptions": {
     "sourceType": "module",
@@ -65,6 +64,7 @@
       }
     ],
     "lines-between-class-members": "off",
+    "@typescript-eslint/no-floating-promises": "error",
     "@typescript-eslint/no-namespace": "off",
     "react/jsx-filename-extension": [0],
     "import/extensions": [
@@ -99,16 +99,6 @@
             "leadingUnderscore": "allow"
           }
         ]
-      }
-    },
-    {
-      "files": ["cypress/**"],
-      "plugins": ["cypress"],
-      "rules": {
-        "no-unused-vars": "warn"
-      },
-      "env": {
-        "cypress/globals": true
       }
     }
   ],

@@ -3,20 +3,21 @@
     "module": "es6",
     "lib": ["es2017", "dom"],
     "target": "es5",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "strict": false,
     "noImplicitAny": false,
-    "declaration": true,
     "allowJs": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "strictNullChecks": true,
     "newLine": "lf",
-    "types": ["cypress", "node"],
-    "declarationDir": "../public/types/cypress"
+    "declaration": false,
+    "declarationMap": false,
+    "types": [],
   },
-  "include": ["."]
+  "include": [".", "../src"],
+  "exclude": ["**/node_modules", "**/public"]
 }
