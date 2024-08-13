@@ -83,6 +83,7 @@
     {
       "files": ["*.test.ts", "*.spec.ts"],
       "rules": {
+        "no-await-in-loop": "off",
         "@typescript-eslint/explicit-function-return-type": "off",
         "no-restricted-syntax": "off",
         "compat/compat": "off",
