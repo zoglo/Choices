@@ -62,9 +62,7 @@ describe('components/dropdown', () => {
         width: 0,
       };
 
-      getBoundingClientRectStub = sinon
-        .stub(instance.element, 'getBoundingClientRect')
-        .returns(dimensions);
+      getBoundingClientRectStub = sinon.stub(instance.element, 'getBoundingClientRect').returns(dimensions);
     });
 
     afterEach(() => {

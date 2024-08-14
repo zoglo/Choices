@@ -6,31 +6,20 @@ import { StringPreEscaped } from '../interfaces/string-pre-escaped';
 import { ChoiceFull } from '../interfaces/choice-full';
 import { Types } from '../interfaces/types';
 
-const getRandomNumber = (min: number, max: number): number =>
-  Math.floor(Math.random() * (max - min) + min);
+const getRandomNumber = (min: number, max: number): number => Math.floor(Math.random() * (max - min) + min);
 
 const generateChars = (length: number): string =>
   Array.from({ length }, () => getRandomNumber(0, 36).toString(36)).join('');
 
-export const generateId = (
-  element: HTMLInputElement | HTMLSelectElement,
-  prefix: string,
-): string => {
-  let id =
-    element.id ||
-    (element.name && `${element.name}-${generateChars(2)}`) ||
-    generateChars(4);
+export const generateId = (element: HTMLInputElement | HTMLSelectElement, prefix: string): string => {
+  let id = element.id || (element.name && `${element.name}-${generateChars(2)}`) || generateChars(4);
   id = id.replace(/(:|\.|\[|\]|,)/g, '');
   id = `${prefix}-${id}`;
 
   return id;
 };
 
-export const getAdjacentEl = (
-  startEl: Element,
-  selector: string,
-  direction = 1,
-): Element => {
+export const getAdjacentEl = (startEl: Element, selector: string, direction = 1): Element => {
   const prop = `${direction > 0 ? 'next' : 'previous'}ElementSibling`;
 
   let sibling = startEl[prop];
@@ -44,11 +33,7 @@ export const getAdjacentEl = (
   return sibling;
 };
 
-export const isScrolledIntoView = (
-  element: HTMLElement,
-  parent: HTMLElement,
-  direction = 1,
-): boolean => {
+export const isScrolledIntoView = (element: HTMLElement, parent: HTMLElement, direction = 1): boolean => {
   if (!element) {
     return false;
   }
@@ -57,9 +42,7 @@ export const isScrolledIntoView = (
 
   if (direction > 0) {
     // In view from bottom
-    isVisible =
-      parent.scrollTop + parent.offsetHeight >=
-      element.offsetTop + element.offsetHeight;
+    isVisible = parent.scrollTop + parent.offsetHeight >= element.offsetTop + element.offsetHeight;
   } else {
     // In view from top
     isVisible = element.offsetTop >= parent.scrollTop;
@@ -68,9 +51,7 @@ export const isScrolledIntoView = (
   return isVisible;
 };
 
-export const sanitise = <T>(
-  value: T | StringUntrusted | StringPreEscaped | string,
-): T | string => {
+export const sanitise = <T>(value: T | StringUntrusted | StringPreEscaped | string): T | string => {
   if (typeof value !== 'string') {
     if (value === null || value === undefined) {
       return '';
@@ -111,9 +92,7 @@ export const strToEl = ((): ((str: string) => Element) => {
   };
 })();
 
-export const unwrapStringForRaw = (
-  s?: StringUntrusted | StringPreEscaped | string,
-): string => {
+export const unwrapStringForRaw = (s?: StringUntrusted | StringPreEscaped | string): string => {
   if (typeof s === 'string') {
     return s;
   }
@@ -130,9 +109,7 @@ export const unwrapStringForRaw = (
   return '';
 };
 
-export const unwrapStringForEscaped = (
-  s?: StringUntrusted | StringPreEscaped | string,
-): string => {
+export const unwrapStringForEscaped = (s?: StringUntrusted | StringPreEscaped | string): string => {
   if (typeof s === 'string') {
     return s;
   }
@@ -159,25 +136,15 @@ export const sortByAlpha = (
     numeric: true,
   });
 
-export const sortByScore = (
-  a: Pick<ChoiceFull, 'score'>,
-  b: Pick<ChoiceFull, 'score'>,
-): number => {
+export const sortByScore = (a: Pick<ChoiceFull, 'score'>, b: Pick<ChoiceFull, 'score'>): number => {
   return a.score - b.score;
 };
 
-export const sortByRank = (
-  a: Pick<ChoiceFull, 'rank'>,
-  b: Pick<ChoiceFull, 'rank'>,
-): number => {
+export const sortByRank = (a: Pick<ChoiceFull, 'rank'>, b: Pick<ChoiceFull, 'rank'>): number => {
   return a.rank - b.rank;
 };
 
-export const dispatchEvent = (
-  element: HTMLElement,
-  type: EventType,
-  customArgs: object | null = null,
-): boolean => {
+export const dispatchEvent = (element: HTMLElement, type: EventType, customArgs: object | null = null): boolean => {
   const event = new CustomEvent(type, {
     detail: customArgs,
     bubbles: true,
@@ -187,31 +154,23 @@ export const dispatchEvent = (
   return element.dispatchEvent(event);
 };
 
-export const cloneObject = <T>(obj: T): T =>
-  obj !== undefined ? JSON.parse(JSON.stringify(obj)) : undefined;
+export const cloneObject = <T>(obj: T): T => (obj !== undefined ? JSON.parse(JSON.stringify(obj)) : undefined);
 
 /**
  * Returns an array of keys present on the first but missing on the second object
  */
-export const diff = (
-  a: Record<string, any>,
-  b: Record<string, any>,
-): string[] => {
+export const diff = (a: Record<string, any>, b: Record<string, any>): string[] => {
   const aKeys = Object.keys(a).sort();
   const bKeys = Object.keys(b).sort();
 
   return aKeys.filter((i) => bKeys.indexOf(i) < 0);
 };
 
-export const getClassNames = (
-  ClassNames: Array<string> | string,
-): Array<string> => {
+export const getClassNames = (ClassNames: Array<string> | string): Array<string> => {
   return Array.isArray(ClassNames) ? ClassNames : [ClassNames];
 };
 
-export const getClassNamesSelector = (
-  option: string | Array<string> | null,
-) => {
+export const getClassNamesSelector = (option: string | Array<string> | null) => {
   if (option && Array.isArray(option)) {
     return option
       .map((item) => {
@@ -223,9 +182,7 @@ export const getClassNamesSelector = (
   return `.${option}`;
 };
 
-export const parseCustomProperties = (
-  customProperties?: string,
-): object | string => {
+export const parseCustomProperties = (customProperties?: string): object | string => {
   if (typeof customProperties !== 'undefined') {
     try {
       return JSON.parse(customProperties);

@@ -6,10 +6,7 @@ import { StringUntrusted } from './string-untrusted';
 // eslint-disable-next-line import/no-cycle
 import { Options } from './options';
 
-export type TemplateOptions = Pick<
-  Options,
-  'classNames' | 'allowHTML' | 'removeItemButtonAlignLeft'
->;
+export type TemplateOptions = Pick<Options, 'classNames' | 'allowHTML' | 'removeItemButtonAlignLeft'>;
 
 export type NoticeType = 'no-choices' | 'no-results' | 'add-choice' | '';
 
@@ -26,9 +23,7 @@ export interface Templates {
     labelId: string,
   ): HTMLDivElement;
 
-  containerInner({
-    classNames: { containerInner },
-  }: TemplateOptions): HTMLDivElement;
+  containerInner({ classNames: { containerInner } }: TemplateOptions): HTMLDivElement;
 
   itemList(
     {
@@ -49,13 +44,7 @@ export interface Templates {
     {
       allowHTML,
       removeItemButtonAlignLeft,
-      classNames: {
-        item,
-        button,
-        highlightedState,
-        itemSelectable,
-        placeholder,
-      },
+      classNames: { item, button, highlightedState, itemSelectable, placeholder },
     }: TemplateOptions,
     choice: ChoiceFull,
     removeItemButton: boolean,
@@ -79,15 +68,7 @@ export interface Templates {
   choice(
     {
       allowHTML,
-      classNames: {
-        item,
-        itemChoice,
-        itemSelectable,
-        selectedState,
-        itemDisabled,
-        description,
-        placeholder,
-      },
+      classNames: { item, itemChoice, itemSelectable, selectedState, itemDisabled, description, placeholder },
     }: TemplateOptions,
     choice: ChoiceFull,
     selectText: string,
@@ -100,9 +81,7 @@ export interface Templates {
     placeholderValue: string | null,
   ): HTMLInputElement;
 
-  dropdown({
-    classNames: { list, listDropdown },
-  }: TemplateOptions): HTMLDivElement;
+  dropdown({ classNames: { list, listDropdown } }: TemplateOptions): HTMLDivElement;
 
   notice(
     {

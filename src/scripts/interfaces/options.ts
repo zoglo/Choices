@@ -392,10 +392,7 @@ export interface Options {
    *
    * @default sortByAlpha
    */
-  sorter: (
-    current: Types.RecordToCompare,
-    next: Types.RecordToCompare,
-  ) => number;
+  sorter: (current: Types.RecordToCompare, next: Types.RecordToCompare) => number;
 
   /**
    * Whether the input should show a placeholder. Used in conjunction with `placeholderValue`. If `placeholder` is set to true and no value is passed to `placeholderValue`, the passed input's placeholder attribute will be used as the placeholder value.
@@ -602,12 +599,7 @@ export interface Options {
    *
    * @default null
    */
-  callbackOnCreateTemplates:
-    | ((
-        template: Types.StrToEl,
-        escapeForTemplate: Types.EscapeForTemplateFn,
-      ) => void)
-    | null;
+  callbackOnCreateTemplates: ((template: Types.StrToEl, escapeForTemplate: Types.EscapeForTemplateFn) => void) | null;
 
   appendGroupInSearch: false;
 }

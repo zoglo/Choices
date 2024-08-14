@@ -3,9 +3,7 @@ import { EventType } from '../interfaces/event-type';
 import { dispatchEvent, getClassNames } from '../lib/utils';
 import { EventMap } from '../interfaces';
 
-export default class WrappedElement<
-  T extends HTMLInputElement | HTMLSelectElement,
-> {
+export default class WrappedElement<T extends HTMLInputElement | HTMLSelectElement> {
   element: T;
 
   classNames: ClassNames;
@@ -87,10 +85,7 @@ export default class WrappedElement<
     this.isDisabled = true;
   }
 
-  triggerEvent<K extends EventType>(
-    eventType: EventType,
-    data?: EventMap[K]['detail'],
-  ): void {
+  triggerEvent<K extends EventType>(eventType: EventType, data?: EventMap[K]['detail']): void {
     dispatchEvent(this.element, eventType, data || {});
   }
 }

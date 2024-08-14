@@ -52,10 +52,7 @@ export default class List {
     const elementPos = element.offsetTop + elementHeight;
 
     // Difference between the element and scroll position
-    const destination =
-      direction > 0
-        ? this.element.scrollTop + elementPos - listScrollPosition
-        : element.offsetTop;
+    const destination = direction > 0 ? this.element.scrollTop + elementPos - listScrollPosition : element.offsetTop;
 
     requestAnimationFrame(() => {
       this._animateScroll(destination, direction);

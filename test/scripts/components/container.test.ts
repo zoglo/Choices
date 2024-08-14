@@ -63,30 +63,19 @@ describe('components/container', () => {
   describe('setActiveDescendant', () => {
     it("sets element's aria-activedescendant attribute with passed descendant ID", () => {
       const activeDescendantID = '1234';
-      expect(instance.element.getAttribute('aria-activedescendant')).to.equal(
-        null,
-      );
+      expect(instance.element.getAttribute('aria-activedescendant')).to.equal(null);
       instance.setActiveDescendant(activeDescendantID);
-      expect(instance.element.getAttribute('aria-activedescendant')).to.equal(
-        activeDescendantID,
-      );
+      expect(instance.element.getAttribute('aria-activedescendant')).to.equal(activeDescendantID);
     });
   });
 
   describe('removeActiveDescendant', () => {
     it("remove elememnt's aria-activedescendant attribute", () => {
       const activeDescendantID = '1234';
-      instance.element.setAttribute(
-        'aria-activedescendant',
-        activeDescendantID,
-      );
-      expect(instance.element.getAttribute('aria-activedescendant')).to.equal(
-        activeDescendantID,
-      );
+      instance.element.setAttribute('aria-activedescendant', activeDescendantID);
+      expect(instance.element.getAttribute('aria-activedescendant')).to.equal(activeDescendantID);
       instance.removeActiveDescendant();
-      expect(instance.element.getAttribute('aria-activedescendant')).to.equal(
-        null,
-      );
+      expect(instance.element.getAttribute('aria-activedescendant')).to.equal(null);
     });
   });
 
@@ -96,9 +85,7 @@ describe('components/container', () => {
     });
 
     it('adds open state class', () => {
-      expect(
-        instance.element.classList.contains(DEFAULT_CLASSNAMES.openState),
-      ).to.equal(true);
+      expect(instance.element.classList.contains(DEFAULT_CLASSNAMES.openState)).to.equal(true);
     });
 
     it('sets aria-expanded attribute to true', () => {
@@ -123,9 +110,7 @@ describe('components/container', () => {
       });
 
       it('adds adds flipped state class', () => {
-        expect(
-          instance.element.classList.contains(DEFAULT_CLASSNAMES.flippedState),
-        ).to.equal(true);
+        expect(instance.element.classList.contains(DEFAULT_CLASSNAMES.flippedState)).to.equal(true);
       });
 
       it('sets isFlipped flag to true', () => {
@@ -140,9 +125,7 @@ describe('components/container', () => {
     });
 
     it('adds open state class', () => {
-      expect(
-        instance.element.classList.contains(DEFAULT_CLASSNAMES.openState),
-      ).to.equal(false);
+      expect(instance.element.classList.contains(DEFAULT_CLASSNAMES.openState)).to.equal(false);
     });
 
     it('sets aria-expanded attribute to true', () => {
@@ -160,9 +143,7 @@ describe('components/container', () => {
       });
 
       it('removes adds flipped state class', () => {
-        expect(
-          instance.element.classList.contains(DEFAULT_CLASSNAMES.flippedState),
-        ).to.equal(false);
+        expect(instance.element.classList.contains(DEFAULT_CLASSNAMES.flippedState)).to.equal(false);
       });
 
       it('sets isFlipped flag to false', () => {
@@ -177,13 +158,9 @@ describe('components/container', () => {
     });
 
     it('adds focus state class', () => {
-      expect(
-        instance.element.classList.contains(DEFAULT_CLASSNAMES.focusState),
-      ).to.equal(false);
+      expect(instance.element.classList.contains(DEFAULT_CLASSNAMES.focusState)).to.equal(false);
       instance.addFocusState();
-      expect(
-        instance.element.classList.contains(DEFAULT_CLASSNAMES.focusState),
-      ).to.equal(true);
+      expect(instance.element.classList.contains(DEFAULT_CLASSNAMES.focusState)).to.equal(true);
     });
   });
 
@@ -193,13 +170,9 @@ describe('components/container', () => {
     });
 
     it('removes focus state class', () => {
-      expect(
-        instance.element.classList.contains(DEFAULT_CLASSNAMES.focusState),
-      ).to.equal(true);
+      expect(instance.element.classList.contains(DEFAULT_CLASSNAMES.focusState)).to.equal(true);
       instance.removeFocusState();
-      expect(
-        instance.element.classList.contains(DEFAULT_CLASSNAMES.focusState),
-      ).to.equal(false);
+      expect(instance.element.classList.contains(DEFAULT_CLASSNAMES.focusState)).to.equal(false);
     });
   });
 
@@ -209,13 +182,9 @@ describe('components/container', () => {
     });
 
     it('removes disabled state class', () => {
-      expect(
-        instance.element.classList.contains(DEFAULT_CLASSNAMES.disabledState),
-      ).to.equal(true);
+      expect(instance.element.classList.contains(DEFAULT_CLASSNAMES.disabledState)).to.equal(true);
       instance.enable();
-      expect(
-        instance.element.classList.contains(DEFAULT_CLASSNAMES.disabledState),
-      ).to.equal(false);
+      expect(instance.element.classList.contains(DEFAULT_CLASSNAMES.disabledState)).to.equal(false);
     });
 
     it('removes aria-disabled attribute', () => {
@@ -247,13 +216,9 @@ describe('components/container', () => {
     });
 
     it('removes disabled state class', () => {
-      expect(
-        instance.element.classList.contains(DEFAULT_CLASSNAMES.disabledState),
-      ).to.equal(false);
+      expect(instance.element.classList.contains(DEFAULT_CLASSNAMES.disabledState)).to.equal(false);
       instance.disable();
-      expect(
-        instance.element.classList.contains(DEFAULT_CLASSNAMES.disabledState),
-      ).to.equal(true);
+      expect(instance.element.classList.contains(DEFAULT_CLASSNAMES.disabledState)).to.equal(true);
     });
 
     it('removes aria-disabled attribute', () => {
@@ -295,9 +260,7 @@ describe('components/container', () => {
     it('wraps passed element inside element', () => {
       expect(instance.element.querySelector('div#wrap-test')).to.equal(null);
       instance.wrap(document.querySelector('div#wrap-test'));
-      expect(instance.element.querySelector('div#wrap-test')).to.equal(
-        elementToWrap,
-      );
+      expect(instance.element.querySelector('div#wrap-test')).to.equal(elementToWrap);
     });
   });
 
@@ -316,14 +279,10 @@ describe('components/container', () => {
     });
 
     it('moves wrapped element outside of element', () => {
-      expect(
-        instance.element.querySelector('div#unwrap-test'),
-      ).to.be.instanceof(HTMLElement);
+      expect(instance.element.querySelector('div#unwrap-test')).to.be.instanceof(HTMLElement);
       instance.unwrap(elementToUnwrap);
       expect(instance.element.querySelector('div#unwrap-test')).to.equal(null);
-      expect(document.querySelector('div#unwrap-test')).to.be.instanceof(
-        HTMLElement,
-      );
+      expect(document.querySelector('div#unwrap-test')).to.be.instanceof(HTMLElement);
     });
 
     it('removes element from DOM', () => {
@@ -339,13 +298,9 @@ describe('components/container', () => {
     });
 
     it('adds loading state class', () => {
-      expect(
-        instance.element.classList.contains(DEFAULT_CLASSNAMES.loadingState),
-      ).to.equal(false);
+      expect(instance.element.classList.contains(DEFAULT_CLASSNAMES.loadingState)).to.equal(false);
       instance.addLoadingState();
-      expect(
-        instance.element.classList.contains(DEFAULT_CLASSNAMES.loadingState),
-      ).to.equal(true);
+      expect(instance.element.classList.contains(DEFAULT_CLASSNAMES.loadingState)).to.equal(true);
     });
 
     it('sets aria-busy attribute to true', () => {
@@ -367,13 +322,9 @@ describe('components/container', () => {
     });
 
     it('removes loading state class', () => {
-      expect(
-        instance.element.classList.contains(DEFAULT_CLASSNAMES.loadingState),
-      ).to.equal(true);
+      expect(instance.element.classList.contains(DEFAULT_CLASSNAMES.loadingState)).to.equal(true);
       instance.removeLoadingState();
-      expect(
-        instance.element.classList.contains(DEFAULT_CLASSNAMES.loadingState),
-      ).to.equal(false);
+      expect(instance.element.classList.contains(DEFAULT_CLASSNAMES.loadingState)).to.equal(false);
     });
 
     it('removes aria-busy attribute', () => {

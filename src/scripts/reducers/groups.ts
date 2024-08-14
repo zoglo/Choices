@@ -7,10 +7,7 @@ import { ChoiceActions } from '../actions/choices';
 type ActionTypes = ChoiceActions | GroupActions;
 type StateType = State['groups'];
 
-export default function groups(
-  s: StateType,
-  action: ActionTypes,
-): StateUpdate<StateType> {
+export default function groups(s: StateType, action: ActionTypes): StateUpdate<StateType> {
   let state = s;
   let update = false;
 

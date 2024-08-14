@@ -46,10 +46,7 @@ describe('components/input', () => {
     it('adds event listeners', () => {
       instance.addEventListeners();
       expect(['input', 'paste', 'focus', 'blur']).to.have.members(
-        Array.from(
-          { length: addEventListenerStub.callCount },
-          (_, i) => addEventListenerStub.getCall(i).args[0],
-        ),
+        Array.from({ length: addEventListenerStub.callCount }, (_, i) => addEventListenerStub.getCall(i).args[0]),
       );
     });
   });
@@ -315,30 +312,19 @@ describe('components/input', () => {
   describe('setActiveDescendant', () => {
     it("sets element's aria-activedescendant attribute with passed descendant ID", () => {
       const activeDescendantID = '1234';
-      expect(instance.element.getAttribute('aria-activedescendant')).to.equal(
-        null,
-      );
+      expect(instance.element.getAttribute('aria-activedescendant')).to.equal(null);
       instance.setActiveDescendant(activeDescendantID);
-      expect(instance.element.getAttribute('aria-activedescendant')).to.equal(
-        activeDescendantID,
-      );
+      expect(instance.element.getAttribute('aria-activedescendant')).to.equal(activeDescendantID);
     });
   });
 
   describe('removeActiveDescendant', () => {
     it("remove elememnt's aria-activedescendant attribute", () => {
       const activeDescendantID = '1234';
-      instance.element.setAttribute(
-        'aria-activedescendant',
-        activeDescendantID,
-      );
-      expect(instance.element.getAttribute('aria-activedescendant')).to.equal(
-        activeDescendantID,
-      );
+      instance.element.setAttribute('aria-activedescendant', activeDescendantID);
+      expect(instance.element.getAttribute('aria-activedescendant')).to.equal(activeDescendantID);
       instance.removeActiveDescendant();
-      expect(instance.element.getAttribute('aria-activedescendant')).to.equal(
-        null,
-      );
+      expect(instance.element.getAttribute('aria-activedescendant')).to.equal(null);
     });
   });
 });

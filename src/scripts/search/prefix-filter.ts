@@ -30,13 +30,7 @@ export class SearchByPrefixFilter<T extends object> implements Searcher<T> {
     const needle = _needle.toLowerCase();
 
     return this._haystack
-      .filter((obj) =>
-        fields.some(
-          (field) =>
-            field in obj &&
-            (obj[field] as string).toLowerCase().startsWith(needle),
-        ),
-      )
+      .filter((obj) => fields.some((field) => field in obj && (obj[field] as string).toLowerCase().startsWith(needle)))
       .map((value, index): SearchResult<T> => {
         return {
           item: value,

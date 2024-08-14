@@ -4,10 +4,7 @@ import { beforeEach } from 'vitest';
 import Store from '../../../src/scripts/store/store';
 import { ActionType, State } from '../../../src';
 import { cloneObject } from '../../../src/scripts/lib/utils';
-import {
-  AnyAction,
-  StoreListener,
-} from '../../../src/scripts/interfaces/store';
+import { AnyAction, StoreListener } from '../../../src/scripts/interfaces/store';
 
 describe('reducers/store', () => {
   let instance: Store;
@@ -251,9 +248,7 @@ describe('reducers/store', () => {
 
     describe('highlightedActiveItems getter', () => {
       it('returns items that are active and highlighted', () => {
-        const expectedResponse = state.items.filter(
-          (item) => item.highlighted && item.active,
-        );
+        const expectedResponse = state.items.filter((item) => item.highlighted && item.active);
         expect(instance.highlightedActiveItems).to.deep.equal(expectedResponse);
       });
     });
@@ -267,18 +262,14 @@ describe('reducers/store', () => {
 
     describe('activeChoices getter', () => {
       it('returns choices that are active', () => {
-        const expectedResponse = state.choices.filter(
-          (choice) => choice.active,
-        );
+        const expectedResponse = state.choices.filter((choice) => choice.active);
         expect(instance.activeChoices).to.deep.equal(expectedResponse);
       });
     });
 
     describe('searchableChoices getter', () => {
       it('returns choices that are not placeholders and are selectable', () => {
-        const expectedResponse = state.choices.filter(
-          (choice) => !choice.disabled && !choice.placeholder,
-        );
+        const expectedResponse = state.choices.filter((choice) => !choice.disabled && !choice.placeholder);
         expect(instance.searchableChoices).to.deep.equal(expectedResponse);
       });
     });
@@ -287,9 +278,7 @@ describe('reducers/store', () => {
       describe('passing id', () => {
         it('returns active choice by passed id', () => {
           const id: number = 1;
-          const expectedResponse = state.choices.find(
-            (choice) => choice.id === id,
-          );
+          const expectedResponse = state.choices.find((choice) => choice.id === id);
           const actualResponse = instance.getChoiceById(id);
           expect(actualResponse).to.deep.equal(expectedResponse);
         });

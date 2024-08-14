@@ -9,22 +9,11 @@ import { GroupFull } from './interfaces/group-full';
 import { PassedElementType } from './interfaces/passed-element-type';
 import { StringPreEscaped } from './interfaces/string-pre-escaped';
 import { StringUntrusted } from './interfaces/string-untrusted';
-import {
-  getClassNames,
-  sanitise,
-  unwrapStringForRaw,
-  unwrapStringForEscaped,
-} from './lib/utils';
-import {
-  NoticeType,
-  TemplateOptions,
-  Templates as TemplatesInterface,
-} from './interfaces/templates';
+import { getClassNames, sanitise, unwrapStringForRaw, unwrapStringForEscaped } from './lib/utils';
+import { NoticeType, TemplateOptions, Templates as TemplatesInterface } from './interfaces/templates';
 
-export const escapeForTemplate = (
-  allowHTML: boolean,
-  s: StringUntrusted | StringPreEscaped | string,
-): string => (allowHTML ? unwrapStringForEscaped(s) : (sanitise(s) as string));
+export const escapeForTemplate = (allowHTML: boolean, s: StringUntrusted | StringPreEscaped | string): string =>
+  allowHTML ? unwrapStringForEscaped(s) : (sanitise(s) as string);
 
 const isEmptyObject = (obj: object): boolean => {
   // eslint-disable-next-line no-restricted-syntax
@@ -37,10 +26,7 @@ const isEmptyObject = (obj: object): boolean => {
   return true;
 };
 
-const assignCustomProperties = (
-  el: HTMLElement,
-  customProperties?: CustomProperties,
-): void => {
+const assignCustomProperties = (el: HTMLElement, customProperties?: CustomProperties): void => {
   if (!customProperties) {
     return;
   }
@@ -48,10 +34,7 @@ const assignCustomProperties = (
 
   if (typeof customProperties === 'string') {
     dataset.customProperties = customProperties;
-  } else if (
-    typeof customProperties === 'object' &&
-    !isEmptyObject(customProperties)
-  ) {
+  } else if (typeof customProperties === 'object' && !isEmptyObject(customProperties)) {
     dataset.customProperties = JSON.stringify(customProperties);
   }
 };
@@ -96,9 +79,7 @@ const templates: TemplatesInterface = {
     return div;
   },
 
-  containerInner({
-    classNames: { containerInner },
-  }: TemplateOptions): HTMLDivElement {
+  containerInner({ classNames: { containerInner } }: TemplateOptions): HTMLDivElement {
     return Object.assign(document.createElement('div'), {
       className: getClassNames(containerInner).join(' '),
     });
@@ -109,11 +90,7 @@ const templates: TemplatesInterface = {
     isSelectOneElement: boolean,
   ): HTMLDivElement {
     return Object.assign(document.createElement('div'), {
-      className: `${getClassNames(list).join(' ')} ${
-        isSelectOneElement
-          ? getClassNames(listSingle).join(' ')
-          : getClassNames(listItems).join(' ')
-      }`,
+      className: `${getClassNames(list).join(' ')} ${isSelectOneElement ? getClassNames(listSingle).join(' ') : getClassNames(listItems).join(' ')}`,
     });
   },
 
@@ -131,13 +108,7 @@ const templates: TemplatesInterface = {
     {
       allowHTML,
       removeItemButtonAlignLeft,
-      classNames: {
-        item,
-        button,
-        highlightedState,
-        itemSelectable,
-        placeholder,
-      },
+      classNames: { item, button, highlightedState, itemSelectable, placeholder },
     }: TemplateOptions,
     {
       id,
@@ -194,11 +165,7 @@ const templates: TemplatesInterface = {
       div.dataset.placeholder = '';
     }
 
-    div.classList.add(
-      ...(highlighted
-        ? getClassNames(highlightedState)
-        : getClassNames(itemSelectable)),
-    );
+    div.classList.add(...(highlighted ? getClassNames(highlightedState) : getClassNames(itemSelectable)));
 
     if (removeItemButton) {
       if (disabled) {
@@ -233,10 +200,7 @@ const templates: TemplatesInterface = {
     return div;
   },
 
-  choiceList(
-    { classNames: { list } }: TemplateOptions,
-    isSelectOneElement: boolean,
-  ): HTMLDivElement {
+  choiceList({ classNames: { list } }: TemplateOptions, isSelectOneElement: boolean): HTMLDivElement {
     const div = Object.assign(document.createElement('div'), {
       className: getClassNames(list).join(' '),
     });
@@ -250,16 +214,11 @@ const templates: TemplatesInterface = {
   },
 
   choiceGroup(
-    {
-      allowHTML,
-      classNames: { group, groupHeading, itemDisabled },
-    }: TemplateOptions,
+    { allowHTML, classNames: { group, groupHeading, itemDisabled } }: TemplateOptions,
     { id, label, disabled }: GroupFull,
   ): HTMLDivElement {
     const div = Object.assign(document.createElement('div'), {
-      className: `${getClassNames(group).join(' ')} ${
-        disabled ? getClassNames(itemDisabled).join(' ') : ''
-      }`,
+      className: `${getClassNames(group).join(' ')} ${disabled ? getClassNames(itemDisabled).join(' ') : ''}`,
     });
 
     div.setAttribute('role', 'group');
@@ -287,15 +246,7 @@ const templates: TemplatesInterface = {
   choice(
     {
       allowHTML,
-      classNames: {
-        item,
-        itemChoice,
-        itemSelectable,
-        selectedState,
-        itemDisabled,
-        description,
-        placeholder,
-      },
+      classNames: { item, itemChoice, itemSelectable, selectedState, itemDisabled, description, placeholder },
     }: TemplateOptions,
     {
       id,
@@ -313,9 +264,7 @@ const templates: TemplatesInterface = {
   ): HTMLDivElement {
     const div = Object.assign(document.createElement('div'), {
       id: elementId,
-      className: `${getClassNames(item).join(' ')} ${getClassNames(
-        itemChoice,
-      ).join(' ')}`,
+      className: `${getClassNames(item).join(' ')} ${getClassNames(itemChoice).join(' ')}`,
     });
 
     let describedBy: HTMLElement = div;
@@ -376,15 +325,10 @@ const templates: TemplatesInterface = {
     return div;
   },
 
-  input(
-    { classNames: { input, inputCloned } }: TemplateOptions,
-    placeholderValue: string | null,
-  ): HTMLInputElement {
+  input({ classNames: { input, inputCloned } }: TemplateOptions, placeholderValue: string | null): HTMLInputElement {
     const inp = Object.assign(document.createElement('input'), {
       type: 'search',
-      className: `${getClassNames(input).join(' ')} ${getClassNames(
-        inputCloned,
-      ).join(' ')}`,
+      className: `${getClassNames(input).join(' ')} ${getClassNames(inputCloned).join(' ')}`,
       autocomplete: 'off',
       autocapitalize: 'off',
       spellcheck: false,
@@ -399,9 +343,7 @@ const templates: TemplatesInterface = {
     return inp;
   },
 
-  dropdown({
-    classNames: { list, listDropdown },
-  }: TemplateOptions): HTMLDivElement {
+  dropdown({ classNames: { list, listDropdown } }: TemplateOptions): HTMLDivElement {
     const div = document.createElement('div');
 
     div.classList.add(...getClassNames(list));
@@ -412,10 +354,7 @@ const templates: TemplatesInterface = {
   },
 
   notice(
-    {
-      allowHTML,
-      classNames: { item, itemChoice, addChoice, noResults, noChoices },
-    }: TemplateOptions,
+    { allowHTML, classNames: { item, itemChoice, addChoice, noResults, noChoices } }: TemplateOptions,
     innerText: StringUntrusted | StringPreEscaped | string,
     type: NoticeType = '',
   ): HTMLDivElement {

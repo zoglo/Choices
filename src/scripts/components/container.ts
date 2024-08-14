@@ -51,8 +51,7 @@ export default class Container {
     // greater than the window height flip the dropdown.
     let shouldFlip = false;
     if (this.position === 'auto') {
-      shouldFlip = !window.matchMedia(`(min-height: ${dropdownPos + 1}px)`)
-        .matches;
+      shouldFlip = !window.matchMedia(`(min-height: ${dropdownPos + 1}px)`).matches;
     } else if (this.position === 'top') {
       shouldFlip = true;
     }
@@ -74,9 +73,7 @@ export default class Container {
     this.isOpen = true;
 
     if (this.shouldFlip(dropdownPos)) {
-      this.element.classList.add(
-        ...getClassNames(this.classNames.flippedState),
-      );
+      this.element.classList.add(...getClassNames(this.classNames.flippedState));
       this.isFlipped = true;
     }
   }
@@ -89,9 +86,7 @@ export default class Container {
 
     // A dropdown flips if it does not have space within the page
     if (this.isFlipped) {
-      this.element.classList.remove(
-        ...getClassNames(this.classNames.flippedState),
-      );
+      this.element.classList.remove(...getClassNames(this.classNames.flippedState));
       this.isFlipped = false;
     }
   }
@@ -109,9 +104,7 @@ export default class Container {
   }
 
   enable(): void {
-    this.element.classList.remove(
-      ...getClassNames(this.classNames.disabledState),
-    );
+    this.element.classList.remove(...getClassNames(this.classNames.disabledState));
     this.element.removeAttribute('aria-disabled');
     if (this.type === SELECT_ONE_TYPE) {
       this.element.setAttribute('tabindex', '0');
@@ -156,9 +149,7 @@ export default class Container {
   }
 
   removeLoadingState(): void {
-    this.element.classList.remove(
-      ...getClassNames(this.classNames.loadingState),
-    );
+    this.element.classList.remove(...getClassNames(this.classNames.loadingState));
     this.element.removeAttribute('aria-busy');
     this.isLoading = false;
   }

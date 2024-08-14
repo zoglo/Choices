@@ -102,15 +102,11 @@ describe('components/wrappedElement', () => {
 
       const classesToCheck = getClassNames(instance.classNames.input);
       expect(
-        Array.from(instance.element.classList).some(
-          (className) => classesToCheck.indexOf(className) !== -1,
-        ),
+        Array.from(instance.element.classList).some((className) => classesToCheck.indexOf(className) !== -1),
       ).to.equal(true);
       expect(instance.element.hidden).to.be.true;
       expect(instance.element.getAttribute('data-choice')).to.equal('active');
-      expect(instance.element.getAttribute('data-choice-orig-style')).to.equal(
-        originalStyling,
-      );
+      expect(instance.element.getAttribute('data-choice-orig-style')).to.equal(originalStyling);
     });
   });
 
@@ -136,17 +132,13 @@ describe('components/wrappedElement', () => {
 
       const classesToCheck = getClassNames(instance.classNames.input);
       expect(
-        Array.from(instance.element.classList).some(
-          (className) => classesToCheck.indexOf(className) !== -1,
-        ),
+        Array.from(instance.element.classList).some((className) => classesToCheck.indexOf(className) !== -1),
       ).to.equal(false);
       expect(instance.element.hidden).to.be.false;
       expect(instance.element.getAttribute('style')).to.equal(originalStyling);
       expect(instance.element.getAttribute('aria-hidden')).to.equal(null);
       expect(instance.element.getAttribute('data-choice')).to.equal(null);
-      expect(instance.element.getAttribute('data-choice-orig-style')).to.equal(
-        null,
-      );
+      expect(instance.element.getAttribute('data-choice-orig-style')).to.equal(null);
     });
   });
 
@@ -241,13 +233,10 @@ describe('components/wrappedElement', () => {
           return;
         }
 
-        instance.element.addEventListener(
-          EventType.change,
-          ({ detail }: CustomEvent) => {
-            expect(detail).to.deep.equal(data);
-            done(true);
-          },
-        );
+        instance.element.addEventListener(EventType.change, ({ detail }: CustomEvent) => {
+          expect(detail).to.deep.equal(data);
+          done(true);
+        });
 
         instance.triggerEvent(EventType.change, data);
       }));

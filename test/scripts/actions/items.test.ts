@@ -38,9 +38,7 @@ describe('actions/items', () => {
         item,
       };
 
-      expect(actions.removeItem(cloneObject(item))).to.deep.equal(
-        expectedAction,
-      );
+      expect(actions.removeItem(cloneObject(item))).to.deep.equal(expectedAction);
     });
   });
 
@@ -53,9 +51,7 @@ describe('actions/items', () => {
         highlighted,
       };
 
-      expect(
-        actions.highlightItem(cloneObject(item), highlighted),
-      ).to.deep.equal(expectedAction);
+      expect(actions.highlightItem(cloneObject(item), highlighted)).to.deep.equal(expectedAction);
     });
   });
 });

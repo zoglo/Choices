@@ -4,11 +4,11 @@ import { GroupFull } from '../interfaces/group-full';
 import { ChoiceFull } from '../interfaces/choice-full';
 import { unwrapStringForRaw } from './utils';
 
-type MappedInputTypeToChoiceType<T extends string | InputChoice | InputGroup> =
-  T extends InputGroup ? GroupFull : ChoiceFull;
+type MappedInputTypeToChoiceType<T extends string | InputChoice | InputGroup> = T extends InputGroup
+  ? GroupFull
+  : ChoiceFull;
 
-const coerceBool = (arg: unknown, defaultValue: boolean = true) =>
-  typeof arg === 'undefined' ? defaultValue : !!arg;
+const coerceBool = (arg: unknown, defaultValue: boolean = true) => (typeof arg === 'undefined' ? defaultValue : !!arg);
 
 export const stringToHtmlClass = (input): string[] | undefined => {
   if (typeof input === 'string') {

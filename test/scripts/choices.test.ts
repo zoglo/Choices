@@ -2,18 +2,8 @@ import { expect } from 'chai';
 import { spy, stub } from 'sinon';
 
 import sinonChai from 'sinon-chai';
-import Choices, {
-  DEFAULT_CONFIG,
-  ActionType,
-  EventType,
-  KeyCodeMap,
-  InputChoice,
-  InputGroup,
-} from '../../src';
-import {
-  WrappedSelect,
-  WrappedInput,
-} from '../../src/scripts/components/index';
+import Choices, { DEFAULT_CONFIG, ActionType, EventType, KeyCodeMap, InputChoice, InputGroup } from '../../src';
+import { WrappedSelect, WrappedInput } from '../../src/scripts/components/index';
 import { removeItem } from '../../src/scripts/actions/items';
 import templates from '../../src/scripts/templates';
 import { ChoiceFull } from '../../src/scripts/interfaces/choice-full';
@@ -274,9 +264,7 @@ describe('choices', () => {
           document.body.innerHTML = `
           <div data-choice id="div-1"></div>
           `;
-          expect(
-            () => new Choices('[data-choice]', { allowHTML: true }),
-          ).to.throw(
+          expect(() => new Choices('[data-choice]', { allowHTML: true })).to.throw(
             TypeError,
             'Expected one of the following types text|select-one|select-multiple',
           );
@@ -421,9 +409,7 @@ describe('choices', () => {
 
         it('reverts outer container', () => {
           expect(containerOuterUnwrapSpy.called).to.equal(true);
-          expect(containerOuterUnwrapSpy.lastCall.args[0]).to.equal(
-            instance.passedElement.element,
-          );
+          expect(containerOuterUnwrapSpy.lastCall.args[0]).to.equal(instance.passedElement.element);
         });
 
         it('clears store', () => {
@@ -630,11 +616,8 @@ describe('choices', () => {
           new Promise((done) => {
             requestAnimationFrame(() => {
               expect(passedElementTriggerEventStub.called).to.equal(true);
-              expect(
-                passedElementTriggerEventStub.lastCall.args[0],
-              ).to.deep.equal(EventType.showDropdown);
-              expect(passedElementTriggerEventStub.lastCall.args[1]).to
-                .undefined;
+              expect(passedElementTriggerEventStub.lastCall.args[0]).to.deep.equal(EventType.showDropdown);
+              expect(passedElementTriggerEventStub.lastCall.args[1]).to.undefined;
               done(true);
             });
           }));
@@ -668,10 +651,7 @@ describe('choices', () => {
         containerOuterCloseSpy = spy(instance.containerOuter, 'close');
         dropdownHideSpy = spy(instance.dropdown, 'hide');
         inputBlurSpy = spy(instance.input, 'blur');
-        inputRemoveActiveDescendantSpy = spy(
-          instance.input,
-          'removeActiveDescendant',
-        );
+        inputRemoveActiveDescendantSpy = spy(instance.input, 'removeActiveDescendant');
         passedElementTriggerEventStub = stub();
 
         instance.passedElement.triggerEvent = passedElementTriggerEventStub;
@@ -733,11 +713,8 @@ describe('choices', () => {
           new Promise((done) => {
             requestAnimationFrame(() => {
               expect(passedElementTriggerEventStub.called).to.equal(true);
-              expect(
-                passedElementTriggerEventStub.lastCall.args[0],
-              ).to.deep.equal(EventType.hideDropdown);
-              expect(passedElementTriggerEventStub.lastCall.args[1]).to
-                .undefined;
+              expect(passedElementTriggerEventStub.lastCall.args[0]).to.deep.equal(EventType.hideDropdown);
+              expect(passedElementTriggerEventStub.lastCall.args[1]).to.undefined;
               done(true);
             });
           }));
@@ -852,9 +829,7 @@ describe('choices', () => {
 
           it('triggers event with null groupValue', () => {
             expect(passedElementTriggerEventStub.called).to.equal(true);
-            expect(passedElementTriggerEventStub.lastCall.args[0]).to.equal(
-              EventType.highlightItem,
-            );
+            expect(passedElementTriggerEventStub.lastCall.args[0]).to.equal(EventType.highlightItem);
             expect(passedElementTriggerEventStub.lastCall.args[1]).to.contains({
               id: item.id,
               value: item.value,
@@ -872,9 +847,7 @@ describe('choices', () => {
 
           it('triggers event with groupValue', () => {
             expect(passedElementTriggerEventStub.called).to.equal(true);
-            expect(passedElementTriggerEventStub.lastCall.args[0]).to.equal(
-              EventType.highlightItem,
-            );
+            expect(passedElementTriggerEventStub.lastCall.args[0]).to.equal(EventType.highlightItem);
             expect(passedElementTriggerEventStub.lastCall.args[1]).to.contains({
               id: item.id,
               value: item.value,
@@ -984,9 +957,7 @@ describe('choices', () => {
 
           it('triggers event with null groupValue', () => {
             expect(passedElementTriggerEventStub.called).to.equal(true);
-            expect(passedElementTriggerEventStub.lastCall.args[0]).to.equal(
-              EventType.highlightItem,
-            );
+            expect(passedElementTriggerEventStub.lastCall.args[0]).to.equal(EventType.highlightItem);
             expect(passedElementTriggerEventStub.lastCall.args[1]).to.contains({
               value: item.value,
               label: item.label,
@@ -1003,9 +974,7 @@ describe('choices', () => {
 
           it('triggers event with groupValue', () => {
             expect(passedElementTriggerEventStub.called).to.equal(true);
-            expect(passedElementTriggerEventStub.lastCall.args[0]).to.equal(
-              EventType.highlightItem,
-            );
+            expect(passedElementTriggerEventStub.lastCall.args[0]).to.equal(EventType.highlightItem);
             expect(passedElementTriggerEventStub.lastCall.args[1]).to.contains({
               value: item.value,
               label: item.label,
@@ -1241,10 +1210,7 @@ describe('choices', () => {
         });
 
         it(`should throw on function that doesn't return promise`, () => {
-          expect(() => instance.setChoices(() => 'boo')).to.throw(
-            TypeError,
-            /promise/i,
-          );
+          expect(() => instance.setChoices(() => 'boo')).to.throw(TypeError, /promise/i);
         });
       });
 
@@ -1335,9 +1301,7 @@ describe('choices', () => {
           expect(_addChoiceStub.firstCall.args[0]).to.be.a('object');
           expect(_addChoiceStub.secondCall.args[0]).to.be.a('object');
           expect(value1).to.equal(_addChoiceStub.firstCall.args[0].value);
-          expect(value2.value).to.equal(
-            _addChoiceStub.secondCall.args[0].value,
-          );
+          expect(value2.value).to.equal(_addChoiceStub.secondCall.args[0].value);
         });
       });
     });
@@ -1395,9 +1359,7 @@ describe('choices', () => {
 
           it('sets each choice with same value', () => {
             expect(findAndSelectChoiceByValueStub.called).to.equal(true);
-            expect(findAndSelectChoiceByValueStub.firstCall.args[0]).to.equal(
-              value,
-            );
+            expect(findAndSelectChoiceByValueStub.firstCall.args[0]).to.equal(value);
           });
         });
 
@@ -1414,12 +1376,8 @@ describe('choices', () => {
 
           it('sets each choice with same value', () => {
             expect(findAndSelectChoiceByValueStub.callCount).to.equal(2);
-            expect(findAndSelectChoiceByValueStub.firstCall.args[0]).to.equal(
-              values[0],
-            );
-            expect(findAndSelectChoiceByValueStub.secondCall.args[0]).to.equal(
-              values[1],
-            );
+            expect(findAndSelectChoiceByValueStub.firstCall.args[0]).to.equal(values[0]);
+            expect(findAndSelectChoiceByValueStub.secondCall.args[0]).to.equal(values[1]);
           });
         });
       });
@@ -1692,10 +1650,7 @@ describe('choices', () => {
       ];
 
       beforeEach(() => {
-        highlightedActiveItemsStub = stub(
-          instance._store,
-          'highlightedActiveItems',
-        ).get(() => items);
+        highlightedActiveItemsStub = stub(instance._store, 'highlightedActiveItems').get(() => items);
         removeItemStub = stub();
         triggerChangeStub = stub();
 
@@ -1781,8 +1736,7 @@ describe('choices', () => {
         instance.clearChoices = clearChoicesStub;
         instance._addGroup = addGroupStub;
         instance._addChoice = addChoiceStub;
-        instance.containerOuter.removeLoadingState =
-          containerOuterRemoveLoadingStateStub;
+        instance.containerOuter.removeLoadingState = containerOuterRemoveLoadingStateStub;
       });
 
       afterEach(() => {
@@ -1798,9 +1752,7 @@ describe('choices', () => {
         });
 
         it('throws', () => {
-          expect(() =>
-            instance.setChoices(choices, value, label, false),
-          ).to.throw(TypeError, /input/i);
+          expect(() => instance.setChoices(choices, value, label, false)).to.throw(TypeError, /input/i);
         });
       });
 
@@ -1811,9 +1763,7 @@ describe('choices', () => {
           });
 
           it('throws', () => {
-            expect(() =>
-              instance.setChoices(choices, null, 'label', false),
-            ).to.throw(TypeError, /value/i);
+            expect(() => instance.setChoices(choices, null, 'label', false)).to.throw(TypeError, /value/i);
           });
         });
       });
@@ -1928,8 +1878,7 @@ describe('choices', () => {
         });
         it('details are passed', () =>
           new Promise((done) => {
-            const query =
-              'This is a <search> query & a "test" with characters that should not be sanitised.';
+            const query = 'This is a <search> query & a "test" with characters that should not be sanitised.';
 
             instance.input.value = query;
             instance.input.focus();
@@ -1975,16 +1924,13 @@ describe('choices', () => {
             instance.config.searchFloor = 0;
             instance.input.value = 'qwerty';
             instance.input.focus();
-            instance.passedElement.element.addEventListener(
-              'search',
-              (event) => {
-                expect(event.detail).to.contains({
-                  value: instance.input.value,
-                  resultCount: 0,
-                });
-                done(true);
-              },
-            );
+            instance.passedElement.element.addEventListener('search', (event) => {
+              expect(event.detail).to.contains({
+                value: instance.input.value,
+                resultCount: 0,
+              });
+              done(true);
+            });
 
             instance._onKeyUp({ target: null, keyCode: null });
             instance._onInput({ target: null });
@@ -1997,8 +1943,7 @@ describe('choices', () => {
         });
         it('details are passed', () =>
           new Promise((done) => {
-            const query =
-              'This is a <search> query & a "test" with characters that should not be sanitised.';
+            const query = 'This is a <search> query & a "test" with characters that should not be sanitised.';
 
             instance.input.value = query;
             instance.input.focus();
@@ -2023,16 +1968,13 @@ describe('choices', () => {
             instance.config.searchFloor = 0;
             instance.input.value = 'qwerty';
             instance.input.focus();
-            instance.passedElement.element.addEventListener(
-              'search',
-              (event) => {
-                expect(event.detail).to.contains({
-                  value: instance.input.value,
-                  resultCount: 0,
-                });
-                done(true);
-              },
-            );
+            instance.passedElement.element.addEventListener('search', (event) => {
+              expect(event.detail).to.contains({
+                value: instance.input.value,
+                resultCount: 0,
+              });
+              done(true);
+            });
 
             instance._onKeyUp({ target: null, keyCode: null });
             instance._onInput({ target: null });
@@ -2124,12 +2066,8 @@ describe('choices', () => {
             elementToWrapFragment.appendChild(output);
 
             expect(output).to.be.instanceOf(DocumentFragment);
-            expect(elementToWrapFragment.children[0]).to.deep.equal(
-              childElement,
-            );
-            expect(
-              elementToWrapFragment.querySelectorAll('[data-group]').length,
-            ).to.equal(2);
+            expect(elementToWrapFragment.children[0]).to.deep.equal(childElement);
+            expect(elementToWrapFragment.querySelectorAll('[data-group]').length).to.equal(2);
           });
         });
 
@@ -2140,9 +2078,7 @@ describe('choices', () => {
             elementToWrapFragment.appendChild(output);
 
             expect(output).to.be.instanceOf(DocumentFragment);
-            expect(
-              elementToWrapFragment.querySelectorAll('[data-group]').length,
-            ).to.equal(2);
+            expect(elementToWrapFragment.querySelectorAll('[data-group]').length).to.equal(2);
           });
         });
 
@@ -2194,22 +2130,18 @@ describe('choices', () => {
             expect(_createChoicesFragmentStub.called).to.equal(false);
             instance._createGroupsFragment(groups, choices);
             expect(_createChoicesFragmentStub.called).to.equal(true);
-            expect(_createChoicesFragmentStub.firstCall.args[0][0]).to.contains(
-              {
-                selected: true,
-                groupId: 1,
-                value: 'Choice 1',
-                label: 'Choice 1',
-              },
-            );
-            expect(_createChoicesFragmentStub.firstCall.args[0][1]).to.contains(
-              {
-                selected: false,
-                groupId: 1,
-                value: 'Choice 3',
-                label: 'Choice 3',
-              },
-            );
+            expect(_createChoicesFragmentStub.firstCall.args[0][0]).to.contains({
+              selected: true,
+              groupId: 1,
+              value: 'Choice 1',
+              label: 'Choice 1',
+            });
+            expect(_createChoicesFragmentStub.firstCall.args[0][1]).to.contains({
+              selected: false,
+              groupId: 1,
+              value: 'Choice 3',
+              label: 'Choice 3',
+            });
           });
         });
 
@@ -2224,25 +2156,19 @@ describe('choices', () => {
               expect(_createChoicesFragmentStub.called).to.equal(false);
               instance._createGroupsFragment(groups, choices);
               expect(_createChoicesFragmentStub.called).to.equal(true);
-              expect(
-                _createChoicesFragmentStub.firstCall.args[0][0],
-              ).to.deep.contains({
+              expect(_createChoicesFragmentStub.firstCall.args[0][0]).to.deep.contains({
                 selected: true,
                 groupId: 1,
                 value: 'Choice 1',
                 label: 'Choice 1',
               });
-              expect(
-                _createChoicesFragmentStub.firstCall.args[0][1],
-              ).to.deep.contains({
+              expect(_createChoicesFragmentStub.firstCall.args[0][1]).to.deep.contains({
                 selected: false,
                 groupId: 1,
                 value: 'Choice 3',
                 label: 'Choice 3',
               });
-              expect(
-                _createChoicesFragmentStub.secondCall.args[0][0],
-              ).to.deep.contains({
+              expect(_createChoicesFragmentStub.secondCall.args[0][0]).to.deep.contains({
                 selected: false,
                 groupId: 2,
                 value: 'Choice 2',
@@ -2261,18 +2187,14 @@ describe('choices', () => {
               expect(_createChoicesFragmentStub.called).to.equal(false);
               instance._createGroupsFragment(groups, choices);
               expect(_createChoicesFragmentStub.called).to.equal(true);
-              expect(
-                _createChoicesFragmentStub.firstCall.args[0][0],
-              ).to.deep.contains({
+              expect(_createChoicesFragmentStub.firstCall.args[0][0]).to.deep.contains({
                 id: 3,
                 selected: false,
                 groupId: 1,
                 value: 'Choice 3',
                 label: 'Choice 3',
               });
-              expect(
-                _createChoicesFragmentStub.secondCall.args[0][0],
-              ).to.deep.contains({
+              expect(_createChoicesFragmentStub.secondCall.args[0][0]).to.deep.contains({
                 id: 2,
                 selected: false,
                 groupId: 2,
@@ -2378,10 +2300,7 @@ describe('choices', () => {
 
             instance._onKeyDown(event);
 
-            expect(instance._onDirectionKey).to.have.been.calledWith(
-              event,
-              hasActiveDropdown,
-            );
+            expect(instance._onDirectionKey).to.have.been.calledWith(event, hasActiveDropdown);
           });
         });
       });
@@ -2395,10 +2314,7 @@ describe('choices', () => {
 
           instance._onKeyDown(event);
 
-          expect(instance._onSelectKey).to.have.been.calledWith(
-            event,
-            hasItems,
-          );
+          expect(instance._onSelectKey).to.have.been.calledWith(event, hasItems);
         });
       });
 
@@ -2411,11 +2327,7 @@ describe('choices', () => {
 
           instance._onKeyDown(event);
 
-          expect(instance._onEnterKey).to.have.been.calledWith(
-            event,
-            items,
-            hasActiveDropdown,
-          );
+          expect(instance._onEnterKey).to.have.been.calledWith(event, items, hasActiveDropdown);
         });
       });
 
@@ -2438,11 +2350,7 @@ describe('choices', () => {
 
             instance._onKeyDown(event);
 
-            expect(instance._onDeleteKey).to.have.been.calledWith(
-              event,
-              items,
-              hasFocussedInput,
-            );
+            expect(instance._onDeleteKey).to.have.been.calledWith(event, items, hasFocussedInput);
           });
         });
       });
@@ -2476,9 +2384,7 @@ describe('choices', () => {
         it('dispatches a REMOVE_ITEM action to the store', () => {
           instance._removeItem(item);
 
-          expect(instance._store.dispatch).to.have.been.calledWith(
-            removeItem(item),
-          );
+          expect(instance._store.dispatch).to.have.been.calledWith(removeItem(item));
         });
 
         it('triggers a REMOVE_ITEM event on the passed element', () =>

@@ -48,9 +48,7 @@ export default class Dropdown {
    * Hide dropdown from user
    */
   hide(): this {
-    this.element.classList.remove(
-      ...getClassNames(this.classNames.activeState),
-    );
+    this.element.classList.remove(...getClassNames(this.classNames.activeState));
     this.element.setAttribute('aria-expanded', 'false');
     this.isActive = false;
 

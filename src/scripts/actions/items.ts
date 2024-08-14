@@ -2,10 +2,7 @@ import { ChoiceFull } from '../interfaces/choice-full';
 import { ActionType } from '../interfaces';
 import { AnyAction } from '../interfaces/store';
 
-export type ItemActions =
-  | AddItemAction
-  | RemoveItemAction
-  | HighlightItemAction;
+export type ItemActions = AddItemAction | RemoveItemAction | HighlightItemAction;
 
 export interface AddItemAction extends AnyAction<ActionType.ADD_ITEM> {
   item: ChoiceFull;
@@ -15,8 +12,7 @@ export interface RemoveItemAction extends AnyAction<ActionType.REMOVE_ITEM> {
   item: ChoiceFull;
 }
 
-export interface HighlightItemAction
-  extends AnyAction<ActionType.HIGHLIGHT_ITEM> {
+export interface HighlightItemAction extends AnyAction<ActionType.HIGHLIGHT_ITEM> {
   item: ChoiceFull;
   highlighted: boolean;
 }
@@ -31,10 +27,7 @@ export const removeItem = (item: ChoiceFull): RemoveItemAction => ({
   item,
 });
 
-export const highlightItem = (
-  item: ChoiceFull,
-  highlighted: boolean,
-): HighlightItemAction => ({
+export const highlightItem = (item: ChoiceFull, highlighted: boolean): HighlightItemAction => ({
   type: ActionType.HIGHLIGHT_ITEM,
   item,
   highlighted,

@@ -8,10 +8,7 @@ import { ChoiceFull } from '../interfaces/choice-full';
 type ActionTypes = ChoiceActions | ItemActions;
 type StateType = State['choices'];
 
-export default function choices(
-  s: StateType,
-  action: ActionTypes,
-): StateUpdate<StateType> {
+export default function choices(s: StateType, action: ActionTypes): StateUpdate<StateType> {
   let state = s;
   let update = false;
 

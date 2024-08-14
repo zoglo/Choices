@@ -53,16 +53,14 @@ export default class WrappedSelect extends WrappedElement<HTMLSelectElement> {
   optionsAsChoices(): (ChoiceFull | GroupFull)[] {
     const choices: (ChoiceFull | GroupFull)[] = [];
 
-    this.element
-      .querySelectorAll(':scope > option, :scope > optgroup')
-      .forEach((e) => {
-        if (isHtmlOption(e)) {
-          choices.push(this._optionToChoice(e));
-        } else if (isHtmlOptgroup(e)) {
-          choices.push(this._optgroupToChoice(e));
-        }
-        // todo: hr as empty optgroup, requires displaying empty opt-groups to be useful
-      });
+    this.element.querySelectorAll(':scope > option, :scope > optgroup').forEach((e) => {
+      if (isHtmlOption(e)) {
+        choices.push(this._optionToChoice(e));
+      } else if (isHtmlOptgroup(e)) {
+        choices.push(this._optgroupToChoice(e));
+      }
+      // todo: hr as empty optgroup, requires displaying empty opt-groups to be useful
+    });
 
     return choices;
   }
@@ -79,31 +77,21 @@ export default class WrappedSelect extends WrappedElement<HTMLSelectElement> {
       element: option,
       active: true,
       // this returns true if nothing is selected on initial load, which will break placeholder support
-      selected: this.extractPlaceholder
-        ? option.selected
-        : option.hasAttribute('selected'),
+      selected: this.extractPlaceholder ? option.selected : option.hasAttribute('selected'),
       disabled: option.disabled,
       highlighted: false,
-      placeholder:
-        this.extractPlaceholder &&
-        (option.value === '' || option.hasAttribute('placeholder')),
+      placeholder: this.extractPlaceholder && (option.value === '' || option.hasAttribute('placeholder')),
       labelClass:
-        typeof option.dataset.labelClass !== 'undefined'
-          ? stringToHtmlClass(option.dataset.labelClass)
-          : undefined,
+        typeof option.dataset.labelClass !== 'undefined' ? stringToHtmlClass(option.dataset.labelClass) : undefined,
       labelDescription:
-        typeof option.dataset.labelDescription !== 'undefined'
-          ? option.dataset.labelDescription
-          : undefined,
+        typeof option.dataset.labelDescription !== 'undefined' ? option.dataset.labelDescription : undefined,
       customProperties: parseCustomProperties(option.dataset.customProperties),
     };
   }
 
   _optgroupToChoice(optgroup: HTMLOptGroupElement): GroupFull {
     const options = optgroup.querySelectorAll('option');
-    const choices = Array.from(options).map((option) =>
-      this._optionToChoice(option),
-    );
+    const choices = Array.from(options).map((option) => this._optionToChoice(option));
 
     return {
       id: 0,

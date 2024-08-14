@@ -1,9 +1,4 @@
-import {
-  AnyAction,
-  Reducer,
-  Store as IStore,
-  StoreListener,
-} from '../interfaces/store';
+import { AnyAction, Reducer, Store as IStore, StoreListener } from '../interfaces/store';
 import { StateChangeSet, State } from '../interfaces/state';
 import { ChoiceFull } from '../interfaces/choice-full';
 import { GroupFull } from '../interfaces/group-full';
@@ -66,10 +61,7 @@ export default class Store implements IStore {
     const changes = this._outstandingChanges || this.changeSet(false);
 
     Object.keys(reducers).forEach((key: string) => {
-      const stateUpdate = (reducers[key] as Reducer<unknown>)(
-        state[key],
-        action,
-      );
+      const stateUpdate = (reducers[key] as Reducer<unknown>)(state[key], action);
       if (stateUpdate.update) {
         hasChanges = true;
         changes[key] = true;
@@ -121,9 +113,7 @@ export default class Store implements IStore {
    * Get highlighted items from store
    */
   get highlightedActiveItems(): ChoiceFull[] {
-    return this.items.filter(
-      (item) => !item.disabled && item.active && item.highlighted,
-    );
+    return this.items.filter((item) => !item.disabled && item.active && item.highlighted);
   }
 
   /**
@@ -144,9 +134,7 @@ export default class Store implements IStore {
    * Get choices that can be searched (excluding placeholders)
    */
   get searchableChoices(): ChoiceFull[] {
-    return this.choices.filter(
-      (choice) => !choice.disabled && !choice.placeholder,
-    );
+    return this.choices.filter((choice) => !choice.disabled && !choice.placeholder);
   }
 
   /**
@@ -162,9 +150,7 @@ export default class Store implements IStore {
   get activeGroups(): GroupFull[] {
     return this.state.groups.filter((group) => {
       const isActive = group.active && !group.disabled;
-      const hasActiveOptions = this.state.choices.some(
-        (choice) => choice.active && !choice.disabled,
-      );
+      const hasActiveOptions = this.state.choices.some((choice) => choice.active && !choice.disabled);
 
       return isActive && hasActiveOptions;
     }, []);

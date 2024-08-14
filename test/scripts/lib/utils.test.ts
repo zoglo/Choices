@@ -72,9 +72,7 @@ describe('utils', () => {
       it('strips HTML from value', () => {
         const value = '<script>somethingMalicious();</script>';
         const output = sanitise(value);
-        expect(output).to.equal(
-          '&lt;script&gt;somethingMalicious();&lt;/script&gt;',
-        );
+        expect(output).to.equal('&lt;script&gt;somethingMalicious();&lt;/script&gt;');
       });
     });
   });
@@ -122,21 +120,11 @@ describe('utils', () => {
   describe('sortByScore', () => {
     describe('sorting an array', () => {
       it('sorts by score ascending', () => {
-        const values = [
-          { score: 10 },
-          { score: 3001 },
-          { score: 124 },
-          { score: 400 },
-        ];
+        const values = [{ score: 10 }, { score: 3001 }, { score: 124 }, { score: 400 }];
 
         const output = values.sort(sortByScore);
 
-        expect(output).to.deep.equal([
-          { score: 10 },
-          { score: 124 },
-          { score: 400 },
-          { score: 3001 },
-        ]);
+        expect(output).to.deep.equal([{ score: 10 }, { score: 124 }, { score: 400 }, { score: 3001 }]);
       });
     });
   });
@@ -144,21 +132,11 @@ describe('utils', () => {
   describe('sortByRank', () => {
     describe('sorting an array', () => {
       it('sorts by rank ascending', () => {
-        const values = [
-          { rank: 10 },
-          { rank: 3001 },
-          { rank: 124 },
-          { rank: 400 },
-        ];
+        const values = [{ rank: 10 }, { rank: 3001 }, { rank: 124 }, { rank: 400 }];
 
         const output = values.sort(sortByRank);
 
-        expect(output).to.deep.equal([
-          { rank: 10 },
-          { rank: 124 },
-          { rank: 400 },
-          { rank: 3001 },
-        ]);
+        expect(output).to.deep.equal([{ rank: 10 }, { rank: 124 }, { rank: 400 }, { rank: 3001 }]);
       });
     });
   });

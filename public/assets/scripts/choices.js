@@ -106,16 +106,12 @@
     }); };
 
     /* eslint-disable @typescript-eslint/no-explicit-any */
-    var getRandomNumber = function (min, max) {
-        return Math.floor(Math.random() * (max - min) + min);
-    };
+    var getRandomNumber = function (min, max) { return Math.floor(Math.random() * (max - min) + min); };
     var generateChars = function (length) {
         return Array.from({ length: length }, function () { return getRandomNumber(0, 36).toString(36); }).join('');
     };
     var generateId = function (element, prefix) {
-        var id = element.id ||
-            (element.name && "".concat(element.name, "-").concat(generateChars(2))) ||
-            generateChars(4);
+        var id = element.id || (element.name && "".concat(element.name, "-").concat(generateChars(2))) || generateChars(4);
         id = id.replace(/(:|\.|\[|\]|,)/g, '');
         id = "".concat(prefix, "-").concat(id);
         return id;
@@ -140,9 +136,7 @@
         var isVisible;
         if (direction > 0) {
             // In view from bottom
-            isVisible =
-                parent.scrollTop + parent.offsetHeight >=
-                    element.offsetTop + element.offsetHeight;
+            isVisible = parent.scrollTop + parent.offsetHeight >= element.offsetTop + element.offsetHeight;
         }
         else {
             // In view from top
@@ -332,8 +326,7 @@
             // greater than the window height flip the dropdown.
             var shouldFlip = false;
             if (this.position === 'auto') {
-                shouldFlip = !window.matchMedia("(min-height: ".concat(dropdownPos + 1, "px)"))
-                    .matches;
+                shouldFlip = !window.matchMedia("(min-height: ".concat(dropdownPos + 1, "px)")).matches;
             }
             else if (this.position === 'top') {
                 shouldFlip = true;
@@ -583,9 +576,7 @@
             // Distance from bottom of element to top of parent
             var elementPos = element.offsetTop + elementHeight;
             // Difference between the element and scroll position
-            var destination = direction > 0
-                ? this.element.scrollTop + elementPos - listScrollPosition
-                : element.offsetTop;
+            var destination = direction > 0 ? this.element.scrollTop + elementPos - listScrollPosition : element.offsetTop;
             requestAnimationFrame(function () {
                 _this._animateScroll(destination, direction);
             });
@@ -718,7 +709,7 @@
 
     var coerceBool = function (arg, defaultValue) {
         if (defaultValue === void 0) { defaultValue = true; }
-        return typeof arg === 'undefined' ? defaultValue : !!arg;
+        return (typeof arg === 'undefined' ? defaultValue : !!arg);
     };
     var stringToHtmlClass = function (input) {
         if (typeof input === 'string') {
@@ -775,18 +766,10 @@
         return result;
     };
 
-    var isHtmlInputElement = function (e) {
-        return e.tagName === 'INPUT';
-    };
-    var isHtmlSelectElement = function (e) {
-        return e.tagName === 'SELECT';
-    };
-    var isHtmlOption = function (e) {
-        return e.tagName === 'OPTION';
-    };
-    var isHtmlOptgroup = function (e) {
-        return e.tagName === 'OPTGROUP';
-    };
+    var isHtmlInputElement = function (e) { return e.tagName === 'INPUT'; };
+    var isHtmlSelectElement = function (e) { return e.tagName === 'SELECT'; };
+    var isHtmlOption = function (e) { return e.tagName === 'OPTION'; };
+    var isHtmlOptgroup = function (e) { return e.tagName === 'OPTGROUP'; };
 
     var WrappedSelect = /** @class */ (function (_super) {
         __extends(WrappedSelect, _super);
@@ -821,9 +804,7 @@
         WrappedSelect.prototype.optionsAsChoices = function () {
             var _this = this;
             var choices = [];
-            this.element
-                .querySelectorAll(':scope > option, :scope > optgroup')
-                .forEach(function (e) {
+            this.element.querySelectorAll(':scope > option, :scope > optgroup').forEach(function (e) {
                 if (isHtmlOption(e)) {
                     choices.push(_this._optionToChoice(e));
                 }
@@ -846,28 +827,19 @@
                 element: option,
                 active: true,
                 // this returns true if nothing is selected on initial load, which will break placeholder support
-                selected: this.extractPlaceholder
-                    ? option.selected
-                    : option.hasAttribute('selected'),
+                selected: this.extractPlaceholder ? option.selected : option.hasAttribute('selected'),
                 disabled: option.disabled,
                 highlighted: false,
-                placeholder: this.extractPlaceholder &&
-                    (option.value === '' || option.hasAttribute('placeholder')),
-                labelClass: typeof option.dataset.labelClass !== 'undefined'
-                    ? stringToHtmlClass(option.dataset.labelClass)
-                    : undefined,
-                labelDescription: typeof option.dataset.labelDescription !== 'undefined'
-                    ? option.dataset.labelDescription
-                    : undefined,
+                placeholder: this.extractPlaceholder && (option.value === '' || option.hasAttribute('placeholder')),
+                labelClass: typeof option.dataset.labelClass !== 'undefined' ? stringToHtmlClass(option.dataset.labelClass) : undefined,
+                labelDescription: typeof option.dataset.labelDescription !== 'undefined' ? option.dataset.labelDescription : undefined,
                 customProperties: parseCustomProperties(option.dataset.customProperties),
             };
         };
         WrappedSelect.prototype._optgroupToChoice = function (optgroup) {
             var _this = this;
             var options = optgroup.querySelectorAll('option');
-            var choices = Array.from(options).map(function (option) {
-                return _this._optionToChoice(option);
-            });
+            var choices = Array.from(options).map(function (option) { return _this._optionToChoice(option); });
             return {
                 id: 0,
                 label: optgroup.label || '',
@@ -999,6 +971,11 @@
                     if (el) {
                         el.selected = false;
                         el.removeAttribute('selected');
+                        // For a select-one, if all options are deselected, the first item is selected. To set a black value, select.value needs to be set
+                        var select = el.parentElement;
+                        if (select && isHtmlSelectElement(select) && select.type === SELECT_ONE_TYPE) {
+                            select.value = '';
+                        }
                     }
                     update = true;
                     state = state.filter(function (choice) { return choice.id !== item_1.id; });
@@ -1314,7 +1291,9 @@
      * Can be overridden by providing `callbackOnCreateTemplates` option.
      * `Choices.defaults.templates` allows access to the default template methods from `callbackOnCreateTemplates`
      */
-    var escapeForTemplate = function (allowHTML, s) { return (allowHTML ? unwrapStringForEscaped(s) : sanitise(s)); };
+    var escapeForTemplate = function (allowHTML, s) {
+        return allowHTML ? unwrapStringForEscaped(s) : sanitise(s);
+    };
     var isEmptyObject = function (obj) {
         // eslint-disable-next-line no-restricted-syntax
         for (var prop in obj) {
@@ -1332,8 +1311,7 @@
         if (typeof customProperties === 'string') {
             dataset.customProperties = customProperties;
         }
-        else if (typeof customProperties === 'object' &&
-            !isEmptyObject(customProperties)) {
+        else if (typeof customProperties === 'object' && !isEmptyObject(customProperties)) {
             dataset.customProperties = JSON.stringify(customProperties);
         }
     };
@@ -1372,9 +1350,7 @@
         itemList: function (_a, isSelectOneElement) {
             var _b = _a.classNames, list = _b.list, listSingle = _b.listSingle, listItems = _b.listItems;
             return Object.assign(document.createElement('div'), {
-                className: "".concat(getClassNames(list).join(' '), " ").concat(isSelectOneElement
-                    ? getClassNames(listSingle).join(' ')
-                    : getClassNames(listItems).join(' ')),
+                className: "".concat(getClassNames(list).join(' '), " ").concat(isSelectOneElement ? getClassNames(listSingle).join(' ') : getClassNames(listItems).join(' ')),
             });
         },
         placeholder: function (_a, value) {
@@ -1423,9 +1399,7 @@
                 (_c = div.classList).add.apply(_c, getClassNames(placeholder));
                 div.dataset.placeholder = '';
             }
-            (_d = div.classList).add.apply(_d, (highlighted
-                ? getClassNames(highlightedState)
-                : getClassNames(itemSelectable)));
+            (_d = div.classList).add.apply(_d, (highlighted ? getClassNames(highlightedState) : getClassNames(itemSelectable)));
             if (removeItemButton) {
                 if (disabled) {
                     (_e = div.classList).remove.apply(_e, getClassNames(itemSelectable));
@@ -1598,19 +1572,22 @@
             }
             return notice;
         },
-        option: function (_a) {
-            var label = _a.label, value = _a.value, labelClass = _a.labelClass, labelDescription = _a.labelDescription, customProperties = _a.customProperties, active = _a.active, disabled = _a.disabled;
+        option: function (choice) {
             // HtmlOptionElement's label value does not support HTML, so the avoid double escaping unwrap the untrusted string.
-            var labelValue = unwrapStringForRaw(label);
-            var opt = new Option(labelValue, value, false, active);
+            var labelValue = unwrapStringForRaw(choice.label);
+            var opt = new Option(labelValue, choice.value, false, choice.selected);
+            var labelClass = choice.labelClass, labelDescription = choice.labelDescription;
             if (labelClass) {
                 opt.dataset.labelClass = getClassNames(labelClass).join(' ');
             }
             if (labelDescription) {
                 opt.dataset.labelDescription = labelDescription;
             }
-            assignCustomProperties(opt, customProperties);
-            opt.disabled = disabled;
+            assignCustomProperties(opt, choice.customProperties);
+            opt.disabled = choice.disabled;
+            if (choice.selected) {
+                opt.setAttribute('selected', '');
+            }
             return opt;
         },
     };
@@ -3284,8 +3261,7 @@
     }
 
     /** @see {@link http://browserhacks.com/#hack-acea075d0ac6954f275a70023906050c} */
-    var IS_IE11 = '-ms-scroll-limit' in document.documentElement.style &&
-        '-ms-ime-align' in document.documentElement.style;
+    var IS_IE11 = '-ms-scroll-limit' in document.documentElement.style && '-ms-ime-align' in document.documentElement.style;
     var USER_DEFAULTS = {};
     var parseDataSetId = function (element) {
         if (!element) {
@@ -3315,9 +3291,7 @@
                 this._validateConfig();
             }
             var documentElement = this.config.shadowRoot || document.documentElement;
-            var passedElement = typeof element === 'string'
-                ? documentElement.querySelector(element)
-                : element;
+            var passedElement = typeof element === 'string' ? documentElement.querySelector(element) : element;
             if (!passedElement ||
                 typeof passedElement !== 'object' ||
                 !(isHtmlInputElement(passedElement) || isHtmlSelectElement(passedElement))) {
@@ -3336,11 +3310,9 @@
             }
             this._isSelectOneElement = this._elementType === SELECT_ONE_TYPE;
             this._isSelectMultipleElement = this._elementType === SELECT_MULTIPLE_TYPE;
-            this._isSelectElement =
-                this._isSelectOneElement || this._isSelectMultipleElement;
+            this._isSelectElement = this._isSelectOneElement || this._isSelectMultipleElement;
             this._canAddUserChoices =
-                (this._isTextElement && this.config.addItems) ||
-                    (this._isSelectElement && this.config.addChoices);
+                (this._isTextElement && this.config.addItems) || (this._isSelectElement && this.config.addChoices);
             if (!['auto', 'always'].includes("".concat(this.config.renderSelectedChoices))) {
                 this.config.renderSelectedChoices = 'auto';
             }
@@ -3353,11 +3325,8 @@
                     this.config.placeholderValue = passedElement.dataset.placeholder;
                 }
             }
-            if (userConfig.addItemFilter &&
-                typeof userConfig.addItemFilter !== 'function') {
-                var re = userConfig.addItemFilter instanceof RegExp
-                    ? userConfig.addItemFilter
-                    : new RegExp(userConfig.addItemFilter);
+            if (userConfig.addItemFilter && typeof userConfig.addItemFilter !== 'function') {
+                var re = userConfig.addItemFilter instanceof RegExp ? userConfig.addItemFilter : new RegExp(userConfig.addItemFilter);
                 this.config.addItemFilter = re.test.bind(re);
             }
             if (this._isTextElement) {
@@ -3371,9 +3340,7 @@
                 this.passedElement = new WrappedSelect({
                     element: selectEl,
                     classNames: this.config.classNames,
-                    template: function (data) {
-                        return _this._templates.option(data);
-                    },
+                    template: function (data) { return _this._templates.option(data); },
                     extractPlaceholder: this.config.placeholder && !this._hasNonChoicePlaceholder,
                 });
             }
@@ -3381,8 +3348,7 @@
             this._store = new Store();
             this._currentValue = '';
             this.config.searchEnabled =
-                (!this._isTextElement && this.config.searchEnabled) ||
-                    this._elementType === SELECT_MULTIPLE_TYPE;
+                (!this._isTextElement && this.config.searchEnabled) || this._elementType === SELECT_MULTIPLE_TYPE;
             this._canSearch = this.config.searchEnabled;
             this._isScrollingOnIe = false;
             this._highlightPosition = 0;
@@ -3560,21 +3526,17 @@
         Choices.prototype.removeActiveItemsByValue = function (value) {
             var _this = this;
             this._store.withTxn(function () {
-                _this._store.items
-                    .filter(function (item) { return item.value === value; })
-                    .forEach(function (item) { return _this._removeItem(item); });
+                _this._store.items.filter(function (item) { return item.value === value; }).forEach(function (item) { return _this._removeItem(item); });
             });
             return this;
         };
         Choices.prototype.removeActiveItems = function (excludedId) {
             var _this = this;
             this._store.withTxn(function () {
-                _this._store.items
-                    .filter(function (_a) {
+                _this._store.items.filter(function (_a) {
                     var id = _a.id;
                     return id !== excludedId;
-                })
-                    .forEach(function (item) { return _this._removeItem(item); });
+                }).forEach(function (item) { return _this._removeItem(item); });
             });
             return this;
         };
@@ -3632,9 +3594,7 @@
                 selectedItems.push(itemValue);
                 return selectedItems;
             }, []);
-            return this._isSelectOneElement || this.config.singleModeForMultiSelect
-                ? values[0]
-                : values;
+            return this._isSelectOneElement || this.config.singleModeForMultiSelect ? values[0] : values;
         };
         Choices.prototype.setValue = function (items) {
             var _this = this;
@@ -3764,9 +3724,7 @@
                     return new Promise(function (resolve) { return requestAnimationFrame(resolve); })
                         .then(function () { return _this._handleLoadingState(true); })
                         .then(function () { return fetcher_1; })
-                        .then(function (data) {
-                        return _this.setChoices(data, value, label, replaceChoices);
-                    })
+                        .then(function (data) { return _this.setChoices(data, value, label, replaceChoices); })
                         .catch(function (err) {
                         if (!_this.config.silent) {
                             console.error(err);
@@ -3828,10 +3786,7 @@
                 var existingItems = {};
                 if (!deselectAll) {
                     items.forEach(function (choice) {
-                        if (choice.id &&
-                            choice.active &&
-                            choice.selected &&
-                            !choice.disabled) {
+                        if (choice.id && choice.active && choice.selected && !choice.disabled) {
                             existingItems[choice.value] = true;
                         }
                     });
@@ -3948,9 +3903,7 @@
             if (activeGroups.length >= 1 && !this._isSearching) {
                 if (!this._hasNonChoicePlaceholder) {
                     // If we have a placeholder choice along with groups
-                    var activePlaceholders = activeChoices.filter(function (activeChoice) {
-                        return activeChoice.placeholder && activeChoice.groupId === -1;
-                    });
+                    var activePlaceholders = activeChoices.filter(function (activeChoice) { return activeChoice.placeholder && activeChoice.groupId === -1; });
                     if (activePlaceholders.length >= 1) {
                         choiceListFragment = this._createChoicesFragment(activePlaceholders, choiceListFragment);
                     }
@@ -3962,8 +3915,7 @@
             }
             var value = this.input.value;
             var canAdd = this._canAddItem(this._store.items, value);
-            if (choiceListFragment.childNodes &&
-                choiceListFragment.childNodes.length > 0) {
+            if (choiceListFragment.childNodes.length !== 0) {
                 var showNotice = !canAdd.response;
                 // ...and we can select them
                 if (canAdd.response) {
@@ -3972,9 +3924,7 @@
                     this._highlightChoice();
                     // for exact matches, do not prompt to add it as a custom choice
                     if (this._canAddUserChoices && value && canAdd.notice) {
-                        showNotice = !activeChoices.find(function (choice) {
-                            return _this.config.valueComparer(choice.value, value);
-                        });
+                        showNotice = !activeChoices.find(function (choice) { return _this.config.valueComparer(choice.value, value); });
                     }
                 }
                 // when adding items, provide feedback while also displaying choices
@@ -3990,15 +3940,11 @@
                     dropdownItem = this._templates.notice(this.config, canAdd.notice, 'add-choice');
                 }
                 else if (this._isSearching) {
-                    var notice = typeof this.config.noResultsText === 'function'
-                        ? this.config.noResultsText()
-                        : this.config.noResultsText;
+                    var notice = typeof this.config.noResultsText === 'function' ? this.config.noResultsText() : this.config.noResultsText;
                     dropdownItem = this._templates.notice(this.config, notice, 'no-results');
                 }
                 else {
-                    var notice = typeof this.config.noChoicesText === 'function'
-                        ? this.config.noChoicesText()
-                        : this.config.noChoicesText;
+                    var notice = typeof this.config.noChoicesText === 'function' ? this.config.noChoicesText() : this.config.noChoicesText;
                     dropdownItem = this._templates.notice(this.config, notice, 'no-choices');
                 }
                 this.choiceList.append(dropdownItem);
@@ -4011,7 +3957,7 @@
             // (so we don't have to update the DOM for each item)
             var itemListFragment = this._createItemsFragment(items);
             // If we have items to add, append them
-            if (itemListFragment.childNodes) {
+            if (itemListFragment.childNodes.length !== 0) {
                 this.itemList.append(itemListFragment);
             }
         };
@@ -4023,8 +3969,7 @@
                     if (_this._isSelectOneElement) {
                         return choice.groupId === group.id;
                     }
-                    return (choice.groupId === group.id &&
-                        (_this.config.renderSelectedChoices === 'always' || !choice.selected));
+                    return choice.groupId === group.id && (_this.config.renderSelectedChoices === 'always' || !choice.selected);
                 });
             };
             // If sorting is enabled, filter groups
@@ -4061,9 +4006,7 @@
                 });
             }
             var appendChoice = function (choice) {
-                var shouldRender = renderSelectedChoices === 'auto'
-                    ? _this._isSelectOneElement || !choice.selected
-                    : true;
+                var shouldRender = renderSelectedChoices === 'auto' ? _this._isSelectOneElement || !choice.selected : true;
                 if (shouldRender) {
                     var dropdownItem = _this._templates.choice(_this.config, choice, _this.config.itemSelectText);
                     if (appendGroupInSearch && choice.groupId > 0) {
@@ -4137,12 +4080,10 @@
             }
             if (this._isTextElement) {
                 // Update the value of the hidden input
-                this.passedElement.value = items
-                    .map(function (_a) {
+                this.passedElement.value = items.map(function (_a) {
                     var value = _a.value;
                     return value;
-                })
-                    .join(this.config.delimiter);
+                }).join(this.config.delimiter);
             }
             var addItemToFragment = function (item) {
                 // Create new list element
@@ -4152,9 +4093,7 @@
             };
             // Add each list item to list
             items.forEach(addItemToFragment);
-            if (this._isSelectOneElement &&
-                this._hasNonChoicePlaceholder &&
-                items.length === 0) {
+            if (this._isSelectOneElement && this._hasNonChoicePlaceholder && items.length === 0) {
                 addItemToFragment(mapInputToChoice({
                     selected: true,
                     value: '',
@@ -4195,9 +4134,7 @@
             });
         };
         Choices.prototype._handleButtonAction = function (items, element) {
-            if (items.length === 0 ||
-                !this.config.removeItems ||
-                !this.config.removeItemButton) {
+            if (items.length === 0 || !this.config.removeItems || !this.config.removeItemButton) {
                 return;
             }
             var id = element && parseDataSetId(element.parentNode);
@@ -4209,9 +4146,7 @@
             this._removeItem(itemToRemove);
             this._triggerChange(itemToRemove.value);
             if (this._isSelectOneElement && !this._hasNonChoicePlaceholder) {
-                var placeholderChoice = this._store.choices
-                    .reverse()
-                    .find(function (choice) { return !choice.disabled && choice.placeholder; });
+                var placeholderChoice = this._store.choices.reverse().find(function (choice) { return !choice.disabled && choice.placeholder; });
                 if (placeholderChoice) {
                     this._addItem(placeholderChoice);
                     if (placeholderChoice.value) {
@@ -4223,9 +4158,7 @@
         Choices.prototype._handleItemAction = function (items, element, hasShiftKey) {
             var _this = this;
             if (hasShiftKey === void 0) { hasShiftKey = false; }
-            if (items.length === 0 ||
-                !this.config.removeItems ||
-                this._isSelectOneElement) {
+            if (items.length === 0 || !this.config.removeItems || this._isSelectOneElement) {
                 return;
             }
             var id = parseDataSetId(element);
@@ -4252,26 +4185,24 @@
             // If we are clicking on an option
             var id = parseDataSetId(element);
             var choice = id && this._store.getChoiceById(id);
-            if (!choice) {
+            if (!choice || choice.disabled || choice.selected) {
                 return false;
             }
             var hasActiveDropdown = this.dropdown.isActive;
             var addedItem = false;
             this._store.withTxn(function () {
-                if (!choice.selected && !choice.disabled) {
-                    var canAddItem = _this._canAddItem(items, choice.value);
-                    if (canAddItem.response) {
-                        if (_this.config.singleModeForMultiSelect) {
-                            if (items.length !== 0) {
-                                var lastItem = items[items.length - 1];
-                                _this._removeItem(lastItem);
-                            }
+                var canAddItem = _this._canAddItem(items, choice.value);
+                if (canAddItem.response) {
+                    if (_this.config.singleModeForMultiSelect || _this._isSelectOneElement) {
+                        if (items.length !== 0) {
+                            var lastItem = items[items.length - 1];
+                            _this._removeItem(lastItem);
                         }
-                        _this.passedElement.triggerEvent("choice" /* EventType.choice */, _this._getChoiceForOutput(choice, keyCode));
-                        _this._addItem(choice);
-                        _this.clearInput();
-                        addedItem = true;
                     }
+                    _this.passedElement.triggerEvent("choice" /* EventType.choice */, _this._getChoiceForOutput(choice, keyCode));
+                    _this._addItem(choice);
+                    _this.clearInput();
+                    addedItem = true;
                 }
             });
             if (!addedItem) {
@@ -4279,8 +4210,7 @@
             }
             this._triggerChange(choice.value);
             // We want to close the dropdown if we are dealing with a single select box
-            if (hasActiveDropdown &&
-                (this.config.singleModeForMultiSelect || this._isSelectOneElement)) {
+            if (hasActiveDropdown && (this.config.singleModeForMultiSelect || this._isSelectOneElement)) {
                 this.hideDropdown(true);
                 this.containerOuter.focus();
             }
@@ -4312,9 +4242,7 @@
             var _a;
             if (this._isTextElement) {
                 // Assign preset items from passed object first
-                this._presetChoices = this.config.items.map(function (e) {
-                    return mapInputToChoice(e, false);
-                });
+                this._presetChoices = this.config.items.map(function (e) { return mapInputToChoice(e, false); });
                 // Add any values passed from attribute
                 var value = this.passedElement.value;
                 if (value) {
@@ -4330,9 +4258,7 @@
             }
             else if (this._isSelectElement) {
                 // Assign preset choices from passed object
-                this._presetChoices = this.config.choices.map(function (e) {
-                    return mapInputToChoice(e, true);
-                });
+                this._presetChoices = this.config.choices.map(function (e) { return mapInputToChoice(e, true); });
                 // Create array of choices from option elements
                 var choicesFromOptions = this.passedElement.optionsAsChoices();
                 if (choicesFromOptions) {
@@ -4382,9 +4308,7 @@
             var _a = this.config, searchFloor = _a.searchFloor, searchChoices = _a.searchChoices;
             var hasUnactiveChoices = choices.some(function (option) { return !option.active; });
             // Check that we have a value to search and the input was an alphanumeric character
-            if (value !== null &&
-                typeof value !== 'undefined' &&
-                value.length >= searchFloor) {
+            if (value !== null && typeof value !== 'undefined' && value.length >= searchFloor) {
                 var resultCount = searchChoices ? this._searchChoices(value) : 0;
                 if (resultCount !== null) {
                     // Trigger search event
@@ -4402,8 +4326,7 @@
             var _this = this;
             var canAddItem = true;
             var notice = '';
-            if (this.config.maxItemCount > 0 &&
-                this.config.maxItemCount <= items.length) {
+            if (this.config.maxItemCount > 0 && this.config.maxItemCount <= items.length) {
                 // If there is a max entry limit and we have reached that limit
                 // don't update
                 if (!this.config.singleModeForMultiSelect) {
@@ -4425,12 +4348,8 @@
                         ? this.config.customAddItemText(sanitise(value), value)
                         : this.config.customAddItemText;
             }
-            if (canAddItem &&
-                value !== '' &&
-                (this._isSelectElement || !this.config.duplicateItemsAllowed)) {
-                var foundChoice = this._store.items.find(function (choice) {
-                    return _this.config.valueComparer(choice.value, value);
-                });
+            if (canAddItem && value !== '' && (this._isSelectElement || !this.config.duplicateItemsAllowed)) {
+                var foundChoice = this._store.items.find(function (choice) { return _this.config.valueComparer(choice.value, value); });
                 if (foundChoice) {
                     canAddItem = false;
                     notice =
@@ -4660,9 +4579,7 @@
             // If CTRL + A or CMD + A have been pressed and there are items to select
             if (hasCtrlDownKeyPressed && hasItems) {
                 this._canSearch = false;
-                var shouldHightlightAll = this.config.removeItems &&
-                    !this.input.value &&
-                    this.input.element === document.activeElement;
+                var shouldHightlightAll = this.config.removeItems && !this.input.value && this.input.element === document.activeElement;
                 if (shouldHightlightAll) {
                     this.highlightAll();
                 }
@@ -4717,9 +4634,7 @@
                 }
                 if (choiceNotFound) {
                     var sanitisedValue = sanitise(value);
-                    var userValue = _this.config.allowHtmlUserInput || sanitisedValue === value
-                        ? value
-                        : { escaped: sanitisedValue, raw: value };
+                    var userValue = _this.config.allowHtmlUserInput || sanitisedValue === value ? value : { escaped: sanitisedValue, raw: value };
                     _this._addChoice(mapInputToChoice({
                         value: userValue,
                         label: userValue,
@@ -4747,12 +4662,8 @@
             if (hasActiveDropdown || this._isSelectOneElement) {
                 this.showDropdown();
                 this._canSearch = false;
-                var directionInt = keyCode === 40 /* KeyCodeMap.DOWN_KEY */ || keyCode === 34 /* KeyCodeMap.PAGE_DOWN_KEY */
-                    ? 1
-                    : -1;
-                var skipKey = metaKey ||
-                    keyCode === 34 /* KeyCodeMap.PAGE_DOWN_KEY */ ||
-                    keyCode === 33 /* KeyCodeMap.PAGE_UP_KEY */;
+                var directionInt = keyCode === 40 /* KeyCodeMap.DOWN_KEY */ || keyCode === 34 /* KeyCodeMap.PAGE_DOWN_KEY */ ? 1 : -1;
+                var skipKey = metaKey || keyCode === 34 /* KeyCodeMap.PAGE_DOWN_KEY */ || keyCode === 33 /* KeyCodeMap.PAGE_UP_KEY */;
                 var selectableChoiceIdentifier = '[data-choice-selectable]';
                 var nextEl = void 0;
                 if (skipKey) {
@@ -4788,9 +4699,7 @@
         Choices.prototype._onDeleteKey = function (event, items, hasFocusedInput) {
             var target = event.target;
             // If backspace or delete key is pressed and the input has no value
-            if (!this._isSelectOneElement &&
-                !target.value &&
-                hasFocusedInput) {
+            if (!this._isSelectOneElement && !target.value && hasFocusedInput) {
                 this._handleBackspace(items);
                 event.preventDefault();
             }
@@ -4804,8 +4713,7 @@
             var target = (event || event.touches[0]).target;
             var touchWasWithinContainer = this._wasTap && this.containerOuter.element.contains(target);
             if (touchWasWithinContainer) {
-                var containerWasExactTarget = target === this.containerOuter.element ||
-                    target === this.containerInner.element;
+                var containerWasExactTarget = target === this.containerOuter.element || target === this.containerInner.element;
                 if (containerWasExactTarget) {
                     if (this._isTextElement) {
                         this.input.focus();
@@ -4830,12 +4738,9 @@
             // If we have our mouse down on the scrollbar and are on IE11...
             if (IS_IE11 && this.choiceList.element.contains(target)) {
                 // check if click was on a scrollbar area
-                var firstChoice = this.choiceList.element
-                    .firstElementChild;
+                var firstChoice = this.choiceList.element.firstElementChild;
                 this._isScrollingOnIe =
-                    this._direction === 'ltr'
-                        ? event.offsetX >= firstChoice.offsetWidth
-                        : event.offsetX < firstChoice.offsetLeft;
+                    this._direction === 'ltr' ? event.offsetX >= firstChoice.offsetWidth : event.offsetX < firstChoice.offsetLeft;
             }
             if (target === this.input.element) {
                 return;
@@ -4948,8 +4853,7 @@
                     },
                     _b[SELECT_ONE_TYPE] = function () {
                         _this.containerOuter.removeFocusState();
-                        if (target === _this.input.element ||
-                            (target === _this.containerOuter.element && !_this._canSearch)) {
+                        if (target === _this.input.element || (target === _this.containerOuter.element && !_this._canSearch)) {
                             _this.hideDropdown(true);
                         }
                     },
@@ -5035,10 +4939,10 @@
             if (id === 0) {
                 throw new TypeError('item.id must be set before _addItem is called for a choice/item');
             }
-            this._store.dispatch(addItem(item));
             if (this._isSelectOneElement) {
                 this.removeActiveItems(id);
             }
+            this._store.dispatch(addItem(item));
             if (withEvents) {
                 this.passedElement.triggerEvent("addItem" /* EventType.addItem */, this._getChoiceForOutput(item));
             }
@@ -5104,8 +5008,7 @@
             var _this = this;
             var callbackOnCreateTemplates = this.config.callbackOnCreateTemplates;
             var userTemplates = {};
-            if (callbackOnCreateTemplates &&
-                typeof callbackOnCreateTemplates === 'function') {
+            if (callbackOnCreateTemplates && typeof callbackOnCreateTemplates === 'function') {
                 userTemplates = callbackOnCreateTemplates.call(this, strToEl, escapeForTemplate);
             }
             var templating = {};
@@ -5228,9 +5131,7 @@
             var _this = this;
             var choices = this._store.choices;
             // Check 'value' property exists and the choice isn't already selected
-            var foundChoice = choices.find(function (choice) {
-                return _this.config.valueComparer(choice.value, value);
-            });
+            var foundChoice = choices.find(function (choice) { return _this.config.valueComparer(choice.value, value); });
             if (foundChoice && !foundChoice.selected) {
                 this._addItem(foundChoice);
                 return true;
