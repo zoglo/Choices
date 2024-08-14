@@ -2264,11 +2264,6 @@ class Choices {
     selectFirstOption: boolean = false,
     withEvents: boolean = true,
   ): void {
-    // If sorting is enabled or the user is searching, filter choices
-    if (this.config.shouldSort) {
-      choices.sort(this.config.sorter);
-    }
-
     if (selectFirstOption) {
       /**
        * If there is a selected choice already or the choice is not the first in
