@@ -3,6 +3,8 @@ import { State } from '../interfaces/state';
 import { ChoiceActions } from '../actions/choices';
 import { ActionType } from '../interfaces';
 import { StateUpdate } from '../interfaces/store';
+import { isHtmlSelectElement } from '../lib/html-guard-statements';
+import { SELECT_ONE_TYPE } from '../constants';
 
 type ActionTypes = ChoiceActions | ItemActions;
 type StateType = State['items'];
@@ -44,6 +46,15 @@ export default function items(
         if (el) {
           el.selected = false;
           el.removeAttribute('selected');
+          // For a select-one, if all options are deselected, the first item is selected. To set a black value, select.value needs to be set
+          const select = el.parentElement;
+          if (
+            select &&
+            isHtmlSelectElement(select) &&
+            select.type === SELECT_ONE_TYPE
+          ) {
+            select.value = '';
+          }
         }
 
         update = true;

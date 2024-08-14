@@ -447,19 +447,12 @@ const templates: TemplatesInterface = {
     return notice;
   },
 
-  option({
-    label,
-    value,
-    labelClass,
-    labelDescription,
-    customProperties,
-    active,
-    disabled,
-  }: ChoiceFull): HTMLOptionElement {
+  option(choice: ChoiceFull): HTMLOptionElement {
     // HtmlOptionElement's label value does not support HTML, so the avoid double escaping unwrap the untrusted string.
-    const labelValue = unwrapStringForRaw(label);
+    const labelValue = unwrapStringForRaw(choice.label);
 
-    const opt = new Option(labelValue, value, false, active);
+    const opt = new Option(labelValue, choice.value, false, choice.selected);
+    const { labelClass, labelDescription } = choice;
     if (labelClass) {
       opt.dataset.labelClass = getClassNames(labelClass).join(' ');
     }
@@ -467,9 +460,12 @@ const templates: TemplatesInterface = {
       opt.dataset.labelDescription = labelDescription;
     }
 
-    assignCustomProperties(opt, customProperties);
+    assignCustomProperties(opt, choice.customProperties);
 
-    opt.disabled = disabled;
+    opt.disabled = choice.disabled;
+    if (choice.selected) {
+      opt.setAttribute('selected', '');
+    }
 
     return opt;
   },

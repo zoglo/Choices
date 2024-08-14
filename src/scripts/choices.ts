@@ -1373,7 +1373,7 @@ class Choices {
     // If we are clicking on an option
     const id = parseDataSetId(element);
     const choice = id && this._store.getChoiceById(id);
-    if (!choice) {
+    if (!choice || choice.disabled || choice.selected) {
       return false;
     }
 
@@ -1381,26 +1381,24 @@ class Choices {
 
     let addedItem = false;
     this._store.withTxn(() => {
-      if (!choice.selected && !choice.disabled) {
-        const canAddItem = this._canAddItem(items, choice.value);
+      const canAddItem = this._canAddItem(items, choice.value);
 
-        if (canAddItem.response) {
-          if (this.config.singleModeForMultiSelect) {
-            if (items.length !== 0) {
-              const lastItem = items[items.length - 1];
-              this._removeItem(lastItem);
-            }
+      if (canAddItem.response) {
+        if (this.config.singleModeForMultiSelect || this._isSelectOneElement) {
+          if (items.length !== 0) {
+            const lastItem = items[items.length - 1];
+            this._removeItem(lastItem);
           }
-
-          this.passedElement.triggerEvent(
-            EventType.choice,
-            this._getChoiceForOutput(choice, keyCode),
-          );
-
-          this._addItem(choice);
-          this.clearInput();
-          addedItem = true;
         }
+
+        this.passedElement.triggerEvent(
+          EventType.choice,
+          this._getChoiceForOutput(choice, keyCode),
+        );
+
+        this._addItem(choice);
+        this.clearInput();
+        addedItem = true;
       }
     });
     if (!addedItem) {
@@ -2348,11 +2346,11 @@ class Choices {
       );
     }
 
-    this._store.dispatch(addItem(item));
-
     if (this._isSelectOneElement) {
       this.removeActiveItems(id);
     }
+
+    this._store.dispatch(addItem(item));
 
     if (withEvents) {
       this.passedElement.triggerEvent(
