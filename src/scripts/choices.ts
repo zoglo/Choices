@@ -990,10 +990,7 @@ class Choices {
     const { value } = this.input;
     const canAdd = this._canAddItem(this._store.items, value);
 
-    if (
-      choiceListFragment.childNodes &&
-      choiceListFragment.childNodes.length > 0
-    ) {
+    if (choiceListFragment.childNodes.length !== 0) {
       let showNotice = !canAdd.response;
       // ...and we can select them
       if (canAdd.response) {
@@ -1065,7 +1062,7 @@ class Choices {
     const itemListFragment = this._createItemsFragment(items);
 
     // If we have items to add, append them
-    if (itemListFragment.childNodes) {
+    if (itemListFragment.childNodes.length !== 0) {
       this.itemList.append(itemListFragment);
     }
   }
