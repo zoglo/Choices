@@ -137,23 +137,41 @@
           </script>
         </div>
 
-        <div data-test-hook="add-items-disabled">
-          <label for="choices-add-items-disabled">Add items disabled</label>
+        <div data-test-hook="disabled-first-choice-via-options">
+          <label for="choices-disabled-choice-via-options"
+          >Disabled first choice by options</label
+          >
           <select
             class="form-control"
-            name="choices-add-items-disabled"
-            id="choices-add-items-disabled"
+            name="choices-disabled-choice-via-options"
+            id="choices-disabled-choice-via-options"
             multiple
           >
-            <option value="Choice 1" selected>Choice 1</option>
-            <option value="Choice 2">Choice 2</option>
-            <option value="Choice 3">Choice 3</option>
           </select>
           <script>
             document.addEventListener('DOMContentLoaded', function() {
-              new Choices('#choices-add-items-disabled', {
+              new Choices('#choices-disabled-choice-via-options', {
                 allowHTML: true,
-                addItems: false,
+                removeItemButton: true,
+                choices: [
+                  {
+                    value: 'Choice 1',
+                    label: 'Choice 1',
+                    disabled: true,
+                  },
+                  {
+                    value: 'Choice 2',
+                    label: 'Choice 2',
+                  },
+                  {
+                    value: 'Choice 3',
+                    label: 'Choice 3',
+                  },
+                  {
+                    value: 'Choice 4',
+                    label: 'Choice 4',
+                  },
+                ],
               });
             });
           </script>
@@ -344,6 +362,31 @@
           </script>
         </div>
 
+        <div data-test-hook="placeholder-via-data-attr">
+          <label for="choices-placeholder-via-data-attr"
+          >Placeholder via data attribute</label
+          >
+          <select
+            class="form-control"
+            name="choices-placeholder-via-data-attr"
+            id="choices-placeholder-via-data-attr"
+            data-placeholder="I am a placeholder"
+            multiple
+          >
+            <option value="">I am a not placeholder</option>
+            <option value="Choice 1">Choice 1</option>
+            <option value="Choice 2">Choice 2</option>
+            <option value="Choice 3">Choice 3</option>
+          </select>
+          <script>
+            document.addEventListener('DOMContentLoaded', function() {
+              new Choices('#choices-placeholder-via-data-attr', {
+                allowHTML: true,
+              });
+            });
+          </script>
+        </div>
+
         <div data-test-hook="remote-data">
           <label for="choices-remote-data">Remote data</label>
           <select
@@ -396,6 +439,14 @@
             <option value="Choice 14">Choice 14</option>
             <option value="Choice 15">Choice 15</option>
           </select>
+          <script>
+            document.addEventListener('DOMContentLoaded', function() {
+              new Choices('#choices-scrolling-dropdown', {
+                allowHTML: true,
+                shouldSort: false,
+              });
+            });
+          </script>
         </div>
 
         <div data-test-hook="groups">
@@ -419,9 +470,8 @@
           </select>
           <script>
             document.addEventListener('DOMContentLoaded', function() {
-              new Choices('#choices-scrolling-dropdown', {
+              new Choices('#choices-groups', {
                 allowHTML: true,
-                shouldSort: false,
               });
             });
           </script>
@@ -775,6 +825,37 @@
                     value: 'Choice 3',
                   },
                 ],
+              });
+            });
+          </script>
+        </div>
+
+        <div data-test-hook="new-destroy-init">
+          <label for="choices-new-destroy-init">New, Destroy, Init</label>
+          <select
+            class="form-control"
+            name="choices-new-destroy-init"
+            id="choices-new-destroy-init"
+            multiple
+          >
+            <option value="Choice 1">Choice 1</option>
+            <option value="Choice 2">Choice 2</option>
+            <option value="Choice 3">Choice 3</option>
+          </select>
+          <button class="destroy">Destroy</button>
+          <button class="init">Init</button>
+          <script>
+            document.addEventListener('DOMContentLoaded', function() {
+              const newDestroyInitChoices = new Choices('#choices-new-destroy-init', {
+                allowHTML: true,
+              });
+              document
+                .querySelector('button.destroy')
+                .addEventListener('click', () => {
+                  newDestroyInitChoices.destroy();
+                });
+              document.querySelector('button.init').addEventListener('click', () => {
+                newDestroyInitChoices.init();
               });
             });
           </script>

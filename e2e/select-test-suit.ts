@@ -22,6 +22,7 @@ export class SelectTestSuit extends TestSuit {
   async startWithClick(): Promise<void> {
     await this.start();
     await this.selectByClick();
+    await this.expectVisibleDropdown();
   }
 
   getWrappedElement(): Locator {

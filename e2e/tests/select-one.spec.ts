@@ -160,6 +160,7 @@ describe('Choices - select one', () => {
 
           await suite.expectedItemCount(0);
           await suite.expectedValue('');
+          await suite.expectHiddenDropdown();
         });
 
         test('removes selected choice', async ({ page }) => {
@@ -182,6 +183,7 @@ describe('Choices - select one', () => {
 
           await suite.expectedItemCount(0);
           await suite.expectedValue('');
+          await suite.expectHiddenDropdown();
         });
       });
     });
@@ -291,6 +293,7 @@ describe('Choices - select one', () => {
 
         await suite.expectedItemCount(1);
         await suite.expectedValue(text);
+        await suite.expectHiddenDropdown();
       });
     });
 
@@ -304,6 +307,7 @@ describe('Choices - select one', () => {
 
             const searchTerm = 'item 2';
             await suite.typeText(searchTerm);
+            await suite.expectVisibleDropdown();
             await expect(suite.choices.first()).not.toHaveText(searchTerm);
           });
         });
@@ -316,6 +320,7 @@ describe('Choices - select one', () => {
             const searchTerm = 'Choice 2';
 
             await suite.typeText(searchTerm);
+            await suite.expectVisibleDropdown();
             await expect(suite.choices.first()).toHaveText(searchTerm);
           });
         });
@@ -363,6 +368,7 @@ describe('Choices - select one', () => {
             const item = suite.itemsWithPlaceholder.first();
             await expect(item).not.toHaveClass(/choices__placeholder/);
             await expect(item).not.toHaveText('I am a placeholder');
+            await suite.expectHiddenDropdown();
           });
         });
 
@@ -522,6 +528,7 @@ describe('Choices - select one', () => {
             const suite = new SelectTestSuit(page, testUrl, testId);
             await suite.startWithClick();
             await suite.typeText(country);
+            await suite.expectVisibleDropdown();
 
             const choice = suite.selectableChoices.first();
             await expect(choice).toHaveText(city);
@@ -547,6 +554,7 @@ describe('Choices - select one', () => {
             const suite = new SelectTestSuit(page, testUrl, testId);
             await suite.startWithClick();
             await suite.typeText(searchText);
+            await suite.expectVisibleDropdown();
 
             const choice = suite.selectableChoices.first();
             await expect(choice).toHaveText(label);
@@ -591,9 +599,13 @@ describe('Choices - select one', () => {
 
             const suite = new SelectTestSuit(page, testUrl, testId);
             await suite.startWithClick();
-            await suite.enterKey(); // closes the dropdown
+            await suite.expectVisibleDropdown();
+
+            await suite.enterKey();
+            await suite.expectHiddenDropdown();
 
             await suite.selectByClick();
+            await suite.expectVisibleDropdown();
 
             const choice = suite.choices.first();
             const text = await choice.innerText();
@@ -603,6 +615,7 @@ describe('Choices - select one', () => {
             await suite.expectedItemCount(1);
             await suite.expectedValue(text);
             expect(submit).toEqual(false);
+            await suite.expectHiddenDropdown();
           });
         });
       });
@@ -646,7 +659,10 @@ describe('Choices - select one', () => {
       test('gets a result when searching by label', async ({ page }) => {
         const suite = new SelectTestSuit(page, testUrl, testId);
         await suite.startWithClick();
-        await suite.typeTextAndEnter('label1');
+        await suite.typeText('label1');
+        await suite.expectVisibleDropdown();
+        await suite.enterKey();
+        await suite.expectHiddenDropdown();
 
         await expect(suite.items.filter({ hasText: 'label1' })).not.toHaveCount(0);
       });
@@ -660,7 +676,10 @@ describe('Choices - select one', () => {
         test('does not show html', async ({ page }) => {
           const suite = new SelectTestSuit(page, testUrl, testId);
           await suite.startWithClick();
-          await suite.typeTextAndEnter(htmlInput);
+          await suite.typeText(htmlInput);
+          await suite.expectVisibleDropdown();
+          await suite.enterKey();
+          await suite.expectHiddenDropdown();
 
           await expect(suite.items.first()).toHaveText(htmlInput);
         });
@@ -671,7 +690,10 @@ describe('Choices - select one', () => {
         test('does not show html as text', async ({ page }) => {
           const suite = new SelectTestSuit(page, testUrl, testId);
           await suite.startWithClick();
-          await suite.typeTextAndEnter(htmlInput);
+          await suite.typeText(htmlInput);
+          await suite.expectVisibleDropdown();
+          await suite.enterKey();
+          await suite.expectHiddenDropdown();
 
           await expect(suite.items.first()).toHaveText(textInput);
         });
@@ -682,7 +704,10 @@ describe('Choices - select one', () => {
         test('does not show html as text', async ({ page }) => {
           const suite = new SelectTestSuit(page, testUrl, testId);
           await suite.startWithClick();
-          await suite.typeTextAndEnter(htmlInput);
+          await suite.typeText(htmlInput);
+          await suite.expectVisibleDropdown();
+          await suite.enterKey();
+          await suite.expectHiddenDropdown();
 
           await expect(suite.items.first()).toHaveText(htmlInput);
         });
@@ -693,7 +718,10 @@ describe('Choices - select one', () => {
         test('does not show html as text', async ({ page }) => {
           const suite = new SelectTestSuit(page, testUrl, testId);
           await suite.startWithClick();
-          await suite.typeTextAndEnter(htmlInput);
+          await suite.typeText(htmlInput);
+          await suite.expectVisibleDropdown();
+          await suite.enterKey();
+          await suite.expectHiddenDropdown();
 
           await expect(suite.items.first()).toHaveText(htmlInput);
         });
@@ -702,10 +730,14 @@ describe('Choices - select one', () => {
 
     describe('re-initialising a choices instance', () => {
       const testId = 'new-destroy-init';
+      const testvalue = 'Choice 2';
       test('preserves the choices & items lists', async ({ page }) => {
         let suite = new SelectTestSuit(page, testUrl, testId);
         await suite.startWithClick();
-        await suite.typeTextAndEnter('Choice 2');
+        await suite.typeText(testvalue);
+        await suite.expectVisibleDropdown();
+        await suite.enterKey();
+        await suite.expectHiddenDropdown();
 
         await expect(suite.choices).toHaveCount(3);
 
@@ -717,18 +749,21 @@ describe('Choices - select one', () => {
 
         suite = new SelectTestSuit(page, testUrl, testId);
         await expect(suite.choices).toHaveCount(3);
-        await suite.expectedValue('Choice 2');
+        await suite.expectedValue(testvalue);
       });
 
       test('preserves the original select element', async ({ page }) => {
         const suite = new SelectTestSuit(page, testUrl, testId);
         await suite.startWithClick();
-        await suite.typeTextAndEnter('Choice 2');
+        await suite.typeText(testvalue);
+        await suite.expectVisibleDropdown();
+        await suite.enterKey();
+        await suite.expectHiddenDropdown();
 
         await expect(suite.choices).toHaveCount(3);
 
         await expect(suite.group.locator('select > option')).toHaveCount(3);
-        expect(await suite.getWrappedElement().inputValue()).toEqual('Choice 2');
+        expect(await suite.getWrappedElement().inputValue()).toEqual(testvalue);
       });
     });
   });
