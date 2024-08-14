@@ -4,6 +4,7 @@
 
 ### Bug Fixes (from 11.0.0RC1)
 * Fix various `select-one` bugs related to how `<select>` initializes and selected values do not match the configured `choices.js`
+* Fix legacy `placeholder` attribute support for `select-one`
 
 ## [11.0.0-rc6] (2024-08-12)
 
