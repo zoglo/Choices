@@ -122,7 +122,7 @@
         </div>
 
         <div data-test-hook="allowhtml-true">
-          <label for="allowhtml-true">HTML allowed</label>
+          <label for="allowhtml-true">HTML allowed (adds choices)</label>
           <input class="form-control" id="allowhtml-true" type="text" />
           <script>
             document.addEventListener('DOMContentLoaded', function() {
@@ -138,7 +138,7 @@
         </div>
 
         <div data-test-hook="allowhtml-true-userinput-false">
-          <label for="allowhtml-true-userinput-false">HTML allowed (except user input)</label>
+          <label for="allowhtml-true-userinput-false">HTML allowed (except user input, adds choices)</label>
           <input class="form-control" id="allowhtml-true-userinput-false" type="text" />
           <script>
             document.addEventListener('DOMContentLoaded', function() {
@@ -154,7 +154,7 @@
         </div>
 
         <div data-test-hook="allowhtml-false">
-          <label for="allowhtml-false">HTML disabled</label>
+          <label for="allowhtml-false">HTML disabled (adds choices)</label>
           <input class="form-control" id="allowhtml-false" type="text" />
           <script>
             document.addEventListener('DOMContentLoaded', function() {
@@ -315,6 +315,28 @@
             document.addEventListener('DOMContentLoaded', function() {
               new Choices('#choices-within-form', {
                 allowHTML: true,
+              });
+            });
+          </script>
+        </div>
+
+        <div data-test-hook="new-destroy-init">
+          <label for="choices-new-destroy-init">New, Destroy, Init</label>
+          <input class="form-control" id="choices-new-destroy-init" type="text" />
+          <button class="destroy">Destroy</button>
+          <button class="init">Init</button>
+          <script>
+            document.addEventListener('DOMContentLoaded', function() {
+              const newDestroyInitChoices = new Choices('#choices-new-destroy-init', {
+                allowHTML: true,
+              });
+              document
+                .querySelector('button.destroy')
+                .addEventListener('click', () => {
+                  newDestroyInitChoices.destroy();
+                });
+              document.querySelector('button.init').addEventListener('click', () => {
+                newDestroyInitChoices.init();
               });
             });
           </script>

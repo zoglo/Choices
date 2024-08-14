@@ -633,7 +633,7 @@
         </div>
 
         <div data-test-hook="allowhtml-undefined">
-          <label for="choices-allowhtml-undefined">HTML disabled by default</label>
+          <label for="choices-allowhtml-undefined">HTML disabled by default (adds choices)</label>
           <select
             class="form-control"
             name="choices-allowhtml-undefined"
@@ -643,6 +643,7 @@
           <script>
             document.addEventListener('DOMContentLoaded', function() {
               new Choices('#choices-allowhtml-undefined', {
+                addChoices: true,
                 choices: [
                   {
                     id: 1,
@@ -667,7 +668,7 @@
         </div>
 
         <div data-test-hook="allowhtml-true">
-          <label for="choices-allowhtml-true">HTML allowed</label>
+          <label for="choices-allowhtml-true">HTML allowed (adds choices)</label>
           <select
             class="form-control"
             name="choices-allowhtml-true"
@@ -704,7 +705,7 @@
         </div>
 
         <div data-test-hook="allowhtml-true-userinput-false">
-          <label for="choices-allowhtml-true-userinput-false">HTML allowed (except user input)</label>
+          <label for="choices-allowhtml-true-userinput-false">HTML allowed (except user input, adds choices)</label>
           <select
             class="form-control"
             name="choices-allowhtml-true-userinput-false"
@@ -742,7 +743,7 @@
         </div>
 
         <div data-test-hook="allowhtml-false">
-          <label for="choices-allowhtml-false">HTML disabled</label>
+          <label for="choices-allowhtml-false">HTML disabled (adds choices)</label>
           <select
             class="form-control"
             name="choices-allowhtml-false"
@@ -774,22 +775,6 @@
                     value: 'Choice 3',
                   },
                 ],
-              });
-            });
-          </script>
-        </div>
-
-        <div data-test-hook="add-choices">
-          <label for="choices-add-choices">Add choices</label>
-          <select class="form-control" name="choices-add-choices" id="choices-add-choices" multiple>
-            <option value="Choice 1">Choice 1</option>
-            <option value="Choice 2">Choice 2</option>
-            <option value="Choice 3">Choice 3</option>
-          </select>
-          <script>
-            document.addEventListener('DOMContentLoaded', function() {
-              new Choices('#choices-groups', {
-                allowHTML: true,
               });
             });
           </script>

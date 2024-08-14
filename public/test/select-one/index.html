@@ -170,27 +170,6 @@
           </script>
         </div>
 
-        <div data-test-hook="add-items-disabled">
-          <label for="choices-add-items-disabled">Add items disabled</label>
-          <select
-            class="form-control"
-            name="choices-add-items-disabled"
-            id="choices-add-items-disabled"
-          >
-            <option value="Choice 1" selected>Choice 1</option>
-            <option value="Choice 2">Choice 2</option>
-            <option value="Choice 3">Choice 3</option>
-          </select>
-          <script>
-            document.addEventListener('DOMContentLoaded', function() {
-              new Choices('#choices-add-items-disabled', {
-                allowHTML: true,
-                addItems: false,
-              });
-            });
-          </script>
-        </div>
-
         <div data-test-hook="disabled-via-fieldset">
           <fieldset disabled>
           <label for="choices-disabled-via-attr">Disabled via fieldset</label>
@@ -455,7 +434,6 @@
             class="form-control"
             name="choices-groups"
             id="choices-groups"
-            multiple
           >
             <optgroup label="UK">
               <option value="London">London</option>
@@ -472,6 +450,30 @@
             document.addEventListener('DOMContentLoaded', function() {
               new Choices('#choices-groups', {
                 allowHTML: true,
+              });
+            });
+          </script>
+        </div>
+
+        <div data-test-hook="mixed-groups">
+          <label for="choices-groups"
+          >Choice groups with some elements without a group</label
+          >
+          <select
+            class="form-control"
+            name="mixed-choices-groups"
+            id="mixed-choices-groups"
+          >
+            <optgroup label="UK">
+              <option value="London">London</option>
+            </optgroup>
+            <option value="Paris">Paris</option>
+            <option value="Lyon">Lyon</option>
+          </select>
+          <script>
+            document.addEventListener('DOMContentLoaded', function() {
+              new Choices('#mixed-choices-groups', {
+                allowHTML: false,
               });
             });
           </script>
@@ -691,7 +693,7 @@
         </div>
 
         <div data-test-hook="allowhtml-undefined">
-          <label for="choices-allowhtml-undefined">HTML disabled by default</label>
+          <label for="choices-allowhtml-undefined">HTML disabled by default (adds choices)</label>
           <select
             class="form-control"
             name="choices-allowhtml-undefined"
@@ -700,6 +702,7 @@
           <script>
             document.addEventListener('DOMContentLoaded', function() {
               new Choices('#choices-allowhtml-undefined', {
+                addChoices: true,
                 choices: [
                   {
                     id: 1,
@@ -718,7 +721,7 @@
         </div>
 
         <div data-test-hook="allowhtml-true">
-          <label for="choices-allowhtml-true">HTML allowed</label>
+          <label for="choices-allowhtml-true">HTML allowed (adds choices)</label>
           <select
             class="form-control"
             name="choices-allowhtml-true"
@@ -749,7 +752,7 @@
         </div>
 
         <div data-test-hook="allowhtml-true-userinput-false">
-          <label for="choices-allowhtml-true-userinput-false">HTML allowed (except user input)</label>
+          <label for="choices-allowhtml-true-userinput-false">HTML allowed (except user input, adds choices)</label>
           <select
             class="form-control"
             name="choices-allowhtml-true-userinput-false"
@@ -779,7 +782,7 @@
         </div>
 
         <div data-test-hook="allowhtml-false">
-          <label for="choices-allowhtml-false">HTML disabled</label>
+          <label for="choices-allowhtml-false">HTML disabled (adds choices)</label>
           <select
             class="form-control"
             name="choices-allowhtml-false"
@@ -821,28 +824,6 @@
           </select>
           <button class="destroy">Destroy</button>
           <button class="init">Init</button>
-          <script>
-            document.addEventListener('DOMContentLoaded', function() {
-              const addChoices = new Choices('#choices-add-choices', { addChoices: true });
-              addChoices.passedElement.element.addEventListener('addItem', function (e) {
-                console.log(e.detail);
-              });
-              addChoices.passedElement.element.addEventListener('removeItem', function (e) {
-                console.log(e.detail);
-              });
-              addChoices.passedElement.element.addEventListener('change', function (e) {
-                console.log(e.detail);
-              });  });
-          </script>
-        </div>
-
-        <div data-test-hook="add-choices">
-          <label for="choices-add-choices">Add choices</label>
-          <select class="form-control" name="choices-add-choices" id="choices-add-choices">
-            <option value="Choice 1">Choice 1</option>
-            <option value="Choice 2">Choice 2</option>
-            <option value="Choice 3">Choice 3</option>
-          </select>
           <script>
             document.addEventListener('DOMContentLoaded', function() {
               const newDestroyInitChoices = new Choices('#choices-new-destroy-init', {

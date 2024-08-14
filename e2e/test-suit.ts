@@ -42,17 +42,15 @@ export class TestSuit {
     }
   }
 
-  async select(textInput?: string): Promise<void> {
+  async selectByKeyPress(textInput: string): Promise<void> {
     await this.wrapper.focus();
-    if (textInput) {
-      await this.input.pressSequentially(textInput);
-    } else {
-      await this.enterKey();
-    }
+    await this.input.pressSequentially(textInput);
+    await this.expectVisibleDropdown();
   }
 
-  async selectClick(): Promise<void> {
+  async selectByClick(): Promise<void> {
     await this.wrapper.click();
+    await this.expectVisibleDropdown();
   }
 
   async typeTextAndEnter(textInput: string): Promise<void> {
@@ -103,7 +101,7 @@ export class TestSuit {
     throw new Error('Not implemented');
   }
 
-  async expectedValue(text: string) {
+  async expectedValue(text: string): Promise<void> {
     if (text !== '') {
       await expect(this.items.filter({ hasText: text })).not.toHaveCount(0);
     }
@@ -111,7 +109,7 @@ export class TestSuit {
     expect(await this.getWrappedElement().inputValue()).toEqual(text);
   }
 
-  async expectedItemCount(count: number) {
+  async expectedItemCount(count: number): Promise<void> {
     await expect(this.items).toHaveCount(count);
   }
 }

@@ -16,6 +16,7 @@ describe('Choices - text element', () => {
         test('allows me to input items', async ({ page }) => {
           const suite = new TextTestSuit(page, testUrl, testId);
           await suite.start(textInput);
+          await suite.expectHiddenDropdown();
 
           await suite.expectedValue(textInput);
         });
@@ -40,6 +41,7 @@ describe('Choices - text element', () => {
           await suite.start(textInput);
           await suite.backspaceKey();
           await suite.typeTextAndEnter('-edited');
+          await suite.expectHiddenDropdown();
 
           await expect(suite.itemList).toHaveText('-edited');
         });
@@ -50,6 +52,7 @@ describe('Choices - text element', () => {
           const suite = new TextTestSuit(page, testUrl, testId);
           await suite.start(textInput);
           await suite.ctrlA();
+          await suite.expectHiddenDropdown();
 
           expect(await suite.itemList.locator('.is-highlighted').count()).toEqual(1);
         });
@@ -60,6 +63,7 @@ describe('Choices - text element', () => {
             await suite.start(textInput);
             await suite.ctrlA();
             await suite.backspaceKey();
+            await suite.expectHiddenDropdown();
 
             expect(await suite.itemList.locator('.is-highlighted').count()).toEqual(0);
           });
@@ -73,6 +77,7 @@ describe('Choices - text element', () => {
         test('removes respective choice', async ({ page }) => {
           const suite = new TextTestSuit(page, testUrl, testId);
           await suite.start(textInput);
+          await suite.expectHiddenDropdown();
 
           await suite.expectedItemCount(1);
 
@@ -93,6 +98,8 @@ describe('Choices - text element', () => {
         test('only allows me to input unique values', async ({ page }) => {
           const suite = new TextTestSuit(page, testUrl, testId);
           await suite.start(textInput);
+          await suite.expectHiddenDropdown();
+
           await suite.typeTextAndEnter(textInput);
 
           await suite.expectedItemCount(1);
@@ -108,6 +115,7 @@ describe('Choices - text element', () => {
         test('does not show html', async ({ page }) => {
           const suite = new TextTestSuit(page, testUrl, testId);
           await suite.start(htmlInput);
+          await suite.expectHiddenDropdown();
 
           await expect(suite.items.first()).toHaveText('<b>Mason Rogers</b>');
           await expect(suite.items.last()).toHaveText(htmlInput);
@@ -119,6 +127,7 @@ describe('Choices - text element', () => {
         test('does not show html as text', async ({ page }) => {
           const suite = new TextTestSuit(page, testUrl, testId);
           await suite.start(htmlInput);
+          await suite.expectHiddenDropdown();
 
           await expect(suite.items.first()).toHaveText('Mason Rogers');
           await expect(suite.items.last()).toHaveText(textInput);
@@ -130,6 +139,7 @@ describe('Choices - text element', () => {
         test('does not show html as text', async ({ page }) => {
           const suite = new TextTestSuit(page, testUrl, testId);
           await suite.start(htmlInput);
+          await suite.expectHiddenDropdown();
 
           await expect(suite.items.first()).toHaveText('Mason Rogers');
           await expect(suite.items.last()).toHaveText(htmlInput);
@@ -141,6 +151,7 @@ describe('Choices - text element', () => {
         test('does not show html as text', async ({ page }) => {
           const suite = new TextTestSuit(page, testUrl, testId);
           await suite.start(htmlInput);
+          await suite.expectHiddenDropdown();
 
           await expect(suite.items.first()).toHaveText('<b>Mason Rogers</b>');
           await expect(suite.items.last()).toHaveText(htmlInput);
@@ -152,14 +163,14 @@ describe('Choices - text element', () => {
       const testId = 'input-limit';
       const inputLimit = 5;
 
-      // @todo fix this test; does not reliably show dropdown
       test('does not let me input more than 5 choices', async ({ page }) => {
         const suite = new TextTestSuit(page, testUrl, testId);
         await suite.start();
-        for (let index = 0; index < inputLimit + 1; index++) {
+        for (let index = 0; index < inputLimit; index++) {
           await suite.typeTextAndEnter(textInput);
-          await suite.expectVisibleDropdown();
+          await suite.expectHiddenDropdown();
         }
+        await suite.typeText(textInput);
 
         expect(await suite.items.count()).toEqual(inputLimit);
         await suite.expectVisibleDropdown(`Only ${inputLimit} values can be added`);
@@ -174,6 +185,7 @@ describe('Choices - text element', () => {
         test('allows me to add choice', async ({ page }) => {
           const suite = new TextTestSuit(page, testUrl, testId);
           await suite.start(input);
+          await suite.expectHiddenDropdown();
 
           await expect(suite.itemList).toHaveText(input);
         });
@@ -194,6 +206,7 @@ describe('Choices - text element', () => {
       test('does not allow me to input data', async ({ page }) => {
         const suite = new TextTestSuit(page, testUrl, testId);
         await suite.start();
+        await suite.expectHiddenDropdown();
 
         await expect(suite.input).toBeDisabled();
       });
@@ -204,6 +217,7 @@ describe('Choices - text element', () => {
       test('does not allow me to input data', async ({ page }) => {
         const suite = new TextTestSuit(page, testUrl, testId);
         await suite.start();
+        await suite.expectHiddenDropdown();
 
         await expect(suite.input).toBeDisabled();
       });
@@ -214,6 +228,7 @@ describe('Choices - text element', () => {
       test('does not allow me to input data', async ({ page }) => {
         const suite = new TextTestSuit(page, testUrl, testId);
         await suite.start();
+        await suite.expectHiddenDropdown();
 
         await expect(suite.input).toBeDisabled();
       });
@@ -224,6 +239,7 @@ describe('Choices - text element', () => {
       test('prepends and appends value to inputted value', async ({ page }) => {
         const suite = new TextTestSuit(page, testUrl, testId);
         await suite.start(textInput);
+        await suite.expectHiddenDropdown();
 
         const item = suite.items.first();
         await expect(item).toHaveText(textInput);
@@ -236,6 +252,7 @@ describe('Choices - text element', () => {
       test('pre-populates choices', async ({ page }) => {
         const suite = new TextTestSuit(page, testUrl, testId);
         await suite.start();
+        await suite.expectHiddenDropdown();
 
         expect(await suite.items.count()).toEqual(2);
         await expect(suite.items.first()).toHaveText('Josh Johnson');
@@ -249,6 +266,7 @@ describe('Choices - text element', () => {
         test('displays a placeholder', async ({ page }) => {
           const suite = new TextTestSuit(page, testUrl, testId);
           await suite.start();
+          await suite.expectHiddenDropdown();
 
           await expect(suite.input).toHaveAttribute('placeholder', 'I am a placeholder');
         });
@@ -269,6 +287,8 @@ describe('Choices - text element', () => {
 
             const suite = new TextTestSuit(page, testUrl, testId);
             await suite.start(textInput);
+            await suite.expectHiddenDropdown();
+
             await suite.expectedValue(textInput);
             expect(submit).toEqual(false);
           });
@@ -282,6 +302,7 @@ describe('Choices - text element', () => {
         test('allows me to input items', async ({ page }) => {
           const suite = new TextTestSuit(page, testUrl, testId);
           await suite.start(textInput);
+          await suite.expectHiddenDropdown();
 
           await suite.expectedValue(textInput);
         });
@@ -290,11 +311,40 @@ describe('Choices - text element', () => {
           test('shows a dropdown prompt', async ({ page }) => {
             const suite = new TextTestSuit(page, testUrl, testId);
             await suite.start();
-            await suite.typeTextAndEnter(textInput);
+            await suite.typeText(textInput);
 
             await suite.expectVisibleDropdown(`Press Enter to add "${textInput}"`);
           });
         });
+      });
+    });
+
+    describe('re-initialising a choices instance', () => {
+      const testId = 'new-destroy-init';
+      test('preserves the choices & items lists', async ({ page }) => {
+        let suite = new TextTestSuit(page, testUrl, testId);
+        await suite.start(textInput);
+        await suite.expectHiddenDropdown();
+
+        await expect(suite.items).toHaveCount(1);
+
+        await suite.group.locator('.destroy').click({ force: true });
+
+        await suite.group.locator('.init').click({ force: true });
+
+        suite = new TextTestSuit(page, testUrl, testId);
+        await expect(suite.items).toHaveCount(1);
+        await suite.expectedValue(textInput);
+      });
+
+      test('preserves the original select element', async ({ page }) => {
+        const suite = new TextTestSuit(page, testUrl, testId);
+        await suite.start(textInput);
+        await suite.expectHiddenDropdown();
+
+        await expect(suite.items).toHaveCount(1);
+
+        expect(await suite.getWrappedElement().inputValue()).toEqual(textInput);
       });
     });
   });
