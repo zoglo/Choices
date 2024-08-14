@@ -2271,13 +2271,18 @@ class Choices {
        *
        * Otherwise we pre-select the first enabled choice in the array ("select-one" only)
        */
-      const hasSelectedChoice = choices.findIndex((choice) => !!(choice as Partial<InputChoice>).selected) === -1;
-      if (hasSelectedChoice) {
-        const i = choices.findIndex((choice) => choice.disabled === undefined || !choice.disabled);
-        if (i !== -1) {
-          const choice = choices[i] as InputChoice;
+      const noSelectedChoices = choices.findIndex((choice: ChoiceFull) => choice.selected) === -1;
+      if (noSelectedChoices) {
+        choices.some((choice) => {
+          if (choice.disabled || 'choices' in choice) {
+            return false;
+          }
+
+          // eslint-disable-next-line no-param-reassign
           choice.selected = true;
-        }
+
+          return true;
+        });
       }
     }
 
