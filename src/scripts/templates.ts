@@ -124,6 +124,7 @@ const templates: TemplatesInterface = {
     }: ChoiceFull,
     removeItemButton: boolean,
   ): HTMLDivElement {
+    const rawValue = unwrapStringForRaw(value);
     const div = Object.assign(document.createElement('div'), {
       className: getClassNames(item).join(' '),
     });
@@ -141,7 +142,7 @@ const templates: TemplatesInterface = {
     Object.assign(div.dataset, {
       item: '',
       id,
-      value,
+      value: rawValue,
     });
     if (labelClass) {
       div.dataset.labelClass = getClassNames(labelClass).join(' ');
@@ -217,6 +218,7 @@ const templates: TemplatesInterface = {
     { allowHTML, classNames: { group, groupHeading, itemDisabled } }: TemplateOptions,
     { id, label, disabled }: GroupFull,
   ): HTMLDivElement {
+    const rawLabel = unwrapStringForRaw(label);
     const div = Object.assign(document.createElement('div'), {
       className: `${getClassNames(group).join(' ')} ${disabled ? getClassNames(itemDisabled).join(' ') : ''}`,
     });
@@ -226,7 +228,7 @@ const templates: TemplatesInterface = {
     Object.assign(div.dataset, {
       group: '',
       id,
-      value: label,
+      value: rawLabel,
     });
 
     if (disabled) {
@@ -262,6 +264,7 @@ const templates: TemplatesInterface = {
     }: ChoiceFull,
     selectText: string,
   ): HTMLDivElement {
+    const rawValue = unwrapStringForRaw(value);
     const div = Object.assign(document.createElement('div'), {
       id: elementId,
       className: `${getClassNames(item).join(' ')} ${getClassNames(itemChoice).join(' ')}`,
@@ -303,7 +306,7 @@ const templates: TemplatesInterface = {
     Object.assign(div.dataset, {
       choice: '',
       id,
-      value,
+      value: rawValue,
       selectText,
     });
     if (labelClass) {
