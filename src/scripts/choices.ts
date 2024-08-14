@@ -335,8 +335,8 @@ class Choices {
     this.passedElement.reveal();
     this.containerOuter.unwrap(this.passedElement.element);
 
+    this._store._listeners = []; // prevents select/input value being wiped
     this.clearStore();
-    this._store._listeners = [];
     this._stopSearch();
 
     this._templates = templates;
