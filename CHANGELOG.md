@@ -5,9 +5,19 @@
 ### ⚠ BREAKING CHANGES
 * Improve consistency of the `choice` event firing. Event now occurs after the `addItem` event
 
+### Bug Fixes (from 10.2.0)
+
+### Bug Fixes (from 11.0.0RC6)
+* Fix destroy&init of `choices.js` would lost track of data from the backing `<input>`/`<select>`
+
 ### Bug Fixes (from 11.0.0RC1)
 * Fix various `select-one` bugs related to how `<select>` initializes and selected values do not match the configured `choices.js`
 * Fix legacy `placeholder` attribute support for `select-one`
+* Fix `data-value` attribute on choices may not be correctly rendered into html
+
+### Chore
+* Restructure end-to-end tests so html/script blocks are co-located to improve debugability
+* Enable `@typescript-eslint/explicit-function-return-type` eslint rule
 
 ## [11.0.0-rc6] (2024-08-12)
 
