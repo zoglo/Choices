@@ -2,6 +2,9 @@
 
 ## [11.0.0-rc7] (2024-08-)
 
+### ⚠ BREAKING CHANGES
+* Improve consistency of the `choice` event firing. Event now occurs after the `addItem` event
+
 ### Bug Fixes (from 11.0.0RC1)
 * Fix various `select-one` bugs related to how `<select>` initializes and selected values do not match the configured `choices.js`
 * Fix legacy `placeholder` attribute support for `select-one`

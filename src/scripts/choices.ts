@@ -1203,7 +1203,7 @@ class Choices {
     this.input.focus();
   }
 
-  _handleChoiceAction(items: ChoiceFull[], element?: HTMLElement, keyCode?: number): boolean {
+  _handleChoiceAction(items: ChoiceFull[], element?: HTMLElement): boolean {
     // If we are clicking on an option
     const id = parseDataSetId(element);
     const choice = id && this._store.getChoiceById(id);
@@ -1218,16 +1218,8 @@ class Choices {
       const canAddItem = this._canAddItem(items, choice.value);
 
       if (canAddItem.response) {
-        if (this.config.singleModeForMultiSelect || this._isSelectOneElement) {
-          if (items.length !== 0) {
-            const lastItem = items[items.length - 1];
-            this._removeItem(lastItem);
-          }
-        }
+        this._addItem(choice, true, true);
 
-        this.passedElement.triggerEvent(EventType.choice, this._getChoiceForOutput(choice, keyCode));
-
-        this._addItem(choice);
         this.clearInput();
         addedItem = true;
       }
@@ -1693,7 +1685,7 @@ class Choices {
       );
 
       if (highlightedChoice) {
-        addedItem = this._handleChoiceAction(items, highlightedChoice, KeyCodeMap.ENTER_KEY);
+        addedItem = this._handleChoiceAction(items, highlightedChoice);
 
         if (addedItem) {
           this.unhighlightAll();
@@ -1724,7 +1716,7 @@ class Choices {
       }
       let choiceNotFound = true;
       if (this._isSelectElement || !this.config.duplicateItemsAllowed) {
-        choiceNotFound = !this._findAndSelectChoiceByValue(value);
+        choiceNotFound = !this._findAndSelectChoiceByValue(value, true);
       }
 
       if (choiceNotFound) {
@@ -1740,6 +1732,8 @@ class Choices {
             } as InputChoice,
             false,
           ),
+          true,
+          true,
         );
       }
       this.clearInput();
@@ -2061,13 +2055,13 @@ class Choices {
     }
   }
 
-  _addItem(item: ChoiceFull, withEvents: boolean = true): void {
+  _addItem(item: ChoiceFull, withEvents: boolean = true, userTriggered = false): void {
     const { id } = item;
     if (id === 0) {
       throw new TypeError('item.id must be set before _addItem is called for a choice/item');
     }
 
-    if (this._isSelectOneElement) {
+    if (this.config.singleModeForMultiSelect || this._isSelectOneElement) {
       this.removeActiveItems(id);
     }
 
@@ -2075,6 +2069,10 @@ class Choices {
 
     if (withEvents) {
       this.passedElement.triggerEvent(EventType.addItem, this._getChoiceForOutput(item));
+
+      if (userTriggered) {
+        this.passedElement.triggerEvent(EventType.choice, this._getChoiceForOutput(item));
+      }
     }
   }
 
@@ -2089,7 +2087,7 @@ class Choices {
     this.passedElement.triggerEvent(EventType.removeItem, this._getChoiceForOutput(item));
   }
 
-  _addChoice(choice: ChoiceFull, withEvents: boolean = true): void {
+  _addChoice(choice: ChoiceFull, withEvents: boolean = true, userTriggered = false): void {
     if (choice.id !== 0) {
       throw new TypeError('Can not re-add a choice which has already been added');
     }
@@ -2113,7 +2111,7 @@ class Choices {
     this._store.dispatch(addChoice(choice));
 
     if (choice.selected) {
-      this._addItem(choice, withEvents);
+      this._addItem(choice, withEvents, userTriggered);
     }
   }
 
@@ -2297,13 +2295,13 @@ class Choices {
     });
   }
 
-  _findAndSelectChoiceByValue(value: string): boolean {
+  _findAndSelectChoiceByValue(value: string, userTriggered: boolean = false): boolean {
     const { choices } = this._store;
     // Check 'value' property exists and the choice isn't already selected
     const foundChoice = choices.find((choice) => this.config.valueComparer(choice.value, value));
 
     if (foundChoice && !foundChoice.selected) {
-      this._addItem(foundChoice);
+      this._addItem(foundChoice, true, userTriggered);
 
       return true;
     }

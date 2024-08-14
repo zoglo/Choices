@@ -10,7 +10,7 @@ export interface EventMap {
    *
    * **Input types affected:** text, select-one, select-multiple
    *
-   * Arguments: id, value, label, groupValue, keyCode
+   * Arguments: id, value, label, groupValue
    */
   addItem: CustomEvent<EventChoice>;
 
