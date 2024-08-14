@@ -155,7 +155,7 @@ declare class Choices {
     _triggerChange(value: any): void;
     _handleButtonAction(items: ChoiceFull[], element?: HTMLElement): void;
     _handleItemAction(items: InputChoice[], element?: HTMLElement, hasShiftKey?: boolean): void;
-    _handleChoiceAction(items: ChoiceFull[], element?: HTMLElement, keyCode?: number): boolean;
+    _handleChoiceAction(items: ChoiceFull[], element?: HTMLElement): boolean;
     _handleBackspace(items: ChoiceFull[]): void;
     _loadChoices(): void;
     _handleLoadingState(setLoading?: boolean): void;
@@ -190,16 +190,16 @@ declare class Choices {
     _onBlur({ target }: Pick<FocusEvent, 'target'>): void;
     _onFormReset(): void;
     _highlightChoice(el?: HTMLElement | null): void;
-    _addItem(item: ChoiceFull, withEvents?: boolean): void;
+    _addItem(item: ChoiceFull, withEvents?: boolean, userTriggered?: boolean): void;
     _removeItem(item: ChoiceFull): void;
-    _addChoice(choice: ChoiceFull, withEvents?: boolean): void;
+    _addChoice(choice: ChoiceFull, withEvents?: boolean, userTriggered?: boolean): void;
     _addGroup(group: GroupFull, withEvents?: boolean): void;
     _createTemplates(): void;
     _createElements(): void;
     _createStructure(): void;
     _initStore(): void;
     _addPredefinedChoices(choices: (ChoiceFull | GroupFull)[], selectFirstOption?: boolean, withEvents?: boolean): void;
-    _findAndSelectChoiceByValue(value: string): boolean;
+    _findAndSelectChoiceByValue(value: string, userTriggered?: boolean): boolean;
     _generatePlaceholderValue(): string | null;
     _warnChoicesInitFailed(caller: string): void;
 }

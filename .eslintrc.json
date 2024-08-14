@@ -19,6 +19,7 @@
     "project": true
   },
   "rules": {
+    "@typescript-eslint/explicit-function-return-type": "error",
     "import/no-named-as-default": "off",
     "import/prefer-default-export": "off",
     "import/no-extraneous-dependencies": [
@@ -79,8 +80,9 @@
   },
   "overrides": [
     {
-      "files": ["*.test.ts"],
+      "files": ["*.test.ts", "*.spec.ts"],
       "rules": {
+        "@typescript-eslint/explicit-function-return-type": "off",
         "no-restricted-syntax": "off",
         "compat/compat": "off",
         "no-new": "off",

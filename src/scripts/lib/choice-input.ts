@@ -8,7 +8,8 @@ type MappedInputTypeToChoiceType<T extends string | InputChoice | InputGroup> = 
   ? GroupFull
   : ChoiceFull;
 
-const coerceBool = (arg: unknown, defaultValue: boolean = true) => (typeof arg === 'undefined' ? defaultValue : !!arg);
+const coerceBool = (arg: unknown, defaultValue: boolean = true): boolean =>
+  typeof arg === 'undefined' ? defaultValue : !!arg;
 
 export const stringToHtmlClass = (input): string[] | undefined => {
   if (typeof input === 'string') {

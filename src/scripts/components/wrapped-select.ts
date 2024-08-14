@@ -37,7 +37,7 @@ export default class WrappedSelect extends WrappedElement<HTMLSelectElement> {
     );
   }
 
-  addOptions(choices: ChoiceFull[]) {
+  addOptions(choices: ChoiceFull[]): void {
     choices.forEach((obj) => {
       const choice = obj;
       if (choice.element) {

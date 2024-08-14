@@ -22,7 +22,7 @@ export class SearchByPrefixFilter<T extends object> implements Searcher<T> {
     return this._haystack.length === 0;
   }
 
-  search(_needle: string) {
+  search(_needle: string): SearchResult<T>[] {
     const fields = this._fields;
     if (!fields || fields.length === 0 || _needle === '') {
       return [];

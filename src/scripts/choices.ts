@@ -2327,7 +2327,7 @@ class Choices {
     return null;
   }
 
-  _warnChoicesInitFailed(caller: string) {
+  _warnChoicesInitFailed(caller: string): void {
     if (this.config.silent) {
       return;
     }

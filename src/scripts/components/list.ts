@@ -17,7 +17,7 @@ export default class List {
     this.element.innerHTML = '';
   }
 
-  prepend(node: Element | DocumentFragment) {
+  prepend(node: Element | DocumentFragment): void {
     const child = this.element.firstElementChild;
     if (child) {
       this.element.insertBefore(node, child);

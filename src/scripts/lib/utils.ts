@@ -170,7 +170,7 @@ export const getClassNames = (ClassNames: Array<string> | string): Array<string>
   return Array.isArray(ClassNames) ? ClassNames : [ClassNames];
 };
 
-export const getClassNamesSelector = (option: string | Array<string> | null) => {
+export const getClassNamesSelector = (option: string | Array<string> | null): string => {
   if (option && Array.isArray(option)) {
     return option
       .map((item) => {

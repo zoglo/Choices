@@ -817,6 +817,12 @@
         };
         // eslint-disable-next-line class-methods-use-this
         WrappedSelect.prototype._optionToChoice = function (option) {
+            // option.value returns the label if there is no value attribute, which can break legacy placeholder attribute support
+            if (!option.hasAttribute('value') && option.hasAttribute('placeholder')) {
+                option.setAttribute('value', '');
+                // eslint-disable-next-line no-param-reassign
+                option.value = '';
+            }
             return {
                 id: 0,
                 groupId: 0,
@@ -1364,6 +1370,7 @@
             var _c, _d, _e;
             var allowHTML = _a.allowHTML, removeItemButtonAlignLeft = _a.removeItemButtonAlignLeft, _f = _a.classNames, item = _f.item, button = _f.button, highlightedState = _f.highlightedState, itemSelectable = _f.itemSelectable, placeholder = _f.placeholder;
             var id = _b.id, value = _b.value, label = _b.label, labelClass = _b.labelClass, labelDescription = _b.labelDescription, customProperties = _b.customProperties, active = _b.active, disabled = _b.disabled, highlighted = _b.highlighted, isPlaceholder = _b.placeholder;
+            var rawValue = unwrapStringForRaw(value);
             var div = Object.assign(document.createElement('div'), {
                 className: getClassNames(item).join(' '),
             });
@@ -1380,7 +1387,7 @@
             Object.assign(div.dataset, {
                 item: '',
                 id: id,
-                value: value,
+                value: rawValue,
             });
             if (labelClass) {
                 div.dataset.labelClass = getClassNames(labelClass).join(' ');
@@ -1443,6 +1450,7 @@
         choiceGroup: function (_a, _b) {
             var allowHTML = _a.allowHTML, _c = _a.classNames, group = _c.group, groupHeading = _c.groupHeading, itemDisabled = _c.itemDisabled;
             var id = _b.id, label = _b.label, disabled = _b.disabled;
+            var rawLabel = unwrapStringForRaw(label);
             var div = Object.assign(document.createElement('div'), {
                 className: "".concat(getClassNames(group).join(' '), " ").concat(disabled ? getClassNames(itemDisabled).join(' ') : ''),
             });
@@ -1450,7 +1458,7 @@
             Object.assign(div.dataset, {
                 group: '',
                 id: id,
-                value: label,
+                value: rawLabel,
             });
             if (disabled) {
                 div.setAttribute('aria-disabled', 'true');
@@ -1465,6 +1473,7 @@
             var _c, _d, _e, _f, _g;
             var allowHTML = _a.allowHTML, _h = _a.classNames, item = _h.item, itemChoice = _h.itemChoice, itemSelectable = _h.itemSelectable, selectedState = _h.selectedState, itemDisabled = _h.itemDisabled, description = _h.description, placeholder = _h.placeholder;
             var id = _b.id, value = _b.value, label = _b.label, groupId = _b.groupId, elementId = _b.elementId, labelClass = _b.labelClass, labelDescription = _b.labelDescription, isDisabled = _b.disabled, isSelected = _b.selected, isPlaceholder = _b.placeholder;
+            var rawValue = unwrapStringForRaw(value);
             var div = Object.assign(document.createElement('div'), {
                 id: elementId,
                 className: "".concat(getClassNames(item).join(' '), " ").concat(getClassNames(itemChoice).join(' ')),
@@ -1498,10 +1507,13 @@
                 (_e = div.classList).add.apply(_e, getClassNames(placeholder));
             }
             div.setAttribute('role', groupId && groupId > 0 ? 'treeitem' : 'option');
+            if (groupId) {
+                div.dataset.groupId = "".concat(groupId);
+            }
             Object.assign(div.dataset, {
                 choice: '',
                 id: id,
-                value: value,
+                value: rawValue,
                 selectText: selectText,
             });
             if (labelClass) {
@@ -4180,7 +4192,7 @@
             // highlighted item
             this.input.focus();
         };
-        Choices.prototype._handleChoiceAction = function (items, element, keyCode) {
+        Choices.prototype._handleChoiceAction = function (items, element) {
             var _this = this;
             // If we are clicking on an option
             var id = parseDataSetId(element);
@@ -4193,14 +4205,7 @@
             this._store.withTxn(function () {
                 var canAddItem = _this._canAddItem(items, choice.value);
                 if (canAddItem.response) {
-                    if (_this.config.singleModeForMultiSelect || _this._isSelectOneElement) {
-                        if (items.length !== 0) {
-                            var lastItem = items[items.length - 1];
-                            _this._removeItem(lastItem);
-                        }
-                    }
-                    _this.passedElement.triggerEvent("choice" /* EventType.choice */, _this._getChoiceForOutput(choice, keyCode));
-                    _this._addItem(choice);
+                    _this._addItem(choice, true, true);
                     _this.clearInput();
                     addedItem = true;
                 }
@@ -4604,7 +4609,7 @@
             if (hasActiveDropdown) {
                 var highlightedChoice = this.dropdown.element.querySelector(getClassNamesSelector(this.config.classNames.highlightedState));
                 if (highlightedChoice) {
-                    addedItem = this._handleChoiceAction(items, highlightedChoice, 13 /* KeyCodeMap.ENTER_KEY */);
+                    addedItem = this._handleChoiceAction(items, highlightedChoice);
                     if (addedItem) {
                         this.unhighlightAll();
                         return;
@@ -4630,7 +4635,7 @@
                 }
                 var choiceNotFound = true;
                 if (_this._isSelectElement || !_this.config.duplicateItemsAllowed) {
-                    choiceNotFound = !_this._findAndSelectChoiceByValue(value);
+                    choiceNotFound = !_this._findAndSelectChoiceByValue(value, true);
                 }
                 if (choiceNotFound) {
                     var sanitisedValue = sanitise(value);
@@ -4639,7 +4644,7 @@
                         value: userValue,
                         label: userValue,
                         selected: true,
-                    }, false));
+                    }, false), true, true);
                 }
                 _this.clearInput();
                 _this.unhighlightAll();
@@ -4933,18 +4938,22 @@
                 this.containerOuter.setActiveDescendant(passedEl.id);
             }
         };
-        Choices.prototype._addItem = function (item, withEvents) {
+        Choices.prototype._addItem = function (item, withEvents, userTriggered) {
             if (withEvents === void 0) { withEvents = true; }
+            if (userTriggered === void 0) { userTriggered = false; }
             var id = item.id;
             if (id === 0) {
                 throw new TypeError('item.id must be set before _addItem is called for a choice/item');
             }
-            if (this._isSelectOneElement) {
+            if (this.config.singleModeForMultiSelect || this._isSelectOneElement) {
                 this.removeActiveItems(id);
             }
             this._store.dispatch(addItem(item));
             if (withEvents) {
                 this.passedElement.triggerEvent("addItem" /* EventType.addItem */, this._getChoiceForOutput(item));
+                if (userTriggered) {
+                    this.passedElement.triggerEvent("choice" /* EventType.choice */, this._getChoiceForOutput(item));
+                }
             }
         };
         Choices.prototype._removeItem = function (item) {
@@ -4955,8 +4964,9 @@
             this._store.dispatch(removeItem(item));
             this.passedElement.triggerEvent("removeItem" /* EventType.removeItem */, this._getChoiceForOutput(item));
         };
-        Choices.prototype._addChoice = function (choice, withEvents) {
+        Choices.prototype._addChoice = function (choice, withEvents, userTriggered) {
             if (withEvents === void 0) { withEvents = true; }
+            if (userTriggered === void 0) { userTriggered = false; }
             if (choice.id !== 0) {
                 throw new TypeError('Can not re-add a choice which has already been added');
             }
@@ -4976,7 +4986,7 @@
             }
             this._store.dispatch(addChoice(choice));
             if (choice.selected) {
-                this._addItem(choice, withEvents);
+                this._addItem(choice, withEvents, userTriggered);
             }
         };
         Choices.prototype._addGroup = function (group, withEvents) {
@@ -5096,10 +5106,6 @@
             var _this = this;
             if (selectFirstOption === void 0) { selectFirstOption = false; }
             if (withEvents === void 0) { withEvents = true; }
-            // If sorting is enabled or the user is searching, filter choices
-            if (this.config.shouldSort) {
-                choices.sort(this.config.sorter);
-            }
             if (selectFirstOption) {
                 /**
                  * If there is a selected choice already or the choice is not the first in
@@ -5107,13 +5113,16 @@
                  *
                  * Otherwise we pre-select the first enabled choice in the array ("select-one" only)
                  */
-                var hasSelectedChoice = choices.findIndex(function (choice) { return !!choice.selected; }) === -1;
-                if (hasSelectedChoice) {
-                    var i = choices.findIndex(function (choice) { return choice.disabled === undefined || !choice.disabled; });
-                    if (i !== -1) {
-                        var choice = choices[i];
+                var noSelectedChoices = choices.findIndex(function (choice) { return choice.selected; }) === -1;
+                if (noSelectedChoices) {
+                    choices.some(function (choice) {
+                        if (choice.disabled || 'choices' in choice) {
+                            return false;
+                        }
+                        // eslint-disable-next-line no-param-reassign
                         choice.selected = true;
-                    }
+                        return true;
+                    });
                 }
             }
             choices.forEach(function (item) {
@@ -5127,13 +5136,14 @@
                 }
             });
         };
-        Choices.prototype._findAndSelectChoiceByValue = function (value) {
+        Choices.prototype._findAndSelectChoiceByValue = function (value, userTriggered) {
             var _this = this;
+            if (userTriggered === void 0) { userTriggered = false; }
             var choices = this._store.choices;
             // Check 'value' property exists and the choice isn't already selected
             var foundChoice = choices.find(function (choice) { return _this.config.valueComparer(choice.value, value); });
             if (foundChoice && !foundChoice.selected) {
-                this._addItem(foundChoice);
+                this._addItem(foundChoice, true, userTriggered);
                 return true;
             }
             return false;
