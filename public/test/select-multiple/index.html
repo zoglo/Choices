@@ -361,7 +361,7 @@
                 shouldSort: false,
               }).setChoices(async () => {
                 try {
-                  const data = await fetch('/data');
+                  const data = await fetch('../data.json');
                   return data.json();
                 } catch (e) {
                   console.log(e);

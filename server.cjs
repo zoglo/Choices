@@ -7,22 +7,6 @@ const DIST_DIR = path.resolve(__dirname, 'public');
 
 const app = express();
 
-app.get('/data', (req, res) => {
-  // prevent endpoint from being cached
-  res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-  res.header('Expires', '-1');
-  res.header('Pragma', 'no-cache');
-
-  const fakeData = [...new Array(50)].map((_, index) => ({
-    label: `Label ${index + 1}`,
-    value: `Value ${index + 1}`,
-  }));
-
-  setTimeout(() => {
-    res.status(200).send(fakeData);
-  }, 1000);
-});
-
 app.use(express.static(DIST_DIR));
 
 const server = app.listen(PORT, err => {

@@ -405,8 +405,8 @@
                 shouldSort: false,
               }).setChoices(async () => {
                 try {
-                  const res = await fetch('/data');
-                  return res.json();
+                  const data = await fetch('../data.json');
+                  return data.json();
                 } catch (e) {
                   console.log(e);
                   return [];
