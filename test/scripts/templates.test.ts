@@ -613,10 +613,9 @@ describe('templates', () => {
     describe('passing a notice type', () => {
       describe('no results', () => {
         it('adds no results classname', () => {
+          const { item, itemChoice, notice, noResults } = noticeOptions.classNames;
           const expectedOutput = strToEl(`
-            <div class="${getClassNames(noticeOptions.classNames.item).join(' ')} ${getClassNames(
-              noticeOptions.classNames.itemChoice,
-            ).join(' ')} ${getClassNames(noticeOptions.classNames.noResults).join(' ')}">
+            <div class="${getClassNames(item).join(' ')} ${getClassNames(itemChoice).join(' ')} ${getClassNames(notice).join(' ')} ${getClassNames(noResults).join(' ')}">
               ${label}
             </div>
           `);
@@ -628,10 +627,9 @@ describe('templates', () => {
 
       describe('no choices', () => {
         it('adds no choices classname', () => {
+          const { item, itemChoice, notice, noChoices } = noticeOptions.classNames;
           const expectedOutput = strToEl(`
-            <div class="${getClassNames(noticeOptions.classNames.item).join(' ')} ${getClassNames(
-              noticeOptions.classNames.itemChoice,
-            ).join(' ')} ${getClassNames(noticeOptions.classNames.noChoices).join(' ')}">
+            <div class="${getClassNames(item).join(' ')} ${getClassNames(itemChoice).join(' ')} ${getClassNames(notice).join(' ')} ${getClassNames(noChoices).join(' ')}">
               ${label}
             </div>
           `);

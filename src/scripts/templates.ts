@@ -364,11 +364,14 @@ const templates: TemplatesInterface = {
   },
 
   notice(
-    { allowHTML, classNames: { item, itemChoice, addChoice, noResults, noChoices } }: TemplateOptions,
+    {
+      allowHTML,
+      classNames: { item, itemChoice, addChoice, noResults, noChoices, notice: noticeItem },
+    }: TemplateOptions,
     innerText: StringUntrusted | StringPreEscaped | string,
     type: NoticeType = '',
   ): HTMLDivElement {
-    const classes = [...getClassNames(item), ...getClassNames(itemChoice)];
+    const classes = [...getClassNames(item), ...getClassNames(itemChoice), ...getClassNames(noticeItem)];
 
     // eslint-disable-next-line default-case
     switch (type) {

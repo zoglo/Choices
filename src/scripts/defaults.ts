@@ -28,7 +28,8 @@ export const DEFAULT_CLASSNAMES: ClassNames = {
   selectedState: ['is-selected'],
   flippedState: ['is-flipped'],
   loadingState: ['is-loading'],
-  addChoice: ['choices__item', 'choices__item--selectable', 'add-choice'],
+  notice: ['choices__notice'],
+  addChoice: ['choices__item--selectable', 'add-choice'],
   noResults: ['has-no-results'],
   noChoices: ['has-no-choices'],
 } as const;

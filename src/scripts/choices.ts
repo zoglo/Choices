@@ -28,10 +28,12 @@ import { ChoiceFull } from './interfaces/choice-full';
 import { GroupFull } from './interfaces/group-full';
 import { EventType, KeyCodeMap, PassedElementType } from './interfaces';
 import { EventChoice } from './interfaces/event-choice';
-import { Templates } from './interfaces/templates';
+import { NoticeType, Templates } from './interfaces/templates';
 import { isHtmlInputElement, isHtmlSelectElement } from './lib/html-guard-statements';
 import { Searcher } from './interfaces/search';
 import { getSearcher } from './search';
+import { StringUntrusted } from './interfaces/string-untrusted';
+import { StringPreEscaped } from './interfaces/string-pre-escaped';
 
 /** @see {@link http://browserhacks.com/#hack-acea075d0ac6954f275a70023906050c} */
 const IS_IE11 =
@@ -143,6 +145,11 @@ class Choices {
   _initialItems: string[];
 
   _searcher: Searcher<ChoiceFull>;
+
+  _notice?: {
+    type: NoticeType;
+    text: StringUntrusted | StringPreEscaped | string;
+  };
 
   constructor(
     element: string | Element | HTMLInputElement | HTMLSelectElement = '[data-choice]',
@@ -487,6 +494,7 @@ class Choices {
         this.input.removeActiveDescendant();
         this.input.blur();
       }
+      this._clearNotice();
 
       this.passedElement.triggerEvent(EventType.hideDropdown);
     });
@@ -812,6 +820,7 @@ class Choices {
   clearInput(): this {
     const shouldSetInputWidth = !this._isSelectOneElement;
     this.input.clear(shouldSetInputWidth);
+    this._clearNotice();
 
     if (this._isSearching) {
       this._stopSearch();
@@ -840,23 +849,22 @@ class Choices {
     }
   }
 
-  _render(changes?: StateChangeSet): void {
+  _render(changes: StateChangeSet = { choices: true, groups: true, items: true }): void {
     if (this._store.inTxn()) {
       return;
     }
 
-    const shouldRenderItems = changes?.items;
-    const stateChanged = changes?.choices || changes?.groups || shouldRenderItems;
+    if (changes.choices || changes.groups) {
+      if (this._store.choices.length === 0 && !this._notice) {
+        const notice =
+          typeof this.config.noChoicesText === 'function' ? this.config.noChoicesText() : this.config.noChoicesText;
+        this._displayNotice(notice, 'no-choices', false);
+      }
 
-    if (!stateChanged) {
-      return;
-    }
-
-    if (this._isSelectElement) {
       this._renderChoices();
     }
 
-    if (shouldRenderItems) {
+    if (changes.items) {
       this._renderItems();
     }
   }
@@ -866,6 +874,7 @@ class Choices {
     let choiceListFragment = document.createDocumentFragment();
 
     this.choiceList.clear();
+    this._renderNotice();
 
     if (this.config.resetScrollPosition) {
       requestAnimationFrame(() => this.choiceList.scrollToTop());
@@ -887,47 +896,8 @@ class Choices {
       choiceListFragment = this._createChoicesFragment(activeChoices, choiceListFragment);
     }
 
-    const { value } = this.input;
-    const canAdd = this._canAddItem(this._store.items, value);
-
     if (choiceListFragment.childNodes.length !== 0) {
-      let showNotice = !canAdd.response;
-      // ...and we can select them
-      if (canAdd.response) {
-        // ...append them and highlight the first choice
-        this.choiceList.append(choiceListFragment);
-        this._highlightChoice();
-
-        // for exact matches, do not prompt to add it as a custom choice
-        if (this._canAddUserChoices && value && canAdd.notice) {
-          showNotice = !activeChoices.find((choice) => this.config.valueComparer(choice.value, value));
-        }
-      }
-
-      // when adding items, provide feedback while also displaying choices
-      if (showNotice) {
-        const notice = this._templates.notice(this.config, canAdd.notice, this._canAddUserChoices ? 'add-choice' : '');
-        this.choiceList.prepend(notice);
-      }
-    } else {
-      // Otherwise show a notice
-      let dropdownItem: Element | DocumentFragment;
-
-      if (canAdd.response && this._canAddUserChoices && value) {
-        dropdownItem = this._templates.notice(this.config, canAdd.notice, 'add-choice');
-      } else if (this._isSearching) {
-        const notice =
-          typeof this.config.noResultsText === 'function' ? this.config.noResultsText() : this.config.noResultsText;
-
-        dropdownItem = this._templates.notice(this.config, notice, 'no-results');
-      } else {
-        const notice =
-          typeof this.config.noChoicesText === 'function' ? this.config.noChoicesText() : this.config.noChoicesText;
-
-        dropdownItem = this._templates.notice(this.config, notice, 'no-choices');
-      }
-
-      this.choiceList.append(dropdownItem);
+      this.choiceList.append(choiceListFragment);
     }
   }
 
@@ -1117,6 +1087,61 @@ class Choices {
     return fragment;
   }
 
+  _displayNotice(
+    text: StringUntrusted | StringPreEscaped | string,
+    type: NoticeType,
+    openDropdown: boolean = true,
+  ): void {
+    const oldNotice = this._notice;
+    const changed = !oldNotice || oldNotice.text !== text || oldNotice.type !== type;
+    if (!changed) {
+      return;
+    }
+
+    if (changed && oldNotice) {
+      if (oldNotice.type === 'add-choice' && (type === 'no-results' || type === 'no-choices')) {
+        return;
+      }
+    }
+
+    this._clearNotice();
+
+    this._notice = text
+      ? {
+          text,
+          type,
+        }
+      : undefined;
+
+    this._renderNotice();
+
+    if (openDropdown) {
+      this.showDropdown(true);
+    }
+  }
+
+  _clearNotice(): void {
+    if (!this._notice) {
+      return;
+    }
+
+    const selector = getClassNamesSelector(this.config.classNames.notice);
+    const noticeElement = this.choiceList.element.querySelector(selector);
+    if (noticeElement) {
+      noticeElement.remove();
+    }
+
+    this._notice = undefined;
+  }
+
+  _renderNotice(): void {
+    const noticeConf = this._notice;
+    if (noticeConf) {
+      const notice = templates.notice(this.config, noticeConf.text, noticeConf.type);
+      this.choiceList.prepend(notice);
+    }
+  }
+
   _getChoiceForOutput(choice?: ChoiceFull, keyCode?: number): EventChoice | undefined {
     if (!choice) {
       return undefined;
@@ -1151,7 +1176,8 @@ class Choices {
     });
   }
 
-  _handleButtonAction(items: ChoiceFull[], element?: HTMLElement): void {
+  _handleButtonAction(element?: HTMLElement): void {
+    const { items } = this._store;
     if (items.length === 0 || !this.config.removeItems || !this.config.removeItemButton) {
       return;
     }
@@ -1177,7 +1203,8 @@ class Choices {
     }
   }
 
-  _handleItemAction(items: InputChoice[], element?: HTMLElement, hasShiftKey = false): void {
+  _handleItemAction(element?: HTMLElement, hasShiftKey = false): void {
+    const { items } = this._store;
     if (items.length === 0 || !this.config.removeItems || this._isSelectOneElement) {
       return;
     }
@@ -1203,7 +1230,7 @@ class Choices {
     this.input.focus();
   }
 
-  _handleChoiceAction(items: ChoiceFull[], element?: HTMLElement): boolean {
+  _handleChoiceAction(element?: HTMLElement): boolean {
     // If we are clicking on an option
     const id = parseDataSetId(element);
     const choice = id && this._store.getChoiceById(id);
@@ -1215,7 +1242,7 @@ class Choices {
 
     let addedItem = false;
     this._store.withTxn(() => {
-      const canAddItem = this._canAddItem(items, choice.value);
+      const canAddItem = this._canAddItem(choice.value);
 
       if (canAddItem.response) {
         this._addItem(choice, true, true);
@@ -1349,10 +1376,11 @@ class Choices {
     }
   }
 
-  _canAddItem(items: InputChoice[], value: string): Notice {
+  _canAddItem(value: string): Notice {
     const { config } = this;
     let canAddItem = true;
     let notice = '';
+    const { items } = this._store;
 
     if (config.maxItemCount > 0 && config.maxItemCount <= items.length) {
       // If there is a max entry limit and we have reached that limit
@@ -1364,10 +1392,16 @@ class Choices {
       }
     }
 
+    if (value === '') {
+      return {
+        response: canAddItem,
+        notice: '',
+      };
+    }
+
     if (
       canAddItem &&
       this._canAddUserChoices &&
-      value !== '' &&
       typeof config.addItemFilter === 'function' &&
       !config.addItemFilter(value)
     ) {
@@ -1378,7 +1412,7 @@ class Choices {
           : config.customAddItemText;
     }
 
-    if (canAddItem && value !== '' && (this._isSelectElement || !this.config.duplicateItemsAllowed)) {
+    if (canAddItem && (this._isSelectElement || !this.config.duplicateItemsAllowed)) {
       const foundChoice = this._store.items.find((choice) => config.valueComparer(choice.value, value));
       if (foundChoice) {
         canAddItem = false;
@@ -1389,6 +1423,17 @@ class Choices {
       }
     }
 
+    if (canAddItem && this._isSelectElement) {
+      // for exact matches, do not prompt to add it as a custom choice
+      const foundChoice = this._store.choices.find((choice) => this.config.valueComparer(choice.value, value));
+      if (foundChoice) {
+        return {
+          response: true,
+          notice: '',
+        };
+      }
+    }
+
     if (canAddItem) {
       notice =
         typeof config.addItemText === 'function' ? config.addItemText(sanitise(value), value) : config.addItemText;
@@ -1396,9 +1441,7 @@ class Choices {
 
     return {
       response: canAddItem,
-      notice: {
-        trusted: notice,
-      },
+      notice: notice ? { trusted: notice } : '',
     };
   }
 
@@ -1420,6 +1463,17 @@ class Choices {
     this._currentValue = newValue;
     this._highlightPosition = 0;
     this._isSearching = true;
+
+    if (this._notice?.type !== 'add-choice') {
+      if (results.length === 0) {
+        const notice =
+          typeof this.config.noResultsText === 'function' ? this.config.noResultsText() : this.config.noResultsText;
+        this._displayNotice(notice, 'no-results');
+      } else if (this._notice?.type === 'no-results') {
+        this._clearNotice();
+      }
+    }
+
     this._store.dispatch(filterChoices(results));
 
     return results.length;
@@ -1599,15 +1653,14 @@ class Choices {
         this._stopSearch();
       }
 
+      this._clearNotice();
+
       return;
     }
 
     if (this._isTextElement) {
-      const canAddItem = this._canAddItem(this._store.items, value);
-      if (canAddItem.notice) {
-        this._displayAddItemNotice(canAddItem);
-        this.showDropdown(true);
-      }
+      const canAddItem = this._canAddItem(value);
+      this._displayNotice(canAddItem.notice, 'add-choice');
     }
 
     if (!this._canSearch) {
@@ -1617,29 +1670,18 @@ class Choices {
     // do the search even if the entered text can not be added
     this._handleSearch(value);
 
-    // determine if a notice needs to be displayed for why a search result can't be added
-    const canAddItem = this._canAddItem(this._store.items, value);
-    if (!canAddItem.response) {
-      this._displayAddItemNotice(canAddItem);
+    if (!this._canAddUserChoices) {
+      return;
     }
-    if (this._canAddUserChoices) {
+
+    // determine if a notice needs to be displayed for why a search result can't be added
+    const canAddItem = this._canAddItem(value);
+    if (!canAddItem.response) {
       // select the non-value so 'enter' doesn't select anything
       this._highlightPosition = 0;
       this._highlightChoice();
     }
-  }
-
-  _displayAddItemNotice(canAddItem: Notice): void {
-    const dropdownItem = this._templates.notice(this.config, canAddItem.notice, 'add-choice');
-
-    // only show the notice once!
-    const selector = `${getClassNamesSelector(this.config.classNames.addChoice)}[data-choice-selectable]`;
-    const noticeElement = this.choiceList.element.querySelector(selector);
-    if (noticeElement) {
-      noticeElement.outerHTML = dropdownItem.outerHTML;
-    } else {
-      this.choiceList.prepend(dropdownItem);
-    }
+    this._displayNotice(canAddItem.notice, 'add-choice');
   }
 
   _onSelectKey(event: KeyboardEvent, hasItems: boolean): void {
@@ -1667,7 +1709,7 @@ class Choices {
     event.preventDefault();
 
     if (targetWasRemoveButton) {
-      this._handleButtonAction(items, target);
+      this._handleButtonAction(target);
 
       return;
     }
@@ -1685,7 +1727,7 @@ class Choices {
       );
 
       if (highlightedChoice) {
-        addedItem = this._handleChoiceAction(items, highlightedChoice);
+        addedItem = this._handleChoiceAction(highlightedChoice);
 
         if (addedItem) {
           this.unhighlightAll();
@@ -1703,10 +1745,12 @@ class Choices {
       return;
     }
 
-    const canAdd: Notice = this._canAddItem(items, value);
+    const canAdd: Notice = this._canAddItem(value);
+    this._displayNotice(canAdd.notice, 'add-choice');
     if (!canAdd.response) {
       return;
     }
+
     this._store.withTxn(() => {
       if (this._isSelectOneElement || this.config.singleModeForMultiSelect) {
         if (items.length !== 0) {
@@ -1862,15 +1906,14 @@ class Choices {
     const item = target.closest('[data-button],[data-item],[data-choice]');
     if (item instanceof HTMLElement) {
       const hasShiftKey = event.shiftKey;
-      const { items } = this._store;
       const { dataset } = item;
 
       if ('button' in dataset) {
-        this._handleButtonAction(items, item);
+        this._handleButtonAction(item);
       } else if ('item' in dataset) {
-        this._handleItemAction(items, item, hasShiftKey);
+        this._handleItemAction(item, hasShiftKey);
       } else if ('choice' in dataset) {
-        this._handleChoiceAction(items, item);
+        this._handleChoiceAction(item);
       }
     }
 
