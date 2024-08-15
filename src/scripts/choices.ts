@@ -1233,7 +1233,7 @@ class Choices {
     // We want to close the dropdown if we are dealing with a single select box
     if (hasActiveDropdown && (this.config.singleModeForMultiSelect || this._isSelectOneElement)) {
       this.hideDropdown(true);
-      this.containerOuter.focus();
+      this.containerOuter.element.focus();
     }
 
     return true;
@@ -1350,18 +1350,19 @@ class Choices {
   }
 
   _canAddItem(items: InputChoice[], value: string): Notice {
+    const config = this.config;
     let canAddItem = true;
     let notice = '';
 
-    if (this.config.maxItemCount > 0 && this.config.maxItemCount <= items.length) {
+    if (config.maxItemCount > 0 && config.maxItemCount <= items.length) {
       // If there is a max entry limit and we have reached that limit
       // don't update
-      if (!this.config.singleModeForMultiSelect) {
+      if (!config.singleModeForMultiSelect) {
         canAddItem = false;
         notice =
-          typeof this.config.maxItemText === 'function'
-            ? this.config.maxItemText(this.config.maxItemCount)
-            : this.config.maxItemText;
+          typeof config.maxItemText === 'function'
+            ? config.maxItemText(config.maxItemCount)
+            : config.maxItemText;
       }
     }
 
@@ -1369,32 +1370,32 @@ class Choices {
       canAddItem &&
       this._canAddUserChoices &&
       value !== '' &&
-      typeof this.config.addItemFilter === 'function' &&
-      !this.config.addItemFilter(value)
+      typeof config.addItemFilter === 'function' &&
+      !config.addItemFilter(value)
     ) {
       canAddItem = false;
       notice =
-        typeof this.config.customAddItemText === 'function'
-          ? this.config.customAddItemText(sanitise(value), value)
-          : this.config.customAddItemText;
+        typeof config.customAddItemText === 'function'
+          ? config.customAddItemText(sanitise(value), value)
+          : config.customAddItemText;
     }
 
     if (canAddItem && value !== '' && (this._isSelectElement || !this.config.duplicateItemsAllowed)) {
-      const foundChoice = this._store.items.find((choice) => this.config.valueComparer(choice.value, value));
+      const foundChoice = this._store.items.find((choice) => config.valueComparer(choice.value, value));
       if (foundChoice) {
         canAddItem = false;
         notice =
-          typeof this.config.uniqueItemText === 'function'
-            ? this.config.uniqueItemText(sanitise(value), value)
-            : this.config.uniqueItemText;
+          typeof config.uniqueItemText === 'function'
+            ? config.uniqueItemText(sanitise(value), value)
+            : config.uniqueItemText;
       }
     }
 
     if (canAddItem) {
       notice =
-        typeof this.config.addItemText === 'function'
-          ? this.config.addItemText(sanitise(value), value)
-          : this.config.addItemText;
+        typeof config.addItemText === 'function'
+          ? config.addItemText(sanitise(value), value)
+          : config.addItemText;
     }
 
     return {
@@ -1523,7 +1524,7 @@ class Choices {
     const { items } = this._store;
     const hasFocusedInput = this.input.isFocussed;
     const hasActiveDropdown = this.dropdown.isActive;
-    const hasItems = this.itemList.hasChildren();
+    const hasItems = this.itemList.element.hasChildNodes();
     /*
     See:
     https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key
@@ -1754,7 +1755,7 @@ class Choices {
     if (hasActiveDropdown) {
       event.stopPropagation();
       this.hideDropdown(true);
-      this.containerOuter.focus();
+      this.containerOuter.element.focus();
     }
   }
 
@@ -1891,7 +1892,8 @@ class Choices {
   }
 
   _onClick({ target }: Pick<MouseEvent, 'target'>): void {
-    const clickWasWithinContainer = this.containerOuter.element.contains(target as Node);
+    const containerOuter = this.containerOuter;
+    const clickWasWithinContainer = containerOuter.element.contains(target as Node);
 
     if (clickWasWithinContainer) {
       if (!this.dropdown.isActive && !this.containerOuter.isDisabled) {
@@ -1901,7 +1903,7 @@ class Choices {
           }
         } else {
           this.showDropdown();
-          this.containerOuter.focus();
+          containerOuter.element.focus();
         }
       } else if (
         this._isSelectOneElement &&
@@ -1917,7 +1919,7 @@ class Choices {
         this.unhighlightAll();
       }
 
-      this.containerOuter.removeFocusState();
+      containerOuter.removeFocusState();
       this.hideDropdown(true);
     }
   }
@@ -1928,21 +1930,22 @@ class Choices {
     if (!focusWasWithinContainer) {
       return;
     }
+    const targetIsInput = target === this.input.element;
 
     const focusActions = {
       [TEXT_TYPE]: (): void => {
-        if (target === this.input.element) {
+        if (targetIsInput) {
           this.containerOuter.addFocusState();
         }
       },
       [SELECT_ONE_TYPE]: (): void => {
         this.containerOuter.addFocusState();
-        if (target === this.input.element) {
+        if (targetIsInput) {
           this.showDropdown(true);
         }
       },
       [SELECT_MULTIPLE_TYPE]: (): void => {
-        if (target === this.input.element) {
+        if (targetIsInput) {
           this.showDropdown(true);
           // If element is a select box, the focused element is the container and the dropdown
           // isn't already open, focus and show dropdown
@@ -1960,9 +1963,10 @@ class Choices {
     if (blurWasWithinContainer && !this._isScrollingOnIe) {
       const { activeChoices } = this._store;
       const hasHighlightedItems = activeChoices.some((item) => item.highlighted);
+      const targetIsInput = target === this.input.element;
       const blurActions = {
         [TEXT_TYPE]: (): void => {
-          if (target === this.input.element) {
+          if (targetIsInput) {
             this.containerOuter.removeFocusState();
             if (hasHighlightedItems) {
               this.unhighlightAll();
@@ -1972,12 +1976,12 @@ class Choices {
         },
         [SELECT_ONE_TYPE]: (): void => {
           this.containerOuter.removeFocusState();
-          if (target === this.input.element || (target === this.containerOuter.element && !this._canSearch)) {
+          if (targetIsInput || (target === this.containerOuter.element && !this._canSearch)) {
             this.hideDropdown(true);
           }
         },
         [SELECT_MULTIPLE_TYPE]: (): void => {
-          if (target === this.input.element) {
+          if (targetIsInput) {
             this.containerOuter.removeFocusState();
             this.hideDropdown(true);
             if (hasHighlightedItems) {
@@ -2167,47 +2171,53 @@ class Choices {
   }
 
   _createElements(): void {
+    const templates = this._templates;
+    const config = this.config;
+    const position = config.position;
+    const classNames = config.classNames;
+    const elementType = this._elementType;
+
     this.containerOuter = new Container({
-      element: this._templates.containerOuter(
-        this.config,
+      element: templates.containerOuter(
+        config,
         this._direction,
         this._isSelectElement,
         this._isSelectOneElement,
-        this.config.searchEnabled,
-        this._elementType,
-        this.config.labelId,
+        config.searchEnabled,
+        elementType,
+        config.labelId,
       ),
-      classNames: this.config.classNames,
-      type: this._elementType,
-      position: this.config.position,
+      classNames,
+      type: elementType,
+      position,
     });
 
     this.containerInner = new Container({
-      element: this._templates.containerInner(this.config),
-      classNames: this.config.classNames,
-      type: this._elementType,
-      position: this.config.position,
+      element: templates.containerInner(config),
+      classNames,
+      type: elementType,
+      position,
     });
 
     this.input = new Input({
-      element: this._templates.input(this.config, this._placeholderValue),
-      classNames: this.config.classNames,
-      type: this._elementType,
-      preventPaste: !this.config.paste,
+      element: templates.input(config, this._placeholderValue),
+      classNames,
+      type: elementType,
+      preventPaste: !config.paste,
     });
 
     this.choiceList = new List({
-      element: this._templates.choiceList(this.config, this._isSelectOneElement),
+      element: templates.choiceList(config, this._isSelectOneElement),
     });
 
     this.itemList = new List({
-      element: this._templates.itemList(this.config, this._isSelectOneElement),
+      element: templates.itemList(config, this._isSelectOneElement),
     });
 
     this.dropdown = new Dropdown({
-      element: this._templates.dropdown(this.config),
-      classNames: this.config.classNames,
-      type: this._elementType,
+      element: templates.dropdown(config),
+      classNames,
+      type: elementType,
     });
   }
 

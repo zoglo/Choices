@@ -91,10 +91,6 @@ export default class Container {
     }
   }
 
-  focus(): void {
-    this.element.focus();
-  }
-
   addFocusState(): void {
     this.element.classList.add(...getClassNames(this.classNames.focusState));
   }

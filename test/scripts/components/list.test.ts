@@ -74,7 +74,7 @@ describe('components/list', () => {
         }
         const childElement = document.createElement('span');
         instance.element.appendChild(childElement);
-        const response = instance.hasChildren();
+        const response = instance.element.hasChildNodes();
         expect(response).to.equal(true);
       });
     });
@@ -86,7 +86,7 @@ describe('components/list', () => {
           return;
         }
         instance.element.innerHTML = '';
-        const response = instance.hasChildren();
+        const response = instance.element.hasChildNodes();
         expect(response).to.equal(false);
       });
     });

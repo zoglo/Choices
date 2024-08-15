@@ -2278,7 +2278,7 @@ describe('choices', () => {
         instance._onDeleteKey = stub();
 
         ({ items } = instance._store);
-        hasItems = instance.itemList.hasChildren();
+        hasItems = instance.itemList.element.hasChildNodes();
         hasActiveDropdown = instance.dropdown.isActive;
         hasFocussedInput = instance.input.isFocussed;
       });
