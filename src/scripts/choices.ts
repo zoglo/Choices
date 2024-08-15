@@ -1439,11 +1439,13 @@ class Choices {
 
   _addEventListeners(): void {
     const documentElement = this.config.shadowRoot || document.documentElement;
+    const outerElement = this.containerOuter.element;
+    const inputElement = this.input.element;
 
     // capture events - can cancel event processing or propagation
     documentElement.addEventListener('touchend', this._onTouchEnd, true);
-    this.containerOuter.element.addEventListener('keydown', this._onKeyDown, true);
-    this.containerOuter.element.addEventListener('mousedown', this._onMouseDown, true);
+    outerElement.addEventListener('keydown', this._onKeyDown, true);
+    outerElement.addEventListener('mousedown', this._onMouseDown, true);
 
     // passive events - doesn't call `preventDefault` or `stopPropagation`
     documentElement.addEventListener('click', this._onClick, { passive: true });
@@ -1455,30 +1457,30 @@ class Choices {
     });
 
     if (this._isSelectOneElement) {
-      this.containerOuter.element.addEventListener('focus', this._onFocus, {
+      outerElement.addEventListener('focus', this._onFocus, {
         passive: true,
       });
-      this.containerOuter.element.addEventListener('blur', this._onBlur, {
+      outerElement.addEventListener('blur', this._onBlur, {
         passive: true,
       });
     }
 
-    this.input.element.addEventListener('keyup', this._onKeyUp, {
+    inputElement.addEventListener('keyup', this._onKeyUp, {
       passive: true,
     });
-    this.input.element.addEventListener('input', this._onInput, {
-      passive: true,
-    });
-
-    this.input.element.addEventListener('focus', this._onFocus, {
-      passive: true,
-    });
-    this.input.element.addEventListener('blur', this._onBlur, {
+    inputElement.addEventListener('input', this._onInput, {
       passive: true,
     });
 
-    if (this.input.element.form) {
-      this.input.element.form.addEventListener('reset', this._onFormReset, {
+    inputElement.addEventListener('focus', this._onFocus, {
+      passive: true,
+    });
+    inputElement.addEventListener('blur', this._onBlur, {
+      passive: true,
+    });
+
+    if (inputElement.form) {
+      inputElement.form.addEventListener('reset', this._onFormReset, {
         passive: true,
       });
     }
@@ -1488,27 +1490,29 @@ class Choices {
 
   _removeEventListeners(): void {
     const documentElement = this.config.shadowRoot || document.documentElement;
+    const outerElement = this.containerOuter.element;
+    const inputElement = this.input.element;
 
     documentElement.removeEventListener('touchend', this._onTouchEnd, true);
-    this.containerOuter.element.removeEventListener('keydown', this._onKeyDown, true);
-    this.containerOuter.element.removeEventListener('mousedown', this._onMouseDown, true);
+    outerElement.removeEventListener('keydown', this._onKeyDown, true);
+    outerElement.removeEventListener('mousedown', this._onMouseDown, true);
 
     documentElement.removeEventListener('click', this._onClick);
     documentElement.removeEventListener('touchmove', this._onTouchMove);
     this.dropdown.element.removeEventListener('mouseover', this._onMouseOver);
 
     if (this._isSelectOneElement) {
-      this.containerOuter.element.removeEventListener('focus', this._onFocus);
-      this.containerOuter.element.removeEventListener('blur', this._onBlur);
+      outerElement.removeEventListener('focus', this._onFocus);
+      outerElement.removeEventListener('blur', this._onBlur);
     }
 
-    this.input.element.removeEventListener('keyup', this._onKeyUp);
-    this.input.element.removeEventListener('input', this._onInput);
-    this.input.element.removeEventListener('focus', this._onFocus);
-    this.input.element.removeEventListener('blur', this._onBlur);
+    inputElement.removeEventListener('keyup', this._onKeyUp);
+    inputElement.removeEventListener('input', this._onInput);
+    inputElement.removeEventListener('focus', this._onFocus);
+    inputElement.removeEventListener('blur', this._onBlur);
 
-    if (this.input.element.form) {
-      this.input.element.form.removeEventListener('reset', this._onFormReset);
+    if (inputElement.form) {
+      inputElement.form.removeEventListener('reset', this._onFormReset);
     }
 
     this.input.removeEventListeners();

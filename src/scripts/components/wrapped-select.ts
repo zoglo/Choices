@@ -70,9 +70,9 @@ export default class WrappedSelect extends WrappedElement<HTMLSelectElement> {
     // option.value returns the label if there is no value attribute, which can break legacy placeholder attribute support
     if (!option.hasAttribute('value') && option.hasAttribute('placeholder')) {
       option.setAttribute('value', '');
-      // eslint-disable-next-line no-param-reassign
       option.value = '';
     }
+    const { dataset } = option;
 
     return {
       id: 0,
@@ -88,11 +88,9 @@ export default class WrappedSelect extends WrappedElement<HTMLSelectElement> {
       disabled: option.disabled,
       highlighted: false,
       placeholder: this.extractPlaceholder && (option.value === '' || option.hasAttribute('placeholder')),
-      labelClass:
-        typeof option.dataset.labelClass !== 'undefined' ? stringToHtmlClass(option.dataset.labelClass) : undefined,
-      labelDescription:
-        typeof option.dataset.labelDescription !== 'undefined' ? option.dataset.labelDescription : undefined,
-      customProperties: parseCustomProperties(option.dataset.customProperties),
+      labelClass: typeof dataset.labelClass !== 'undefined' ? stringToHtmlClass(dataset.labelClass) : undefined,
+      labelDescription: typeof dataset.labelDescription !== 'undefined' ? dataset.labelDescription : undefined,
+      customProperties: parseCustomProperties(dataset.customProperties),
     };
   }
 

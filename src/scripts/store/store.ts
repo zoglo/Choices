@@ -15,13 +15,13 @@ const reducers: ReducerList = {
 } as const;
 
 export default class Store implements IStore {
-  _store: State = this.defaultState;
+  _state: State = this.defaultState;
 
   _listeners: StoreListener[] = [];
 
   _txn: number = 0;
 
-  _outstandingChanges?: StateChangeSet;
+  _changeSet?: StateChangeSet;
 
   // eslint-disable-next-line class-methods-use-this
   get defaultState(): State {
@@ -42,10 +42,10 @@ export default class Store implements IStore {
   }
 
   reset(): void {
-    this._store = this.defaultState;
+    this._state = this.defaultState;
     const changes = this.changeSet(true);
     if (this._txn) {
-      this._outstandingChanges = changes;
+      this._changeSet = changes;
     } else {
       this._listeners.forEach((l) => l(changes));
     }
@@ -56,9 +56,9 @@ export default class Store implements IStore {
   }
 
   dispatch(action: AnyAction): void {
-    const state = this._store;
+    const state = this._state;
     let hasChanges = false;
-    const changes = this._outstandingChanges || this.changeSet(false);
+    const changes = this._changeSet || this.changeSet(false);
 
     Object.keys(reducers).forEach((key: string) => {
       const stateUpdate = (reducers[key] as Reducer<unknown>)(state[key], action);
@@ -71,7 +71,7 @@ export default class Store implements IStore {
 
     if (hasChanges) {
       if (this._txn) {
-        this._outstandingChanges = changes;
+        this._changeSet = changes;
       } else {
         this._listeners.forEach((l) => l(changes));
       }
@@ -86,9 +86,9 @@ export default class Store implements IStore {
       this._txn = Math.max(0, this._txn - 1);
 
       if (!this._txn) {
-        const changeSet = this._outstandingChanges;
+        const changeSet = this._changeSet;
         if (changeSet) {
-          this._outstandingChanges = undefined;
+          this._changeSet = undefined;
           this._listeners.forEach((l) => l(changeSet));
         }
       }
@@ -99,7 +99,7 @@ export default class Store implements IStore {
    * Get store object
    */
   get state(): State {
-    return this._store;
+    return this._state;
   }
 
   /**

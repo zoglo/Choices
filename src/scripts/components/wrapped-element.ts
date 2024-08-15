@@ -34,39 +34,41 @@ export default class WrappedElement<T extends HTMLInputElement | HTMLSelectEleme
   }
 
   conceal(): void {
+    const el = this.element;
     // Hide passed input
-    this.element.classList.add(...getClassNames(this.classNames.input));
-    this.element.hidden = true;
+    el.classList.add(...getClassNames(this.classNames.input));
+    el.hidden = true;
 
     // Remove element from tab index
-    this.element.tabIndex = -1;
+    el.tabIndex = -1;
 
     // Backup original styles if any
-    const origStyle = this.element.getAttribute('style');
+    const origStyle = el.getAttribute('style');
 
     if (origStyle) {
-      this.element.setAttribute('data-choice-orig-style', origStyle);
+      el.setAttribute('data-choice-orig-style', origStyle);
     }
 
-    this.element.setAttribute('data-choice', 'active');
+    el.setAttribute('data-choice', 'active');
   }
 
   reveal(): void {
+    const el = this.element;
     // Reinstate passed element
-    this.element.classList.remove(...getClassNames(this.classNames.input));
-    this.element.hidden = false;
-    this.element.removeAttribute('tabindex');
+    el.classList.remove(...getClassNames(this.classNames.input));
+    el.hidden = false;
+    el.removeAttribute('tabindex');
 
     // Recover original styles if any
-    const origStyle = this.element.getAttribute('data-choice-orig-style');
+    const origStyle = el.getAttribute('data-choice-orig-style');
 
     if (origStyle) {
-      this.element.removeAttribute('data-choice-orig-style');
-      this.element.setAttribute('style', origStyle);
+      el.removeAttribute('data-choice-orig-style');
+      el.setAttribute('style', origStyle);
     } else {
-      this.element.removeAttribute('style');
+      el.removeAttribute('style');
     }
-    this.element.removeAttribute('data-choice');
+    el.removeAttribute('data-choice');
   }
 
   enable(): void {

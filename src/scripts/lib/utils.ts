@@ -38,7 +38,7 @@ export const isScrolledIntoView = (element: HTMLElement, parent: HTMLElement, di
     return false;
   }
 
-  let isVisible;
+  let isVisible: boolean;
 
   if (direction > 0) {
     // In view from bottom
@@ -82,13 +82,13 @@ export const strToEl = ((): ((str: string) => Element) => {
 
   return (str): Element => {
     tmpEl.innerHTML = str.trim();
-    const firldChild = tmpEl.children[0];
+    const firstChild = tmpEl.children[0];
 
     while (tmpEl.firstChild) {
       tmpEl.removeChild(tmpEl.firstChild);
     }
 
-    return firldChild;
+    return firstChild;
   };
 })();
 

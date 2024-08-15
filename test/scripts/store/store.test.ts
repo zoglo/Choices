@@ -124,7 +124,7 @@ describe('reducers/store', () => {
 
   describe('constructor', () => {
     it('creates redux-like store', () => {
-      expect(instance).to.contain.keys(['_store', '_listeners', '_txn']);
+      expect(instance).to.contain.keys(['_state', '_listeners', '_txn']);
     });
   });
 
@@ -164,7 +164,7 @@ describe('reducers/store', () => {
       dispatchStub.restore();
       getStateStub.restore();
 
-      instance._store = cloneObject(state);
+      instance._state = cloneObject(state);
       listenerStub = sinon.stub();
       instance.subscribe(listenerStub);
     });
@@ -205,7 +205,7 @@ describe('reducers/store', () => {
       dispatchStub.restore();
       getStateStub.restore();
 
-      instance._store = cloneObject(state);
+      instance._state = cloneObject(state);
       listenerStub = sinon.stub();
       instance.subscribe(listenerStub);
     });

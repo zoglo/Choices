@@ -1157,10 +1157,10 @@
             };
         };
         Store.prototype.reset = function () {
-            this._store = this.defaultState;
+            this._state = this.defaultState;
             var changes = this.changeSet(true);
             if (this._txn) {
-                this._outstandingChanges = changes;
+                this._changeSet = changes;
             }
             else {
                 this._listeners.forEach(function (l) { return l(changes); });
@@ -1170,9 +1170,9 @@
             this._listeners.push(onChange);
         };
         Store.prototype.dispatch = function (action) {
-            var state = this._store;
+            var state = this._state;
             var hasChanges = false;
-            var changes = this._outstandingChanges || this.changeSet(false);
+            var changes = this._changeSet || this.changeSet(false);
             Object.keys(reducers).forEach(function (key) {
                 var stateUpdate = reducers[key](state[key], action);
                 if (stateUpdate.update) {
@@ -1183,7 +1183,7 @@
             });
             if (hasChanges) {
                 if (this._txn) {
-                    this._outstandingChanges = changes;
+                    this._changeSet = changes;
                 }
                 else {
                     this._listeners.forEach(function (l) { return l(changes); });
@@ -1198,9 +1198,9 @@
             finally {
                 this._txn = Math.max(0, this._txn - 1);
                 if (!this._txn) {
-                    var changeSet_1 = this._outstandingChanges;
+                    var changeSet_1 = this._changeSet;
                     if (changeSet_1) {
-                        this._outstandingChanges = undefined;
+                        this._changeSet = undefined;
                         this._listeners.forEach(function (l) { return l(changeSet_1); });
                     }
                 }
@@ -1211,7 +1211,7 @@
              * Get store object
              */
             get: function () {
-                return this._store;
+                return this._state;
             },
             enumerable: false,
             configurable: true
@@ -2927,24 +2927,24 @@
             https://en.wikipedia.org/wiki/UTF-16#Code_points_from_U+010000_to_U+10FFFF - UTF-16 surrogate pairs
             https://stackoverflow.com/a/70866532 - "Unidentified" for mobile
             http://www.unicode.org/versions/Unicode5.2.0/ch16.pdf#G19635 - U+FFFF is reserved (Section 16.7)
-        
+
             Logic: when a key event is sent, `event.key` represents its printable value _or_ one
             of a large list of special values indicating meta keys/functionality. In addition,
             key events for compose functionality contain a value of `Dead` when mid-composition.
-        
+
             I can't quite verify it, but non-English IMEs may also be able to generate key codes
             for code points in the surrogate-pair range, which could potentially be seen as having
             key.length > 1. Since `Fn` is one of the special keys, we can't distinguish by that
             alone.
-        
+
             Here, key.length === 1 means we know for sure the input was printable and not a special
             `key` value. When the length is greater than 1, it could be either a printable surrogate
             pair or a special `key` value. We can tell the difference by checking if the _character
             code_ value (not code point!) is in the "surrogate pair" range or not.
-        
+
             We don't use .codePointAt because an invalid code point would return 65535, which wouldn't
             pass the >= 0x10000 check we would otherwise use.
-        
+
             > ...The Unicode Standard sets aside 66 noncharacter code points. The last two code points
             > of each plane are noncharacters: U+FFFE and U+FFFF on the BMP...
             */

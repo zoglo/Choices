@@ -11,7 +11,7 @@ type MappedInputTypeToChoiceType<T extends string | InputChoice | InputGroup> = 
 const coerceBool = (arg: unknown, defaultValue: boolean = true): boolean =>
   typeof arg === 'undefined' ? defaultValue : !!arg;
 
-export const stringToHtmlClass = (input): string[] | undefined => {
+export const stringToHtmlClass = (input: string | string[] | undefined): string[] | undefined => {
   if (typeof input === 'string') {
     // eslint-disable-next-line no-param-reassign
     input = input.split(' ').filter((s) => s.length !== 0);

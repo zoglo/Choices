@@ -52,23 +52,25 @@ export default class Input {
   }
 
   addEventListeners(): void {
-    this.element.addEventListener('paste', this._onPaste);
-    this.element.addEventListener('input', this._onInput, {
+    const el = this.element;
+    el.addEventListener('paste', this._onPaste);
+    el.addEventListener('input', this._onInput, {
       passive: true,
     });
-    this.element.addEventListener('focus', this._onFocus, {
+    el.addEventListener('focus', this._onFocus, {
       passive: true,
     });
-    this.element.addEventListener('blur', this._onBlur, {
+    el.addEventListener('blur', this._onBlur, {
       passive: true,
     });
   }
 
   removeEventListeners(): void {
-    this.element.removeEventListener('input', this._onInput);
-    this.element.removeEventListener('paste', this._onPaste);
-    this.element.removeEventListener('focus', this._onFocus);
-    this.element.removeEventListener('blur', this._onBlur);
+    const el = this.element;
+    el.removeEventListener('input', this._onInput);
+    el.removeEventListener('paste', this._onPaste);
+    el.removeEventListener('focus', this._onFocus);
+    el.removeEventListener('blur', this._onBlur);
   }
 
   enable(): void {
@@ -94,10 +96,7 @@ export default class Input {
   }
 
   clear(setWidth = true): this {
-    if (this.element.value) {
-      this.element.value = '';
-    }
-
+    this.element.value = '';
     if (setWidth) {
       this.setWidth();
     }

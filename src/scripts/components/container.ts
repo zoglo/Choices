@@ -122,11 +122,12 @@ export default class Container {
   }
 
   wrap(element: HTMLElement): void {
-    if (element.parentNode) {
+    const { parentNode } = element;
+    if (parentNode) {
       if (element.nextSibling) {
-        element.parentNode.insertBefore(this.element, element.nextSibling);
+        parentNode.insertBefore(this.element, element.nextSibling);
       } else {
-        element.parentNode.appendChild(this.element);
+        parentNode.appendChild(this.element);
       }
     }
 
@@ -134,11 +135,12 @@ export default class Container {
   }
 
   unwrap(element: HTMLElement): void {
-    if (this.element.parentNode) {
+    const { parentNode } = this.element;
+    if (parentNode) {
       // Move passed element outside this element
-      this.element.parentNode.insertBefore(element, this.element);
+      parentNode.insertBefore(element, this.element);
       // Remove this element
-      this.element.parentNode.removeChild(this.element);
+      parentNode.removeChild(this.element);
     }
   }
 

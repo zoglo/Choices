@@ -139,16 +139,18 @@ const templates: TemplatesInterface = {
       div.innerHTML = escapeForTemplate(allowHTML, label);
     }
 
-    Object.assign(div.dataset, {
+    const { dataset } = div;
+    Object.assign(dataset, {
       item: '',
       id,
       value: rawValue,
     });
+
     if (labelClass) {
-      div.dataset.labelClass = getClassNames(labelClass).join(' ');
+      dataset.labelClass = getClassNames(labelClass).join(' ');
     }
     if (labelDescription) {
-      div.dataset.labelDescription = labelDescription;
+      dataset.labelDescription = labelDescription;
     }
 
     assignCustomProperties(div, customProperties);
@@ -163,7 +165,7 @@ const templates: TemplatesInterface = {
 
     if (isPlaceholder) {
       div.classList.add(...getClassNames(placeholder));
-      div.dataset.placeholder = '';
+      dataset.placeholder = '';
     }
 
     div.classList.add(...(highlighted ? getClassNames(highlightedState) : getClassNames(itemSelectable)));
@@ -172,7 +174,7 @@ const templates: TemplatesInterface = {
       if (disabled) {
         div.classList.remove(...getClassNames(itemSelectable));
       }
-      div.dataset.deletable = '';
+      dataset.deletable = '';
 
       const REMOVE_ITEM_ICON =
         typeof this.config.removeItemIconText === 'function'
@@ -301,32 +303,33 @@ const templates: TemplatesInterface = {
       div.classList.add(...getClassNames(placeholder));
     }
 
+    const { dataset } = div;
     const showGroupId = groupId && groupId > 0;
     div.setAttribute('role', showGroupId ? 'treeitem' : 'option');
     if (showGroupId) {
-      div.dataset.groupId = `${groupId}`;
+      dataset.groupId = `${groupId}`;
     }
 
-    Object.assign(div.dataset, {
+    Object.assign(dataset, {
       choice: '',
       id,
       value: rawValue,
       selectText,
     });
     if (labelClass) {
-      div.dataset.labelClass = getClassNames(labelClass).join(' ');
+      dataset.labelClass = getClassNames(labelClass).join(' ');
     }
     if (labelDescription) {
-      div.dataset.labelDescription = labelDescription;
+      dataset.labelDescription = labelDescription;
     }
 
     if (isDisabled) {
       div.classList.add(...getClassNames(itemDisabled));
-      div.dataset.choiceDisabled = '';
+      dataset.choiceDisabled = '';
       div.setAttribute('aria-disabled', 'true');
     } else {
       div.classList.add(...getClassNames(itemSelectable));
-      div.dataset.choiceSelectable = '';
+      dataset.choiceSelectable = '';
     }
 
     return div;
