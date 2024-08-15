@@ -160,7 +160,14 @@ function genConfig(buildConfig) {
       }
 
       if (minify) {
-        output.plugins.push(terser())
+        output.plugins.push(terser({
+          compress: {
+            passes: 2,
+            pure_getters: true,
+            pure_new: true,
+            // unsafe: true,
+          }
+        }))
       }
 
       config.output.push(output);
