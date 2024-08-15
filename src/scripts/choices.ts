@@ -898,6 +898,7 @@ class Choices {
 
     if (choiceListFragment.childNodes.length !== 0) {
       this.choiceList.append(choiceListFragment);
+      this._highlightChoice();
     }
   }
 
@@ -1676,12 +1677,9 @@ class Choices {
 
     // determine if a notice needs to be displayed for why a search result can't be added
     const canAddItem = this._canAddItem(value);
-    if (!canAddItem.response) {
-      // select the non-value so 'enter' doesn't select anything
-      this._highlightPosition = 0;
-      this._highlightChoice();
-    }
     this._displayNotice(canAddItem.notice, 'add-choice');
+    this._highlightPosition = 0; // reset to select the notice and/or exact match
+    this._highlightChoice();
   }
 
   _onSelectKey(event: KeyboardEvent, hasItems: boolean): void {
