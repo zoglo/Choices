@@ -1350,7 +1350,7 @@ class Choices {
   }
 
   _canAddItem(items: InputChoice[], value: string): Notice {
-    const config = this.config;
+    const { config } = this;
     let canAddItem = true;
     let notice = '';
 
@@ -1360,9 +1360,7 @@ class Choices {
       if (!config.singleModeForMultiSelect) {
         canAddItem = false;
         notice =
-          typeof config.maxItemText === 'function'
-            ? config.maxItemText(config.maxItemCount)
-            : config.maxItemText;
+          typeof config.maxItemText === 'function' ? config.maxItemText(config.maxItemCount) : config.maxItemText;
       }
     }
 
@@ -1393,9 +1391,7 @@ class Choices {
 
     if (canAddItem) {
       notice =
-        typeof config.addItemText === 'function'
-          ? config.addItemText(sanitise(value), value)
-          : config.addItemText;
+        typeof config.addItemText === 'function' ? config.addItemText(sanitise(value), value) : config.addItemText;
     }
 
     return {
@@ -1892,7 +1888,7 @@ class Choices {
   }
 
   _onClick({ target }: Pick<MouseEvent, 'target'>): void {
-    const containerOuter = this.containerOuter;
+    const { containerOuter } = this;
     const clickWasWithinContainer = containerOuter.element.contains(target as Node);
 
     if (clickWasWithinContainer) {
@@ -2171,14 +2167,14 @@ class Choices {
   }
 
   _createElements(): void {
-    const templates = this._templates;
-    const config = this.config;
-    const position = config.position;
-    const classNames = config.classNames;
+    const templating = this._templates;
+    const { config } = this;
+    const { position } = config;
+    const { classNames } = config;
     const elementType = this._elementType;
 
     this.containerOuter = new Container({
-      element: templates.containerOuter(
+      element: templating.containerOuter(
         config,
         this._direction,
         this._isSelectElement,
@@ -2193,29 +2189,29 @@ class Choices {
     });
 
     this.containerInner = new Container({
-      element: templates.containerInner(config),
+      element: templating.containerInner(config),
       classNames,
       type: elementType,
       position,
     });
 
     this.input = new Input({
-      element: templates.input(config, this._placeholderValue),
+      element: templating.input(config, this._placeholderValue),
       classNames,
       type: elementType,
       preventPaste: !config.paste,
     });
 
     this.choiceList = new List({
-      element: templates.choiceList(config, this._isSelectOneElement),
+      element: templating.choiceList(config, this._isSelectOneElement),
     });
 
     this.itemList = new List({
-      element: templates.itemList(config, this._isSelectOneElement),
+      element: templating.itemList(config, this._isSelectOneElement),
     });
 
     this.dropdown = new Dropdown({
-      element: templates.dropdown(config),
+      element: templating.dropdown(config),
       classNames,
       type: elementType,
     });

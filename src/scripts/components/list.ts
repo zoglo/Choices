@@ -30,10 +30,6 @@ export default class List {
     this.element.appendChild(node);
   }
 
-  hasChildren(): boolean {
-    return this.element.hasChildNodes();
-  }
-
   scrollToTop(): void {
     this.element.scrollTop = 0;
   }
