@@ -1275,9 +1275,8 @@ class Choices {
           .map((e: InputChoice | string) => mapInputToChoice(e, false));
         this._presetChoices = this._presetChoices.concat(elementItems);
       }
-      this._presetChoices.forEach((obj: ChoiceFull) => {
-        // eslint-disable-next-line no-param-reassign
-        obj.selected = true;
+      this._presetChoices.forEach((choice: ChoiceFull) => {
+        choice.selected = true;
       });
     } else if (this._isSelectElement) {
       // Assign preset choices from passed object
@@ -2133,8 +2132,7 @@ class Choices {
     const { id, choices } = group;
     g.choices = [];
 
-    choices.forEach((choice: ChoiceFull) => {
-      const item = choice;
+    choices.forEach((item: ChoiceFull) => {
       item.groupId = id;
       if (group.disabled) {
         item.disabled = true;
@@ -2276,7 +2274,6 @@ class Choices {
             return false;
           }
 
-          // eslint-disable-next-line no-param-reassign
           choice.selected = true;
 
           return true;

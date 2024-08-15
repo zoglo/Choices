@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { ActionType, State } from '../interfaces';
 import { StateUpdate } from '../interfaces/store';
 import { ChoiceActions } from '../actions/choices';
@@ -47,8 +48,7 @@ export default function choices(s: StateType, action: ActionTypes): StateUpdate<
         scoreLookup[result.item.id] = result;
       });
 
-      state.forEach((obj) => {
-        const choice = obj;
+      state.forEach((choice) => {
         const result = scoreLookup[choice.id];
         if (result !== undefined) {
           choice.score = result.score;
@@ -65,11 +65,8 @@ export default function choices(s: StateType, action: ActionTypes): StateUpdate<
     }
 
     case ActionType.ACTIVATE_CHOICES: {
-      state.forEach((obj) => {
-        const choice = obj;
+      state.forEach((choice) => {
         choice.active = action.active;
-
-        return choice;
       });
       break;
     }

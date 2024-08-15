@@ -24,9 +24,8 @@ export default function items(s: StateType, action: ActionTypes): StateUpdate<St
       }
 
       state.push(item);
-      state.forEach((obj) => {
-        // eslint-disable-next-line no-param-reassign
-        obj.highlighted = false;
+      state.forEach((choice) => {
+        choice.highlighted = false;
       });
       break;
     }
@@ -55,10 +54,9 @@ export default function items(s: StateType, action: ActionTypes): StateUpdate<St
 
     case ActionType.HIGHLIGHT_ITEM: {
       const highlightItemAction = action;
-      state.forEach((obj) => {
-        const item = obj;
-        if (item.id === highlightItemAction.item.id) {
-          item.highlighted = highlightItemAction.highlighted;
+      state.forEach((choice) => {
+        if (choice.id === highlightItemAction.item.id) {
+          choice.highlighted = highlightItemAction.highlighted;
         }
       });
       break;
