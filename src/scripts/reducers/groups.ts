@@ -9,25 +9,23 @@ type StateType = State['groups'];
 
 export default function groups(s: StateType, action: ActionTypes): StateUpdate<StateType> {
   let state = s;
-  let update = false;
+  let update = true;
 
   switch (action.type) {
     case ActionType.ADD_GROUP: {
-      const addGroupAction = action;
-
-      update = true;
-      state.push(addGroupAction.group);
+      state.push(action.group);
       break;
     }
 
     case ActionType.CLEAR_CHOICES: {
-      update = true;
       state = [];
       break;
     }
 
-    default:
+    default: {
+      update = false;
       break;
+    }
   }
 
   return { state, update };
