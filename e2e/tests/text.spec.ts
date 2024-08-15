@@ -93,7 +93,6 @@ describe('Choices - text element', () => {
 
     describe('unique values only', () => {
       const testId = 'unique-values';
-      // @todo fix this test; does not reliably show dropdown
       describe('unique values', () => {
         test('only allows me to input unique values', async ({ page }) => {
           const suite = new TextTestSuit(page, testUrl, testId);

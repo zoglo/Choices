@@ -151,12 +151,14 @@ describe('Choices - select one', () => {
       describe('on click', () => {
         test('removes default', async ({ page }) => {
           const suite = new SelectTestSuit(page, testUrl, testId);
-          await suite.startWithClick();
+          await suite.start();
+          await suite.expectHiddenDropdown();
 
           await suite.expectedItemCount(1);
           await suite.expectedValue('Choice 1');
 
           await suite.items.getByRole('button', { name: 'Remove item' }).first().click();
+          await suite.advanceClock();
 
           await suite.expectedItemCount(0);
           await suite.expectedValue('');
@@ -611,6 +613,7 @@ describe('Choices - select one', () => {
             const text = await choice.innerText();
             await expect(choice).toBeEnabled();
             await choice.click();
+            await suite.advanceClock();
 
             await suite.expectedItemCount(1);
             await suite.expectedValue(text);

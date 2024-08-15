@@ -34,22 +34,36 @@ export class TestSuit {
   async start(textInput?: string): Promise<void> {
     // disable google analytics, as it can weirdly fail sometimes
     await this.page.route('https://www.google-analytics.com/analytics.js', (route) => route.abort('blockedbyresponse'));
+    await this.page.clock.install();
 
     await this.page.goto(this.url);
 
+    await this.group.scrollIntoViewIfNeeded();
+
     if (textInput) {
       await this.typeTextAndEnter(textInput);
+    } else {
+      await this.wrapper.focus();
+      await this.advanceClock();
     }
+  }
+
+  async advanceClock(): Promise<void> {
+    // dropdown uses requestAnimationFrame for show/hide
+    await this.page.clock.runFor(1000);
   }
 
   async selectByKeyPress(textInput: string): Promise<void> {
     await this.wrapper.focus();
+    await this.advanceClock();
     await this.input.pressSequentially(textInput);
+    await this.advanceClock();
     await this.expectVisibleDropdown();
   }
 
   async selectByClick(): Promise<void> {
     await this.wrapper.click();
+    await this.advanceClock();
     await this.expectVisibleDropdown();
   }
 
@@ -60,38 +74,52 @@ export class TestSuit {
 
   async typeText(textInput: string): Promise<void> {
     await this.input.focus();
+    await this.advanceClock();
+
     await this.input.fill(textInput);
+    await this.advanceClock();
   }
 
   async ctrlA(): Promise<void> {
     await this.input.focus();
+    await this.advanceClock();
+
     await this.input.press('ControlOrMeta+a');
+    await this.advanceClock();
   }
 
   async enterKey(): Promise<void> {
     await this.input.focus();
+    await this.advanceClock();
+
     await this.input.press('Enter');
+    await this.advanceClock();
   }
 
   async backspaceKey(): Promise<void> {
     await this.input.focus();
+    await this.advanceClock();
+
     await this.input.press('Backspace');
+    await this.advanceClock();
   }
 
   /**
    * Currently flaky, may indicate the dropdown isn't reliably appearing
    */
   async expectVisibleDropdown(text?: string): Promise<void> {
+    await this.advanceClock();
+
     if (text) {
       await expect(this.dropdown).toHaveText(text);
     }
 
     await this.dropdown.waitFor({ state: 'visible' });
-
     await expect(this.dropdown).toBeVisible();
   }
 
   async expectHiddenDropdown(): Promise<void> {
+    await this.advanceClock();
     await this.dropdown.waitFor({ state: 'hidden' });
     await expect(this.dropdown).toBeHidden();
   }
