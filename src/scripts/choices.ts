@@ -1235,28 +1235,27 @@ class Choices {
     // If we are clicking on an option
     const id = parseDataSetId(element);
     const choice = id && this._store.getChoiceById(id);
-    if (!choice || choice.disabled || choice.selected) {
+    if (!choice || choice.disabled) {
       return false;
     }
 
     const hasActiveDropdown = this.dropdown.isActive;
 
-    let addedItem = false;
-    this._store.withTxn(() => {
+    if (!choice.selected) {
       const canAddItem = this._canAddItem(choice.value);
+      if (!canAddItem.response) {
+        return false;
+      }
 
-      if (canAddItem.response) {
+      this._store.withTxn(() => {
         this._addItem(choice, true, true);
 
         this.clearInput();
-        addedItem = true;
-      }
-    });
-    if (!addedItem) {
-      return false;
-    }
+        this.unhighlightAll();
+      });
 
-    this._triggerChange(choice.value);
+      this._triggerChange(choice.value);
+    }
 
     // We want to close the dropdown if we are dealing with a single select box
     if (hasActiveDropdown && (this.config.singleModeForMultiSelect || this._isSelectOneElement)) {
@@ -1413,25 +1412,24 @@ class Choices {
           : config.customAddItemText;
     }
 
-    if (canAddItem && (this._isSelectElement || !this.config.duplicateItemsAllowed)) {
+    if (canAddItem) {
       const foundChoice = this._store.items.find((choice) => config.valueComparer(choice.value, value));
-      if (foundChoice) {
-        canAddItem = false;
-        notice =
-          typeof config.uniqueItemText === 'function'
-            ? config.uniqueItemText(sanitise(value), value)
-            : config.uniqueItemText;
-      }
-    }
-
-    if (canAddItem && this._isSelectElement) {
-      // for exact matches, do not prompt to add it as a custom choice
-      const foundChoice = this._store.choices.find((choice) => this.config.valueComparer(choice.value, value));
-      if (foundChoice) {
-        return {
-          response: true,
-          notice: '',
-        };
+      if (this._isSelectElement) {
+        // for exact matches, do not prompt to add it as a custom choice
+        if (foundChoice) {
+          return {
+            response: true,
+            notice: '',
+          };
+        }
+      } else if (this._isTextElement && !this.config.duplicateItemsAllowed) {
+        if (foundChoice) {
+          canAddItem = false;
+          notice =
+            typeof config.uniqueItemText === 'function'
+              ? config.uniqueItemText(sanitise(value), value)
+              : config.uniqueItemText;
+        }
       }
     }
 
@@ -1626,7 +1624,7 @@ class Choices {
       case KeyCodeMap.A_KEY:
         return this._onSelectKey(event, hasItems);
       case KeyCodeMap.ENTER_KEY:
-        return this._onEnterKey(event, items, hasActiveDropdown);
+        return this._onEnterKey(event, hasActiveDropdown);
       case KeyCodeMap.ESC_KEY:
         return this._onEscapeKey(event, hasActiveDropdown);
       case KeyCodeMap.UP_KEY:
@@ -1659,17 +1657,10 @@ class Choices {
       return;
     }
 
-    if (this._isTextElement) {
-      const canAddItem = this._canAddItem(value);
-      this._displayNotice(canAddItem.notice, 'add-choice');
+    if (this._canSearch) {
+      // do the search even if the entered text can not be added
+      this._handleSearch(value);
     }
-
-    if (!this._canSearch) {
-      return;
-    }
-
-    // do the search even if the entered text can not be added
-    this._handleSearch(value);
 
     if (!this._canAddUserChoices) {
       return;
@@ -1678,8 +1669,10 @@ class Choices {
     // determine if a notice needs to be displayed for why a search result can't be added
     const canAddItem = this._canAddItem(value);
     this._displayNotice(canAddItem.notice, 'add-choice');
-    this._highlightPosition = 0; // reset to select the notice and/or exact match
-    this._highlightChoice();
+    if (this._isSelectElement) {
+      this._highlightPosition = 0; // reset to select the notice and/or exact match
+      this._highlightChoice();
+    }
   }
 
   _onSelectKey(event: KeyboardEvent, hasItems: boolean): void {
@@ -1699,11 +1692,10 @@ class Choices {
     }
   }
 
-  _onEnterKey(event: KeyboardEvent, items: ChoiceFull[], hasActiveDropdown: boolean): void {
+  _onEnterKey(event: KeyboardEvent, hasActiveDropdown: boolean): void {
     const { value } = this.input;
     const target = event.target as HTMLElement | null;
     const targetWasRemoveButton = target && target.hasAttribute('data-button');
-    let addedItem = false;
     event.preventDefault();
 
     if (targetWasRemoveButton) {
@@ -1712,56 +1704,41 @@ class Choices {
       return;
     }
 
-    if (!hasActiveDropdown && this._isSelectOneElement) {
-      this.showDropdown();
+    if (!hasActiveDropdown) {
+      if (this._isSelectElement || this._notice) {
+        this.showDropdown();
+      }
 
       return;
     }
 
-    // add the highlighted item
-    if (hasActiveDropdown) {
-      const highlightedChoice: HTMLElement | null = this.dropdown.element.querySelector(
-        getClassNamesSelector(this.config.classNames.highlightedState),
-      );
+    const highlightedChoice: HTMLElement | null = this.dropdown.element.querySelector(
+      getClassNamesSelector(this.config.classNames.highlightedState),
+    );
 
-      if (highlightedChoice) {
-        addedItem = this._handleChoiceAction(highlightedChoice);
-
-        if (addedItem) {
-          this.unhighlightAll();
-
-          return;
-        }
-      }
-
-      if (!value) {
-        this.hideDropdown(true);
-      }
+    if (highlightedChoice && this._handleChoiceAction(highlightedChoice)) {
+      return;
     }
 
-    if (!target || !value || !this._canAddUserChoices) {
+    if (!target || value === '') {
+      this.hideDropdown(true);
+
       return;
     }
 
     const canAdd: Notice = this._canAddItem(value);
-    this._displayNotice(canAdd.notice, 'add-choice');
     if (!canAdd.response) {
       return;
     }
 
+    let addedItem = false;
     this._store.withTxn(() => {
-      if (this._isSelectOneElement || this.config.singleModeForMultiSelect) {
-        if (items.length !== 0) {
-          const lastItem = items[items.length - 1];
-          this._removeItem(lastItem);
+      addedItem = this._findAndSelectChoiceByValue(value, true);
+      if (!addedItem) {
+        if (!this._canAddUserChoices) {
+          return;
         }
-      }
-      let choiceNotFound = true;
-      if (this._isSelectElement || !this.config.duplicateItemsAllowed) {
-        choiceNotFound = !this._findAndSelectChoiceByValue(value, true);
-      }
 
-      if (choiceNotFound) {
         const sanitisedValue = sanitise(value);
         const userValue =
           this.config.allowHtmlUserInput || sanitisedValue === value ? value : { escaped: sanitisedValue, raw: value };
@@ -1777,12 +1754,18 @@ class Choices {
           true,
           true,
         );
+        addedItem = true;
       }
+
       this.clearInput();
       this.unhighlightAll();
-
-      this._triggerChange(value);
     });
+
+    if (!addedItem) {
+      return;
+    }
+
+    this._triggerChange(value);
 
     if (this._isTextElement || this._isSelectOneElement) {
       this.hideDropdown(true);
@@ -2348,7 +2331,7 @@ class Choices {
     // Check 'value' property exists and the choice isn't already selected
     const foundChoice = choices.find((choice) => this.config.valueComparer(choice.value, value));
 
-    if (foundChoice && !foundChoice.selected) {
+    if (foundChoice && !foundChoice.disabled && !foundChoice.selected) {
       this._addItem(foundChoice, true, userTriggered);
 
       return true;

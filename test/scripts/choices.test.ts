@@ -2327,7 +2327,7 @@ describe('choices', () => {
 
           instance._onKeyDown(event);
 
-          expect(instance._onEnterKey).to.have.been.calledWith(event, items, hasActiveDropdown);
+          expect(instance._onEnterKey).to.have.been.calledWith(event, hasActiveDropdown);
         });
       });
 
