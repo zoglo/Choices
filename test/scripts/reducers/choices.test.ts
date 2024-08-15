@@ -73,7 +73,7 @@ describe('reducers/choices', () => {
         {
           id: 1,
           elementId: 'choices-test-1',
-          groupId: -1,
+          groupId: 0,
           value: 'Choice 1',
           label: 'Choice 1',
           disabled: false,
@@ -88,7 +88,7 @@ describe('reducers/choices', () => {
         {
           id: 2,
           elementId: 'choices-test-2',
-          groupId: -1,
+          groupId: 0,
           value: 'Choice 2',
           label: 'Choice 2',
           disabled: false,

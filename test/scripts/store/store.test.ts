@@ -24,7 +24,7 @@ describe('reducers/store', () => {
       items: [
         {
           id: 1,
-          groupId: -1,
+          groupId: 0,
           value: 'Item one',
           label: 'Item one',
           active: false,
@@ -38,7 +38,7 @@ describe('reducers/store', () => {
         },
         {
           id: 2,
-          groupId: -1,
+          groupId: 0,
           value: 'Item two',
           label: 'Item two',
           active: true,
@@ -52,7 +52,7 @@ describe('reducers/store', () => {
         },
         {
           id: 3,
-          groupId: -1,
+          groupId: 0,
           value: 'Item three',
           label: 'Item three',
           active: true,
@@ -69,7 +69,7 @@ describe('reducers/store', () => {
         {
           id: 1,
           elementId: 'choices-test-1',
-          groupId: -1,
+          groupId: 0,
           value: 'Choice 1',
           label: 'Choice 1',
           disabled: false,
@@ -84,7 +84,7 @@ describe('reducers/store', () => {
         {
           id: 2,
           elementId: 'choices-test-2',
-          groupId: -1,
+          groupId: 0,
           value: 'Choice 2',
           label: 'Choice 2',
           disabled: false,

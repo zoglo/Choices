@@ -301,7 +301,11 @@ const templates: TemplatesInterface = {
       div.classList.add(...getClassNames(placeholder));
     }
 
-    div.setAttribute('role', groupId && groupId > 0 ? 'treeitem' : 'option');
+    const showGroupId = groupId && groupId > 0;
+    div.setAttribute('role', showGroupId ? 'treeitem' : 'option');
+    if (showGroupId) {
+      div.dataset.groupId = `${groupId}`;
+    }
 
     Object.assign(div.dataset, {
       choice: '',

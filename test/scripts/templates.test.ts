@@ -381,7 +381,7 @@ describe('templates', () => {
     beforeEach(() => {
       data = {
         id: 1,
-        groupId: -1,
+        groupId: 0,
         disabled: false,
         elementId: 'test',
         label: 'test',
@@ -530,6 +530,7 @@ describe('templates', () => {
             data-choice
             data-id="${data.id}"
             data-value="${data.value}"
+            data-group-id="${data.groupId}"
             data-choice-selectable
             id="${data.elementId}"
             role="treeitem"
@@ -667,7 +668,7 @@ describe('templates', () => {
       beforeEach(() => {
         data = {
           ...data,
-          active: true,
+          selected: true,
         };
       });
 

@@ -752,7 +752,7 @@ describe('choices', () => {
       let choicesStub;
       const groupIdValue = 'Test';
       const item: ChoiceFull = {
-        groupId: -1,
+        groupId: 0,
         highlighted: false,
         active: false,
         disabled: false,
