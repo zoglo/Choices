@@ -10,6 +10,7 @@
 * Add closeDropdownOnSelect option, controls how the dropdown is close after selection is made. [#636](https://github.com/Choices-js/Choices/issues/636) [#973](https://github.com/Choices-js/Choices/issues/873) [#1012](https://github.com/Choices-js/Choices/issues/1012)
 
 ### Bug Fixes (from 10.2.0)
+* Fix `[aria-*]` attributes do not match their roles [#1169](https://github.com/Choices-js/Choices/issues/1169)
 
 ### Bug Fixes (from 11.0.0RC6)
 * Fix destroy&init of `choices.js` would lost track of data from the backing `<input>`/`<select>`

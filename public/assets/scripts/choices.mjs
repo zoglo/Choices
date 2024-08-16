@@ -1391,6 +1391,7 @@ var templates = {
         assignCustomProperties(div, customProperties);
         if (active) {
             div.setAttribute('aria-selected', 'true');
+            div.setAttribute('role', 'option');
         }
         if (disabled) {
             div.setAttribute('aria-disabled', 'true');

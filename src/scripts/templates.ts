@@ -165,6 +165,7 @@ const templates: TemplatesInterface = {
 
     if (active) {
       div.setAttribute('aria-selected', 'true');
+      div.setAttribute('role', 'option');
     }
 
     if (disabled) {
