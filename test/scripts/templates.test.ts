@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import templates from '../../src/scripts/templates';
 import { strToEl, getClassNames } from '../../src/scripts/lib/utils';
 import { DEFAULT_CLASSNAMES, DEFAULT_CONFIG, Options, ClassNames } from '../../src';
+import { NoticeTypes } from '../../src/scripts/interfaces/templates';
 
 /**
  * @param {HTMLElement} element1
@@ -619,7 +620,7 @@ describe('templates', () => {
               ${label}
             </div>
           `);
-          const actualOutput = templates.notice(noticeOptions, label, 'no-results');
+          const actualOutput = templates.notice(noticeOptions, label, NoticeTypes.noResults);
 
           expectEqualElements(actualOutput, expectedOutput);
         });
@@ -633,7 +634,7 @@ describe('templates', () => {
               ${label}
             </div>
           `);
-          const actualOutput = templates.notice(noticeOptions, label, 'no-choices');
+          const actualOutput = templates.notice(noticeOptions, label, NoticeTypes.noChoices);
 
           expectEqualElements(actualOutput, expectedOutput);
         });

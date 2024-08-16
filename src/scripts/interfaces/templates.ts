@@ -11,7 +11,13 @@ export type TemplateOptions = Pick<
   'classNames' | 'allowHTML' | 'removeItemButtonAlignLeft' | 'removeItemIconText' | 'removeItemLabelText'
 >;
 
-export type NoticeType = 'no-choices' | 'no-results' | 'add-choice' | '';
+export const NoticeTypes = {
+  noChoices: 'no-choices',
+  noResults: 'no-results',
+  addChoice: 'add-choice',
+  generic: '',
+} as const;
+export type NoticeType = (typeof NoticeTypes)[keyof typeof NoticeTypes];
 
 export interface Templates {
   containerOuter(

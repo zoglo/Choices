@@ -30,7 +30,7 @@ import { ChoiceFull } from './interfaces/choice-full';
 import { GroupFull } from './interfaces/group-full';
 import { EventType, KeyCodeMap, PassedElementType } from './interfaces';
 import { EventChoice } from './interfaces/event-choice';
-import { NoticeType, Templates } from './interfaces/templates';
+import { NoticeType, NoticeTypes, Templates } from './interfaces/templates';
 import { isHtmlInputElement, isHtmlSelectElement } from './lib/html-guard-statements';
 import { Searcher } from './interfaces/search';
 import { getSearcher } from './search';
@@ -904,10 +904,10 @@ class Choices {
       if (!notice) {
         this._notice = {
           text: resolveStringFunction(config.noChoicesText),
-          type: 'no-choices',
+          type: NoticeTypes.noChoices,
         };
       }
-    } else if (notice && notice.type === 'no-choices') {
+    } else if (notice && notice.type === NoticeTypes.noChoices) {
       this._notice = undefined;
     }
 
@@ -1117,7 +1117,8 @@ class Choices {
     if (
       oldNotice &&
       ((oldNotice.type === type && oldNotice.text === text) ||
-        (oldNotice.type === 'add-choice' && (type === 'no-results' || type === 'no-choices')))
+        (oldNotice.type === NoticeTypes.addChoice &&
+          (type === NoticeTypes.noResults || type === NoticeTypes.noChoices)))
     ) {
       return;
     }
@@ -1477,10 +1478,10 @@ class Choices {
 
     const notice = this._notice;
     const noticeType = notice && notice.type;
-    if (noticeType !== 'add-choice') {
+    if (noticeType !== NoticeTypes.addChoice) {
       if (results.length === 0) {
-        this._displayNotice(resolveStringFunction(this.config.noResultsText), 'no-results');
-      } else if (noticeType === 'no-results') {
+        this._displayNotice(resolveStringFunction(this.config.noResultsText), NoticeTypes.noResults);
+      } else if (noticeType === NoticeTypes.noResults) {
         this._clearNotice();
       }
     }

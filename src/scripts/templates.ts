@@ -16,7 +16,7 @@ import {
   unwrapStringForEscaped,
   resolveNoticeFunction,
 } from './lib/utils';
-import { NoticeType, TemplateOptions, Templates as TemplatesInterface } from './interfaces/templates';
+import { NoticeType, NoticeTypes, TemplateOptions, Templates as TemplatesInterface } from './interfaces/templates';
 
 export const escapeForTemplate = (allowHTML: boolean, s: StringUntrusted | StringPreEscaped | string): string =>
   allowHTML ? unwrapStringForEscaped(s) : (sanitise(s) as string);
@@ -371,19 +371,19 @@ const templates: TemplatesInterface = {
       classNames: { item, itemChoice, addChoice, noResults, noChoices, notice: noticeItem },
     }: TemplateOptions,
     innerText: StringUntrusted | StringPreEscaped | string,
-    type: NoticeType = '',
+    type: NoticeType = NoticeTypes.generic,
   ): HTMLDivElement {
     const classes = [...getClassNames(item), ...getClassNames(itemChoice), ...getClassNames(noticeItem)];
 
     // eslint-disable-next-line default-case
     switch (type) {
-      case 'add-choice':
+      case NoticeTypes.addChoice:
         classes.push(...getClassNames(addChoice));
         break;
-      case 'no-results':
+      case NoticeTypes.noResults:
         classes.push(...getClassNames(noResults));
         break;
-      case 'no-choices':
+      case NoticeTypes.noChoices:
         classes.push(...getClassNames(noChoices));
         break;
     }
@@ -393,7 +393,7 @@ const templates: TemplatesInterface = {
       className: classes.join(' '),
     });
 
-    if (type === 'add-choice') {
+    if (type === NoticeTypes.addChoice) {
       notice.dataset.choiceSelectable = '';
       notice.dataset.choice = '';
     }
