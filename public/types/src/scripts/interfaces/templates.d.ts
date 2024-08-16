@@ -4,7 +4,7 @@ import { ChoiceFull } from './choice-full';
 import { GroupFull } from './group-full';
 import { StringUntrusted } from './string-untrusted';
 import { Options } from './options';
-export type TemplateOptions = Pick<Options, 'classNames' | 'allowHTML' | 'removeItemButtonAlignLeft'>;
+export type TemplateOptions = Pick<Options, 'classNames' | 'allowHTML' | 'removeItemButtonAlignLeft' | 'removeItemIconText' | 'removeItemLabelText'>;
 export type NoticeType = 'no-choices' | 'no-results' | 'add-choice' | '';
 export interface Templates {
     containerOuter({ classNames: { containerOuter }, }: TemplateOptions, dir: HTMLElement['dir'], isSelectElement: boolean, isSelectOneElement: boolean, searchEnabled: boolean, passedElementType: PassedElementType, labelId: string): HTMLDivElement;
