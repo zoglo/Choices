@@ -9,8 +9,10 @@ import { ChoiceFull } from './interfaces/choice-full';
 import { GroupFull } from './interfaces/group-full';
 import { PassedElementType } from './interfaces';
 import { EventChoice } from './interfaces/event-choice';
-import { Templates } from './interfaces/templates';
+import { NoticeType, Templates } from './interfaces/templates';
 import { Searcher } from './interfaces/search';
+import { StringUntrusted } from './interfaces/string-untrusted';
+import { StringPreEscaped } from './interfaces/string-pre-escaped';
 /**
  * Choices
  * @author Josh Johnson<josh@joshuajohnson.co.uk>
@@ -58,6 +60,10 @@ declare class Choices {
     _presetChoices: (ChoiceFull | GroupFull)[];
     _initialItems: string[];
     _searcher: Searcher<ChoiceFull>;
+    _notice?: {
+        type: NoticeType;
+        text: StringUntrusted | StringPreEscaped | string;
+    };
     constructor(element?: string | Element | HTMLInputElement | HTMLSelectElement, userConfig?: Partial<Options>);
     init(): void;
     destroy(): void;
@@ -151,16 +157,19 @@ declare class Choices {
     _createGroupsFragment(groups: GroupFull[], choices: ChoiceFull[], fragment?: DocumentFragment): DocumentFragment;
     _createChoicesFragment(choices: ChoiceFull[], fragment?: DocumentFragment, withinGroup?: boolean): DocumentFragment;
     _createItemsFragment(items: InputChoice[], fragment?: DocumentFragment): DocumentFragment;
+    _displayNotice(text: StringUntrusted | StringPreEscaped | string, type: NoticeType, openDropdown?: boolean): void;
+    _clearNotice(): void;
+    _renderNotice(): void;
     _getChoiceForOutput(choice?: ChoiceFull, keyCode?: number): EventChoice | undefined;
     _triggerChange(value: any): void;
-    _handleButtonAction(items: ChoiceFull[], element?: HTMLElement): void;
-    _handleItemAction(items: InputChoice[], element?: HTMLElement, hasShiftKey?: boolean): void;
-    _handleChoiceAction(items: ChoiceFull[], element?: HTMLElement): boolean;
+    _handleButtonAction(element?: HTMLElement): void;
+    _handleItemAction(element?: HTMLElement, hasShiftKey?: boolean): void;
+    _handleChoiceAction(element?: HTMLElement): boolean;
     _handleBackspace(items: ChoiceFull[]): void;
     _loadChoices(): void;
     _handleLoadingState(setLoading?: boolean): void;
     _handleSearch(value?: string): void;
-    _canAddItem(items: InputChoice[], value: string): Notice;
+    _canAddItem(value: string): Notice;
     _searchChoices(value: string): number | null;
     _stopSearch(): void;
     _addEventListeners(): void;
@@ -168,9 +177,8 @@ declare class Choices {
     _onKeyDown(event: KeyboardEvent): void;
     _onKeyUp(): void;
     _onInput(): void;
-    _displayAddItemNotice(canAddItem: Notice): void;
     _onSelectKey(event: KeyboardEvent, hasItems: boolean): void;
-    _onEnterKey(event: KeyboardEvent, items: ChoiceFull[], hasActiveDropdown: boolean): void;
+    _onEnterKey(event: KeyboardEvent, hasActiveDropdown: boolean): void;
     _onEscapeKey(event: KeyboardEvent, hasActiveDropdown: boolean): void;
     _onDirectionKey(event: KeyboardEvent, hasActiveDropdown: boolean): void;
     _onDeleteKey(event: KeyboardEvent, items: ChoiceFull[], hasFocusedInput: boolean): void;

@@ -25,7 +25,6 @@ export default class Container {
     removeActiveDescendant(): void;
     open(dropdownPos: number): void;
     close(): void;
-    focus(): void;
     addFocusState(): void;
     removeFocusState(): void;
     enable(): void;
