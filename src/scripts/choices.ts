@@ -1104,15 +1104,12 @@ class Choices {
     openDropdown: boolean = true,
   ): void {
     const oldNotice = this._notice;
-    const changed = !oldNotice || oldNotice.text !== text || oldNotice.type !== type;
-    if (!changed) {
+    if (
+      oldNotice &&
+      ((oldNotice.type === type && oldNotice.text === text) ||
+        (oldNotice.type === 'add-choice' && (type === 'no-results' || type === 'no-choices')))
+    ) {
       return;
-    }
-
-    if (changed && oldNotice) {
-      if (oldNotice.type === 'add-choice' && (type === 'no-results' || type === 'no-choices')) {
-        return;
-      }
     }
 
     this._clearNotice();
@@ -1136,8 +1133,7 @@ class Choices {
       return;
     }
 
-    const selector = getClassNamesSelector(this.config.classNames.notice);
-    const noticeElement = this.choiceList.element.querySelector(selector);
+    const noticeElement = this.choiceList.element.querySelector(getClassNamesSelector(this.config.classNames.notice));
     if (noticeElement) {
       noticeElement.remove();
     }
@@ -1469,10 +1465,12 @@ class Choices {
     this._highlightPosition = 0;
     this._isSearching = true;
 
-    if (this._notice?.type !== 'add-choice') {
+    const notice = this._notice;
+    const noticeType = notice && notice.type;
+    if (noticeType !== 'add-choice') {
       if (results.length === 0) {
         this._displayNotice(resolveStringFunction(this.config.noResultsText), 'no-results');
-      } else if (this._notice?.type === 'no-results') {
+      } else if (noticeType === 'no-results') {
         this._clearNotice();
       }
     }
