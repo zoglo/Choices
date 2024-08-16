@@ -58,43 +58,57 @@ typeof SuppressedError === "function" ? SuppressedError : function (error, suppr
   return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
 };
 
+var ActionType = {
+    ADD_CHOICE: 'ADD_CHOICE',
+    REMOVE_CHOICE: 'REMOVE_CHOICE',
+    FILTER_CHOICES: 'FILTER_CHOICES',
+    ACTIVATE_CHOICES: 'ACTIVATE_CHOICES',
+    CLEAR_CHOICES: 'CLEAR_CHOICES',
+    ADD_GROUP: 'ADD_GROUP',
+    ADD_ITEM: 'ADD_ITEM',
+    REMOVE_ITEM: 'REMOVE_ITEM',
+    HIGHLIGHT_ITEM: 'HIGHLIGHT_ITEM',
+};
+
+var ObjectsInConfig = ['fuseOptions', 'classNames'];
+
 var addChoice = function (choice) { return ({
-    type: "ADD_CHOICE" /* ActionType.ADD_CHOICE */,
+    type: ActionType.ADD_CHOICE,
     choice: choice,
 }); };
 var removeChoice = function (choice) { return ({
-    type: "REMOVE_CHOICE" /* ActionType.REMOVE_CHOICE */,
+    type: ActionType.REMOVE_CHOICE,
     choice: choice,
 }); };
 var filterChoices = function (results) { return ({
-    type: "FILTER_CHOICES" /* ActionType.FILTER_CHOICES */,
+    type: ActionType.FILTER_CHOICES,
     results: results,
 }); };
 var activateChoices = function (active) {
     return ({
-        type: "ACTIVATE_CHOICES" /* ActionType.ACTIVATE_CHOICES */,
+        type: ActionType.ACTIVATE_CHOICES,
         active: active,
     });
 };
 var clearChoices = function () { return ({
-    type: "CLEAR_CHOICES" /* ActionType.CLEAR_CHOICES */,
+    type: ActionType.CLEAR_CHOICES,
 }); };
 
 var addGroup = function (group) { return ({
-    type: "ADD_GROUP" /* ActionType.ADD_GROUP */,
+    type: ActionType.ADD_GROUP,
     group: group,
 }); };
 
 var addItem = function (item) { return ({
-    type: "ADD_ITEM" /* ActionType.ADD_ITEM */,
+    type: ActionType.ADD_ITEM,
     item: item,
 }); };
 var removeItem = function (item) { return ({
-    type: "REMOVE_ITEM" /* ActionType.REMOVE_ITEM */,
+    type: ActionType.REMOVE_ITEM,
     item: item,
 }); };
 var highlightItem = function (item, highlighted) { return ({
-    type: "HIGHLIGHT_ITEM" /* ActionType.HIGHLIGHT_ITEM */,
+    type: ActionType.HIGHLIGHT_ITEM,
     item: item,
     highlighted: highlighted,
 }); };
@@ -942,13 +956,11 @@ var DEFAULT_CONFIG = {
     appendGroupInSearch: false,
 };
 
-var ObjectsInConfig = ['fuseOptions', 'classNames'];
-
 function items(s, action) {
     var state = s;
     var update = true;
     switch (action.type) {
-        case "ADD_ITEM" /* ActionType.ADD_ITEM */: {
+        case ActionType.ADD_ITEM: {
             var item = action.item;
             item.selected = true;
             var el = item.element;
@@ -962,7 +974,7 @@ function items(s, action) {
             });
             break;
         }
-        case "REMOVE_ITEM" /* ActionType.REMOVE_ITEM */: {
+        case ActionType.REMOVE_ITEM: {
             var item_1 = action.item;
             item_1.selected = false;
             var el = item_1.element;
@@ -978,11 +990,11 @@ function items(s, action) {
             state = state.filter(function (choice) { return choice.id !== item_1.id; });
             break;
         }
-        case "REMOVE_CHOICE" /* ActionType.REMOVE_CHOICE */: {
+        case ActionType.REMOVE_CHOICE: {
             state = state.filter(function (item) { return item.id !== action.choice.id; });
             break;
         }
-        case "HIGHLIGHT_ITEM" /* ActionType.HIGHLIGHT_ITEM */: {
+        case ActionType.HIGHLIGHT_ITEM: {
             var highlightItemAction_1 = action;
             state.forEach(function (choice) {
                 if (choice.id === highlightItemAction_1.item.id) {
@@ -1003,11 +1015,11 @@ function groups(s, action) {
     var state = s;
     var update = true;
     switch (action.type) {
-        case "ADD_GROUP" /* ActionType.ADD_GROUP */: {
+        case ActionType.ADD_GROUP: {
             state.push(action.group);
             break;
         }
-        case "CLEAR_CHOICES" /* ActionType.CLEAR_CHOICES */: {
+        case ActionType.CLEAR_CHOICES: {
             state = [];
             break;
         }
@@ -1019,11 +1031,12 @@ function groups(s, action) {
     return { state: state, update: update };
 }
 
+/* eslint-disable */
 function choices(s, action) {
     var state = s;
     var update = true;
     switch (action.type) {
-        case "ADD_CHOICE" /* ActionType.ADD_CHOICE */: {
+        case ActionType.ADD_CHOICE: {
             /*
               A disabled choice appears in the choice dropdown but cannot be selected
               A selected choice has been added to the passed input's value (added as an item)
@@ -1032,21 +1045,16 @@ function choices(s, action) {
             state.push(action.choice);
             break;
         }
-        case "REMOVE_CHOICE" /* ActionType.REMOVE_CHOICE */: {
+        case ActionType.REMOVE_CHOICE: {
             state = state.filter(function (obj) { return obj.id !== action.choice.id; });
             break;
         }
-        case "ADD_ITEM" /* ActionType.ADD_ITEM */: {
-            // trigger a rebuild of the choices list as the item can not be added multiple times
-            update = action.item.selected;
+        case ActionType.ADD_ITEM:
+        case ActionType.REMOVE_ITEM: {
+            update = true;
             break;
         }
-        case "REMOVE_ITEM" /* ActionType.REMOVE_ITEM */: {
-            // trigger a rebuild of the choices list as the item can be added
-            update = action.item.selected;
-            break;
-        }
-        case "FILTER_CHOICES" /* ActionType.FILTER_CHOICES */: {
+        case ActionType.FILTER_CHOICES: {
             // avoid O(n^2) algorithm complexity when searching/filtering choices
             var scoreLookup_1 = [];
             action.results.forEach(function (result) {
@@ -1067,13 +1075,13 @@ function choices(s, action) {
             });
             break;
         }
-        case "ACTIVATE_CHOICES" /* ActionType.ACTIVATE_CHOICES */: {
+        case ActionType.ACTIVATE_CHOICES: {
             state.forEach(function (choice) {
                 choice.active = action.active;
             });
             break;
         }
-        case "CLEAR_CHOICES" /* ActionType.CLEAR_CHOICES */: {
+        case ActionType.CLEAR_CHOICES: {
             state = [];
             break;
         }
@@ -1268,6 +1276,13 @@ var Store = /** @class */ (function () {
     };
     return Store;
 }());
+
+var NoticeTypes = {
+    noChoices: 'no-choices',
+    noResults: 'no-results',
+    addChoice: 'add-choice',
+    generic: '',
+};
 
 /**
  * Helpers to create HTML elements used by Choices
@@ -1536,17 +1551,17 @@ var templates = {
     },
     notice: function (_a, innerText, type) {
         var allowHTML = _a.allowHTML, _b = _a.classNames, item = _b.item, itemChoice = _b.itemChoice, addChoice = _b.addChoice, noResults = _b.noResults, noChoices = _b.noChoices, noticeItem = _b.notice;
-        if (type === void 0) { type = ''; }
+        if (type === void 0) { type = NoticeTypes.generic; }
         var classes = __spreadArray(__spreadArray(__spreadArray([], getClassNames(item), true), getClassNames(itemChoice), true), getClassNames(noticeItem), true);
         // eslint-disable-next-line default-case
         switch (type) {
-            case 'add-choice':
+            case NoticeTypes.addChoice:
                 classes.push.apply(classes, getClassNames(addChoice));
                 break;
-            case 'no-results':
+            case NoticeTypes.noResults:
                 classes.push.apply(classes, getClassNames(noResults));
                 break;
-            case 'no-choices':
+            case NoticeTypes.noChoices:
                 classes.push.apply(classes, getClassNames(noChoices));
                 break;
         }
@@ -1554,7 +1569,7 @@ var templates = {
             innerHTML: escapeForTemplate(allowHTML, innerText),
             className: classes.join(' '),
         });
-        if (type === 'add-choice') {
+        if (type === NoticeTypes.addChoice) {
             notice.dataset.choiceSelectable = '';
             notice.dataset.choice = '';
         }
@@ -1944,7 +1959,6 @@ var Choices = /** @class */ (function () {
                 _this.input.removeActiveDescendant();
                 _this.input.blur();
             }
-            _this._clearNotice();
             _this.passedElement.triggerEvent("hideDropdown" /* EventType.hideDropdown */);
         });
         return this;
@@ -2246,9 +2260,6 @@ var Choices = /** @class */ (function () {
             return;
         }
         if (changes.choices || changes.groups) {
-            if (this._store.choices.length === 0 && !this._notice) {
-                this._displayNotice(resolveStringFunction(this.config.noChoicesText), 'no-choices', false);
-            }
             this._renderChoices();
         }
         if (changes.items) {
@@ -2257,11 +2268,11 @@ var Choices = /** @class */ (function () {
     };
     Choices.prototype._renderChoices = function () {
         var _this = this;
+        var config = this.config;
         var _a = this._store, activeGroups = _a.activeGroups, activeChoices = _a.activeChoices;
         var choiceListFragment = document.createDocumentFragment();
         this.choiceList.clear();
-        this._renderNotice();
-        if (this.config.resetScrollPosition) {
+        if (config.resetScrollPosition) {
             requestAnimationFrame(function () { return _this.choiceList.scrollToTop(); });
         }
         // If we have grouped options
@@ -2278,7 +2289,21 @@ var Choices = /** @class */ (function () {
         else if (activeChoices.length >= 1) {
             choiceListFragment = this._createChoicesFragment(activeChoices, choiceListFragment);
         }
-        if (choiceListFragment.childNodes.length !== 0) {
+        var noChoices = choiceListFragment.childNodes.length === 0;
+        var notice = this._notice;
+        if (noChoices) {
+            if (!notice) {
+                this._notice = {
+                    text: resolveStringFunction(config.noChoicesText),
+                    type: NoticeTypes.noChoices,
+                };
+            }
+        }
+        else if (notice && notice.type === NoticeTypes.noChoices) {
+            this._notice = undefined;
+        }
+        this._renderNotice();
+        if (!noChoices) {
             this.choiceList.append(choiceListFragment);
             this._highlightChoice();
         }
@@ -2445,7 +2470,8 @@ var Choices = /** @class */ (function () {
         var oldNotice = this._notice;
         if (oldNotice &&
             ((oldNotice.type === type && oldNotice.text === text) ||
-                (oldNotice.type === 'add-choice' && (type === 'no-results' || type === 'no-choices')))) {
+                (oldNotice.type === NoticeTypes.addChoice &&
+                    (type === NoticeTypes.noResults || type === NoticeTypes.noChoices)))) {
             return;
         }
         this._clearNotice();
@@ -2761,11 +2787,11 @@ var Choices = /** @class */ (function () {
         this._isSearching = true;
         var notice = this._notice;
         var noticeType = notice && notice.type;
-        if (noticeType !== 'add-choice') {
+        if (noticeType !== NoticeTypes.addChoice) {
             if (results.length === 0) {
-                this._displayNotice(resolveStringFunction(this.config.noResultsText), 'no-results');
+                this._displayNotice(resolveStringFunction(this.config.noResultsText), NoticeTypes.noResults);
             }
-            else if (noticeType === 'no-results') {
+            else if (noticeType === NoticeTypes.noResults) {
                 this._clearNotice();
             }
         }

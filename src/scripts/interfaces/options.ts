@@ -4,7 +4,7 @@ import { ClassNames } from './class-names';
 import { PositionOptionsType } from './position-options-type';
 import { Types } from './types';
 
-export const ObjectsInConfig = ['fuseOptions', 'classNames'];
+export const ObjectsInConfig: string[] = ['fuseOptions', 'classNames'];
 
 /**
  * Choices options interface

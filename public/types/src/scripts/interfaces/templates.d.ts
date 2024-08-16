@@ -5,7 +5,13 @@ import { GroupFull } from './group-full';
 import { StringUntrusted } from './string-untrusted';
 import { Options } from './options';
 export type TemplateOptions = Pick<Options, 'classNames' | 'allowHTML' | 'removeItemButtonAlignLeft' | 'removeItemIconText' | 'removeItemLabelText'>;
-export type NoticeType = 'no-choices' | 'no-results' | 'add-choice' | '';
+export declare const NoticeTypes: {
+    readonly noChoices: "no-choices";
+    readonly noResults: "no-results";
+    readonly addChoice: "add-choice";
+    readonly generic: "";
+};
+export type NoticeType = (typeof NoticeTypes)[keyof typeof NoticeTypes];
 export interface Templates {
     containerOuter({ classNames: { containerOuter }, }: TemplateOptions, dir: HTMLElement['dir'], isSelectElement: boolean, isSelectOneElement: boolean, searchEnabled: boolean, passedElementType: PassedElementType, labelId: string): HTMLDivElement;
     containerInner({ classNames: { containerInner } }: TemplateOptions): HTMLDivElement;
