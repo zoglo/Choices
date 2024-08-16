@@ -10,8 +10,8 @@ export class SelectTestSuit extends TestSuit {
 
   readonly itemsWithPlaceholder: Locator;
 
-  constructor(page: Page, baseURL: string | undefined, choicesBundle: string, url: string, testId: string) {
-    super(page, baseURL, choicesBundle, url, testId);
+  constructor(page: Page, choicesBundle: string | undefined, url: string, testId: string) {
+    super(page, choicesBundle, url, testId);
 
     this.wrappedSelect = this.group.locator('select');
     this.choices = this.dropdown.locator('.choices__item');

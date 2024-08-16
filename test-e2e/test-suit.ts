@@ -1,19 +1,6 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 
 export class TestSuit {
-  static testBundles(): { name: string; bundle: string }[] {
-    return [
-      {
-        name: 'Dev',
-        bundle: '/assets/scripts/choices.js',
-      },
-      {
-        name: 'Prod',
-        bundle: '/assets/scripts/choices.min.js',
-      },
-    ];
-  }
-
   readonly testId: string;
 
   readonly url: string;
@@ -32,10 +19,10 @@ export class TestSuit {
 
   readonly dropdown: Locator;
 
-  readonly choicesBundle: string;
+  readonly choicesBundle: string | undefined;
 
-  constructor(page: Page, baseURL: string | undefined, choicesBundle: string, url: string, testId: string) {
-    this.choicesBundle = baseURL ? baseURL + choicesBundle : choicesBundle;
+  constructor(page: Page, choicesBundle: string | undefined, url: string, testId: string) {
+    this.choicesBundle = choicesBundle;
     this.testId = testId;
     this.url = url;
     this.page = page;
@@ -48,8 +35,10 @@ export class TestSuit {
   }
 
   async start(textInput?: string): Promise<void> {
-    await this.page.route('/assets/scripts/choices.js', (route) => route.continue({ url: this.choicesBundle }));
-    await this.page.route('/assets/scripts/choices.min.js', (route) => route.continue({ url: this.choicesBundle }));
+    if (this.choicesBundle) {
+      await this.page.route('/assets/scripts/choices.js', (route) => route.continue({ url: this.choicesBundle }));
+      await this.page.route('/assets/scripts/choices.min.js', (route) => route.continue({ url: this.choicesBundle }));
+    }
 
     // disable google analytics, as it can weirdly fail sometimes
     await this.page.route('https://www.google-analytics.com/analytics.js', (route) => route.abort('blockedbyresponse'));

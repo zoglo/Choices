@@ -1,4 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
+import { PlaywrightTestConfig } from 'playwright/types/test';
+import { BundleTest } from './test-e2e/bundle-test';
 
 /**
  * Read environment variables from file.
@@ -10,7 +12,7 @@ import { defineConfig, devices } from '@playwright/test';
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
-export default defineConfig({
+const config: PlaywrightTestConfig = {
   testDir: './test-e2e',
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -21,7 +23,7 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: process.env.CI ? 'dot' : 'list',
+  reporter: 'dot',//process.env.CI ? 'dot' : 'list',
   timeout: 2000,
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
@@ -76,4 +78,35 @@ export default defineConfig({
   //  url: 'http://127.0.0.1:3001',
   //  reuseExistingServer: !process.env.CI,
   //},
-});
+};
+
+const bundles = [
+  {
+    name: '',
+    bundle: '/assets/scripts/choices.js',
+  },
+  {
+    name: ' - prod',
+    bundle: '/assets/scripts/choices.min.js',
+  },
+];
+const projects = config.projects;
+if (config.use.baseURL) {
+  config.projects = [];
+
+  projects.forEach((project) => {
+    bundles.forEach(({ name, bundle }) => {
+      const projectBundle = {
+        ...project,
+        name: project.name + name,
+        use: {
+          ...project.use,
+          bundle: config.use.baseURL + bundle,
+        }
+      };
+      config.projects.push(projectBundle);
+    });
+  });
+}
+
+export default defineConfig<BundleTest>(config);
