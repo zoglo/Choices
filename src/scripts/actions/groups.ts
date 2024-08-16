@@ -4,7 +4,7 @@ import { AnyAction } from '../interfaces/store';
 
 export type GroupActions = AddGroupAction;
 
-export interface AddGroupAction extends AnyAction<ActionType.ADD_GROUP> {
+export interface AddGroupAction extends AnyAction<typeof ActionType.ADD_GROUP> {
   group: GroupFull;
 }
 

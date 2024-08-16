@@ -4,15 +4,15 @@ import { AnyAction } from '../interfaces/store';
 
 export type ItemActions = AddItemAction | RemoveItemAction | HighlightItemAction;
 
-export interface AddItemAction extends AnyAction<ActionType.ADD_ITEM> {
+export interface AddItemAction extends AnyAction<typeof ActionType.ADD_ITEM> {
   item: ChoiceFull;
 }
 
-export interface RemoveItemAction extends AnyAction<ActionType.REMOVE_ITEM> {
+export interface RemoveItemAction extends AnyAction<typeof ActionType.REMOVE_ITEM> {
   item: ChoiceFull;
 }
 
-export interface HighlightItemAction extends AnyAction<ActionType.HIGHLIGHT_ITEM> {
+export interface HighlightItemAction extends AnyAction<typeof ActionType.HIGHLIGHT_ITEM> {
   item: ChoiceFull;
   highlighted: boolean;
 }

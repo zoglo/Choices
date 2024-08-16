@@ -10,23 +10,23 @@ export type ChoiceActions =
   | ActivateChoicesAction
   | ClearChoicesAction;
 
-export interface AddChoiceAction extends AnyAction<ActionType.ADD_CHOICE> {
+export interface AddChoiceAction extends AnyAction<typeof ActionType.ADD_CHOICE> {
   choice: ChoiceFull;
 }
 
-export interface RemoveChoiceAction extends AnyAction<ActionType.REMOVE_CHOICE> {
+export interface RemoveChoiceAction extends AnyAction<typeof ActionType.REMOVE_CHOICE> {
   choice: ChoiceFull;
 }
 
-export interface FilterChoicesAction extends AnyAction<ActionType.FILTER_CHOICES> {
+export interface FilterChoicesAction extends AnyAction<typeof ActionType.FILTER_CHOICES> {
   results: SearchResult<ChoiceFull>[];
 }
 
-export interface ActivateChoicesAction extends AnyAction<ActionType.ACTIVATE_CHOICES> {
+export interface ActivateChoicesAction extends AnyAction<typeof ActionType.ACTIVATE_CHOICES> {
   active: boolean;
 }
 
-export interface ClearChoicesAction extends AnyAction<ActionType.CLEAR_CHOICES> {}
+export interface ClearChoicesAction extends AnyAction<typeof ActionType.CLEAR_CHOICES> {}
 
 export const addChoice = (choice: ChoiceFull): AddChoiceAction => ({
   type: ActionType.ADD_CHOICE,

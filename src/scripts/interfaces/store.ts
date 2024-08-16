@@ -1,9 +1,9 @@
 import { StateChangeSet, State } from './state';
 import { ChoiceFull } from './choice-full';
 import { GroupFull } from './group-full';
-import { ActionType } from './action-type';
+import { ActionTypes } from './action-type';
 
-export interface AnyAction<A extends ActionType = ActionType> {
+export interface AnyAction<A extends ActionTypes = ActionTypes> {
   type: A;
 }
 
