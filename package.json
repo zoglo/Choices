@@ -36,7 +36,7 @@
     "playwright:cli": "playwright test",
     "playwright:gui": "playwright test --ui",
     "test": "run-s test:unit test:e2e:all",
-    "test:unit": "vitest --config test/vitest.config.ts run",
+    "test:unit": "vitest run",
     "test:unit:watch": "npm run test:unit -- --watch --inspect=5556",
     "test:unit:coverage": "vitest --config test/vitest.config.ts run --coverage",
     "test:e2e": "run-s playwright:cli --project=chromium",
