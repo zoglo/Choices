@@ -45,6 +45,7 @@ describe('choices', () => {
           expect(instance.config).to.deep.equal({
             ...DEFAULT_CONFIG,
             searchEnabled: false,
+            closeDropdownOnSelect: true,
           });
         });
       });
@@ -63,8 +64,9 @@ describe('choices', () => {
 
           expect(instance.config).to.deep.equal({
             ...DEFAULT_CONFIG,
-            ...config,
             searchEnabled: false,
+            closeDropdownOnSelect: true,
+            ...config,
           });
         });
 
