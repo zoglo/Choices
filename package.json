@@ -30,7 +30,7 @@
     "start": "run-p js:watch css:watch",
     "build": "run-p js:build css:build",
     "lint": "run-p lint:js lint:scss",
-    "lint:js": "eslint src/scripts test/scripts e2e",
+    "lint:js": "eslint src/scripts test/scripts test-e2e",
     "lint:scss": "stylelint src/**/*.scss",
     "bundlesize": "bundlesize",
     "playwright:cli": "playwright test",
