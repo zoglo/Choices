@@ -502,7 +502,6 @@ class Choices {
         this.input.removeActiveDescendant();
         this.input.blur();
       }
-      this._clearNotice();
 
       this.passedElement.triggerEvent(EventType.hideDropdown);
     });
@@ -864,10 +863,6 @@ class Choices {
     }
 
     if (changes.choices || changes.groups) {
-      if (this._store.choices.length === 0 && !this._notice) {
-        this._displayNotice(resolveStringFunction(this.config.noChoicesText), 'no-choices', false);
-      }
-
       this._renderChoices();
     }
 
@@ -877,13 +872,13 @@ class Choices {
   }
 
   _renderChoices(): void {
+    const { config } = this;
     const { activeGroups, activeChoices } = this._store;
     let choiceListFragment = document.createDocumentFragment();
 
     this.choiceList.clear();
-    this._renderNotice();
 
-    if (this.config.resetScrollPosition) {
+    if (config.resetScrollPosition) {
       requestAnimationFrame(() => this.choiceList.scrollToTop());
     }
 
@@ -903,7 +898,22 @@ class Choices {
       choiceListFragment = this._createChoicesFragment(activeChoices, choiceListFragment);
     }
 
-    if (choiceListFragment.childNodes.length !== 0) {
+    const noChoices = choiceListFragment.childNodes.length === 0;
+    const notice = this._notice;
+    if (noChoices) {
+      if (!notice) {
+        this._notice = {
+          text: resolveStringFunction(config.noChoicesText),
+          type: 'no-choices',
+        };
+      }
+    } else if (notice && notice.type === 'no-choices') {
+      this._notice = undefined;
+    }
+
+    this._renderNotice();
+
+    if (!noChoices) {
       this.choiceList.append(choiceListFragment);
       this._highlightChoice();
     }
