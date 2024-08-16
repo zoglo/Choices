@@ -29,15 +29,9 @@ export default function choices(s: StateType, action: ActionTypes): StateUpdate<
       break;
     }
 
-    case ActionType.ADD_ITEM: {
-      // trigger a rebuild of the choices list as the item can not be added multiple times
-      update = action.item.selected;
-      break;
-    }
-
+    case ActionType.ADD_ITEM:
     case ActionType.REMOVE_ITEM: {
-      // trigger a rebuild of the choices list as the item can be added
-      update = action.item.selected;
+      update = true;
       break;
     }
 
