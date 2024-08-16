@@ -80,7 +80,6 @@ export interface Options {
    *   },
    * },
    * {
-   *   id: 1,
    *   label: 'Group 1',
    *   choices: [{
    *     value: 'Option 3',

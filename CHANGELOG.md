@@ -3,7 +3,8 @@
 ## [11.0.0-rc7] (2024-08-)
 
 ### ⚠ BREAKING CHANGES
-* Improve consistency of the `choice` event firing. Event now occurs after the `addItem` event
+* Improve consistency of the `choice` event firing. `choice` event now occurs after the `addItem` event
+* `enter` key now consistently opens/closes the dropdown instead of the behavior varying depending on backing element or internal state of the highlighted choice
 
 ### Features
 * Add closeDropdownOnSelect option, controls how the dropdown is close after selection is made. [#636](https://github.com/Choices-js/Choices/issues/636) [#973](https://github.com/Choices-js/Choices/issues/873) [#1012](https://github.com/Choices-js/Choices/issues/1012)

@@ -122,14 +122,17 @@ Or include Choices directly:
     choices: [],
     renderChoiceLimit: -1,
     maxItemCount: -1,
+    closeDropdownOnSelect: 'auto',
+    singleModeForMultiSelect: false,
     addChoices: false,
     addItems: true,
-    addItemFilter: null,
+    addItemFilter: (value) => !!value && value !== '',
     removeItems: true,
     removeItemButton: false,
     removeItemButtonAlignLeft: false,
     editItems: false,
     allowHTML: false,
+    allowHtmlUserInput: false,
     duplicateItemsAllowed: true,
     delimiter: ',',
     paste: true,
@@ -143,6 +146,7 @@ Or include Choices directly:
     shouldSort: true,
     shouldSortItems: false,
     sorter: () => {...},
+    shadowRoot: null,
     placeholder: true,
     placeholderValue: null,
     searchPlaceholderValue: null,
@@ -156,10 +160,10 @@ Or include Choices directly:
     uniqueItemText: 'Only unique values can be added',
     customAddItemText: 'Only values matching specific conditions can be added',
     addItemText: (value) => {
-      return `Press Enter to add <b>"${sanitise(value)}"</b>`;
+      return `Press Enter to add <b>"${value}"</b>`;
     },
     removeItemIconText: () => `Remove item`,
-    removeItemLabelText: (value) => `Remove item: ${sanitise(value)}`,
+    removeItemLabelText: (value) => `Remove item: ${value}`,
     maxItemText: (maxItemCount) => {
       return `Only ${maxItemCount} values can be added`;
     },
@@ -179,6 +183,7 @@ Or include Choices directly:
       itemSelectable: ['choices__item--selectable'],
       itemDisabled: ['choices__item--disabled'],
       itemChoice: ['choices__item--choice'],
+      description: ['choices__description'],
       placeholder: ['choices__placeholder'],
       group: ['choices__group'],
       groupHeading: ['choices__heading'],
@@ -191,8 +196,10 @@ Or include Choices directly:
       selectedState: ['is-selected'],
       flippedState: ['is-flipped'],
       loadingState: ['is-loading'],
+      notice: ['choices__notice'],
+      addChoice: ['choices__item--selectable', 'add-choice'],
       noResults: ['has-no-results'],
-      noChoices: ['has-no-choices']
+      noChoices: ['has-no-choices'],
     },
     // Choices uses the great Fuse library for searching. You
     // can find more options here: https://fusejs.io/api/options.html
@@ -201,7 +208,8 @@ Or include Choices directly:
     },
     labelId: '',
     callbackOnInit: null,
-    callbackOnCreateTemplates: null
+    callbackOnCreateTemplates: null,
+    appendGroupInSearch: false,
   });
 ```
 
@@ -289,6 +297,25 @@ Pass an array of objects:
     description: 'Custom description about Option 2',
     random: 'Another random custom property'
   },
+},
+{
+  label: 'Group 1',
+  choices: [{
+    value: 'Option 3',
+    label: 'Option 4',
+    selected: true,
+    disabled: false,
+  },
+  {
+    value: 'Option 2',
+    label: 'Option 2',
+    selected: false,
+    disabled: true,
+    customProperties: {
+      description: 'Custom description about Option 2',
+      random: 'Another random custom property'
+    }
+  }]
 }]
 ```
 
@@ -332,7 +359,7 @@ Pass an array of objects:
 
 **Input types affected:** `select-multiple`, `select-one`
 
-**Usage:** Whether a user can add choices
+**Usage:** Whether a user can add choices dynamically.
 
 **Note:** `addItems` must also be `true`
 
@@ -736,7 +763,8 @@ classNames: {
   selectedState: ['is-selected'],
   flippedState: ['is-flipped'],
   loadingState: ['is-loading'],
-  addChoice: ['choices__item', 'choices__item--selectable', 'add-choice'],
+  notice: ['choices__notice'],
+  addChoice: ['choices__item--selectable', 'add-choice'],
   noResults: ['has-no-results'],
   noChoices: ['has-no-choices'],
 }
@@ -797,10 +825,10 @@ const example = new Choices(element, {
             : classNames.itemSelectable).join(' ')
         } ${
           data.placeholder ? classNames.placeholder : ''
-        }" data-item data-id="${data.id}" data-value="${data.value}" ${
+        }" data-item data-id="${data.id}" data-value="${escapeForTemplate(data.value)}" ${
           data.active ? 'aria-selected="true"' : ''
         } ${data.disabled ? 'aria-disabled="true"' : ''}>
-            <span>&bigstar;</span> ${data.label}
+            <span>&bigstar;</span> ${escapeForTemplate(data.label)}
           </div>
         `);
       },
@@ -812,10 +840,10 @@ const example = new Choices(element, {
           data.disabled
             ? 'data-choice-disabled aria-disabled="true"'
             : 'data-choice-selectable'
-        } data-id="${data.id}" data-value="${data.value}" ${
+        } data-id="${data.id}" data-value="${escapeForTemplate(data.value)}" ${
           data.groupId > 0 ? 'role="treeitem"' : 'role="option"'
         }>
-            <span>&bigstar;</span> ${data.label}
+            <span>&bigstar;</span> ${escapeForTemplate(data.label)}
           </div>
         `);
       },
@@ -987,7 +1015,7 @@ choices.disable();
 
 **Input types affected:** `select-multiple`, `select-one`
 
-**Usage:** Reads options from backing `<select>` element, and recreates choices. Existing items are preserved. When `withEvents` only addItem events are generated.
+**Usage:** Reads options from backing `<select>` element, and recreates choices. Existing items are preserved. When `withEvents` is truthy, only `addItem` events are generated.
 
 ### highlightAll();
 
@@ -1087,7 +1115,6 @@ example.setChoices(
   [
     {
       label: 'Group one',
-      id: 1,
       disabled: false,
       choices: [
         { value: 'Child One', label: 'Child One', selected: true },
@@ -1097,7 +1124,6 @@ example.setChoices(
     },
     {
       label: 'Group two',
-      id: 2,
       disabled: false,
       choices: [
         { value: 'Child Four', label: 'Child Four', disabled: true },
