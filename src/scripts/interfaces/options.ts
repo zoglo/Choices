@@ -124,6 +124,19 @@ export interface Options {
   maxItemCount: number;
 
   /**
+   * Control how the dropdown closes after making a selection for select-one or select-multiple
+   *
+   * 'auto' defaults based on backing-element type:
+   * select-one: true
+   * select-multiple: false
+   *
+   * **Input types affected:** select-one, select-multiple
+   *
+   * @default 'auto'
+   */
+  closeDropdownOnSelect: boolean | 'auto';
+
+  /**
    * Make select-multiple with a max item count of 1 work similar to select-one does.
    * Selecting an item will auto-close the dropdown and swap any existing item for the just selected choice.
    * If applied to a select-one, it functions as above and not the standard select-one.

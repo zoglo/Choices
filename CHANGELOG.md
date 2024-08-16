@@ -5,6 +5,9 @@
 ### ⚠ BREAKING CHANGES
 * Improve consistency of the `choice` event firing. Event now occurs after the `addItem` event
 
+### Features
+* Add closeDropdownOnSelect option, controls how the dropdown is close after selection is made. [#636](https://github.com/Choices-js/Choices/issues/636) [#973](https://github.com/Choices-js/Choices/issues/873) [#1012](https://github.com/Choices-js/Choices/issues/1012)
+
 ### Bug Fixes (from 10.2.0)
 
 ### Bug Fixes (from 11.0.0RC6)

@@ -203,6 +203,14 @@ class Choices {
       this.config.renderSelectedChoices = 'auto';
     }
 
+    if (!['auto', true, false].includes(this.config.closeDropdownOnSelect)) {
+      this.config.closeDropdownOnSelect = 'auto';
+    }
+    if (this.config.closeDropdownOnSelect === 'auto') {
+      this.config.closeDropdownOnSelect =
+        this._isTextElement || this._isSelectOneElement || this.config.singleModeForMultiSelect;
+    }
+
     if (this.config.placeholder) {
       if (this.config.placeholderValue) {
         this._hasNonChoicePlaceholder = true;
@@ -1258,7 +1266,7 @@ class Choices {
     }
 
     // We want to close the dropdown if we are dealing with a single select box
-    if (hasActiveDropdown && (this.config.singleModeForMultiSelect || this._isSelectOneElement)) {
+    if (hasActiveDropdown && this.config.closeDropdownOnSelect) {
       this.hideDropdown(true);
       this.containerOuter.element.focus();
     }
@@ -1767,7 +1775,7 @@ class Choices {
 
     this._triggerChange(value);
 
-    if (this._isTextElement || this._isSelectOneElement) {
+    if (this.config.closeDropdownOnSelect) {
       this.hideDropdown(true);
     }
   }

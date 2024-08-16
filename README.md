@@ -308,6 +308,17 @@ Pass an array of objects:
 
 **Usage:** The amount of items a user can input/select ("-1" indicates no limit).
 
+### closeDropdownOnSelect
+
+**Type:** `Boolean` | 'auto' **Default:** `auto`
+
+**Input types affected:** select-one, select-multiple
+
+**Usage:** Control how the dropdown closes after making a selection for select-one or select-multiple.
+- 'auto' defaults based on backing-element type:
+- select-one: true
+- select-multiple: false
+
 ### singleModeForMultiSelect
 
 **Type:** `Boolean` **Default:** `false`
