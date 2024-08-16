@@ -108,6 +108,8 @@ const templates: TemplatesInterface = {
     {
       allowHTML,
       removeItemButtonAlignLeft,
+      removeItemIconText,
+      removeItemLabelText,
       classNames: { item, button, highlightedState, itemSelectable, placeholder },
     }: TemplateOptions,
     {
@@ -177,13 +179,9 @@ const templates: TemplatesInterface = {
       dataset.deletable = '';
 
       const REMOVE_ITEM_ICON =
-        typeof this.config.removeItemIconText === 'function'
-          ? this.config.removeItemIconText(sanitise(value), value)
-          : this.config.removeItemIconText;
+        typeof removeItemIconText === 'function' ? removeItemIconText(sanitise(value), value) : removeItemIconText;
       const REMOVE_ITEM_LABEL =
-        typeof this.config.removeItemLabelText === 'function'
-          ? this.config.removeItemLabelText(sanitise(value), value)
-          : this.config.removeItemLabelText;
+        typeof removeItemLabelText === 'function' ? removeItemLabelText(sanitise(value), value) : removeItemLabelText;
       const removeButton = Object.assign(document.createElement('button'), {
         type: 'button',
         className: getClassNames(button).join(' '),

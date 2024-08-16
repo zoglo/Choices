@@ -168,11 +168,12 @@ class Choices {
       };
     });
 
-    if (!this.config.silent) {
+    const config = this.config;
+    if (!config.silent) {
       this._validateConfig();
     }
 
-    const documentElement = this.config.shadowRoot || document.documentElement;
+    const documentElement = config.shadowRoot || document.documentElement;
     const passedElement = typeof element === 'string' ? documentElement.querySelector(element) : element;
 
     if (
@@ -188,35 +189,33 @@ class Choices {
 
     this._elementType = passedElement.type as PassedElementType;
     this._isTextElement = this._elementType === TEXT_TYPE;
-    if (this._isTextElement || this.config.maxItemCount !== 1) {
-      this.config.singleModeForMultiSelect = false;
+    if (this._isTextElement || config.maxItemCount !== 1) {
+      config.singleModeForMultiSelect = false;
     }
-    if (this.config.singleModeForMultiSelect) {
+    if (config.singleModeForMultiSelect) {
       this._elementType = SELECT_MULTIPLE_TYPE;
     }
     this._isSelectOneElement = this._elementType === SELECT_ONE_TYPE;
     this._isSelectMultipleElement = this._elementType === SELECT_MULTIPLE_TYPE;
     this._isSelectElement = this._isSelectOneElement || this._isSelectMultipleElement;
-    this._canAddUserChoices =
-      (this._isTextElement && this.config.addItems) || (this._isSelectElement && this.config.addChoices);
-    if (!['auto', 'always'].includes(`${this.config.renderSelectedChoices}`)) {
-      this.config.renderSelectedChoices = 'auto';
+    this._canAddUserChoices = (this._isTextElement && config.addItems) || (this._isSelectElement && config.addChoices);
+    if (!['auto', 'always'].includes(`${config.renderSelectedChoices}`)) {
+      config.renderSelectedChoices = 'auto';
     }
 
-    if (!['auto', true, false].includes(this.config.closeDropdownOnSelect)) {
-      this.config.closeDropdownOnSelect = 'auto';
+    if (!['auto', true, false].includes(config.closeDropdownOnSelect)) {
+      config.closeDropdownOnSelect = 'auto';
     }
-    if (this.config.closeDropdownOnSelect === 'auto') {
-      this.config.closeDropdownOnSelect =
-        this._isTextElement || this._isSelectOneElement || this.config.singleModeForMultiSelect;
+    if (config.closeDropdownOnSelect === 'auto') {
+      config.closeDropdownOnSelect = this._isTextElement || this._isSelectOneElement || config.singleModeForMultiSelect;
     }
 
-    if (this.config.placeholder) {
-      if (this.config.placeholderValue) {
+    if (config.placeholder) {
+      if (config.placeholderValue) {
         this._hasNonChoicePlaceholder = true;
       } else if (passedElement.dataset.placeholder) {
         this._hasNonChoicePlaceholder = true;
-        this.config.placeholderValue = passedElement.dataset.placeholder;
+        config.placeholderValue = passedElement.dataset.placeholder;
       }
     }
 
@@ -224,21 +223,21 @@ class Choices {
       const re =
         userConfig.addItemFilter instanceof RegExp ? userConfig.addItemFilter : new RegExp(userConfig.addItemFilter);
 
-      this.config.addItemFilter = re.test.bind(re);
+      config.addItemFilter = re.test.bind(re);
     }
 
     if (this._isTextElement) {
       this.passedElement = new WrappedInput({
         element: passedElement as HTMLInputElement,
-        classNames: this.config.classNames,
+        classNames: config.classNames,
       });
     } else {
       const selectEl = passedElement as HTMLSelectElement;
       this.passedElement = new WrappedSelect({
         element: selectEl,
-        classNames: this.config.classNames,
+        classNames: config.classNames,
         template: (data: ChoiceFull): HTMLOptionElement => this._templates.option(data),
-        extractPlaceholder: this.config.placeholder && !this._hasNonChoicePlaceholder,
+        extractPlaceholder: config.placeholder && !this._hasNonChoicePlaceholder,
       });
     }
 
@@ -246,9 +245,8 @@ class Choices {
 
     this._store = new Store();
     this._currentValue = '';
-    this.config.searchEnabled =
-      (!this._isTextElement && this.config.searchEnabled) || this._elementType === SELECT_MULTIPLE_TYPE;
-    this._canSearch = this.config.searchEnabled;
+    config.searchEnabled = (!this._isTextElement && config.searchEnabled) || this._elementType === SELECT_MULTIPLE_TYPE;
+    this._canSearch = config.searchEnabled;
     this._isScrollingOnIe = false;
     this._highlightPosition = 0;
     this._wasTap = true;
@@ -293,7 +291,7 @@ class Choices {
 
     // If element has already been initialised with Choices, fail silently
     if (this.passedElement.isActive) {
-      if (!this.config.silent) {
+      if (!config.silent) {
         console.warn('Trying to initialise Choices on element already initialised', { element });
       }
 
@@ -838,18 +836,19 @@ class Choices {
   }
 
   _validateConfig(): void {
-    const invalidConfigOptions = diff(this.config, DEFAULT_CONFIG);
+    const { config } = this;
+    const invalidConfigOptions = diff(config, DEFAULT_CONFIG);
     if (invalidConfigOptions.length) {
       console.warn('Unknown config option(s) passed', invalidConfigOptions.join(', '));
     }
 
-    if (this.config.allowHTML && this.config.allowHtmlUserInput) {
-      if (this.config.addItems) {
+    if (config.allowHTML && config.allowHtmlUserInput) {
+      if (config.addItems) {
         console.warn(
           'Warning: allowHTML/allowHtmlUserInput/addItems all being true is strongly not recommended and may lead to XSS attacks',
         );
       }
-      if (this.config.addChoices) {
+      if (config.addChoices) {
         console.warn(
           'Warning: allowHTML/allowHtmlUserInput/addChoices all being true is strongly not recommended and may lead to XSS attacks',
         );
@@ -864,8 +863,8 @@ class Choices {
 
     if (changes.choices || changes.groups) {
       if (this._store.choices.length === 0 && !this._notice) {
-        const notice =
-          typeof this.config.noChoicesText === 'function' ? this.config.noChoicesText() : this.config.noChoicesText;
+        const { noChoicesText } = this.config;
+        const notice = typeof noChoicesText === 'function' ? noChoicesText() : noChoicesText;
         this._displayNotice(notice, 'no-choices', false);
       }
 
@@ -929,18 +928,19 @@ class Choices {
     choices: ChoiceFull[],
     fragment: DocumentFragment = document.createDocumentFragment(),
   ): DocumentFragment {
+    const { config } = this;
     const getGroupChoices = (group: GroupFull): ChoiceFull[] =>
       choices.filter((choice) => {
         if (this._isSelectOneElement) {
           return choice.groupId === group.id;
         }
 
-        return choice.groupId === group.id && (this.config.renderSelectedChoices === 'always' || !choice.selected);
+        return choice.groupId === group.id && (config.renderSelectedChoices === 'always' || !choice.selected);
       });
 
     // If sorting is enabled, filter groups
-    if (this.config.shouldSort) {
-      groups.sort(this.config.sorter);
+    if (config.shouldSort) {
+      groups.sort(config.sorter);
     }
 
     // Add Choices without group first, regardless of sort, otherwise they won't be distinguishable
@@ -968,9 +968,10 @@ class Choices {
     withinGroup = false,
   ): DocumentFragment {
     // Create a fragment to store our list items (so we don't have to update the DOM for each item)
-    const { renderSelectedChoices, searchResultLimit, renderChoiceLimit } = this.config;
+    const { config } = this;
+    const { renderSelectedChoices, searchResultLimit, renderChoiceLimit } = config;
     const groupLookup: string[] = [];
-    const appendGroupInSearch = this.config.appendGroupInSearch && this._isSearching;
+    const appendGroupInSearch = config.appendGroupInSearch && this._isSearching;
     if (appendGroupInSearch) {
       this._store.groups.forEach((group) => {
         groupLookup[group.id] = group.label;
@@ -981,7 +982,7 @@ class Choices {
       const shouldRender = renderSelectedChoices === 'auto' ? this._isSelectOneElement || !choice.selected : true;
 
       if (shouldRender) {
-        const dropdownItem = this._templates.choice(this.config, choice, this.config.itemSelectText);
+        const dropdownItem = this._templates.choice(config, choice, config.itemSelectText);
         if (appendGroupInSearch && choice.groupId > 0) {
           const groupName: string | undefined = groupLookup[choice.groupId];
           if (groupName) {
@@ -1024,8 +1025,8 @@ class Choices {
       // sortByRank is used to ensure stable sorting, as scores are non-unique
       // this additionally ensures fuseOptions.sortFn is not ignored
       normalChoices.sort(sortByRank);
-    } else if (this.config.shouldSort) {
-      normalChoices.sort(this.config.sorter);
+    } else if (config.shouldSort) {
+      normalChoices.sort(config.sorter);
     }
 
     let choiceLimit = rendererableChoices.length;
@@ -1056,7 +1057,8 @@ class Choices {
     fragment: DocumentFragment = document.createDocumentFragment(),
   ): DocumentFragment {
     // Create fragment to add elements to
-    const { shouldSortItems, sorter, removeItemButton } = this.config;
+    const { config } = this;
+    const { shouldSortItems, sorter, removeItemButton, delimiter } = config;
 
     // If sorting is enabled, filter items
     if (shouldSortItems && !this._isSelectOneElement) {
@@ -1065,12 +1067,12 @@ class Choices {
 
     if (this._isTextElement) {
       // Update the value of the hidden input
-      this.passedElement.value = items.map(({ value }) => value).join(this.config.delimiter);
+      this.passedElement.value = items.map(({ value }) => value).join(delimiter);
     }
 
     const addItemToFragment = (item: ChoiceFull): void => {
       // Create new list element
-      const listItem = this._templates.item(this.config, item, removeItemButton);
+      const listItem = this._templates.item(config, item, removeItemButton);
       // Append it to list
       fragment.appendChild(listItem);
     };
@@ -1275,7 +1277,8 @@ class Choices {
   }
 
   _handleBackspace(items: ChoiceFull[]): void {
-    if (!this.config.removeItems || items.length === 0) {
+    const { config } = this;
+    if (!config.removeItems || items.length === 0) {
       return;
     }
 
@@ -1284,7 +1287,7 @@ class Choices {
 
     // If editing the last item is allowed and there are not other selected items,
     // we can edit the item value. Otherwise if we can remove items, remove all selected items
-    if (this.config.editItems && !hasHighlightedItems && lastItem) {
+    if (config.editItems && !hasHighlightedItems && lastItem) {
       this.input.value = lastItem.value;
       this.input.setWidth();
       this._removeItem(lastItem);
@@ -1299,14 +1302,15 @@ class Choices {
   }
 
   _loadChoices(): void {
+    const { config } = this;
     if (this._isTextElement) {
       // Assign preset items from passed object first
-      this._presetChoices = this.config.items.map((e: InputChoice | string) => mapInputToChoice(e, false));
+      this._presetChoices = config.items.map((e: InputChoice | string) => mapInputToChoice(e, false));
       // Add any values passed from attribute
       const { value } = this.passedElement;
       if (value) {
         const elementItems: ChoiceFull[] = value
-          .split(this.config.delimiter)
+          .split(config.delimiter)
           .map((e: InputChoice | string) => mapInputToChoice(e, false));
         this._presetChoices = this._presetChoices.concat(elementItems);
       }
@@ -1315,7 +1319,7 @@ class Choices {
       });
     } else if (this._isSelectElement) {
       // Assign preset choices from passed object
-      this._presetChoices = this.config.choices.map((e: InputChoice) => mapInputToChoice(e, true));
+      this._presetChoices = config.choices.map((e: InputChoice) => mapInputToChoice(e, true));
       // Create array of choices from option elements
       const choicesFromOptions = (this.passedElement as WrappedSelect).optionsAsChoices();
       if (choicesFromOptions) {
@@ -1325,8 +1329,9 @@ class Choices {
   }
 
   _handleLoadingState(setLoading = true): void {
+    const { config } = this;
     let placeholderItem: HTMLElement | null = this.itemList.element.querySelector(
-      getClassNamesSelector(this.config.classNames.placeholder),
+      getClassNamesSelector(config.classNames.placeholder),
     );
 
     if (setLoading) {
@@ -1335,16 +1340,16 @@ class Choices {
 
       if (this._isSelectOneElement) {
         if (!placeholderItem) {
-          placeholderItem = this._templates.placeholder(this.config, this.config.loadingText);
+          placeholderItem = this._templates.placeholder(config, config.loadingText);
 
           if (placeholderItem) {
             this.itemList.append(placeholderItem);
           }
         } else {
-          placeholderItem.innerHTML = this.config.loadingText;
+          placeholderItem.innerHTML = config.loadingText;
         }
       } else {
-        this.input.placeholder = this.config.loadingText;
+        this.input.placeholder = config.loadingText;
       }
     } else {
       this.enable();
@@ -1430,7 +1435,7 @@ class Choices {
             notice: '',
           };
         }
-      } else if (this._isTextElement && !this.config.duplicateItemsAllowed) {
+      } else if (this._isTextElement && !config.duplicateItemsAllowed) {
         if (foundChoice) {
           canAddItem = false;
           notice =
@@ -1701,6 +1706,7 @@ class Choices {
   }
 
   _onEnterKey(event: KeyboardEvent, hasActiveDropdown: boolean): void {
+    const { config } = this;
     const { value } = this.input;
     const target = event.target as HTMLElement | null;
     const targetWasRemoveButton = target && target.hasAttribute('data-button');
@@ -1721,7 +1727,7 @@ class Choices {
     }
 
     const highlightedChoice: HTMLElement | null = this.dropdown.element.querySelector(
-      getClassNamesSelector(this.config.classNames.highlightedState),
+      getClassNamesSelector(config.classNames.highlightedState),
     );
 
     if (highlightedChoice && this._handleChoiceAction(highlightedChoice)) {
@@ -1749,7 +1755,7 @@ class Choices {
 
         const sanitisedValue = sanitise(value);
         const userValue =
-          this.config.allowHtmlUserInput || sanitisedValue === value ? value : { escaped: sanitisedValue, raw: value };
+          config.allowHtmlUserInput || sanitisedValue === value ? value : { escaped: sanitisedValue, raw: value };
         this._addChoice(
           mapInputToChoice(
             {
@@ -1775,7 +1781,7 @@ class Choices {
 
     this._triggerChange(value);
 
-    if (this.config.closeDropdownOnSelect) {
+    if (config.closeDropdownOnSelect) {
       this.hideDropdown(true);
     }
   }
@@ -1953,7 +1959,8 @@ class Choices {
   }
 
   _onFocus({ target }: Pick<FocusEvent, 'target'>): void {
-    const focusWasWithinContainer = target && this.containerOuter.element.contains(target as Node);
+    const { containerOuter } = this;
+    const focusWasWithinContainer = target && containerOuter.element.contains(target as Node);
 
     if (!focusWasWithinContainer) {
       return;
@@ -1963,11 +1970,11 @@ class Choices {
     const focusActions = {
       [TEXT_TYPE]: (): void => {
         if (targetIsInput) {
-          this.containerOuter.addFocusState();
+          containerOuter.addFocusState();
         }
       },
       [SELECT_ONE_TYPE]: (): void => {
-        this.containerOuter.addFocusState();
+        containerOuter.addFocusState();
         if (targetIsInput) {
           this.showDropdown(true);
         }
@@ -1977,7 +1984,7 @@ class Choices {
           this.showDropdown(true);
           // If element is a select box, the focused element is the container and the dropdown
           // isn't already open, focus and show dropdown
-          this.containerOuter.addFocusState();
+          containerOuter.addFocusState();
         }
       },
     };
@@ -1986,7 +1993,8 @@ class Choices {
   }
 
   _onBlur({ target }: Pick<FocusEvent, 'target'>): void {
-    const blurWasWithinContainer = target && this.containerOuter.element.contains(target as Node);
+    const { containerOuter } = this;
+    const blurWasWithinContainer = target && containerOuter.element.contains(target as Node);
 
     if (blurWasWithinContainer && !this._isScrollingOnIe) {
       const { activeChoices } = this._store;
@@ -1995,7 +2003,7 @@ class Choices {
       const blurActions = {
         [TEXT_TYPE]: (): void => {
           if (targetIsInput) {
-            this.containerOuter.removeFocusState();
+            containerOuter.removeFocusState();
             if (hasHighlightedItems) {
               this.unhighlightAll();
             }
@@ -2003,14 +2011,14 @@ class Choices {
           }
         },
         [SELECT_ONE_TYPE]: (): void => {
-          this.containerOuter.removeFocusState();
-          if (targetIsInput || (target === this.containerOuter.element && !this._canSearch)) {
+          containerOuter.removeFocusState();
+          if (targetIsInput || (target === containerOuter.element && !this._canSearch)) {
             this.hideDropdown(true);
           }
         },
         [SELECT_MULTIPLE_TYPE]: (): void => {
           if (targetIsInput) {
-            this.containerOuter.removeFocusState();
+            containerOuter.removeFocusState();
             this.hideDropdown(true);
             if (hasHighlightedItems) {
               this.unhighlightAll();
@@ -2042,6 +2050,7 @@ class Choices {
   }
 
   _highlightChoice(el: HTMLElement | null = null): void {
+    const { highlightedState } = this.config.classNames;
     const choices: HTMLElement[] = Array.from(this.dropdown.element.querySelectorAll('[data-choice-selectable]'));
 
     if (!choices.length) {
@@ -2050,12 +2059,12 @@ class Choices {
 
     let passedEl = el;
     const highlightedChoices = Array.from(
-      this.dropdown.element.querySelectorAll(getClassNamesSelector(this.config.classNames.highlightedState)),
+      this.dropdown.element.querySelectorAll(getClassNamesSelector(highlightedState)),
     );
 
     // Remove any highlighted choices
     highlightedChoices.forEach((choice) => {
-      choice.classList.remove(...getClassNames(this.config.classNames.highlightedState));
+      choice.classList.remove(...getClassNames(highlightedState));
       choice.setAttribute('aria-selected', 'false');
     });
 
@@ -2076,7 +2085,7 @@ class Choices {
       }
     }
 
-    passedEl.classList.add(...getClassNames(this.config.classNames.highlightedState));
+    passedEl.classList.add(...getClassNames(highlightedState));
     passedEl.setAttribute('aria-selected', 'true');
     this.passedElement.triggerEvent(EventType.highlightChoice, {
       el: passedEl,
@@ -2128,19 +2137,19 @@ class Choices {
     }
 
     // Generate unique id, in-place update is required so chaining _addItem works as expected
-    const item = choice;
     this._lastAddedChoiceId++;
-    item.id = this._lastAddedChoiceId;
-    item.elementId = `${this._baseId}-${this._idNames.itemChoice}-${item.id}`;
+    choice.id = this._lastAddedChoiceId;
+    choice.elementId = `${this._baseId}-${this._idNames.itemChoice}-${choice.id}`;
 
-    if (this.config.prependValue) {
-      item.value = this.config.prependValue + item.value;
+    const { prependValue, appendValue } = this.config;
+    if (prependValue) {
+      choice.value = prependValue + choice.value;
     }
-    if (this.config.appendValue) {
-      item.value += this.config.appendValue.toString();
+    if (appendValue) {
+      choice.value += appendValue.toString();
     }
-    if ((this.config.prependValue || this.config.appendValue) && item.element) {
-      (item.element as HTMLOptionElement).value = item.value;
+    if ((prependValue || appendValue) && choice.element) {
+      (choice.element as HTMLOptionElement).value = choice.value;
     }
 
     this._store.dispatch(addChoice(choice));
@@ -2201,8 +2210,7 @@ class Choices {
   _createElements(): void {
     const templating = this._templates;
     const { config } = this;
-    const { position } = config;
-    const { classNames } = config;
+    const { position, classNames } = config;
     const elementType = this._elementType;
 
     this.containerOuter = new Container({
@@ -2250,31 +2258,33 @@ class Choices {
   }
 
   _createStructure(): void {
+    const { containerInner, containerOuter, passedElement, dropdown, input } = this;
+
     // Hide original element
-    this.passedElement.conceal();
+    passedElement.conceal();
     // Wrap input in container preserving DOM ordering
-    this.containerInner.wrap(this.passedElement.element);
+    containerInner.wrap(passedElement.element);
     // Wrapper inner container with outer container
-    this.containerOuter.wrap(this.containerInner.element);
+    containerOuter.wrap(containerInner.element);
 
     if (this._isSelectOneElement) {
-      this.input.placeholder = this.config.searchPlaceholderValue || '';
+      input.placeholder = this.config.searchPlaceholderValue || '';
     } else {
       if (this._placeholderValue) {
-        this.input.placeholder = this._placeholderValue;
+        input.placeholder = this._placeholderValue;
       }
-      this.input.setWidth();
+      input.setWidth();
     }
 
-    this.containerOuter.element.appendChild(this.containerInner.element);
-    this.containerOuter.element.appendChild(this.dropdown.element);
-    this.containerInner.element.appendChild(this.itemList.element);
-    this.dropdown.element.appendChild(this.choiceList.element);
+    containerOuter.element.appendChild(containerInner.element);
+    containerOuter.element.appendChild(dropdown.element);
+    containerInner.element.appendChild(this.itemList.element);
+    dropdown.element.appendChild(this.choiceList.element);
 
     if (!this._isSelectOneElement) {
-      this.containerInner.element.appendChild(this.input.element);
+      containerInner.element.appendChild(input.element);
     } else if (this.config.searchEnabled) {
-      this.dropdown.element.insertBefore(this.input.element, this.dropdown.element.firstChild);
+      dropdown.element.insertBefore(input.element, dropdown.element.firstChild);
     }
 
     this._highlightPosition = 0;
@@ -2349,12 +2359,13 @@ class Choices {
   }
 
   _generatePlaceholderValue(): string | null {
-    if (!this.config.placeholder) {
+    const { config } = this;
+    if (!config.placeholder) {
       return null;
     }
 
     if (this._hasNonChoicePlaceholder) {
-      return this.config.placeholderValue;
+      return config.placeholderValue;
     }
 
     if (this._isSelectElement) {

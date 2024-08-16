@@ -6,7 +6,10 @@ import { StringUntrusted } from './string-untrusted';
 // eslint-disable-next-line import/no-cycle
 import { Options } from './options';
 
-export type TemplateOptions = Pick<Options, 'classNames' | 'allowHTML' | 'removeItemButtonAlignLeft'>;
+export type TemplateOptions = Pick<
+  Options,
+  'classNames' | 'allowHTML' | 'removeItemButtonAlignLeft' | 'removeItemIconText' | 'removeItemLabelText'
+>;
 
 export type NoticeType = 'no-choices' | 'no-results' | 'add-choice' | '';
 
