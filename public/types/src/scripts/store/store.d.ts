@@ -3,10 +3,10 @@ import { StateChangeSet, State } from '../interfaces/state';
 import { ChoiceFull } from '../interfaces/choice-full';
 import { GroupFull } from '../interfaces/group-full';
 export default class Store implements IStore {
-    _store: State;
+    _state: State;
     _listeners: StoreListener[];
     _txn: number;
-    _outstandingChanges?: StateChangeSet;
+    _changeSet?: StateChangeSet;
     get defaultState(): State;
     changeSet(init: boolean): StateChangeSet;
     reset(): void;

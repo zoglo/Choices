@@ -170,11 +170,11 @@
         var tmpEl = document.createElement('div');
         return function (str) {
             tmpEl.innerHTML = str.trim();
-            var firldChild = tmpEl.children[0];
+            var firstChild = tmpEl.children[0];
             while (tmpEl.firstChild) {
                 tmpEl.removeChild(tmpEl.firstChild);
             }
-            return firldChild;
+            return firstChild;
         };
     })();
     var unwrapStringForRaw = function (s) {
@@ -361,9 +361,6 @@
                 this.isFlipped = false;
             }
         };
-        Container.prototype.focus = function () {
-            this.element.focus();
-        };
         Container.prototype.addFocusState = function () {
             var _a;
             (_a = this.element.classList).add.apply(_a, getClassNames(this.classNames.focusState));
@@ -391,22 +388,24 @@
             this.isDisabled = true;
         };
         Container.prototype.wrap = function (element) {
-            if (element.parentNode) {
+            var parentNode = element.parentNode;
+            if (parentNode) {
                 if (element.nextSibling) {
-                    element.parentNode.insertBefore(this.element, element.nextSibling);
+                    parentNode.insertBefore(this.element, element.nextSibling);
                 }
                 else {
-                    element.parentNode.appendChild(this.element);
+                    parentNode.appendChild(this.element);
                 }
             }
             this.element.appendChild(element);
         };
         Container.prototype.unwrap = function (element) {
-            if (this.element.parentNode) {
+            var parentNode = this.element.parentNode;
+            if (parentNode) {
                 // Move passed element outside this element
-                this.element.parentNode.insertBefore(element, this.element);
+                parentNode.insertBefore(element, this.element);
                 // Remove this element
-                this.element.parentNode.removeChild(this.element);
+                parentNode.removeChild(this.element);
             }
         };
         Container.prototype.addLoadingState = function () {
@@ -456,22 +455,24 @@
             configurable: true
         });
         Input.prototype.addEventListeners = function () {
-            this.element.addEventListener('paste', this._onPaste);
-            this.element.addEventListener('input', this._onInput, {
+            var el = this.element;
+            el.addEventListener('paste', this._onPaste);
+            el.addEventListener('input', this._onInput, {
                 passive: true,
             });
-            this.element.addEventListener('focus', this._onFocus, {
+            el.addEventListener('focus', this._onFocus, {
                 passive: true,
             });
-            this.element.addEventListener('blur', this._onBlur, {
+            el.addEventListener('blur', this._onBlur, {
                 passive: true,
             });
         };
         Input.prototype.removeEventListeners = function () {
-            this.element.removeEventListener('input', this._onInput);
-            this.element.removeEventListener('paste', this._onPaste);
-            this.element.removeEventListener('focus', this._onFocus);
-            this.element.removeEventListener('blur', this._onBlur);
+            var el = this.element;
+            el.removeEventListener('input', this._onInput);
+            el.removeEventListener('paste', this._onPaste);
+            el.removeEventListener('focus', this._onFocus);
+            el.removeEventListener('blur', this._onBlur);
         };
         Input.prototype.enable = function () {
             this.element.removeAttribute('disabled');
@@ -493,9 +494,7 @@
         };
         Input.prototype.clear = function (setWidth) {
             if (setWidth === void 0) { setWidth = true; }
-            if (this.element.value) {
-                this.element.value = '';
-            }
+            this.element.value = '';
             if (setWidth) {
                 this.setWidth();
             }
@@ -557,9 +556,6 @@
         };
         List.prototype.append = function (node) {
             this.element.appendChild(node);
-        };
-        List.prototype.hasChildren = function () {
-            return this.element.hasChildNodes();
         };
         List.prototype.scrollToTop = function () {
             this.element.scrollTop = 0;
@@ -651,37 +647,36 @@
         });
         WrappedElement.prototype.conceal = function () {
             var _a;
+            var el = this.element;
             // Hide passed input
-            (_a = this.element.classList).add.apply(_a, getClassNames(this.classNames.input));
-            this.element.hidden = true;
+            (_a = el.classList).add.apply(_a, getClassNames(this.classNames.input));
+            el.hidden = true;
             // Remove element from tab index
-            this.element.tabIndex = -1;
+            el.tabIndex = -1;
             // Backup original styles if any
-            var origStyle = this.element.getAttribute('style');
+            var origStyle = el.getAttribute('style');
             if (origStyle) {
-                this.element.setAttribute('data-choice-orig-style', origStyle);
+                el.setAttribute('data-choice-orig-style', origStyle);
             }
-            this.element.setAttribute('data-choice', 'active');
+            el.setAttribute('data-choice', 'active');
         };
         WrappedElement.prototype.reveal = function () {
             var _a;
+            var el = this.element;
             // Reinstate passed element
-            (_a = this.element.classList).remove.apply(_a, getClassNames(this.classNames.input));
-            this.element.hidden = false;
-            this.element.removeAttribute('tabindex');
+            (_a = el.classList).remove.apply(_a, getClassNames(this.classNames.input));
+            el.hidden = false;
+            el.removeAttribute('tabindex');
             // Recover original styles if any
-            var origStyle = this.element.getAttribute('data-choice-orig-style');
+            var origStyle = el.getAttribute('data-choice-orig-style');
             if (origStyle) {
-                this.element.removeAttribute('data-choice-orig-style');
-                this.element.setAttribute('style', origStyle);
+                el.removeAttribute('data-choice-orig-style');
+                el.setAttribute('style', origStyle);
             }
             else {
-                this.element.removeAttribute('style');
+                el.removeAttribute('style');
             }
-            this.element.removeAttribute('data-choice');
-            // Re-assign values - this is weird, I know
-            // @todo Figure out why we need to do this
-            this.element.value = this.element.value; // eslint-disable-line no-self-assign
+            el.removeAttribute('data-choice');
         };
         WrappedElement.prototype.enable = function () {
             this.element.removeAttribute('disabled');
@@ -709,7 +704,7 @@
 
     var coerceBool = function (arg, defaultValue) {
         if (defaultValue === void 0) { defaultValue = true; }
-        return (typeof arg === 'undefined' ? defaultValue : !!arg);
+        return typeof arg === 'undefined' ? defaultValue : !!arg;
     };
     var stringToHtmlClass = function (input) {
         if (typeof input === 'string') {
@@ -820,9 +815,9 @@
             // option.value returns the label if there is no value attribute, which can break legacy placeholder attribute support
             if (!option.hasAttribute('value') && option.hasAttribute('placeholder')) {
                 option.setAttribute('value', '');
-                // eslint-disable-next-line no-param-reassign
                 option.value = '';
             }
+            var dataset = option.dataset;
             return {
                 id: 0,
                 groupId: 0,
@@ -837,9 +832,9 @@
                 disabled: option.disabled,
                 highlighted: false,
                 placeholder: this.extractPlaceholder && (option.value === '' || option.hasAttribute('placeholder')),
-                labelClass: typeof option.dataset.labelClass !== 'undefined' ? stringToHtmlClass(option.dataset.labelClass) : undefined,
-                labelDescription: typeof option.dataset.labelDescription !== 'undefined' ? option.dataset.labelDescription : undefined,
-                customProperties: parseCustomProperties(option.dataset.customProperties),
+                labelClass: typeof dataset.labelClass !== 'undefined' ? stringToHtmlClass(dataset.labelClass) : undefined,
+                labelDescription: typeof dataset.labelDescription !== 'undefined' ? dataset.labelDescription : undefined,
+                customProperties: parseCustomProperties(dataset.customProperties),
             };
         };
         WrappedSelect.prototype._optgroupToChoice = function (optgroup) {
@@ -884,7 +879,8 @@
         selectedState: ['is-selected'],
         flippedState: ['is-flipped'],
         loadingState: ['is-loading'],
-        addChoice: ['choices__item', 'choices__item--selectable', 'add-choice'],
+        notice: ['choices__notice'],
+        addChoice: ['choices__item--selectable', 'add-choice'],
         noResults: ['has-no-results'],
         noChoices: ['has-no-choices'],
     };
@@ -949,60 +945,53 @@
 
     function items(s, action) {
         var state = s;
-        var update = false;
+        var update = true;
         switch (action.type) {
             case "ADD_ITEM" /* ActionType.ADD_ITEM */: {
                 var item = action.item;
-                if (item.id) {
-                    item.selected = true;
-                    var el = item.element;
-                    if (el) {
-                        el.selected = true;
-                        el.setAttribute('selected', '');
-                    }
-                    update = true;
-                    state.push(item);
-                    state.forEach(function (obj) {
-                        // eslint-disable-next-line no-param-reassign
-                        obj.highlighted = false;
-                    });
+                item.selected = true;
+                var el = item.element;
+                if (el) {
+                    el.selected = true;
+                    el.setAttribute('selected', '');
                 }
+                state.push(item);
+                state.forEach(function (choice) {
+                    choice.highlighted = false;
+                });
                 break;
             }
             case "REMOVE_ITEM" /* ActionType.REMOVE_ITEM */: {
                 var item_1 = action.item;
-                if (item_1.id) {
-                    item_1.selected = false;
-                    var el = item_1.element;
-                    if (el) {
-                        el.selected = false;
-                        el.removeAttribute('selected');
-                        // For a select-one, if all options are deselected, the first item is selected. To set a black value, select.value needs to be set
-                        var select = el.parentElement;
-                        if (select && isHtmlSelectElement(select) && select.type === SELECT_ONE_TYPE) {
-                            select.value = '';
-                        }
+                item_1.selected = false;
+                var el = item_1.element;
+                if (el) {
+                    el.selected = false;
+                    el.removeAttribute('selected');
+                    // For a select-one, if all options are deselected, the first item is selected. To set a black value, select.value needs to be set
+                    var select = el.parentElement;
+                    if (select && isHtmlSelectElement(select) && select.type === SELECT_ONE_TYPE) {
+                        select.value = '';
                     }
-                    update = true;
-                    state = state.filter(function (choice) { return choice.id !== item_1.id; });
                 }
+                state = state.filter(function (choice) { return choice.id !== item_1.id; });
                 break;
             }
             case "REMOVE_CHOICE" /* ActionType.REMOVE_CHOICE */: {
-                var choice_1 = action.choice;
-                update = true;
-                state = state.filter(function (item) { return item.id !== choice_1.id; });
+                state = state.filter(function (item) { return item.id !== action.choice.id; });
                 break;
             }
             case "HIGHLIGHT_ITEM" /* ActionType.HIGHLIGHT_ITEM */: {
                 var highlightItemAction_1 = action;
-                update = true;
-                state.forEach(function (obj) {
-                    var item = obj;
-                    if (item.id === highlightItemAction_1.item.id) {
-                        item.highlighted = highlightItemAction_1.highlighted;
+                state.forEach(function (choice) {
+                    if (choice.id === highlightItemAction_1.item.id) {
+                        choice.highlighted = highlightItemAction_1.highlighted;
                     }
                 });
+                break;
+            }
+            default: {
+                update = false;
                 break;
             }
         }
@@ -1011,17 +1000,18 @@
 
     function groups(s, action) {
         var state = s;
-        var update = false;
+        var update = true;
         switch (action.type) {
             case "ADD_GROUP" /* ActionType.ADD_GROUP */: {
-                var addGroupAction = action;
-                update = true;
-                state.push(addGroupAction.group);
+                state.push(action.group);
                 break;
             }
             case "CLEAR_CHOICES" /* ActionType.CLEAR_CHOICES */: {
-                update = true;
                 state = [];
+                break;
+            }
+            default: {
+                update = false;
                 break;
             }
         }
@@ -1030,51 +1020,38 @@
 
     function choices(s, action) {
         var state = s;
-        var update = false;
+        var update = true;
         switch (action.type) {
             case "ADD_CHOICE" /* ActionType.ADD_CHOICE */: {
-                var choice = action.choice;
                 /*
                   A disabled choice appears in the choice dropdown but cannot be selected
                   A selected choice has been added to the passed input's value (added as an item)
                   An active choice appears within the choice dropdown
                 */
-                state.push(choice);
-                update = true;
+                state.push(action.choice);
                 break;
             }
             case "REMOVE_CHOICE" /* ActionType.REMOVE_CHOICE */: {
-                var choice_1 = action.choice;
-                update = true;
-                state = state.filter(function (obj) { return obj.id !== choice_1.id; });
+                state = state.filter(function (obj) { return obj.id !== action.choice.id; });
                 break;
             }
             case "ADD_ITEM" /* ActionType.ADD_ITEM */: {
-                var item = action.item;
                 // trigger a rebuild of the choices list as the item can not be added multiple times
-                if (item.id && item.selected) {
-                    update = true;
-                }
+                update = action.item.selected;
                 break;
             }
             case "REMOVE_ITEM" /* ActionType.REMOVE_ITEM */: {
-                var item = action.item;
                 // trigger a rebuild of the choices list as the item can be added
-                if (item.id && !item.selected) {
-                    update = true;
-                }
+                update = action.item.selected;
                 break;
             }
             case "FILTER_CHOICES" /* ActionType.FILTER_CHOICES */: {
-                var results = action.results;
-                update = true;
                 // avoid O(n^2) algorithm complexity when searching/filtering choices
                 var scoreLookup_1 = [];
-                results.forEach(function (result) {
+                action.results.forEach(function (result) {
                     scoreLookup_1[result.item.id] = result;
                 });
-                state.forEach(function (obj) {
-                    var choice = obj;
+                state.forEach(function (choice) {
                     var result = scoreLookup_1[choice.id];
                     if (result !== undefined) {
                         choice.score = result.score;
@@ -1090,18 +1067,17 @@
                 break;
             }
             case "ACTIVATE_CHOICES" /* ActionType.ACTIVATE_CHOICES */: {
-                var active_1 = action.active;
-                update = true;
-                state.forEach(function (obj) {
-                    var choice = obj;
-                    choice.active = active_1;
-                    return choice;
+                state.forEach(function (choice) {
+                    choice.active = action.active;
                 });
                 break;
             }
             case "CLEAR_CHOICES" /* ActionType.CLEAR_CHOICES */: {
-                update = true;
                 state = [];
+                break;
+            }
+            default: {
+                update = false;
                 break;
             }
         }
@@ -1115,7 +1091,7 @@
     };
     var Store = /** @class */ (function () {
         function Store() {
-            this._store = this.defaultState;
+            this._state = this.defaultState;
             this._listeners = [];
             this._txn = 0;
         }
@@ -1384,16 +1360,17 @@
             else {
                 div.innerHTML = escapeForTemplate(allowHTML, label);
             }
-            Object.assign(div.dataset, {
+            var dataset = div.dataset;
+            Object.assign(dataset, {
                 item: '',
                 id: id,
                 value: rawValue,
             });
             if (labelClass) {
-                div.dataset.labelClass = getClassNames(labelClass).join(' ');
+                dataset.labelClass = getClassNames(labelClass).join(' ');
             }
             if (labelDescription) {
-                div.dataset.labelDescription = labelDescription;
+                dataset.labelDescription = labelDescription;
             }
             assignCustomProperties(div, customProperties);
             if (active) {
@@ -1404,14 +1381,14 @@
             }
             if (isPlaceholder) {
                 (_c = div.classList).add.apply(_c, getClassNames(placeholder));
-                div.dataset.placeholder = '';
+                dataset.placeholder = '';
             }
             (_d = div.classList).add.apply(_d, (highlighted ? getClassNames(highlightedState) : getClassNames(itemSelectable)));
             if (removeItemButton) {
                 if (disabled) {
                     (_e = div.classList).remove.apply(_e, getClassNames(itemSelectable));
                 }
-                div.dataset.deletable = '';
+                dataset.deletable = '';
                 var REMOVE_ITEM_ICON = typeof this.config.removeItemIconText === 'function'
                     ? this.config.removeItemIconText(sanitise(value), value)
                     : this.config.removeItemIconText;
@@ -1506,30 +1483,32 @@
             if (isPlaceholder) {
                 (_e = div.classList).add.apply(_e, getClassNames(placeholder));
             }
-            div.setAttribute('role', groupId && groupId > 0 ? 'treeitem' : 'option');
-            if (groupId) {
-                div.dataset.groupId = "".concat(groupId);
+            var dataset = div.dataset;
+            var showGroupId = groupId && groupId > 0;
+            div.setAttribute('role', showGroupId ? 'treeitem' : 'option');
+            if (showGroupId) {
+                dataset.groupId = "".concat(groupId);
             }
-            Object.assign(div.dataset, {
+            Object.assign(dataset, {
                 choice: '',
                 id: id,
                 value: rawValue,
                 selectText: selectText,
             });
             if (labelClass) {
-                div.dataset.labelClass = getClassNames(labelClass).join(' ');
+                dataset.labelClass = getClassNames(labelClass).join(' ');
             }
             if (labelDescription) {
-                div.dataset.labelDescription = labelDescription;
+                dataset.labelDescription = labelDescription;
             }
             if (isDisabled) {
                 (_f = div.classList).add.apply(_f, getClassNames(itemDisabled));
-                div.dataset.choiceDisabled = '';
+                dataset.choiceDisabled = '';
                 div.setAttribute('aria-disabled', 'true');
             }
             else {
                 (_g = div.classList).add.apply(_g, getClassNames(itemSelectable));
-                div.dataset.choiceSelectable = '';
+                dataset.choiceSelectable = '';
             }
             return div;
         },
@@ -1559,9 +1538,9 @@
             return div;
         },
         notice: function (_a, innerText, type) {
-            var allowHTML = _a.allowHTML, _b = _a.classNames, item = _b.item, itemChoice = _b.itemChoice, addChoice = _b.addChoice, noResults = _b.noResults, noChoices = _b.noChoices;
+            var allowHTML = _a.allowHTML, _b = _a.classNames, item = _b.item, itemChoice = _b.itemChoice, addChoice = _b.addChoice, noResults = _b.noResults, noChoices = _b.noChoices, noticeItem = _b.notice;
             if (type === void 0) { type = ''; }
-            var classes = __spreadArray(__spreadArray([], getClassNames(item), true), getClassNames(itemChoice), true);
+            var classes = __spreadArray(__spreadArray(__spreadArray([], getClassNames(item), true), getClassNames(itemChoice), true), getClassNames(noticeItem), true);
             // eslint-disable-next-line default-case
             switch (type) {
                 case 'add-choice':
@@ -3462,8 +3441,8 @@
             this._removeEventListeners();
             this.passedElement.reveal();
             this.containerOuter.unwrap(this.passedElement.element);
+            this._store._listeners = []; // prevents select/input value being wiped
             this.clearStore();
-            this._store._listeners = [];
             this._stopSearch();
             this._templates = templates;
             this.initialised = false;
@@ -3594,6 +3573,7 @@
                     _this.input.removeActiveDescendant();
                     _this.input.blur();
                 }
+                _this._clearNotice();
                 _this.passedElement.triggerEvent("hideDropdown" /* EventType.hideDropdown */);
             });
             return this;
@@ -3868,6 +3848,7 @@
         Choices.prototype.clearInput = function () {
             var shouldSetInputWidth = !this._isSelectOneElement;
             this.input.clear(shouldSetInputWidth);
+            this._clearNotice();
             if (this._isSearching) {
                 this._stopSearch();
             }
@@ -3888,18 +3869,18 @@
             }
         };
         Choices.prototype._render = function (changes) {
+            if (changes === void 0) { changes = { choices: true, groups: true, items: true }; }
             if (this._store.inTxn()) {
                 return;
             }
-            var shouldRenderItems = changes === null || changes === void 0 ? void 0 : changes.items;
-            var stateChanged = (changes === null || changes === void 0 ? void 0 : changes.choices) || (changes === null || changes === void 0 ? void 0 : changes.groups) || shouldRenderItems;
-            if (!stateChanged) {
-                return;
-            }
-            if (this._isSelectElement) {
+            if (changes.choices || changes.groups) {
+                if (this._store.choices.length === 0 && !this._notice) {
+                    var notice = typeof this.config.noChoicesText === 'function' ? this.config.noChoicesText() : this.config.noChoicesText;
+                    this._displayNotice(notice, 'no-choices', false);
+                }
                 this._renderChoices();
             }
-            if (shouldRenderItems) {
+            if (changes.items) {
                 this._renderItems();
             }
         };
@@ -3908,6 +3889,7 @@
             var _a = this._store, activeGroups = _a.activeGroups, activeChoices = _a.activeChoices;
             var choiceListFragment = document.createDocumentFragment();
             this.choiceList.clear();
+            this._renderNotice();
             if (this.config.resetScrollPosition) {
                 requestAnimationFrame(function () { return _this.choiceList.scrollToTop(); });
             }
@@ -3925,41 +3907,9 @@
             else if (activeChoices.length >= 1) {
                 choiceListFragment = this._createChoicesFragment(activeChoices, choiceListFragment);
             }
-            var value = this.input.value;
-            var canAdd = this._canAddItem(this._store.items, value);
             if (choiceListFragment.childNodes.length !== 0) {
-                var showNotice = !canAdd.response;
-                // ...and we can select them
-                if (canAdd.response) {
-                    // ...append them and highlight the first choice
-                    this.choiceList.append(choiceListFragment);
-                    this._highlightChoice();
-                    // for exact matches, do not prompt to add it as a custom choice
-                    if (this._canAddUserChoices && value && canAdd.notice) {
-                        showNotice = !activeChoices.find(function (choice) { return _this.config.valueComparer(choice.value, value); });
-                    }
-                }
-                // when adding items, provide feedback while also displaying choices
-                if (showNotice) {
-                    var notice = this._templates.notice(this.config, canAdd.notice, this._canAddUserChoices ? 'add-choice' : '');
-                    this.choiceList.prepend(notice);
-                }
-            }
-            else {
-                // Otherwise show a notice
-                var dropdownItem = void 0;
-                if (canAdd.response && this._canAddUserChoices && value) {
-                    dropdownItem = this._templates.notice(this.config, canAdd.notice, 'add-choice');
-                }
-                else if (this._isSearching) {
-                    var notice = typeof this.config.noResultsText === 'function' ? this.config.noResultsText() : this.config.noResultsText;
-                    dropdownItem = this._templates.notice(this.config, notice, 'no-results');
-                }
-                else {
-                    var notice = typeof this.config.noChoicesText === 'function' ? this.config.noChoicesText() : this.config.noChoicesText;
-                    dropdownItem = this._templates.notice(this.config, notice, 'no-choices');
-                }
-                this.choiceList.append(dropdownItem);
+                this.choiceList.append(choiceListFragment);
+                this._highlightChoice();
             }
         };
         Choices.prototype._renderItems = function () {
@@ -4116,6 +4066,48 @@
             }
             return fragment;
         };
+        Choices.prototype._displayNotice = function (text, type, openDropdown) {
+            if (openDropdown === void 0) { openDropdown = true; }
+            var oldNotice = this._notice;
+            var changed = !oldNotice || oldNotice.text !== text || oldNotice.type !== type;
+            if (!changed) {
+                return;
+            }
+            if (changed && oldNotice) {
+                if (oldNotice.type === 'add-choice' && (type === 'no-results' || type === 'no-choices')) {
+                    return;
+                }
+            }
+            this._clearNotice();
+            this._notice = text
+                ? {
+                    text: text,
+                    type: type,
+                }
+                : undefined;
+            this._renderNotice();
+            if (openDropdown) {
+                this.showDropdown(true);
+            }
+        };
+        Choices.prototype._clearNotice = function () {
+            if (!this._notice) {
+                return;
+            }
+            var selector = getClassNamesSelector(this.config.classNames.notice);
+            var noticeElement = this.choiceList.element.querySelector(selector);
+            if (noticeElement) {
+                noticeElement.remove();
+            }
+            this._notice = undefined;
+        };
+        Choices.prototype._renderNotice = function () {
+            var noticeConf = this._notice;
+            if (noticeConf) {
+                var notice = templates.notice(this.config, noticeConf.text, noticeConf.type);
+                this.choiceList.prepend(notice);
+            }
+        };
         Choices.prototype._getChoiceForOutput = function (choice, keyCode) {
             if (!choice) {
                 return undefined;
@@ -4145,7 +4137,8 @@
                 value: value,
             });
         };
-        Choices.prototype._handleButtonAction = function (items, element) {
+        Choices.prototype._handleButtonAction = function (element) {
+            var items = this._store.items;
             if (items.length === 0 || !this.config.removeItems || !this.config.removeItemButton) {
                 return;
             }
@@ -4167,9 +4160,10 @@
                 }
             }
         };
-        Choices.prototype._handleItemAction = function (items, element, hasShiftKey) {
+        Choices.prototype._handleItemAction = function (element, hasShiftKey) {
             var _this = this;
             if (hasShiftKey === void 0) { hasShiftKey = false; }
+            var items = this._store.items;
             if (items.length === 0 || !this.config.removeItems || this._isSelectOneElement) {
                 return;
             }
@@ -4192,32 +4186,31 @@
             // highlighted item
             this.input.focus();
         };
-        Choices.prototype._handleChoiceAction = function (items, element) {
+        Choices.prototype._handleChoiceAction = function (element) {
             var _this = this;
             // If we are clicking on an option
             var id = parseDataSetId(element);
             var choice = id && this._store.getChoiceById(id);
-            if (!choice || choice.disabled || choice.selected) {
+            if (!choice || choice.disabled) {
                 return false;
             }
             var hasActiveDropdown = this.dropdown.isActive;
-            var addedItem = false;
-            this._store.withTxn(function () {
-                var canAddItem = _this._canAddItem(items, choice.value);
-                if (canAddItem.response) {
+            if (!choice.selected) {
+                var canAddItem = this._canAddItem(choice.value);
+                if (!canAddItem.response) {
+                    return false;
+                }
+                this._store.withTxn(function () {
                     _this._addItem(choice, true, true);
                     _this.clearInput();
-                    addedItem = true;
-                }
-            });
-            if (!addedItem) {
-                return false;
+                    _this.unhighlightAll();
+                });
+                this._triggerChange(choice.value);
             }
-            this._triggerChange(choice.value);
             // We want to close the dropdown if we are dealing with a single select box
             if (hasActiveDropdown && (this.config.singleModeForMultiSelect || this._isSelectOneElement)) {
                 this.hideDropdown(true);
-                this.containerOuter.focus();
+                this.containerOuter.element.focus();
             }
             return true;
         };
@@ -4256,9 +4249,8 @@
                         .map(function (e) { return mapInputToChoice(e, false); });
                     this._presetChoices = this._presetChoices.concat(elementItems);
                 }
-                this._presetChoices.forEach(function (obj) {
-                    // eslint-disable-next-line no-param-reassign
-                    obj.selected = true;
+                this._presetChoices.forEach(function (choice) {
+                    choice.selected = true;
                 });
             }
             else if (this._isSelectElement) {
@@ -4327,56 +4319,68 @@
                 this._stopSearch();
             }
         };
-        Choices.prototype._canAddItem = function (items, value) {
-            var _this = this;
+        Choices.prototype._canAddItem = function (value) {
+            var config = this.config;
             var canAddItem = true;
             var notice = '';
-            if (this.config.maxItemCount > 0 && this.config.maxItemCount <= items.length) {
+            var items = this._store.items;
+            if (config.maxItemCount > 0 && config.maxItemCount <= items.length) {
                 // If there is a max entry limit and we have reached that limit
                 // don't update
-                if (!this.config.singleModeForMultiSelect) {
+                if (!config.singleModeForMultiSelect) {
                     canAddItem = false;
                     notice =
-                        typeof this.config.maxItemText === 'function'
-                            ? this.config.maxItemText(this.config.maxItemCount)
-                            : this.config.maxItemText;
+                        typeof config.maxItemText === 'function' ? config.maxItemText(config.maxItemCount) : config.maxItemText;
                 }
+            }
+            if (value === '') {
+                return {
+                    response: canAddItem,
+                    notice: '',
+                };
             }
             if (canAddItem &&
                 this._canAddUserChoices &&
-                value !== '' &&
-                typeof this.config.addItemFilter === 'function' &&
-                !this.config.addItemFilter(value)) {
+                typeof config.addItemFilter === 'function' &&
+                !config.addItemFilter(value)) {
                 canAddItem = false;
                 notice =
-                    typeof this.config.customAddItemText === 'function'
-                        ? this.config.customAddItemText(sanitise(value), value)
-                        : this.config.customAddItemText;
+                    typeof config.customAddItemText === 'function'
+                        ? config.customAddItemText(sanitise(value), value)
+                        : config.customAddItemText;
             }
-            if (canAddItem && value !== '' && (this._isSelectElement || !this.config.duplicateItemsAllowed)) {
-                var foundChoice = this._store.items.find(function (choice) { return _this.config.valueComparer(choice.value, value); });
-                if (foundChoice) {
-                    canAddItem = false;
-                    notice =
-                        typeof this.config.uniqueItemText === 'function'
-                            ? this.config.uniqueItemText(sanitise(value), value)
-                            : this.config.uniqueItemText;
+            if (canAddItem) {
+                var foundChoice = this._store.items.find(function (choice) { return config.valueComparer(choice.value, value); });
+                if (this._isSelectElement) {
+                    // for exact matches, do not prompt to add it as a custom choice
+                    if (foundChoice) {
+                        return {
+                            response: true,
+                            notice: '',
+                        };
+                    }
+                }
+                else if (this._isTextElement && !this.config.duplicateItemsAllowed) {
+                    if (foundChoice) {
+                        canAddItem = false;
+                        notice =
+                            typeof config.uniqueItemText === 'function'
+                                ? config.uniqueItemText(sanitise(value), value)
+                                : config.uniqueItemText;
+                    }
                 }
             }
             if (canAddItem) {
                 notice =
-                    typeof this.config.addItemText === 'function'
-                        ? this.config.addItemText(sanitise(value), value)
-                        : this.config.addItemText;
+                    typeof config.addItemText === 'function' ? config.addItemText(sanitise(value), value) : config.addItemText;
             }
             return {
                 response: canAddItem,
-                notice: {
-                    trusted: notice,
-                },
+                notice: notice ? { trusted: notice } : '',
             };
         };
         Choices.prototype._searchChoices = function (value) {
+            var _a, _b;
             var newValue = value.trim().replace(/\s{2,}/, ' ');
             // signal input didn't change search
             if (newValue.length === 0 || newValue === this._currentValue) {
@@ -4391,6 +4395,15 @@
             this._currentValue = newValue;
             this._highlightPosition = 0;
             this._isSearching = true;
+            if (((_a = this._notice) === null || _a === void 0 ? void 0 : _a.type) !== 'add-choice') {
+                if (results.length === 0) {
+                    var notice = typeof this.config.noResultsText === 'function' ? this.config.noResultsText() : this.config.noResultsText;
+                    this._displayNotice(notice, 'no-results');
+                }
+                else if (((_b = this._notice) === null || _b === void 0 ? void 0 : _b.type) === 'no-results') {
+                    this._clearNotice();
+                }
+            }
             this._store.dispatch(filterChoices(results));
             return results.length;
         };
@@ -4404,10 +4417,12 @@
         };
         Choices.prototype._addEventListeners = function () {
             var documentElement = this.config.shadowRoot || document.documentElement;
+            var outerElement = this.containerOuter.element;
+            var inputElement = this.input.element;
             // capture events - can cancel event processing or propagation
             documentElement.addEventListener('touchend', this._onTouchEnd, true);
-            this.containerOuter.element.addEventListener('keydown', this._onKeyDown, true);
-            this.containerOuter.element.addEventListener('mousedown', this._onMouseDown, true);
+            outerElement.addEventListener('keydown', this._onKeyDown, true);
+            outerElement.addEventListener('mousedown', this._onMouseDown, true);
             // passive events - doesn't call `preventDefault` or `stopPropagation`
             documentElement.addEventListener('click', this._onClick, { passive: true });
             documentElement.addEventListener('touchmove', this._onTouchMove, {
@@ -4417,27 +4432,27 @@
                 passive: true,
             });
             if (this._isSelectOneElement) {
-                this.containerOuter.element.addEventListener('focus', this._onFocus, {
+                outerElement.addEventListener('focus', this._onFocus, {
                     passive: true,
                 });
-                this.containerOuter.element.addEventListener('blur', this._onBlur, {
+                outerElement.addEventListener('blur', this._onBlur, {
                     passive: true,
                 });
             }
-            this.input.element.addEventListener('keyup', this._onKeyUp, {
+            inputElement.addEventListener('keyup', this._onKeyUp, {
                 passive: true,
             });
-            this.input.element.addEventListener('input', this._onInput, {
+            inputElement.addEventListener('input', this._onInput, {
                 passive: true,
             });
-            this.input.element.addEventListener('focus', this._onFocus, {
+            inputElement.addEventListener('focus', this._onFocus, {
                 passive: true,
             });
-            this.input.element.addEventListener('blur', this._onBlur, {
+            inputElement.addEventListener('blur', this._onBlur, {
                 passive: true,
             });
-            if (this.input.element.form) {
-                this.input.element.form.addEventListener('reset', this._onFormReset, {
+            if (inputElement.form) {
+                inputElement.form.addEventListener('reset', this._onFormReset, {
                     passive: true,
                 });
             }
@@ -4445,22 +4460,24 @@
         };
         Choices.prototype._removeEventListeners = function () {
             var documentElement = this.config.shadowRoot || document.documentElement;
+            var outerElement = this.containerOuter.element;
+            var inputElement = this.input.element;
             documentElement.removeEventListener('touchend', this._onTouchEnd, true);
-            this.containerOuter.element.removeEventListener('keydown', this._onKeyDown, true);
-            this.containerOuter.element.removeEventListener('mousedown', this._onMouseDown, true);
+            outerElement.removeEventListener('keydown', this._onKeyDown, true);
+            outerElement.removeEventListener('mousedown', this._onMouseDown, true);
             documentElement.removeEventListener('click', this._onClick);
             documentElement.removeEventListener('touchmove', this._onTouchMove);
             this.dropdown.element.removeEventListener('mouseover', this._onMouseOver);
             if (this._isSelectOneElement) {
-                this.containerOuter.element.removeEventListener('focus', this._onFocus);
-                this.containerOuter.element.removeEventListener('blur', this._onBlur);
+                outerElement.removeEventListener('focus', this._onFocus);
+                outerElement.removeEventListener('blur', this._onBlur);
             }
-            this.input.element.removeEventListener('keyup', this._onKeyUp);
-            this.input.element.removeEventListener('input', this._onInput);
-            this.input.element.removeEventListener('focus', this._onFocus);
-            this.input.element.removeEventListener('blur', this._onBlur);
-            if (this.input.element.form) {
-                this.input.element.form.removeEventListener('reset', this._onFormReset);
+            inputElement.removeEventListener('keyup', this._onKeyUp);
+            inputElement.removeEventListener('input', this._onInput);
+            inputElement.removeEventListener('focus', this._onFocus);
+            inputElement.removeEventListener('blur', this._onBlur);
+            if (inputElement.form) {
+                inputElement.form.removeEventListener('reset', this._onFormReset);
             }
             this.input.removeEventListeners();
         };
@@ -4469,7 +4486,7 @@
             var items = this._store.items;
             var hasFocusedInput = this.input.isFocussed;
             var hasActiveDropdown = this.dropdown.isActive;
-            var hasItems = this.itemList.hasChildren();
+            var hasItems = this.itemList.element.hasChildNodes();
             /*
             See:
             https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key
@@ -4477,24 +4494,24 @@
             https://en.wikipedia.org/wiki/UTF-16#Code_points_from_U+010000_to_U+10FFFF - UTF-16 surrogate pairs
             https://stackoverflow.com/a/70866532 - "Unidentified" for mobile
             http://www.unicode.org/versions/Unicode5.2.0/ch16.pdf#G19635 - U+FFFF is reserved (Section 16.7)
-
+        
             Logic: when a key event is sent, `event.key` represents its printable value _or_ one
             of a large list of special values indicating meta keys/functionality. In addition,
             key events for compose functionality contain a value of `Dead` when mid-composition.
-
+        
             I can't quite verify it, but non-English IMEs may also be able to generate key codes
             for code points in the surrogate-pair range, which could potentially be seen as having
             key.length > 1. Since `Fn` is one of the special keys, we can't distinguish by that
             alone.
-
+        
             Here, key.length === 1 means we know for sure the input was printable and not a special
             `key` value. When the length is greater than 1, it could be either a printable surrogate
             pair or a special `key` value. We can tell the difference by checking if the _character
             code_ value (not code point!) is in the "surrogate pair" range or not.
-
+        
             We don't use .codePointAt because an invalid code point would return 65535, which wouldn't
             pass the >= 0x10000 check we would otherwise use.
-
+        
             > ...The Unicode Standard sets aside 66 noncharacter code points. The last two code points
             > of each plane are noncharacters: U+FFFE and U+FFFF on the BMP...
             */
@@ -4516,7 +4533,7 @@
                 case 65 /* KeyCodeMap.A_KEY */:
                     return this._onSelectKey(event, hasItems);
                 case 13 /* KeyCodeMap.ENTER_KEY */:
-                    return this._onEnterKey(event, items, hasActiveDropdown);
+                    return this._onEnterKey(event, hasActiveDropdown);
                 case 27 /* KeyCodeMap.ESC_KEY */:
                     return this._onEscapeKey(event, hasActiveDropdown);
                 case 38 /* KeyCodeMap.UP_KEY */:
@@ -4541,41 +4558,22 @@
                 else {
                     this._stopSearch();
                 }
+                this._clearNotice();
                 return;
             }
-            if (this._isTextElement) {
-                var canAddItem_1 = this._canAddItem(this._store.items, value);
-                if (canAddItem_1.notice) {
-                    this._displayAddItemNotice(canAddItem_1);
-                    this.showDropdown(true);
-                }
+            if (this._canSearch) {
+                // do the search even if the entered text can not be added
+                this._handleSearch(value);
             }
-            if (!this._canSearch) {
+            if (!this._canAddUserChoices) {
                 return;
             }
-            // do the search even if the entered text can not be added
-            this._handleSearch(value);
             // determine if a notice needs to be displayed for why a search result can't be added
-            var canAddItem = this._canAddItem(this._store.items, value);
-            if (!canAddItem.response) {
-                this._displayAddItemNotice(canAddItem);
-            }
-            if (this._canAddUserChoices) {
-                // select the non-value so 'enter' doesn't select anything
-                this._highlightPosition = 0;
+            var canAddItem = this._canAddItem(value);
+            this._displayNotice(canAddItem.notice, 'add-choice');
+            if (this._isSelectElement) {
+                this._highlightPosition = 0; // reset to select the notice and/or exact match
                 this._highlightChoice();
-            }
-        };
-        Choices.prototype._displayAddItemNotice = function (canAddItem) {
-            var dropdownItem = this._templates.notice(this.config, canAddItem.notice, 'add-choice');
-            // only show the notice once!
-            var selector = "".concat(getClassNamesSelector(this.config.classNames.addChoice), "[data-choice-selectable]");
-            var noticeElement = this.choiceList.element.querySelector(selector);
-            if (noticeElement) {
-                noticeElement.outerHTML = dropdownItem.outerHTML;
-            }
-            else {
-                this.choiceList.prepend(dropdownItem);
             }
         };
         Choices.prototype._onSelectKey = function (event, hasItems) {
@@ -4590,54 +4588,41 @@
                 }
             }
         };
-        Choices.prototype._onEnterKey = function (event, items, hasActiveDropdown) {
+        Choices.prototype._onEnterKey = function (event, hasActiveDropdown) {
             var _this = this;
             var value = this.input.value;
             var target = event.target;
             var targetWasRemoveButton = target && target.hasAttribute('data-button');
-            var addedItem = false;
             event.preventDefault();
             if (targetWasRemoveButton) {
-                this._handleButtonAction(items, target);
+                this._handleButtonAction(target);
                 return;
             }
-            if (!hasActiveDropdown && this._isSelectOneElement) {
-                this.showDropdown();
-                return;
-            }
-            // add the highlighted item
-            if (hasActiveDropdown) {
-                var highlightedChoice = this.dropdown.element.querySelector(getClassNamesSelector(this.config.classNames.highlightedState));
-                if (highlightedChoice) {
-                    addedItem = this._handleChoiceAction(items, highlightedChoice);
-                    if (addedItem) {
-                        this.unhighlightAll();
-                        return;
-                    }
+            if (!hasActiveDropdown) {
+                if (this._isSelectElement || this._notice) {
+                    this.showDropdown();
                 }
-                if (!value) {
-                    this.hideDropdown(true);
-                }
-            }
-            if (!target || !value || !this._canAddUserChoices) {
                 return;
             }
-            var canAdd = this._canAddItem(items, value);
+            var highlightedChoice = this.dropdown.element.querySelector(getClassNamesSelector(this.config.classNames.highlightedState));
+            if (highlightedChoice && this._handleChoiceAction(highlightedChoice)) {
+                return;
+            }
+            if (!target || value === '') {
+                this.hideDropdown(true);
+                return;
+            }
+            var canAdd = this._canAddItem(value);
             if (!canAdd.response) {
                 return;
             }
+            var addedItem = false;
             this._store.withTxn(function () {
-                if (_this._isSelectOneElement || _this.config.singleModeForMultiSelect) {
-                    if (items.length !== 0) {
-                        var lastItem = items[items.length - 1];
-                        _this._removeItem(lastItem);
+                addedItem = _this._findAndSelectChoiceByValue(value, true);
+                if (!addedItem) {
+                    if (!_this._canAddUserChoices) {
+                        return;
                     }
-                }
-                var choiceNotFound = true;
-                if (_this._isSelectElement || !_this.config.duplicateItemsAllowed) {
-                    choiceNotFound = !_this._findAndSelectChoiceByValue(value, true);
-                }
-                if (choiceNotFound) {
                     var sanitisedValue = sanitise(value);
                     var userValue = _this.config.allowHtmlUserInput || sanitisedValue === value ? value : { escaped: sanitisedValue, raw: value };
                     _this._addChoice(mapInputToChoice({
@@ -4645,11 +4630,15 @@
                         label: userValue,
                         selected: true,
                     }, false), true, true);
+                    addedItem = true;
                 }
                 _this.clearInput();
                 _this.unhighlightAll();
-                _this._triggerChange(value);
             });
+            if (!addedItem) {
+                return;
+            }
+            this._triggerChange(value);
             if (this._isTextElement || this._isSelectOneElement) {
                 this.hideDropdown(true);
             }
@@ -4658,7 +4647,7 @@
             if (hasActiveDropdown) {
                 event.stopPropagation();
                 this.hideDropdown(true);
-                this.containerOuter.focus();
+                this.containerOuter.element.focus();
             }
         };
         Choices.prototype._onDirectionKey = function (event, hasActiveDropdown) {
@@ -4753,16 +4742,15 @@
             var item = target.closest('[data-button],[data-item],[data-choice]');
             if (item instanceof HTMLElement) {
                 var hasShiftKey = event.shiftKey;
-                var items = this._store.items;
                 var dataset = item.dataset;
                 if ('button' in dataset) {
-                    this._handleButtonAction(items, item);
+                    this._handleButtonAction(item);
                 }
                 else if ('item' in dataset) {
-                    this._handleItemAction(items, item, hasShiftKey);
+                    this._handleItemAction(item, hasShiftKey);
                 }
                 else if ('choice' in dataset) {
-                    this._handleChoiceAction(items, item);
+                    this._handleChoiceAction(item);
                 }
             }
             event.preventDefault();
@@ -4779,7 +4767,8 @@
         };
         Choices.prototype._onClick = function (_a) {
             var target = _a.target;
-            var clickWasWithinContainer = this.containerOuter.element.contains(target);
+            var containerOuter = this.containerOuter;
+            var clickWasWithinContainer = containerOuter.element.contains(target);
             if (clickWasWithinContainer) {
                 if (!this.dropdown.isActive && !this.containerOuter.isDisabled) {
                     if (this._isTextElement) {
@@ -4789,7 +4778,7 @@
                     }
                     else {
                         this.showDropdown();
-                        this.containerOuter.focus();
+                        containerOuter.element.focus();
                     }
                 }
                 else if (this._isSelectOneElement &&
@@ -4803,7 +4792,7 @@
                 if (hasHighlightedItems) {
                     this.unhighlightAll();
                 }
-                this.containerOuter.removeFocusState();
+                containerOuter.removeFocusState();
                 this.hideDropdown(true);
             }
         };
@@ -4815,20 +4804,21 @@
             if (!focusWasWithinContainer) {
                 return;
             }
+            var targetIsInput = target === this.input.element;
             var focusActions = (_b = {},
                 _b[TEXT_TYPE] = function () {
-                    if (target === _this.input.element) {
+                    if (targetIsInput) {
                         _this.containerOuter.addFocusState();
                     }
                 },
                 _b[SELECT_ONE_TYPE] = function () {
                     _this.containerOuter.addFocusState();
-                    if (target === _this.input.element) {
+                    if (targetIsInput) {
                         _this.showDropdown(true);
                     }
                 },
                 _b[SELECT_MULTIPLE_TYPE] = function () {
-                    if (target === _this.input.element) {
+                    if (targetIsInput) {
                         _this.showDropdown(true);
                         // If element is a select box, the focused element is the container and the dropdown
                         // isn't already open, focus and show dropdown
@@ -4846,9 +4836,10 @@
             if (blurWasWithinContainer && !this._isScrollingOnIe) {
                 var activeChoices = this._store.activeChoices;
                 var hasHighlightedItems_1 = activeChoices.some(function (item) { return item.highlighted; });
+                var targetIsInput_1 = target === this.input.element;
                 var blurActions = (_b = {},
                     _b[TEXT_TYPE] = function () {
-                        if (target === _this.input.element) {
+                        if (targetIsInput_1) {
                             _this.containerOuter.removeFocusState();
                             if (hasHighlightedItems_1) {
                                 _this.unhighlightAll();
@@ -4858,12 +4849,12 @@
                     },
                     _b[SELECT_ONE_TYPE] = function () {
                         _this.containerOuter.removeFocusState();
-                        if (target === _this.input.element || (target === _this.containerOuter.element && !_this._canSearch)) {
+                        if (targetIsInput_1 || (target === _this.containerOuter.element && !_this._canSearch)) {
                             _this.hideDropdown(true);
                         }
                     },
                     _b[SELECT_MULTIPLE_TYPE] = function () {
-                        if (target === _this.input.element) {
+                        if (targetIsInput_1) {
                             _this.containerOuter.removeFocusState();
                             _this.hideDropdown(true);
                             if (hasHighlightedItems_1) {
@@ -5005,8 +4996,7 @@
             g.id = this._lastAddedGroupId;
             var id = group.id, choices = group.choices;
             g.choices = [];
-            choices.forEach(function (choice) {
-                var item = choice;
+            choices.forEach(function (item) {
                 item.groupId = id;
                 if (group.disabled) {
                     item.disabled = true;
@@ -5033,34 +5023,39 @@
             this._templates = templating;
         };
         Choices.prototype._createElements = function () {
+            var templating = this._templates;
+            var config = this.config;
+            var position = config.position;
+            var classNames = config.classNames;
+            var elementType = this._elementType;
             this.containerOuter = new Container({
-                element: this._templates.containerOuter(this.config, this._direction, this._isSelectElement, this._isSelectOneElement, this.config.searchEnabled, this._elementType, this.config.labelId),
-                classNames: this.config.classNames,
-                type: this._elementType,
-                position: this.config.position,
+                element: templating.containerOuter(config, this._direction, this._isSelectElement, this._isSelectOneElement, config.searchEnabled, elementType, config.labelId),
+                classNames: classNames,
+                type: elementType,
+                position: position,
             });
             this.containerInner = new Container({
-                element: this._templates.containerInner(this.config),
-                classNames: this.config.classNames,
-                type: this._elementType,
-                position: this.config.position,
+                element: templating.containerInner(config),
+                classNames: classNames,
+                type: elementType,
+                position: position,
             });
             this.input = new Input({
-                element: this._templates.input(this.config, this._placeholderValue),
-                classNames: this.config.classNames,
-                type: this._elementType,
-                preventPaste: !this.config.paste,
+                element: templating.input(config, this._placeholderValue),
+                classNames: classNames,
+                type: elementType,
+                preventPaste: !config.paste,
             });
             this.choiceList = new List({
-                element: this._templates.choiceList(this.config, this._isSelectOneElement),
+                element: templating.choiceList(config, this._isSelectOneElement),
             });
             this.itemList = new List({
-                element: this._templates.itemList(this.config, this._isSelectOneElement),
+                element: templating.itemList(config, this._isSelectOneElement),
             });
             this.dropdown = new Dropdown({
-                element: this._templates.dropdown(this.config),
-                classNames: this.config.classNames,
-                type: this._elementType,
+                element: templating.dropdown(config),
+                classNames: classNames,
+                type: elementType,
             });
         };
         Choices.prototype._createStructure = function () {
@@ -5119,7 +5114,6 @@
                         if (choice.disabled || 'choices' in choice) {
                             return false;
                         }
-                        // eslint-disable-next-line no-param-reassign
                         choice.selected = true;
                         return true;
                     });
@@ -5142,7 +5136,7 @@
             var choices = this._store.choices;
             // Check 'value' property exists and the choice isn't already selected
             var foundChoice = choices.find(function (choice) { return _this.config.valueComparer(choice.value, value); });
-            if (foundChoice && !foundChoice.selected) {
+            if (foundChoice && !foundChoice.disabled && !foundChoice.selected) {
                 this._addItem(foundChoice, true, userTriggered);
                 return true;
             }
