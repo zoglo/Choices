@@ -10,13 +10,24 @@ export class SelectTestSuit extends TestSuit {
 
   readonly itemsWithPlaceholder: Locator;
 
-  constructor(page: Page, url: string, testId: string) {
-    super(page, url, testId);
+  constructor(page: Page, baseURL: string | undefined, choicesBundle: string, url: string, testId: string) {
+    super(page, baseURL, choicesBundle, url, testId);
 
     this.wrappedSelect = this.group.locator('select');
     this.choices = this.dropdown.locator('.choices__item');
     this.selectableChoices = this.dropdown.locator('.choices__item:not(.choices__placeholder)');
     this.itemsWithPlaceholder = this.itemList.locator('.choices__item');
+  }
+
+  async start(textInput?: string): Promise<void> {
+    await this.page.route('/test/data.json', async (route) => {
+      await new Promise((f) => {
+        setTimeout(f, 1000);
+      });
+      await route.continue();
+    });
+
+    await super.start(textInput);
   }
 
   async startWithClick(): Promise<void> {
