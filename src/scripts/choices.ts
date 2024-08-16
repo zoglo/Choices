@@ -17,6 +17,8 @@ import {
   getClassNames,
   getClassNamesSelector,
   isScrolledIntoView,
+  resolveNoticeFunction,
+  resolveStringFunction,
   sanitise,
   sortByRank,
   strToEl,
@@ -168,7 +170,7 @@ class Choices {
       };
     });
 
-    const config = this.config;
+    const { config } = this;
     if (!config.silent) {
       this._validateConfig();
     }
@@ -863,9 +865,7 @@ class Choices {
 
     if (changes.choices || changes.groups) {
       if (this._store.choices.length === 0 && !this._notice) {
-        const { noChoicesText } = this.config;
-        const notice = typeof noChoicesText === 'function' ? noChoicesText() : noChoicesText;
-        this._displayNotice(notice, 'no-choices', false);
+        this._displayNotice(resolveStringFunction(this.config.noChoicesText), 'no-choices', false);
       }
 
       this._renderChoices();
@@ -1419,10 +1419,7 @@ class Choices {
       !config.addItemFilter(value)
     ) {
       canAddItem = false;
-      notice =
-        typeof config.customAddItemText === 'function'
-          ? config.customAddItemText(sanitise(value), value)
-          : config.customAddItemText;
+      notice = resolveNoticeFunction(config.customAddItemText, value);
     }
 
     if (canAddItem) {
@@ -1438,17 +1435,13 @@ class Choices {
       } else if (this._isTextElement && !config.duplicateItemsAllowed) {
         if (foundChoice) {
           canAddItem = false;
-          notice =
-            typeof config.uniqueItemText === 'function'
-              ? config.uniqueItemText(sanitise(value), value)
-              : config.uniqueItemText;
+          notice = resolveNoticeFunction(config.uniqueItemText, value);
         }
       }
     }
 
     if (canAddItem) {
-      notice =
-        typeof config.addItemText === 'function' ? config.addItemText(sanitise(value), value) : config.addItemText;
+      notice = resolveNoticeFunction(config.addItemText, value);
     }
 
     return {
@@ -1478,9 +1471,7 @@ class Choices {
 
     if (this._notice?.type !== 'add-choice') {
       if (results.length === 0) {
-        const notice =
-          typeof this.config.noResultsText === 'function' ? this.config.noResultsText() : this.config.noResultsText;
-        this._displayNotice(notice, 'no-results');
+        this._displayNotice(resolveStringFunction(this.config.noResultsText), 'no-results');
       } else if (this._notice?.type === 'no-results') {
         this._clearNotice();
       }

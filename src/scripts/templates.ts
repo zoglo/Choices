@@ -9,7 +9,13 @@ import { GroupFull } from './interfaces/group-full';
 import { PassedElementType } from './interfaces/passed-element-type';
 import { StringPreEscaped } from './interfaces/string-pre-escaped';
 import { StringUntrusted } from './interfaces/string-untrusted';
-import { getClassNames, sanitise, unwrapStringForRaw, unwrapStringForEscaped } from './lib/utils';
+import {
+  getClassNames,
+  sanitise,
+  unwrapStringForRaw,
+  unwrapStringForEscaped,
+  resolveNoticeFunction,
+} from './lib/utils';
 import { NoticeType, TemplateOptions, Templates as TemplatesInterface } from './interfaces/templates';
 
 export const escapeForTemplate = (allowHTML: boolean, s: StringUntrusted | StringPreEscaped | string): string =>
@@ -178,10 +184,8 @@ const templates: TemplatesInterface = {
       }
       dataset.deletable = '';
 
-      const REMOVE_ITEM_ICON =
-        typeof removeItemIconText === 'function' ? removeItemIconText(sanitise(value), value) : removeItemIconText;
-      const REMOVE_ITEM_LABEL =
-        typeof removeItemLabelText === 'function' ? removeItemLabelText(sanitise(value), value) : removeItemLabelText;
+      const REMOVE_ITEM_ICON = resolveNoticeFunction(removeItemIconText, value);
+      const REMOVE_ITEM_LABEL = resolveNoticeFunction(removeItemLabelText, value);
       const removeButton = Object.assign(document.createElement('button'), {
         type: 'button',
         className: getClassNames(button).join(' '),

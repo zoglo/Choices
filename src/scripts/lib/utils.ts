@@ -92,6 +92,14 @@ export const strToEl = ((): ((str: string) => Element) => {
   };
 })();
 
+export const resolveNoticeFunction = (fn: Types.NoticeStringFunction | string, value: string): string => {
+  return typeof fn === 'function' ? fn(sanitise(value), value) : fn;
+};
+
+export const resolveStringFunction = (fn: Types.StringFunction | string): string => {
+  return typeof fn === 'function' ? fn() : fn;
+};
+
 export const unwrapStringForRaw = (s?: StringUntrusted | StringPreEscaped | string): string => {
   if (typeof s === 'string') {
     return s;
