@@ -16,7 +16,7 @@
     "newLine": "lf",
     "declaration": false,
     "declarationMap": false,
-    "types": [],
+    "types": ["@types/node"],
   },
   "include": [".", "../src"],
   "exclude": ["**/node_modules", "**/public"]

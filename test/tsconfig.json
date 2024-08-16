@@ -16,7 +16,7 @@
     "newLine": "lf",
     "declaration": false,
     "declarationMap": false,
-    "types": ["vitest/globals", "vitest/jsdom"],
+    "types": ["@types/node", "vitest/globals", "vitest/jsdom"],
   },
   "include": [".", "../src"],
   "exclude": ["**/node_modules", "**/public"]
