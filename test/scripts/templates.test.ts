@@ -185,8 +185,6 @@ describe('templates', () => {
           <div
             class="${getClassNames(options.classNames.containerOuter).join(' ')}"
             data-type="${passedElementType}"
-            aria-haspopup="true"
-            aria-expanded="false"
             dir="${direction}"
             >
           </div>
