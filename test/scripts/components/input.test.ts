@@ -261,10 +261,6 @@ describe('components/input', () => {
     });
   });
 
-  /**
-   * Blocked by lack of ch support in JSDOM
-   * @see {@link https://github.com/jsdom/cssstyle/pull/107}
-   *
   describe('setWidth', () => {
     it('sets the width of the element based on input value and placeholder', () => {
       instance.placeholder = 'This is a placeholder';
@@ -275,7 +271,6 @@ describe('components/input', () => {
       expect(instance.element.style.minWidth).to.equal('22ch');
     });
   });
-  */
 
   describe('placeholder setter', () => {
     it('sets value of element to passed placeholder', () => {
