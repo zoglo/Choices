@@ -495,11 +495,15 @@
             el.removeEventListener('blur', this._onBlur);
         };
         Input.prototype.enable = function () {
-            this.element.removeAttribute('disabled');
+            var el = this.element;
+            el.removeAttribute('disabled');
+            el.hidden = false;
             this.isDisabled = false;
         };
         Input.prototype.disable = function () {
-            this.element.setAttribute('disabled', '');
+            var el = this.element;
+            el.setAttribute('disabled', '');
+            el.hidden = true;
             this.isDisabled = true;
         };
         Input.prototype.focus = function () {
@@ -699,13 +703,15 @@
             el.removeAttribute('data-choice');
         };
         WrappedElement.prototype.enable = function () {
-            this.element.removeAttribute('disabled');
-            this.element.disabled = false;
+            var element = this.element;
+            element.removeAttribute('disabled');
+            element.disabled = false;
             this.isDisabled = false;
         };
         WrappedElement.prototype.disable = function () {
-            this.element.setAttribute('disabled', '');
-            this.element.disabled = true;
+            var element = this.element;
+            element.setAttribute('disabled', '');
+            element.disabled = true;
             this.isDisabled = true;
         };
         WrappedElement.prototype.triggerEvent = function (eventType, data) {
@@ -1337,9 +1343,9 @@
                 if (searchEnabled) {
                     div.setAttribute('aria-autocomplete', 'list');
                 }
+                div.setAttribute('aria-haspopup', 'true');
+                div.setAttribute('aria-expanded', 'false');
             }
-            div.setAttribute('aria-haspopup', 'true');
-            div.setAttribute('aria-expanded', 'false');
             if (labelId) {
                 div.setAttribute('aria-labelledby', labelId);
             }
@@ -1352,10 +1358,14 @@
             });
         },
         itemList: function (_a, isSelectOneElement) {
-            var _b = _a.classNames, list = _b.list, listSingle = _b.listSingle, listItems = _b.listItems;
-            return Object.assign(document.createElement('div'), {
+            var searchEnabled = _a.searchEnabled, _b = _a.classNames, list = _b.list, listSingle = _b.listSingle, listItems = _b.listItems;
+            var div = Object.assign(document.createElement('div'), {
                 className: "".concat(getClassNames(list).join(' '), " ").concat(isSelectOneElement ? getClassNames(listSingle).join(' ') : getClassNames(listItems).join(' ')),
             });
+            if (this._isSelectElement && searchEnabled) {
+                div.setAttribute('role', 'listbox');
+            }
+            return div;
         },
         placeholder: function (_a, value) {
             var allowHTML = _a.allowHTML, placeholder = _a.classNames.placeholder;
@@ -1367,7 +1377,7 @@
         item: function (_a, _b, removeItemButton) {
             var _c, _d, _e;
             var allowHTML = _a.allowHTML, removeItemButtonAlignLeft = _a.removeItemButtonAlignLeft, removeItemIconText = _a.removeItemIconText, removeItemLabelText = _a.removeItemLabelText, _f = _a.classNames, item = _f.item, button = _f.button, highlightedState = _f.highlightedState, itemSelectable = _f.itemSelectable, placeholder = _f.placeholder;
-            var id = _b.id, value = _b.value, label = _b.label, labelClass = _b.labelClass, labelDescription = _b.labelDescription, customProperties = _b.customProperties, active = _b.active, disabled = _b.disabled, highlighted = _b.highlighted, isPlaceholder = _b.placeholder;
+            var id = _b.id, value = _b.value, label = _b.label, labelClass = _b.labelClass, labelDescription = _b.labelDescription, customProperties = _b.customProperties, disabled = _b.disabled, highlighted = _b.highlighted, isPlaceholder = _b.placeholder;
             var rawValue = unwrapStringForRaw(value);
             var div = Object.assign(document.createElement('div'), {
                 className: getClassNames(item).join(' '),
@@ -1395,12 +1405,12 @@
                 dataset.labelDescription = labelDescription;
             }
             assignCustomProperties(div, customProperties);
-            if (active) {
+            if (disabled || this.containerOuter.isDisabled) {
+                div.setAttribute('aria-disabled', 'true');
+            }
+            if (this._isSelectElement) {
                 div.setAttribute('aria-selected', 'true');
                 div.setAttribute('role', 'option');
-            }
-            if (disabled) {
-                div.setAttribute('aria-disabled', 'true');
             }
             if (isPlaceholder) {
                 (_c = div.classList).add.apply(_c, getClassNames(placeholder));
@@ -2960,14 +2970,17 @@
             this._createTemplates();
             this._createElements();
             this._createStructure();
-            this._initStore();
-            this._addEventListeners();
-            var shouldDisable = (this._isTextElement && !this.config.addItems) ||
+            if ((this._isTextElement && !this.config.addItems) ||
                 this.passedElement.element.hasAttribute('disabled') ||
-                !!this.passedElement.element.closest('fieldset:disabled');
-            if (shouldDisable) {
+                !!this.passedElement.element.closest('fieldset:disabled')) {
                 this.disable();
             }
+            else {
+                this.enable();
+                this._addEventListeners();
+            }
+            // should be triggered **after** disabled state to avoid additional re-draws
+            this._initStore();
             this.initialised = true;
             this.initialisedOK = true;
             var callbackOnInit = this.config.callbackOnInit;
@@ -2991,24 +3004,28 @@
             this.initialisedOK = undefined;
         };
         Choices.prototype.enable = function () {
-            if (this.passedElement.isDisabled) {
-                this.passedElement.enable();
+            var _a = this, passedElement = _a.passedElement, containerOuter = _a.containerOuter;
+            if (passedElement.isDisabled) {
+                passedElement.enable();
             }
-            if (this.containerOuter.isDisabled) {
+            if (containerOuter.isDisabled) {
                 this._addEventListeners();
                 this.input.enable();
-                this.containerOuter.enable();
+                containerOuter.enable();
+                this._render();
             }
             return this;
         };
         Choices.prototype.disable = function () {
-            if (!this.passedElement.isDisabled) {
-                this.passedElement.disable();
+            var _a = this, passedElement = _a.passedElement, containerOuter = _a.containerOuter;
+            if (!passedElement.isDisabled) {
+                passedElement.disable();
             }
-            if (!this.containerOuter.isDisabled) {
+            if (!containerOuter.isDisabled) {
                 this._removeEventListeners();
                 this.input.disable();
-                this.containerOuter.disable();
+                containerOuter.disable();
+                this._render();
             }
             return this;
         };

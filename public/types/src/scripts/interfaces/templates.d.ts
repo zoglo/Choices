@@ -4,7 +4,7 @@ import { ChoiceFull } from './choice-full';
 import { GroupFull } from './group-full';
 import { StringUntrusted } from './string-untrusted';
 import { Options } from './options';
-export type TemplateOptions = Pick<Options, 'classNames' | 'allowHTML' | 'removeItemButtonAlignLeft' | 'removeItemIconText' | 'removeItemLabelText'>;
+export type TemplateOptions = Pick<Options, 'classNames' | 'allowHTML' | 'removeItemButtonAlignLeft' | 'removeItemIconText' | 'removeItemLabelText' | 'searchEnabled'>;
 export declare const NoticeTypes: {
     readonly noChoices: "no-choices";
     readonly noResults: "no-results";
