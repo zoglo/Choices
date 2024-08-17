@@ -842,9 +842,10 @@
           {
             allowHTML: true,
             position: 'bottom',
-            callbackOnCreateTemplates: function(strToEl) {
+            callbackOnCreateTemplates: function(strToEl, escapeForTemplate) {
               var classNames = this.config.classNames;
               var itemSelectText = this.config.itemSelectText;
+              var allowHTML = this.config.allowHTML;
               return {
                 item: function({ classNames }, data) {
                   return strToEl(
@@ -860,11 +861,12 @@
                       ) +
                       '"\
                   data-item\
+                  role="option"\
                   data-id="' +
                       String(data.id) +
                       '"\
                   data-value="' +
-                      String(data.value) +
+                      String(escapeForTemplate(allowHTML, data.value)) +
                       '"\
                   ' +
                       String(data.active ? 'aria-selected="true"' : '') +
@@ -874,7 +876,7 @@
                       '\
                   >\
                   <span style="margin-right:10px;">🎉</span> ' +
-                      String(data.label) +
+                      String(escapeForTemplate(allowHTML, data.label)) +
                       '\
                 </div>\
               '
@@ -910,7 +912,7 @@
                       String(data.id) +
                       '"\
                   data-value="' +
-                      String(data.value) +
+                      String(escapeForTemplate(allowHTML, data.value)) +
                       '"\
                   ' +
                       String(
@@ -919,7 +921,7 @@
                       '\
                   >\
                   <span style="margin-right:10px;">👉🏽</span> ' +
-                      String(data.label) +
+                      String(escapeForTemplate(allowHTML, data.label)) +
                       '\
                 </div>\
               '
