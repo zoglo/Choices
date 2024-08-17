@@ -8,7 +8,12 @@ import { Options } from './options';
 
 export type TemplateOptions = Pick<
   Options,
-  'classNames' | 'allowHTML' | 'removeItemButtonAlignLeft' | 'removeItemIconText' | 'removeItemLabelText'
+  | 'classNames'
+  | 'allowHTML'
+  | 'removeItemButtonAlignLeft'
+  | 'removeItemIconText'
+  | 'removeItemLabelText'
+  | 'searchEnabled'
 >;
 
 export const NoticeTypes = {

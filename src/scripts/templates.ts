@@ -74,6 +74,9 @@ const templates: TemplatesInterface = {
       if (searchEnabled) {
         div.setAttribute('aria-autocomplete', 'list');
       }
+
+      div.setAttribute('aria-haspopup', 'true');
+      div.setAttribute('aria-expanded', 'false');
     }
 
     if (labelId) {
@@ -90,12 +93,18 @@ const templates: TemplatesInterface = {
   },
 
   itemList(
-    { classNames: { list, listSingle, listItems } }: TemplateOptions,
+    { searchEnabled, classNames: { list, listSingle, listItems } }: TemplateOptions,
     isSelectOneElement: boolean,
   ): HTMLDivElement {
-    return Object.assign(document.createElement('div'), {
+    const div = Object.assign(document.createElement('div'), {
       className: `${getClassNames(list).join(' ')} ${isSelectOneElement ? getClassNames(listSingle).join(' ') : getClassNames(listItems).join(' ')}`,
     });
+
+    if (this._isSelectElement && searchEnabled) {
+      div.setAttribute('role', 'listbox');
+    }
+
+    return div;
   },
 
   placeholder(
@@ -162,7 +171,8 @@ const templates: TemplatesInterface = {
 
     if (disabled || this.containerOuter.isDisabled) {
       div.setAttribute('aria-disabled', 'true');
-    } else if (this._isSelectElement) {
+    }
+    if (this._isSelectElement) {
       div.setAttribute('aria-selected', 'true');
       div.setAttribute('role', 'option');
     }
