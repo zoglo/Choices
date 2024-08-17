@@ -72,14 +72,16 @@ export default class WrappedElement<T extends HTMLInputElement | HTMLSelectEleme
   }
 
   enable(): void {
-    this.element.removeAttribute('disabled');
-    this.element.disabled = false;
+    const { element } = this;
+    element.removeAttribute('disabled');
+    element.disabled = false;
     this.isDisabled = false;
   }
 
   disable(): void {
-    this.element.setAttribute('disabled', '');
-    this.element.disabled = true;
+    const { element } = this;
+    element.setAttribute('disabled', '');
+    element.disabled = true;
     this.isDisabled = true;
   }
 
