@@ -279,6 +279,7 @@ class Choices {
       itemChoice: 'item-choice',
     };
 
+    this._templates = defaults.templates;
     this._render = this._render.bind(this);
     this._onFocus = this._onFocus.bind(this);
     this._onBlur = this._onBlur.bind(this);
