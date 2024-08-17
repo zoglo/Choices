@@ -798,6 +798,8 @@ original template function.
 
 Templates receive the full Choices config as the first argument to any template, which allows you to conditionally display things based on the options specified.
 
+@note For each callback, `this` refers to the current instance of Choices. This can be useful if you need access to methods `(this.disable())`.
+
 **Example:**
 
 ```js

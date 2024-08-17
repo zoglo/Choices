@@ -12,6 +12,7 @@ import { Options, ObjectsInConfig } from './interfaces/options';
 import { StateChangeSet } from './interfaces/state';
 import {
   diff,
+  escapeForTemplate,
   generateId,
   getAdjacentEl,
   getClassNames,
@@ -24,7 +25,6 @@ import {
   strToEl,
 } from './lib/utils';
 import Store from './store/store';
-import templates, { escapeForTemplate } from './templates';
 import { mapInputToChoice } from './lib/choice-input';
 import { ChoiceFull } from './interfaces/choice-full';
 import { GroupFull } from './interfaces/group-full';
@@ -36,6 +36,8 @@ import { Searcher } from './interfaces/search';
 import { getSearcher } from './search';
 import { StringUntrusted } from './interfaces/string-untrusted';
 import { StringPreEscaped } from './interfaces/string-pre-escaped';
+// eslint-disable-next-line import/no-named-default
+import { default as defaultTemplates } from './templates';
 
 /** @see {@link http://browserhacks.com/#hack-acea075d0ac6954f275a70023906050c} */
 const IS_IE11 =
@@ -73,7 +75,7 @@ class Choices {
         return DEFAULT_CONFIG;
       },
       get templates(): Templates {
-        return templates;
+        return defaultTemplates;
       },
     });
   }
@@ -159,15 +161,16 @@ class Choices {
     element: string | Element | HTMLInputElement | HTMLSelectElement = '[data-choice]',
     userConfig: Partial<Options> = {},
   ) {
+    const defaults = Choices.defaults;
     this.config = {
-      ...Choices.defaults.allOptions,
-      ...Choices.defaults.options,
+      ...defaults.allOptions,
+      ...defaults.options,
       ...userConfig,
     } as Options;
     ObjectsInConfig.forEach((key) => {
       this.config[key] = {
-        ...Choices.defaults.allOptions[key],
-        ...Choices.defaults.options[key],
+        ...defaults.allOptions[key],
+        ...defaults.options[key],
         ...userConfig[key],
       };
     });
@@ -360,7 +363,7 @@ class Choices {
     this.clearStore();
     this._stopSearch();
 
-    this._templates = templates;
+    this._templates = Choices.defaults.templates;
     this.initialised = false;
     this.initialisedOK = undefined;
   }
@@ -1169,7 +1172,7 @@ class Choices {
   _renderNotice(): void {
     const noticeConf = this._notice;
     if (noticeConf) {
-      const notice = templates.notice(this.config, noticeConf.text, noticeConf.type);
+      const notice = this._templates.notice(this.config, noticeConf.text, noticeConf.type);
       this.choiceList.prepend(notice);
     }
   }
@@ -2210,11 +2213,11 @@ class Choices {
     }
 
     const templating = {};
-    Object.keys(templates).forEach((name) => {
+    Object.keys(this._templates).forEach((name) => {
       if (name in userTemplates) {
         templating[name] = userTemplates[name].bind(this);
       } else {
-        templating[name] = templates[name].bind(this);
+        templating[name] = this._templates[name].bind(this);
       }
     });
 

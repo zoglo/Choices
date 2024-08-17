@@ -9,17 +9,8 @@ import { GroupFull } from './interfaces/group-full';
 import { PassedElementType } from './interfaces/passed-element-type';
 import { StringPreEscaped } from './interfaces/string-pre-escaped';
 import { StringUntrusted } from './interfaces/string-untrusted';
-import {
-  getClassNames,
-  sanitise,
-  unwrapStringForRaw,
-  unwrapStringForEscaped,
-  resolveNoticeFunction,
-} from './lib/utils';
+import { getClassNames, unwrapStringForRaw, resolveNoticeFunction, escapeForTemplate } from './lib/utils';
 import { NoticeType, NoticeTypes, TemplateOptions, Templates as TemplatesInterface } from './interfaces/templates';
-
-export const escapeForTemplate = (allowHTML: boolean, s: StringUntrusted | StringPreEscaped | string): string =>
-  allowHTML ? unwrapStringForEscaped(s) : (sanitise(s) as string);
 
 const isEmptyObject = (obj: object): boolean => {
   // eslint-disable-next-line no-restricted-syntax
@@ -353,7 +344,10 @@ const templates: TemplatesInterface = {
     return div;
   },
 
-  input({ classNames: { input, inputCloned }, labelId }: TemplateOptions, placeholderValue: string | null): HTMLInputElement {
+  input(
+    { classNames: { input, inputCloned }, labelId }: TemplateOptions,
+    placeholderValue: string | null,
+  ): HTMLInputElement {
     const inp = Object.assign(document.createElement('input'), {
       type: 'search',
       className: `${getClassNames(input).join(' ')} ${getClassNames(inputCloned).join(' ')}`,

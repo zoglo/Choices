@@ -582,7 +582,7 @@ export interface Options {
    *
    * **Input types affected:** text, select-one, select-multiple
    *
-   * @note For each callback, this refers to the current instance of  This can be useful if you need access to methods `(this.disable())` or the config object `(this.config)`.
+   * @note For each callback, `this` refers to the current instance of Choices. This can be useful if you need access to methods `(this.disable())`.
    *
    * @example
    * ```
