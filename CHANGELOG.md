@@ -10,7 +10,7 @@
 * Add closeDropdownOnSelect option, controls how the dropdown is close after selection is made. [#636](https://github.com/Choices-js/Choices/issues/636) [#973](https://github.com/Choices-js/Choices/issues/873) [#1012](https://github.com/Choices-js/Choices/issues/1012)
 
 ### Bug Fixes (from 10.2.0)
-* Fix `[aria-*]` attributes do not match their roles [#1169](https://github.com/Choices-js/Choices/issues/1169)
+* Improve various `[aria-*]` attribute handling for better lighthouse accessibility scores [#1169](https://github.com/Choices-js/Choices/issues/1169)
 * Improve contrast on default CSS by darkening primary item selection color [#924](https://github.com/Choices-js/Choices/issues/924)
 
 ### Bug Fixes (from 11.0.0RC6)

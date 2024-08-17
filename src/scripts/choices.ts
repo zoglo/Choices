@@ -319,17 +319,20 @@ class Choices {
     this._createTemplates();
     this._createElements();
     this._createStructure();
-    this._initStore();
-    this._addEventListeners();
 
-    const shouldDisable =
+    if (
       (this._isTextElement && !this.config.addItems) ||
       this.passedElement.element.hasAttribute('disabled') ||
-      !!this.passedElement.element.closest('fieldset:disabled');
-
-    if (shouldDisable) {
+      !!this.passedElement.element.closest('fieldset:disabled')
+    ) {
       this.disable();
+    } else {
+      this.enable();
+      this._addEventListeners();
     }
+
+    // should be triggered **after** disabled state to avoid additional re-draws
+    this._initStore();
 
     this.initialised = true;
     this.initialisedOK = true;
@@ -360,28 +363,42 @@ class Choices {
   }
 
   enable(): this {
-    if (this.passedElement.isDisabled) {
-      this.passedElement.enable();
+    const { passedElement, containerOuter} = this;
+    const el = containerOuter.element;
+    el.setAttribute('aria-haspopup', 'true');
+    el.setAttribute('aria-expanded', 'false');
+
+    if (passedElement.isDisabled) {
+      passedElement.enable();
     }
 
-    if (this.containerOuter.isDisabled) {
+    if (containerOuter.isDisabled) {
       this._addEventListeners();
       this.input.enable();
-      this.containerOuter.enable();
+      containerOuter.enable();
+
+      this._render();
     }
 
     return this;
   }
 
   disable(): this {
-    if (!this.passedElement.isDisabled) {
-      this.passedElement.disable();
+    const { passedElement, containerOuter} = this;
+    const el = containerOuter.element;
+    el.removeAttribute('aria-haspopup');
+    el.removeAttribute('aria-expanded');
+
+    if (!passedElement.isDisabled) {
+      passedElement.disable();
     }
 
-    if (!this.containerOuter.isDisabled) {
+    if (!containerOuter.isDisabled) {
       this._removeEventListeners();
       this.input.disable();
-      this.containerOuter.disable();
+      containerOuter.disable();
+
+      this._render();
     }
 
     return this;

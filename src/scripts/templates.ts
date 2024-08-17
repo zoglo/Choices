@@ -76,8 +76,6 @@ const templates: TemplatesInterface = {
       }
     }
 
-    div.setAttribute('aria-haspopup', 'true');
-    div.setAttribute('aria-expanded', 'false');
     if (labelId) {
       div.setAttribute('aria-labelledby', labelId);
     }
@@ -163,13 +161,11 @@ const templates: TemplatesInterface = {
 
     assignCustomProperties(div, customProperties);
 
-    if (active) {
+    if (disabled || this.containerOuter.isDisabled) {
+      div.setAttribute('aria-disabled', 'true');
+    } else if (active) {
       div.setAttribute('aria-selected', 'true');
       div.setAttribute('role', 'option');
-    }
-
-    if (disabled) {
-      div.setAttribute('aria-disabled', 'true');
     }
 
     if (isPlaceholder) {
