@@ -1,8 +1,9 @@
 import { expect } from 'chai';
-import templates from '../../src/scripts/templates';
+// eslint-disable-next-line import/no-named-default
+import { default as _templates } from '../../src/scripts/templates';
 import { strToEl, getClassNames } from '../../src/scripts/lib/utils';
 import { DEFAULT_CLASSNAMES, DEFAULT_CONFIG, Options, ClassNames } from '../../src';
-import { NoticeTypes } from '../../src/scripts/interfaces/templates';
+import { NoticeTypes, Templates as TemplatesInterface } from '../../src/scripts/interfaces/templates';
 
 /**
  * @param {HTMLElement} element1
@@ -30,6 +31,22 @@ function createOptionsWithPartialClasses(classNames: Partial<ClassNames>, option
   };
 }
 
+function shimTemplates(element: string): TemplatesInterface {
+  const fauxChoices = {
+    _docRoot: document.createElement('body'),
+    passedElement: {
+      element: document.createElement(element),
+    },
+  };
+
+  const templating = {};
+  Object.keys(_templates).forEach((name) => {
+    templating[name] = _templates[name].bind(fauxChoices);
+  });
+
+  return templating as TemplatesInterface;
+}
+
 describe('templates', () => {
   describe('containerOuter', () => {
     const options = createOptionsWithPartialClasses({
@@ -38,6 +55,7 @@ describe('templates', () => {
     const direction = 'rtl';
 
     describe('select element', () => {
+      const templates = shimTemplates('select');
       describe('search enabled', () => {
         it('returns expected html', () => {
           const isSelectElement = true;
@@ -174,6 +192,7 @@ describe('templates', () => {
     });
 
     describe('non select element', () => {
+      const templates = shimTemplates('input');
       it('returns expected html', () => {
         const isSelectElement = false;
         const isSelectOneElement = false;
@@ -205,6 +224,7 @@ describe('templates', () => {
   });
 
   describe('containerInner', () => {
+    const templates = shimTemplates('select');
     it('returns expected html', () => {
       const innerOptions = createOptionsWithPartialClasses({
         containerInner: 'class-1',
@@ -219,6 +239,7 @@ describe('templates', () => {
   });
 
   describe('itemList', () => {
+    const templates = shimTemplates('select');
     const itemOptions = createOptionsWithPartialClasses({
       list: 'class-1',
       listSingle: 'class-2',
@@ -249,6 +270,7 @@ describe('templates', () => {
   });
 
   describe('placeholder', () => {
+    const templates = shimTemplates('select');
     it('returns expected html', () => {
       const placeholderOptions = createOptionsWithPartialClasses({
         placeholder: 'class-1',
@@ -268,6 +290,7 @@ describe('templates', () => {
     });
 
     describe('select one element', () => {
+      const templates = shimTemplates('select');
       it('returns expected html', () => {
         const expectedOutput = strToEl(`
           <div
@@ -283,6 +306,7 @@ describe('templates', () => {
     });
 
     describe('non select one element', () => {
+      const templates = shimTemplates('input');
       it('returns expected html', () => {
         const expectedOutput = strToEl(`
           <div
@@ -300,6 +324,7 @@ describe('templates', () => {
   });
 
   describe('choiceGroup', () => {
+    const templates = shimTemplates('select');
     const groupOptions = createOptionsWithPartialClasses({
       group: 'class-1',
       groupHeading: 'class-2',
@@ -364,6 +389,7 @@ describe('templates', () => {
   });
 
   describe('choice', () => {
+    const templates = shimTemplates('select');
     const choiceOptions = createOptionsWithPartialClasses({
       item: 'class-1',
       itemChoice: 'class-2',
@@ -545,6 +571,7 @@ describe('templates', () => {
   });
 
   describe('input', () => {
+    const templates = shimTemplates('input');
     const inputOptions = createOptionsWithPartialClasses({
       input: 'class-1',
       inputCloned: 'class-2',
@@ -573,6 +600,7 @@ describe('templates', () => {
   });
 
   describe('dropdown', () => {
+    const templates = shimTemplates('select');
     const dropdownOptions = createOptionsWithPartialClasses({
       list: 'class-1',
       listDropdown: 'class-2',
@@ -589,6 +617,7 @@ describe('templates', () => {
   });
 
   describe('notice', () => {
+    const templates = shimTemplates('select');
     const noticeOptions = createOptionsWithPartialClasses({
       item: 'class-1',
       itemChoice: 'class-2',
@@ -641,6 +670,7 @@ describe('templates', () => {
   });
 
   describe('option', () => {
+    const templates = shimTemplates('select');
     let data;
 
     beforeEach(() => {
