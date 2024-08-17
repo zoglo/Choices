@@ -45,6 +45,14 @@ const assignCustomProperties = (el: HTMLElement, customProperties?: CustomProper
   }
 };
 
+const addAriaLabel = (docRoot: HTMLElement | ShadowRoot, id: string | undefined, element: HTMLElement): void => {
+  const label = id && docRoot.querySelector(`label[for='${id}']`);
+  const text = label && (label as HTMLElement).innerText;
+  if (text) {
+    element.setAttribute('aria-label', text);
+  }
+};
+
 const templates: TemplatesInterface = {
   containerOuter(
     { classNames: { containerOuter } }: TemplateOptions,
@@ -73,6 +81,8 @@ const templates: TemplatesInterface = {
       div.setAttribute('role', searchEnabled ? 'combobox' : 'listbox');
       if (searchEnabled) {
         div.setAttribute('aria-autocomplete', 'list');
+      } else if (!labelId) {
+        addAriaLabel(this._docRoot, this.passedElement.element.id, div);
       }
 
       div.setAttribute('aria-haspopup', 'true');
@@ -343,7 +353,7 @@ const templates: TemplatesInterface = {
     return div;
   },
 
-  input({ classNames: { input, inputCloned } }: TemplateOptions, placeholderValue: string | null): HTMLInputElement {
+  input({ classNames: { input, inputCloned }, labelId }: TemplateOptions, placeholderValue: string | null): HTMLInputElement {
     const inp = Object.assign(document.createElement('input'), {
       type: 'search',
       className: `${getClassNames(input).join(' ')} ${getClassNames(inputCloned).join(' ')}`,
@@ -356,6 +366,10 @@ const templates: TemplatesInterface = {
     inp.setAttribute('aria-autocomplete', 'list');
     if (placeholderValue) {
       inp.setAttribute('aria-label', placeholderValue);
+    }
+
+    if (!labelId) {
+      addAriaLabel(this._docRoot, this.passedElement.element.id, inp);
     }
 
     return inp;

@@ -153,6 +153,8 @@ class Choices {
     text: StringUntrusted | StringPreEscaped | string;
   };
 
+  _docRoot: ShadowRoot | HTMLElement;
+
   constructor(
     element: string | Element | HTMLInputElement | HTMLSelectElement = '[data-choice]',
     userConfig: Partial<Options> = {},
@@ -175,8 +177,9 @@ class Choices {
       this._validateConfig();
     }
 
-    const documentElement = config.shadowRoot || document.documentElement;
-    const passedElement = typeof element === 'string' ? documentElement.querySelector(element) : element;
+    const docRoot = config.shadowRoot || document.documentElement;
+    this._docRoot = docRoot;
+    const passedElement = typeof element === 'string' ? docRoot.querySelector(element) : element;
 
     if (
       !passedElement ||
@@ -253,7 +256,7 @@ class Choices {
     this._highlightPosition = 0;
     this._wasTap = true;
     this._placeholderValue = this._generatePlaceholderValue();
-    this._baseId = generateId(this.passedElement.element, 'choices-');
+    this._baseId = generateId(passedElement, 'choices-');
 
     /**
      * setting direction in cases where it's explicitly set on passedElement
@@ -1512,7 +1515,7 @@ class Choices {
   }
 
   _addEventListeners(): void {
-    const documentElement = this.config.shadowRoot || document.documentElement;
+    const documentElement = this._docRoot;
     const outerElement = this.containerOuter.element;
     const inputElement = this.input.element;
 
@@ -1563,7 +1566,7 @@ class Choices {
   }
 
   _removeEventListeners(): void {
-    const documentElement = this.config.shadowRoot || document.documentElement;
+    const documentElement = this._docRoot;
     const outerElement = this.containerOuter.element;
     const inputElement = this.input.element;
 
