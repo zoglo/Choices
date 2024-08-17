@@ -38,7 +38,7 @@
     "test": "run-s test:unit test:e2e:all",
     "test:unit": "vitest run",
     "test:unit:watch": "npm run test:unit -- --watch --inspect=5556",
-    "test:unit:coverage": "vitest --config test/vitest.config.ts run --coverage",
+    "test:unit:coverage": "vitest run --coverage",
     "test:e2e": "run-s playwright:cli --project=chromium",
     "test:e2e:all": "run-s playwright:cli",
     "js:watch": "rollup -w --bundleConfigAsCjs -c scripts/rollup.config.mjs --environment TARGET:. --environment OUTPUT_TYPES:umd --environment WATCH_HOST:localhost",
