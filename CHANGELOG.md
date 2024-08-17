@@ -11,6 +11,7 @@
 
 ### Bug Fixes (from 10.2.0)
 * Fix `[aria-*]` attributes do not match their roles [#1169](https://github.com/Choices-js/Choices/issues/1169)
+* Improve contrast on default CSS by darkening primary item selection color [#924](https://github.com/Choices-js/Choices/issues/924)
 
 ### Bug Fixes (from 11.0.0RC6)
 * Fix destroy&init of `choices.js` would lost track of data from the backing `<input>`/`<select>`
