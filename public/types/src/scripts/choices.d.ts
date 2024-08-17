@@ -64,6 +64,7 @@ declare class Choices {
         type: NoticeType;
         text: StringUntrusted | StringPreEscaped | string;
     };
+    _docRoot: ShadowRoot | HTMLElement;
     constructor(element?: string | Element | HTMLInputElement | HTMLSelectElement, userConfig?: Partial<Options>);
     init(): void;
     destroy(): void;

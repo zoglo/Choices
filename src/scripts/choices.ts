@@ -161,7 +161,7 @@ class Choices {
     element: string | Element | HTMLInputElement | HTMLSelectElement = '[data-choice]',
     userConfig: Partial<Options> = {},
   ) {
-    const defaults = Choices.defaults;
+    const { defaults } = Choices;
     this.config = {
       ...defaults.allOptions,
       ...defaults.options,

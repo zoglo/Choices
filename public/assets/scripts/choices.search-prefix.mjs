@@ -219,6 +219,9 @@ var unwrapStringForEscaped = function (s) {
     }
     return '';
 };
+var escapeForTemplate = function (allowHTML, s) {
+    return allowHTML ? unwrapStringForEscaped(s) : sanitise(s);
+};
 var sortByAlpha = function (_a, _b) {
     var value = _a.value, _c = _a.label, label = _c === void 0 ? value : _c;
     var value2 = _b.value, _d = _b.label, label2 = _d === void 0 ? value2 : _d;
@@ -1290,14 +1293,48 @@ var NoticeTypes = {
     generic: '',
 };
 
+var SearchByPrefixFilter = /** @class */ (function () {
+    function SearchByPrefixFilter(config) {
+        this._haystack = [];
+        this._fields = config.searchFields;
+    }
+    SearchByPrefixFilter.prototype.index = function (data) {
+        this._haystack = data;
+    };
+    SearchByPrefixFilter.prototype.reset = function () {
+        this._haystack = [];
+    };
+    SearchByPrefixFilter.prototype.isEmptyIndex = function () {
+        return this._haystack.length === 0;
+    };
+    SearchByPrefixFilter.prototype.search = function (_needle) {
+        var fields = this._fields;
+        if (!fields || fields.length === 0 || _needle === '') {
+            return [];
+        }
+        var needle = _needle.toLowerCase();
+        return this._haystack
+            .filter(function (obj) { return fields.some(function (field) { return field in obj && obj[field].toLowerCase().startsWith(needle); }); })
+            .map(function (value, index) {
+            return {
+                item: value,
+                score: index,
+                rank: index,
+            };
+        });
+    };
+    return SearchByPrefixFilter;
+}());
+
+function getSearcher(config) {
+    return new SearchByPrefixFilter(config);
+}
+
 /**
  * Helpers to create HTML elements used by Choices
  * Can be overridden by providing `callbackOnCreateTemplates` option.
  * `Choices.defaults.templates` allows access to the default template methods from `callbackOnCreateTemplates`
  */
-var escapeForTemplate = function (allowHTML, s) {
-    return allowHTML ? unwrapStringForEscaped(s) : sanitise(s);
-};
 var isEmptyObject = function (obj) {
     // eslint-disable-next-line no-restricted-syntax
     for (var prop in obj) {
@@ -1319,6 +1356,13 @@ var assignCustomProperties = function (el, customProperties) {
         dataset.customProperties = JSON.stringify(customProperties);
     }
 };
+var addAriaLabel = function (docRoot, id, element) {
+    var label = id && docRoot.querySelector("label[for='".concat(id, "']"));
+    var text = label && label.innerText;
+    if (text) {
+        element.setAttribute('aria-label', text);
+    }
+};
 var templates = {
     containerOuter: function (_a, dir, isSelectElement, isSelectOneElement, searchEnabled, passedElementType, labelId) {
         var containerOuter = _a.classNames.containerOuter;
@@ -1336,6 +1380,9 @@ var templates = {
             div.setAttribute('role', searchEnabled ? 'combobox' : 'listbox');
             if (searchEnabled) {
                 div.setAttribute('aria-autocomplete', 'list');
+            }
+            else if (!labelId) {
+                addAriaLabel(this._docRoot, this.passedElement.element.id, div);
             }
             div.setAttribute('aria-haspopup', 'true');
             div.setAttribute('aria-expanded', 'false');
@@ -1536,7 +1583,7 @@ var templates = {
         return div;
     },
     input: function (_a, placeholderValue) {
-        var _b = _a.classNames, input = _b.input, inputCloned = _b.inputCloned;
+        var _b = _a.classNames, input = _b.input, inputCloned = _b.inputCloned, labelId = _a.labelId;
         var inp = Object.assign(document.createElement('input'), {
             type: 'search',
             className: "".concat(getClassNames(input).join(' '), " ").concat(getClassNames(inputCloned).join(' ')),
@@ -1548,6 +1595,9 @@ var templates = {
         inp.setAttribute('aria-autocomplete', 'list');
         if (placeholderValue) {
             inp.setAttribute('aria-label', placeholderValue);
+        }
+        if (!labelId) {
+            addAriaLabel(this._docRoot, this.passedElement.element.id, inp);
         }
         return inp;
     },
@@ -1606,43 +1656,6 @@ var templates = {
     },
 };
 
-var SearchByPrefixFilter = /** @class */ (function () {
-    function SearchByPrefixFilter(config) {
-        this._haystack = [];
-        this._fields = config.searchFields;
-    }
-    SearchByPrefixFilter.prototype.index = function (data) {
-        this._haystack = data;
-    };
-    SearchByPrefixFilter.prototype.reset = function () {
-        this._haystack = [];
-    };
-    SearchByPrefixFilter.prototype.isEmptyIndex = function () {
-        return this._haystack.length === 0;
-    };
-    SearchByPrefixFilter.prototype.search = function (_needle) {
-        var fields = this._fields;
-        if (!fields || fields.length === 0 || _needle === '') {
-            return [];
-        }
-        var needle = _needle.toLowerCase();
-        return this._haystack
-            .filter(function (obj) { return fields.some(function (field) { return field in obj && obj[field].toLowerCase().startsWith(needle); }); })
-            .map(function (value, index) {
-            return {
-                item: value,
-                score: index,
-                rank: index,
-            };
-        });
-    };
-    return SearchByPrefixFilter;
-}());
-
-function getSearcher(config) {
-    return new SearchByPrefixFilter(config);
-}
-
 /** @see {@link http://browserhacks.com/#hack-acea075d0ac6954f275a70023906050c} */
 var IS_IE11 = '-ms-scroll-limit' in document.documentElement.style && '-ms-ime-align' in document.documentElement.style;
 var USER_DEFAULTS = {};
@@ -1666,16 +1679,18 @@ var Choices = /** @class */ (function () {
         this._hasNonChoicePlaceholder = false;
         this._lastAddedChoiceId = 0;
         this._lastAddedGroupId = 0;
-        this.config = __assign(__assign(__assign({}, Choices.defaults.allOptions), Choices.defaults.options), userConfig);
+        var defaults = Choices.defaults;
+        this.config = __assign(__assign(__assign({}, defaults.allOptions), defaults.options), userConfig);
         ObjectsInConfig.forEach(function (key) {
-            _this.config[key] = __assign(__assign(__assign({}, Choices.defaults.allOptions[key]), Choices.defaults.options[key]), userConfig[key]);
+            _this.config[key] = __assign(__assign(__assign({}, defaults.allOptions[key]), defaults.options[key]), userConfig[key]);
         });
         var config = this.config;
         if (!config.silent) {
             this._validateConfig();
         }
-        var documentElement = config.shadowRoot || document.documentElement;
-        var passedElement = typeof element === 'string' ? documentElement.querySelector(element) : element;
+        var docRoot = config.shadowRoot || document.documentElement;
+        this._docRoot = docRoot;
+        var passedElement = typeof element === 'string' ? docRoot.querySelector(element) : element;
         if (!passedElement ||
             typeof passedElement !== 'object' ||
             !(isHtmlInputElement(passedElement) || isHtmlSelectElement(passedElement))) {
@@ -1742,7 +1757,7 @@ var Choices = /** @class */ (function () {
         this._highlightPosition = 0;
         this._wasTap = true;
         this._placeholderValue = this._generatePlaceholderValue();
-        this._baseId = generateId(this.passedElement.element, 'choices-');
+        this._baseId = generateId(passedElement, 'choices-');
         /**
          * setting direction in cases where it's explicitly set on passedElement
          * or when calculated direction is different from the document
@@ -1758,6 +1773,7 @@ var Choices = /** @class */ (function () {
         this._idNames = {
             itemChoice: 'item-choice',
         };
+        this._templates = defaults.templates;
         this._render = this._render.bind(this);
         this._onFocus = this._onFocus.bind(this);
         this._onBlur = this._onBlur.bind(this);
@@ -1844,7 +1860,7 @@ var Choices = /** @class */ (function () {
         this._store._listeners = []; // prevents select/input value being wiped
         this.clearStore();
         this._stopSearch();
-        this._templates = templates;
+        this._templates = Choices.defaults.templates;
         this.initialised = false;
         this.initialisedOK = undefined;
     };
@@ -2517,7 +2533,7 @@ var Choices = /** @class */ (function () {
     Choices.prototype._renderNotice = function () {
         var noticeConf = this._notice;
         if (noticeConf) {
-            var notice = templates.notice(this.config, noticeConf.text, noticeConf.type);
+            var notice = this._templates.notice(this.config, noticeConf.text, noticeConf.type);
             this.choiceList.prepend(notice);
         }
     };
@@ -2825,7 +2841,7 @@ var Choices = /** @class */ (function () {
         }
     };
     Choices.prototype._addEventListeners = function () {
-        var documentElement = this.config.shadowRoot || document.documentElement;
+        var documentElement = this._docRoot;
         var outerElement = this.containerOuter.element;
         var inputElement = this.input.element;
         // capture events - can cancel event processing or propagation
@@ -2868,7 +2884,7 @@ var Choices = /** @class */ (function () {
         this.input.addEventListeners();
     };
     Choices.prototype._removeEventListeners = function () {
-        var documentElement = this.config.shadowRoot || document.documentElement;
+        var documentElement = this._docRoot;
         var outerElement = this.containerOuter.element;
         var inputElement = this.input.element;
         documentElement.removeEventListener('touchend', this._onTouchEnd, true);
@@ -3424,12 +3440,12 @@ var Choices = /** @class */ (function () {
             userTemplates = callbackOnCreateTemplates.call(this, strToEl, escapeForTemplate);
         }
         var templating = {};
-        Object.keys(templates).forEach(function (name) {
+        Object.keys(this._templates).forEach(function (name) {
             if (name in userTemplates) {
                 templating[name] = userTemplates[name].bind(_this);
             }
             else {
-                templating[name] = templates[name].bind(_this);
+                templating[name] = _this._templates[name].bind(_this);
             }
         });
         this._templates = templating;
