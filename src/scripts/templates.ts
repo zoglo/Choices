@@ -123,7 +123,6 @@ const templates: TemplatesInterface = {
       labelClass,
       labelDescription,
       customProperties,
-      active,
       disabled,
       highlighted,
       placeholder: isPlaceholder,
@@ -163,11 +162,9 @@ const templates: TemplatesInterface = {
 
     if (disabled || this.containerOuter.isDisabled) {
       div.setAttribute('aria-disabled', 'true');
-    } else if (active) {
+    } else if (this._isSelectElement) {
       div.setAttribute('aria-selected', 'true');
-      if (this._isSelectElement) {
-        div.setAttribute('role', 'option');
-      }
+      div.setAttribute('role', 'option');
     }
 
     if (isPlaceholder) {

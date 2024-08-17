@@ -363,10 +363,13 @@ class Choices {
   }
 
   enable(): this {
-    const { passedElement, containerOuter} = this;
-    const el = containerOuter.element;
-    el.setAttribute('aria-haspopup', 'true');
-    el.setAttribute('aria-expanded', 'false');
+    const { passedElement, containerOuter } = this;
+
+    if (this._isSelectElement) {
+      const el = containerOuter.element;
+      el.setAttribute('aria-haspopup', 'true');
+      el.setAttribute('aria-expanded', 'false');
+    }
 
     if (passedElement.isDisabled) {
       passedElement.enable();
@@ -384,10 +387,13 @@ class Choices {
   }
 
   disable(): this {
-    const { passedElement, containerOuter} = this;
-    const el = containerOuter.element;
-    el.removeAttribute('aria-haspopup');
-    el.removeAttribute('aria-expanded');
+    const { passedElement, containerOuter } = this;
+
+    if (this._isSelectElement) {
+      const el = containerOuter.element;
+      el.removeAttribute('aria-haspopup');
+      el.removeAttribute('aria-expanded');
+    }
 
     if (!passedElement.isDisabled) {
       passedElement.disable();
