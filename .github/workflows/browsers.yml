@@ -1,11 +1,11 @@
-name: Playwright Tests
+name: End-to-end tests (playwright)
 on:
   push:
     branches: [ playwright ]
   pull_request:
     branches: [ main, master ]
 jobs:
-  playwright-e2e:
+  test-e2e-playwright:
     timeout-minutes: 60
     strategy:
       fail-fast: false
@@ -31,7 +31,7 @@ jobs:
 
     - name: Get installed Playwright version
       id: playwright-version
-      run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').dependencies['@playwright/test'].version)")" >> $GITHUB_ENV
+      run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').devDependencies['@playwright/test'].version)")" >> $GITHUB_ENV
     - name: Cache playwright binaries
       uses: actions/cache@v3
       id: playwright-cache
