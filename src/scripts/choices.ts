@@ -1851,7 +1851,7 @@ class Choices {
       const skipKey = metaKey || keyCode === KeyCodeMap.PAGE_DOWN_KEY || keyCode === KeyCodeMap.PAGE_UP_KEY;
       const selectableChoiceIdentifier = '[data-choice-selectable]';
 
-      let nextEl;
+      let nextEl: HTMLElement | null;
       if (skipKey) {
         if (directionInt > 0) {
           nextEl = this.dropdown.element.querySelector(`${selectableChoiceIdentifier}:last-of-type`);

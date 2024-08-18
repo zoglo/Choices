@@ -19,7 +19,7 @@ export const generateId = (element: HTMLInputElement | HTMLSelectElement, prefix
   return id;
 };
 
-export const getAdjacentEl = (startEl: Element, selector: string, direction = 1): Element => {
+export const getAdjacentEl = (startEl: HTMLElement, selector: string, direction = 1): HTMLElement | null => {
   const prop = `${direction > 0 ? 'next' : 'previous'}ElementSibling`;
 
   let sibling = startEl[prop];
@@ -30,14 +30,10 @@ export const getAdjacentEl = (startEl: Element, selector: string, direction = 1)
     sibling = sibling[prop];
   }
 
-  return sibling;
+  return null;
 };
 
 export const isScrolledIntoView = (element: HTMLElement, parent: HTMLElement, direction = 1): boolean => {
-  if (!element) {
-    return false;
-  }
-
   let isVisible: boolean;
 
   if (direction > 0) {
