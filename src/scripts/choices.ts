@@ -1138,6 +1138,10 @@ class Choices {
         (oldNotice.type === NoticeTypes.addChoice &&
           (type === NoticeTypes.noResults || type === NoticeTypes.noChoices)))
     ) {
+      if (openDropdown) {
+        this.showDropdown(true);
+      }
+
       return;
     }
 
@@ -1152,7 +1156,7 @@ class Choices {
 
     this._renderNotice();
 
-    if (openDropdown) {
+    if (openDropdown && text) {
       this.showDropdown(true);
     }
   }
@@ -1433,7 +1437,7 @@ class Choices {
     if (value === '') {
       return {
         response: canAddItem,
-        notice: '',
+        notice,
       };
     }
 
