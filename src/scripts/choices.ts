@@ -880,8 +880,10 @@ class Choices {
       return;
     }
 
-    if (changes.choices || changes.groups) {
-      this._renderChoices();
+    if (this._isSelectElement) {
+      if (changes.choices || changes.groups) {
+        this._renderChoices();
+      }
     }
 
     if (changes.items) {
@@ -890,33 +892,42 @@ class Choices {
   }
 
   _renderChoices(): void {
-    const { config } = this;
-    const { activeGroups, activeChoices } = this._store;
-    let choiceListFragment = document.createDocumentFragment();
-
     this.choiceList.clear();
 
-    if (config.resetScrollPosition) {
-      requestAnimationFrame(() => this.choiceList.scrollToTop());
+    const canAddItem = this._canAddItems();
+    if (!canAddItem.response) {
+      this._displayNotice(canAddItem.notice, NoticeTypes.addChoice);
+
+      return; // block rendering choices if the input limit is reached.
     }
 
-    // If we have grouped options
-    if (activeGroups.length >= 1 && !this._isSearching) {
-      if (!this._hasNonChoicePlaceholder) {
-        // If we have a placeholder choice along with groups
-        const activePlaceholders = activeChoices.filter(
-          (activeChoice) => activeChoice.placeholder && activeChoice.groupId === -1,
-        );
-        if (activePlaceholders.length >= 1) {
-          choiceListFragment = this._createChoicesFragment(activePlaceholders, choiceListFragment);
-        }
+    const { config } = this;
+    const { activeGroups, activeChoices } = this._store;
+
+    let choiceListFragment = document.createDocumentFragment();
+    let noChoices = true;
+    if (activeChoices.length) {
+      if (config.resetScrollPosition) {
+        requestAnimationFrame(() => this.choiceList.scrollToTop());
       }
-      choiceListFragment = this._createGroupsFragment(activeGroups, activeChoices, choiceListFragment);
-    } else if (activeChoices.length >= 1) {
-      choiceListFragment = this._createChoicesFragment(activeChoices, choiceListFragment);
+      // If we have grouped options
+      if (activeGroups.length && !this._isSearching) {
+        if (!this._hasNonChoicePlaceholder) {
+          // If we have a placeholder choice along with groups
+          const activePlaceholders = activeChoices.filter(
+            (activeChoice) => activeChoice.placeholder && activeChoice.groupId === -1,
+          );
+          if (activePlaceholders.length) {
+            choiceListFragment = this._createChoicesFragment(activePlaceholders, choiceListFragment);
+          }
+        }
+        choiceListFragment = this._createGroupsFragment(activeGroups, activeChoices, choiceListFragment);
+      } else {
+        choiceListFragment = this._createChoicesFragment(activeChoices, choiceListFragment);
+      }
+      noChoices = !choiceListFragment.childNodes.length;
     }
 
-    const noChoices = !!choiceListFragment.childNodes.length;
     const notice = this._notice;
     if (noChoices) {
       if (!notice) {
@@ -1281,9 +1292,11 @@ class Choices {
     const hasActiveDropdown = this.dropdown.isActive;
 
     if (!choice.selected) {
-      const canAddItem = this._canAddItem(choice.value);
+      const canAddItem = this._canAddItems();
       if (!canAddItem.response) {
-        return false;
+        this._displayNotice(canAddItem.notice, NoticeTypes.addChoice);
+
+        return true; // causes _onEnterKey to early out
       }
 
       this._store.withTxn(() => {
@@ -1418,41 +1431,35 @@ class Choices {
     }
   }
 
-  _canAddItem(value: string): Notice {
+  _canAddItems(): Notice {
     const { config } = this;
+    const { maxItemCount, maxItemText } = config;
     let canAddItem = true;
     let notice = '';
-    const { items } = this._store;
 
-    if (config.maxItemCount > 0 && config.maxItemCount <= items.length) {
-      // If there is a max entry limit and we have reached that limit
-      // don't update
-      if (!config.singleModeForMultiSelect) {
-        canAddItem = false;
-        notice =
-          typeof config.maxItemText === 'function' ? config.maxItemText(config.maxItemCount) : config.maxItemText;
-      }
+    if (!config.singleModeForMultiSelect && maxItemCount > 0 && maxItemCount <= this._store.items.length) {
+      canAddItem = false;
+      notice = typeof maxItemText === 'function' ? maxItemText(maxItemCount) : maxItemText;
     }
 
-    if (value === '') {
     return {
       response: canAddItem,
       notice,
     };
   }
 
-    if (
-      canAddItem &&
-      this._canAddUserChoices &&
-      typeof config.addItemFilter === 'function' &&
-      !config.addItemFilter(value)
-    ) {
+  _canCreateItem(value: string): Notice {
+    const { config } = this;
+    let canAddItem = true;
+    let notice = '';
+
+    if (canAddItem && typeof config.addItemFilter === 'function' && !config.addItemFilter(value)) {
       canAddItem = false;
       notice = resolveNoticeFunction(config.customAddItemText, value);
     }
 
     if (canAddItem) {
-      const foundChoice = this._store.items.find((choice) => config.valueComparer(choice.value, value));
+      const foundChoice = this._store.choices.find((choice) => config.valueComparer(choice.value, value));
       if (this._isSelectElement) {
         // for exact matches, do not prompt to add it as a custom choice
         if (foundChoice) {
@@ -1692,6 +1699,13 @@ class Choices {
       return;
     }
 
+    const canAdd = this._canAddItems();
+    if (!canAdd.response) {
+      this._displayNotice(canAdd.notice, 'add-choice');
+
+      return;
+    }
+
     if (this._canSearch) {
       // do the search even if the entered text can not be added
       this._handleSearch(value);
@@ -1702,8 +1716,8 @@ class Choices {
     }
 
     // determine if a notice needs to be displayed for why a search result can't be added
-    const canAddItem = this._canAddItem(value);
-    this._displayNotice(canAddItem.notice, 'add-choice');
+    const canCreate = this._canCreateItem(value);
+    this._displayNotice(canCreate.notice, 'add-choice');
     if (this._isSelectElement) {
       this._highlightPosition = 0; // reset to select the notice and/or exact match
       this._highlightChoice();
@@ -1756,14 +1770,16 @@ class Choices {
       return;
     }
 
-    if (!target || value === '') {
+    if (!target || !value) {
       this.hideDropdown(true);
 
       return;
     }
 
-    const canAdd: Notice = this._canAddItem(value);
+    const canAdd = this._canAddItems();
     if (!canAdd.response) {
+      this._displayNotice(canAdd.notice, 'add-choice');
+
       return;
     }
 
@@ -1772,6 +1788,13 @@ class Choices {
       addedItem = this._findAndSelectChoiceByValue(value, true);
       if (!addedItem) {
         if (!this._canAddUserChoices) {
+          return;
+        }
+
+        const canCreate = this._canCreateItem(value);
+        if (!canCreate.response) {
+          this._displayNotice(canCreate.notice, 'add-choice');
+
           return;
         }
 
