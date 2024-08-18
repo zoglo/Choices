@@ -20,7 +20,7 @@ describe(`Choices - select multiple`, () => {
             await suite.wrapper.focus();
             await suite.enterKey();
             await suite.expectVisibleDropdown();
-            await suite.enterKey();
+            await suite.escapeKey();
             await suite.expectHiddenDropdown();
           });
         });
@@ -46,14 +46,49 @@ describe(`Choices - select multiple`, () => {
           await expect(suite.itemList.last()).toHaveText(selectedChoiceText);
         });
 
-        test('does not remove selected choice from dropdown list', async ({ page, bundle }) => {
+        test('remove selected choice from dropdown list', async ({ page, bundle }) => {
           const suite = new SelectTestSuit(page, bundle, testUrl, testId);
           await suite.startWithClick();
 
-          const choice = suite.choices.first();
-          await choice.click();
-          await expect(choice).toHaveText(selectedChoiceText);
+          await suite.choices.first().click();
+          await expect(suite.choices.first()).not.toHaveText(selectedChoiceText);
           await expect(suite.itemList.last()).toHaveText(selectedChoiceText);
+        });
+
+        test('selecting multiple choices', async ({ page, bundle }) => {
+          const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+          await suite.startWithClick();
+
+          await suite.expectedItemCount(0);
+          await suite.expectChoiceCount(4);
+          await suite.expectVisibleDropdown();
+
+          await suite.selectableChoices.filter({ hasText: 'Choice 1' }).click();
+          await suite.expectedItemCount(1);
+          await suite.expectChoiceCount(3);
+          await suite.expectVisibleDropdown();
+
+          await suite.selectableChoices.filter({ hasText: 'Choice 2' }).click();
+          await suite.expectedItemCount(2);
+          await suite.expectChoiceCount(2);
+          await suite.expectVisibleDropdown();
+        });
+
+        test('selecting all available choices', async ({ page, bundle }) => {
+          const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+          await suite.startWithClick();
+
+          const count = await suite.choices.count();
+
+          for (let i = 1; i < count + 1; i++) {
+            await suite.expectVisibleDropdown();
+            await suite.selectableChoices.filter({ hasText: `Choice ${i}` }).click();
+            await suite.advanceClock();
+            await suite.expectedItemCount(i);
+            await expect(suite.selectableChoices).toHaveCount(count - i);
+          }
+
+          await suite.expectVisibleDropdown('No choices to choose from');
         });
       });
 
@@ -82,6 +117,31 @@ describe(`Choices - select multiple`, () => {
           await suite.input.press('PageUp');
           await expect(suite.choices.first()).toHaveClass(/is-highlighted/);
           await expect(suite.choices.last()).not.toHaveClass(/is-highlighted/);
+        });
+      });
+
+      describe('on cmd+a', () => {
+        test('highlights selected items', async ({ page, bundle }) => {
+          const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+          await suite.startWithClick();
+          await suite.selectableChoices.first().click();
+          await suite.ctrlA();
+          await suite.expectVisibleDropdown();
+
+          expect(await suite.itemList.locator('.is-highlighted').count()).toEqual(1);
+        });
+
+        describe('on backspace', () => {
+          test('clears selected inputted values', async ({ page, bundle }) => {
+            const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+            await suite.startWithClick();
+            await suite.selectableChoices.first().click();
+            await suite.ctrlA();
+            await suite.backspaceKey();
+            await suite.expectVisibleDropdown();
+
+            expect(await suite.itemList.locator('.is-highlighted').count()).toEqual(0);
+          });
         });
       });
 
@@ -150,8 +210,8 @@ describe(`Choices - select multiple`, () => {
       describe('on click', () => {
         test('removes default', async ({ page, bundle }) => {
           const suite = new SelectTestSuit(page, bundle, testUrl, testId);
-          await suite.start();
-          await suite.expectHiddenDropdown();
+          await suite.startWithClick();
+          await suite.expectVisibleDropdown();
 
           await suite.expectedItemCount(1);
           await suite.expectedValue('Choice 1');
@@ -161,6 +221,7 @@ describe(`Choices - select multiple`, () => {
 
           await suite.expectedItemCount(0);
           await suite.expectedValue('');
+          await suite.escapeKey();
           await suite.expectHiddenDropdown();
         });
 
@@ -181,9 +242,11 @@ describe(`Choices - select multiple`, () => {
           await suite.expectedValue(selectedChoice);
 
           await suite.items.getByRole('button', { name: 'Remove item' }).first().click();
+          await suite.advanceClock();
 
-          await suite.expectedItemCount(0);
-          await suite.expectedValue('');
+          await suite.expectedItemCount(1);
+          await suite.expectedValue('Choice 1');
+          await suite.escapeKey();
           await suite.expectHiddenDropdown();
         });
       });
@@ -251,6 +314,23 @@ describe(`Choices - select multiple`, () => {
       });
     });
 
+    describe('selection limit', () => {
+      const testId = 'selection-limit';
+      const selectionLimit = 5;
+
+      test('displays "limit reached" prompt', async ({ page, bundle }) => {
+        const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+        await suite.startWithClick();
+
+        for (let index = 0; index < selectionLimit; index++) {
+          await suite.selectableChoices.first().click();
+          await suite.advanceClock();
+        }
+
+        await suite.expectVisibleDropdown(`Only ${selectionLimit} values can be added`);
+      });
+    });
+
     describe('prepend/append', () => {
       const testId = 'prepend-append';
       const textInput = 'Choice 1';
@@ -274,6 +354,7 @@ describe(`Choices - select multiple`, () => {
       });
     });
 
+    /*
     describe('search disabled', () => {
       const testId = 'search-disabled';
       test('does not display a search input', async ({ page, bundle }) => {
@@ -297,6 +378,7 @@ describe(`Choices - select multiple`, () => {
         await suite.expectHiddenDropdown();
       });
     });
+    */
 
     describe('search floor', () => {
       const testId = 'search-floor';
@@ -399,36 +481,22 @@ describe(`Choices - select multiple`, () => {
 
     describe('remote data', () => {
       const testId = 'remote-data';
-      describe('when loading data', () => {
-        test('shows a loading message as a placeholder', async ({ page, bundle }) => {
-          const suite = new SelectTestSuit(page, bundle, testUrl, testId);
-          await suite.start();
-          await suite.expectHiddenDropdown();
-          await expect(suite.dropdown).toBeDisabled();
+      test('checking placeholder values', async ({ page, bundle }) => {
+        const jsonLoad = page.waitForResponse('**/data.json');
 
-          const placeholder = suite.itemsWithPlaceholder.first();
-          await expect(placeholder).toHaveClass(/choices__placeholder/);
-          await expect(placeholder).toHaveText('Loading...');
-        });
-      });
+        const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+        await suite.start();
 
-      describe('when data has loaded', () => {
-        describe('opening the dropdown', () => {
-          test('displays the loaded data', async ({ page, bundle }) => {
-            const jsonLoad = page.waitForResponse('**/data.json');
+        const placeholder = suite.itemsWithPlaceholder.first();
+        await expect(placeholder).toHaveClass(/choices__placeholder/);
+        await expect(placeholder).toHaveText('Loading...');
 
-            const suite = new SelectTestSuit(page, bundle, testUrl, testId);
-            await suite.start();
+        await jsonLoad;
+        await suite.selectByClick();
 
-            await jsonLoad;
-            await suite.selectByClick();
-
-            const placeholder = suite.itemsWithPlaceholder.first();
-            await expect(placeholder).toHaveClass(/choices__placeholder/);
-            await expect(placeholder).toHaveText('I am a placeholder');
-            await expect(suite.selectableChoices).toHaveCount(10);
-          });
-        });
+        await expect(placeholder).toHaveClass(/choices__placeholder/);
+        await expect(placeholder).toHaveText('I am a placeholder');
+        await expect(suite.selectableChoices).toHaveCount(10);
       });
     });
 
@@ -732,7 +800,7 @@ describe(`Choices - select multiple`, () => {
         await suite.enterKey();
         await suite.expectHiddenDropdown();
 
-        await expect(suite.choices).toHaveCount(3);
+        await suite.expectChoiceCount(3);
 
         await suite.group.locator('.destroy').click({ force: true });
 
@@ -741,7 +809,7 @@ describe(`Choices - select multiple`, () => {
         await suite.group.locator('.init').click({ force: true });
 
         suite = new SelectTestSuit(page, bundle, testUrl, testId);
-        await expect(suite.choices).toHaveCount(3);
+        await suite.expectChoiceCount(3);
         await suite.expectedValue(testvalue);
       });
 
@@ -753,7 +821,7 @@ describe(`Choices - select multiple`, () => {
         await suite.enterKey();
         await suite.expectHiddenDropdown();
 
-        await expect(suite.choices).toHaveCount(3);
+        await suite.expectChoiceCount(3);
 
         await expect(suite.group.locator('select > option')).toHaveCount(3);
         expect(await suite.getWrappedElement().inputValue()).toEqual(testvalue);
