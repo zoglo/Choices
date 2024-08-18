@@ -1,4 +1,5 @@
-import { test, expect } from '../bundle-test';
+import { expect } from '@playwright/test';
+import { test } from '../bundle-test';
 import { TextTestSuit } from '../text-test-suit';
 
 const { describe } = test;

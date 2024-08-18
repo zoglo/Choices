@@ -1,7 +1,5 @@
 import { test as base } from '@playwright/test';
 
-export { expect } from '@playwright/test';
-
 export type BundleTest = {
   bundle: string | undefined;
 };
