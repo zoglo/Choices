@@ -7,7 +7,6 @@ import { SELECT_MULTIPLE_TYPE, SELECT_ONE_TYPE, TEXT_TYPE } from './constants';
 import { DEFAULT_CONFIG } from './defaults';
 import { InputChoice } from './interfaces/input-choice';
 import { InputGroup } from './interfaces/input-group';
-import { Notice } from './interfaces/notice';
 import { Options, ObjectsInConfig } from './interfaces/options';
 import { StateChangeSet } from './interfaces/state';
 import {
@@ -894,10 +893,7 @@ class Choices {
   _renderChoices(): void {
     this.choiceList.clear();
 
-    const canAddItem = this._canAddItems();
-    if (!canAddItem.response) {
-      this._displayNotice(canAddItem.notice, NoticeTypes.addChoice);
-
+    if (!this._canAddItems()) {
       return; // block rendering choices if the input limit is reached.
     }
 
@@ -1292,10 +1288,7 @@ class Choices {
     const hasActiveDropdown = this.dropdown.isActive;
 
     if (!choice.selected) {
-      const canAddItem = this._canAddItems();
-      if (!canAddItem.response) {
-        this._displayNotice(canAddItem.notice, NoticeTypes.addChoice);
-
+      if (!this._canAddItems()) {
         return true; // causes _onEnterKey to early out
       }
 
@@ -1431,24 +1424,23 @@ class Choices {
     }
   }
 
-  _canAddItems(): Notice {
+  _canAddItems(): boolean {
     const { config } = this;
     const { maxItemCount, maxItemText } = config;
-    let canAddItem = true;
-    let notice = '';
 
     if (!config.singleModeForMultiSelect && maxItemCount > 0 && maxItemCount <= this._store.items.length) {
-      canAddItem = false;
-      notice = typeof maxItemText === 'function' ? maxItemText(maxItemCount) : maxItemText;
+      this._displayNotice(
+        typeof maxItemText === 'function' ? maxItemText(maxItemCount) : maxItemText,
+        NoticeTypes.addChoice,
+      );
+
+      return false;
     }
 
-    return {
-      response: canAddItem,
-      notice,
-    };
+    return true;
   }
 
-  _canCreateItem(value: string): Notice {
+  _canCreateItem(value: string): boolean {
     const { config } = this;
     let canAddItem = true;
     let notice = '';
@@ -1463,10 +1455,9 @@ class Choices {
       if (this._isSelectElement) {
         // for exact matches, do not prompt to add it as a custom choice
         if (foundChoice) {
-          return {
-            response: true,
-            notice: '',
-          };
+          this._displayNotice('', NoticeTypes.addChoice);
+
+          return false;
         }
       } else if (this._isTextElement && !config.duplicateItemsAllowed) {
         if (foundChoice) {
@@ -1480,10 +1471,11 @@ class Choices {
       notice = resolveNoticeFunction(config.addItemText, value);
     }
 
-    return {
-      response: canAddItem,
-      notice: notice ? { trusted: notice } : '',
-    };
+    if (notice) {
+      this._displayNotice(notice, NoticeTypes.addChoice);
+    }
+
+    return canAddItem;
   }
 
   _searchChoices(value: string): number | null {
@@ -1699,10 +1691,7 @@ class Choices {
       return;
     }
 
-    const canAdd = this._canAddItems();
-    if (!canAdd.response) {
-      this._displayNotice(canAdd.notice, 'add-choice');
-
+    if (!this._canAddItems()) {
       return;
     }
 
@@ -1716,8 +1705,7 @@ class Choices {
     }
 
     // determine if a notice needs to be displayed for why a search result can't be added
-    const canCreate = this._canCreateItem(value);
-    this._displayNotice(canCreate.notice, 'add-choice');
+    this._canCreateItem(value);
     if (this._isSelectElement) {
       this._highlightPosition = 0; // reset to select the notice and/or exact match
       this._highlightChoice();
@@ -1776,10 +1764,7 @@ class Choices {
       return;
     }
 
-    const canAdd = this._canAddItems();
-    if (!canAdd.response) {
-      this._displayNotice(canAdd.notice, 'add-choice');
-
+    if (!this._canAddItems()) {
       return;
     }
 
@@ -1791,10 +1776,7 @@ class Choices {
           return;
         }
 
-        const canCreate = this._canCreateItem(value);
-        if (!canCreate.response) {
-          this._displayNotice(canCreate.notice, 'add-choice');
-
+        if (!this._canCreateItem(value)) {
           return;
         }
 
