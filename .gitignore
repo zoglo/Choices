@@ -5,6 +5,7 @@ npm-debug.log
 .rollup.cache
 tsconfig.tsbuildinfo
 .npmrc
+.run
 
 # Test
 tests/reports
