@@ -23,7 +23,7 @@ const config: PlaywrightTestConfig = {
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 2 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'dot',//process.env.CI ? 'dot' : 'list',
+  reporter: process.env.CI ? 'dot' : 'list',
   timeout: 2000,
   expect : {
     timeout: 500,
@@ -76,11 +76,11 @@ const config: PlaywrightTestConfig = {
   ],
 
   /* Run your local dev server before starting the tests */
-  //webServer: {
-  //  command: 'npm run start',
-  //  url: 'http://127.0.0.1:3001',
-  //  reuseExistingServer: !process.env.CI,
-  //},
+  webServer: {
+    command: 'npm run start',
+    url: 'http://127.0.0.1:3001',
+    reuseExistingServer: !process.env.CI,
+  },
 };
 
 const bundles = [
