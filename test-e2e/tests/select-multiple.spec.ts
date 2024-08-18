@@ -695,10 +695,9 @@ describe(`Choices - select multiple`, () => {
         test('does not show html', async ({ page, bundle }) => {
           const suite = new SelectTestSuit(page, bundle, testUrl, testId);
           await suite.startWithClick();
-          await suite.typeTextAndEnter(htmlInput);
-          await suite.expectVisibleDropdown();
-          await suite.escapeKey();
-          await suite.expectHiddenDropdown();
+          await suite.typeText(htmlInput);
+          await suite.expectVisibleDropdown(`Press Enter to add <b>"${textInput}"</b>`);
+          await suite.enterKey();
 
           await expect(suite.items.last()).toHaveText(htmlInput);
         });
@@ -709,10 +708,9 @@ describe(`Choices - select multiple`, () => {
         test('does not show html as text', async ({ page, bundle }) => {
           const suite = new SelectTestSuit(page, bundle, testUrl, testId);
           await suite.startWithClick();
-          await suite.typeTextAndEnter(htmlInput);
-          await suite.expectVisibleDropdown();
-          await suite.escapeKey();
-          await suite.expectHiddenDropdown();
+          await suite.typeText(htmlInput);
+          await suite.expectVisibleDropdown(`Press Enter to add <b>"${textInput}"</b>`);
+          await suite.enterKey();
 
           await expect(suite.items.last()).toHaveText(textInput);
         });
@@ -723,10 +721,9 @@ describe(`Choices - select multiple`, () => {
         test('does not show html as text', async ({ page, bundle }) => {
           const suite = new SelectTestSuit(page, bundle, testUrl, testId);
           await suite.startWithClick();
-          await suite.typeTextAndEnter(htmlInput);
-          await suite.expectVisibleDropdown();
-          await suite.escapeKey();
-          await suite.expectHiddenDropdown();
+          await suite.typeText(htmlInput);
+          await suite.expectVisibleDropdown(`Press Enter to add <b>"${textInput}"</b>`);
+          await suite.enterKey();
 
           await expect(suite.items.last()).toHaveText(htmlInput);
         });
@@ -737,10 +734,9 @@ describe(`Choices - select multiple`, () => {
         test('does not show html as text', async ({ page, bundle }) => {
           const suite = new SelectTestSuit(page, bundle, testUrl, testId);
           await suite.startWithClick();
-          await suite.typeTextAndEnter(htmlInput);
-          await suite.expectVisibleDropdown();
-          await suite.escapeKey();
-          await suite.expectHiddenDropdown();
+          await suite.typeText(htmlInput);
+          await suite.expectVisibleDropdown(`Press Enter to add <b>"${textInput}"</b>`);
+          await suite.enterKey();
 
           await expect(suite.items.last()).toHaveText(htmlInput);
         });

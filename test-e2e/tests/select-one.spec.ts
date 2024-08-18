@@ -650,9 +650,8 @@ describe(`Choices - select one`, () => {
           const suite = new SelectTestSuit(page, bundle, testUrl, testId);
           await suite.startWithClick();
           await suite.typeText(htmlInput);
-          await suite.expectVisibleDropdown();
+          await suite.expectVisibleDropdown(`Press Enter to add <b>"${textInput}"</b>`);
           await suite.enterKey();
-          await suite.expectHiddenDropdown();
 
           await expect(suite.items.first()).toHaveText(htmlInput);
         });
@@ -664,9 +663,8 @@ describe(`Choices - select one`, () => {
           const suite = new SelectTestSuit(page, bundle, testUrl, testId);
           await suite.startWithClick();
           await suite.typeText(htmlInput);
-          await suite.expectVisibleDropdown();
+          await suite.expectVisibleDropdown(`Press Enter to add <b>"${textInput}"</b>`);
           await suite.enterKey();
-          await suite.expectHiddenDropdown();
 
           await expect(suite.items.first()).toHaveText(textInput);
         });
@@ -678,9 +676,8 @@ describe(`Choices - select one`, () => {
           const suite = new SelectTestSuit(page, bundle, testUrl, testId);
           await suite.startWithClick();
           await suite.typeText(htmlInput);
-          await suite.expectVisibleDropdown();
+          await suite.expectVisibleDropdown(`Press Enter to add <b>"${textInput}"</b>`);
           await suite.enterKey();
-          await suite.expectHiddenDropdown();
 
           await expect(suite.items.first()).toHaveText(htmlInput);
         });
@@ -692,9 +689,8 @@ describe(`Choices - select one`, () => {
           const suite = new SelectTestSuit(page, bundle, testUrl, testId);
           await suite.startWithClick();
           await suite.typeText(htmlInput);
-          await suite.expectVisibleDropdown();
+          await suite.expectVisibleDropdown(`Press Enter to add <b>"${textInput}"</b>`);
           await suite.enterKey();
-          await suite.expectHiddenDropdown();
 
           await expect(suite.items.first()).toHaveText(htmlInput);
         });

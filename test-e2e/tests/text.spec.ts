@@ -33,7 +33,7 @@ describe(`Choices - text element`, () => {
             await suite.start();
             await suite.typeText(textInput);
 
-            await suite.expectVisibleDropdown(`Press Enter to add "${textInput}"`);
+            await suite.expectVisibleDropdown(`Press Enter to add <b>"${textInput}"</b>`);
           });
         });
       });
@@ -119,11 +119,14 @@ describe(`Choices - text element`, () => {
         const testId = 'allowhtml-undefined';
         test('does not show html', async ({ page, bundle }) => {
           const suite = new TextTestSuit(page, bundle, testUrl, testId);
-          await suite.start(htmlInput);
-          await suite.expectHiddenDropdown();
+          await suite.start();
+          await suite.typeText(htmlInput);
+          await suite.expectVisibleDropdown(`Press Enter to add <b>"${textInput}"</b>`);
+          await suite.enterKey();
 
           await expect(suite.items.first()).toHaveText('<b>Mason Rogers</b>');
           await expect(suite.items.last()).toHaveText(htmlInput);
+
         });
       });
 
@@ -131,8 +134,10 @@ describe(`Choices - text element`, () => {
         const testId = 'allowhtml-true';
         test('does not show html as text', async ({ page, bundle }) => {
           const suite = new TextTestSuit(page, bundle, testUrl, testId);
-          await suite.start(htmlInput);
-          await suite.expectHiddenDropdown();
+          await suite.start();
+          await suite.typeText(htmlInput);
+          await suite.expectVisibleDropdown(`Press Enter to add <b>"${textInput}"</b>`);
+          await suite.enterKey();
 
           await expect(suite.items.first()).toHaveText('Mason Rogers');
           await expect(suite.items.last()).toHaveText(textInput);
@@ -143,8 +148,10 @@ describe(`Choices - text element`, () => {
         const testId = 'allowhtml-true-userinput-false';
         test('does not show html as text', async ({ page, bundle }) => {
           const suite = new TextTestSuit(page, bundle, testUrl, testId);
-          await suite.start(htmlInput);
-          await suite.expectHiddenDropdown();
+          await suite.start();
+          await suite.typeText(htmlInput);
+          await suite.expectVisibleDropdown(`Press Enter to add <b>"${textInput}"</b>`);
+          await suite.enterKey();
 
           await expect(suite.items.first()).toHaveText('Mason Rogers');
           await expect(suite.items.last()).toHaveText(htmlInput);
@@ -155,8 +162,10 @@ describe(`Choices - text element`, () => {
         const testId = 'allowhtml-false';
         test('does not show html as text', async ({ page, bundle }) => {
           const suite = new TextTestSuit(page, bundle, testUrl, testId);
-          await suite.start(htmlInput);
-          await suite.expectHiddenDropdown();
+          await suite.start();
+          await suite.typeText(htmlInput);
+          await suite.expectVisibleDropdown(`Press Enter to add <b>"${textInput}"</b>`);
+          await suite.enterKey();
 
           await expect(suite.items.first()).toHaveText('<b>Mason Rogers</b>');
           await expect(suite.items.last()).toHaveText(htmlInput);
@@ -318,7 +327,7 @@ describe(`Choices - text element`, () => {
             await suite.start();
             await suite.typeText(textInput);
 
-            await suite.expectVisibleDropdown(`Press Enter to add "${textInput}"`);
+            await suite.expectVisibleDropdown(`Press Enter to add <b>"${textInput}"</b>`);
           });
         });
       });
