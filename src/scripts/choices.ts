@@ -182,7 +182,7 @@ class Choices {
 
     const docRoot = config.shadowRoot || document.documentElement;
     this._docRoot = docRoot;
-    const passedElement = typeof element === 'string' ? docRoot.querySelector(element) : element;
+    const passedElement = typeof element === 'string' ? docRoot.querySelector<HTMLElement>(element) : element;
 
     if (
       !passedElement ||
@@ -1071,9 +1071,7 @@ class Choices {
     let choiceLimit = rendererableChoices.length;
 
     const sortedChoices =
-      this._isSelectOneElement && placeholderChoices.length
-        ? [...placeholderChoices, ...normalChoices]
-        : normalChoices;
+      this._isSelectOneElement && placeholderChoices.length ? [...placeholderChoices, ...normalChoices] : normalChoices;
 
     if (this._isSearching) {
       choiceLimit = searchResultLimit;
@@ -1177,7 +1175,9 @@ class Choices {
       return;
     }
 
-    const noticeElement = this.choiceList.element.querySelector(getClassNamesSelector(this.config.classNames.notice));
+    const noticeElement = this.choiceList.element.querySelector<HTMLElement>(
+      getClassNamesSelector(this.config.classNames.notice),
+    );
     if (noticeElement) {
       noticeElement.remove();
     }
@@ -1372,7 +1372,7 @@ class Choices {
 
   _handleLoadingState(setLoading = true): void {
     const { config } = this;
-    let placeholderItem: HTMLElement | null = this.itemList.element.querySelector(
+    let placeholderItem = this.itemList.element.querySelector<HTMLElement>(
       getClassNamesSelector(config.classNames.placeholder),
     );
 
@@ -1762,7 +1762,7 @@ class Choices {
       return;
     }
 
-    const highlightedChoice: HTMLElement | null = this.dropdown.element.querySelector(
+    const highlightedChoice = this.dropdown.element.querySelector<HTMLElement>(
       getClassNamesSelector(config.classNames.highlightedState),
     );
 
@@ -1859,7 +1859,7 @@ class Choices {
           nextEl = this.dropdown.element.querySelector(selectableChoiceIdentifier);
         }
       } else {
-        const currentEl = this.dropdown.element.querySelector(
+        const currentEl = this.dropdown.element.querySelector<HTMLElement>(
           getClassNamesSelector(this.config.classNames.highlightedState),
         );
         if (currentEl) {
@@ -2096,7 +2096,7 @@ class Choices {
 
   _highlightChoice(el: HTMLElement | null = null): void {
     const { highlightedState } = this.config.classNames;
-    const choices: HTMLElement[] = Array.from(this.dropdown.element.querySelectorAll('[data-choice-selectable]'));
+    const choices = Array.from(this.dropdown.element.querySelectorAll<HTMLElement>('[data-choice-selectable]'));
 
     if (!choices.length) {
       return;
@@ -2104,7 +2104,7 @@ class Choices {
 
     let passedEl = el;
     const highlightedChoices = Array.from(
-      this.dropdown.element.querySelectorAll(getClassNamesSelector(highlightedState)),
+      this.dropdown.element.querySelectorAll<HTMLElement>(getClassNamesSelector(highlightedState)),
     );
 
     // Remove any highlighted choices

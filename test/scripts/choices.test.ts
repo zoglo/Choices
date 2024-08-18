@@ -124,7 +124,7 @@ describe('choices', () => {
         <input data-choice type="text" id="input-3" />
         `;
 
-        const inputs = document.querySelectorAll('[data-choice]');
+        const inputs = document.querySelectorAll<HTMLElement>('[data-choice]');
         expect(inputs.length).to.equal(3);
 
         instance = new Choices(undefined, { allowHTML: true });

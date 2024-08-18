@@ -53,7 +53,7 @@ export default class WrappedSelect extends WrappedElement<HTMLSelectElement> {
   optionsAsChoices(): (ChoiceFull | GroupFull)[] {
     const choices: (ChoiceFull | GroupFull)[] = [];
 
-    this.element.querySelectorAll(':scope > option, :scope > optgroup').forEach((e) => {
+    this.element.querySelectorAll<HTMLElement>(':scope > option, :scope > optgroup').forEach((e) => {
       if (isHtmlOption(e)) {
         choices.push(this._optionToChoice(e));
       } else if (isHtmlOptgroup(e)) {

@@ -37,7 +37,7 @@ const assignCustomProperties = (el: HTMLElement, customProperties?: CustomProper
 };
 
 const addAriaLabel = (docRoot: HTMLElement | ShadowRoot, id: string | undefined, element: HTMLElement): void => {
-  const label = id && docRoot.querySelector(`label[for='${id}']`);
+  const label = id && docRoot.querySelector<HTMLElement>(`label[for='${id}']`);
   const text = label && (label as HTMLElement).innerText;
   if (text) {
     element.setAttribute('aria-label', text);
