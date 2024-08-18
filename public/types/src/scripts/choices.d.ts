@@ -170,7 +170,8 @@ declare class Choices {
     _loadChoices(): void;
     _handleLoadingState(setLoading?: boolean): void;
     _handleSearch(value?: string): void;
-    _canAddItem(value: string): Notice;
+    _canAddItems(): Notice;
+    _canCreateItem(value: string): Notice;
     _searchChoices(value: string): number | null;
     _stopSearch(): void;
     _addEventListeners(): void;

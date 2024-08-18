@@ -140,13 +140,10 @@
             }
             sibling = sibling[prop];
         }
-        return sibling;
+        return null;
     };
     var isScrolledIntoView = function (element, parent, direction) {
         if (direction === void 0) { direction = 1; }
-        if (!element) {
-            return false;
-        }
         var isVisible;
         if (direction > 0) {
             // In view from bottom
@@ -738,9 +735,9 @@
     var stringToHtmlClass = function (input) {
         if (typeof input === 'string') {
             // eslint-disable-next-line no-param-reassign
-            input = input.split(' ').filter(function (s) { return s.length !== 0; });
+            input = input.split(' ').filter(function (s) { return s.length; });
         }
-        if (Array.isArray(input) && input.length !== 0) {
+        if (Array.isArray(input) && input.length) {
             return input;
         }
         return undefined;
@@ -764,7 +761,7 @@
             var result_2 = {
                 id: 0, // actual ID will be assigned during _addGroup
                 label: unwrapStringForRaw(group.label) || group.value,
-                active: choices.length !== 0,
+                active: !!choices.length,
                 disabled: !!group.disabled,
                 choices: choices,
             };
@@ -860,7 +857,7 @@
                 selected: this.extractPlaceholder ? option.selected : option.hasAttribute('selected'),
                 disabled: option.disabled,
                 highlighted: false,
-                placeholder: this.extractPlaceholder && (option.value === '' || option.hasAttribute('placeholder')),
+                placeholder: this.extractPlaceholder && (!option.value || option.hasAttribute('placeholder')),
                 labelClass: typeof dataset.labelClass !== 'undefined' ? stringToHtmlClass(dataset.labelClass) : undefined,
                 labelDescription: typeof dataset.labelDescription !== 'undefined' ? dataset.labelDescription : undefined,
                 customProperties: parseCustomProperties(dataset.customProperties),
@@ -874,7 +871,7 @@
                 id: 0,
                 label: optgroup.label || '',
                 element: optgroup,
-                active: choices.length !== 0,
+                active: !!choices.length,
                 disabled: optgroup.disabled,
                 choices: choices,
             };
@@ -2459,7 +2456,7 @@
             this._fuse = undefined;
         };
         SearchByFuse.prototype.isEmptyIndex = function () {
-            return this._haystack.length === 0;
+            return !this._haystack.length;
         };
         SearchByFuse.prototype.search = function (needle) {
             if (!this._fuse) {
@@ -3448,8 +3445,10 @@
             if (this._store.inTxn()) {
                 return;
             }
-            if (changes.choices || changes.groups) {
-                this._renderChoices();
+            if (this._isSelectElement) {
+                if (changes.choices || changes.groups) {
+                    this._renderChoices();
+                }
             }
             if (changes.items) {
                 this._renderItems();
@@ -3457,28 +3456,36 @@
         };
         Choices.prototype._renderChoices = function () {
             var _this = this;
+            this.choiceList.clear();
+            var canAddItem = this._canAddItems();
+            if (!canAddItem.response) {
+                this._displayNotice(canAddItem.notice, NoticeTypes.addChoice);
+                return; // block rendering choices if the input limit is reached.
+            }
             var config = this.config;
             var _a = this._store, activeGroups = _a.activeGroups, activeChoices = _a.activeChoices;
             var choiceListFragment = document.createDocumentFragment();
-            this.choiceList.clear();
-            if (config.resetScrollPosition) {
-                requestAnimationFrame(function () { return _this.choiceList.scrollToTop(); });
-            }
-            // If we have grouped options
-            if (activeGroups.length >= 1 && !this._isSearching) {
-                if (!this._hasNonChoicePlaceholder) {
-                    // If we have a placeholder choice along with groups
-                    var activePlaceholders = activeChoices.filter(function (activeChoice) { return activeChoice.placeholder && activeChoice.groupId === -1; });
-                    if (activePlaceholders.length >= 1) {
-                        choiceListFragment = this._createChoicesFragment(activePlaceholders, choiceListFragment);
-                    }
+            var noChoices = true;
+            if (activeChoices.length) {
+                if (config.resetScrollPosition) {
+                    requestAnimationFrame(function () { return _this.choiceList.scrollToTop(); });
                 }
-                choiceListFragment = this._createGroupsFragment(activeGroups, activeChoices, choiceListFragment);
+                // If we have grouped options
+                if (activeGroups.length && !this._isSearching) {
+                    if (!this._hasNonChoicePlaceholder) {
+                        // If we have a placeholder choice along with groups
+                        var activePlaceholders = activeChoices.filter(function (activeChoice) { return activeChoice.placeholder && activeChoice.groupId === -1; });
+                        if (activePlaceholders.length) {
+                            choiceListFragment = this._createChoicesFragment(activePlaceholders, choiceListFragment);
+                        }
+                    }
+                    choiceListFragment = this._createGroupsFragment(activeGroups, activeChoices, choiceListFragment);
+                }
+                else {
+                    choiceListFragment = this._createChoicesFragment(activeChoices, choiceListFragment);
+                }
+                noChoices = !choiceListFragment.childNodes.length;
             }
-            else if (activeChoices.length >= 1) {
-                choiceListFragment = this._createChoicesFragment(activeChoices, choiceListFragment);
-            }
-            var noChoices = choiceListFragment.childNodes.length === 0;
             var notice = this._notice;
             if (noChoices) {
                 if (!notice) {
@@ -3504,7 +3511,7 @@
             // (so we don't have to update the DOM for each item)
             var itemListFragment = this._createItemsFragment(items);
             // If we have items to add, append them
-            if (itemListFragment.childNodes.length !== 0) {
+            if (itemListFragment.childNodes.length) {
                 this.itemList.append(itemListFragment);
             }
         };
@@ -3526,13 +3533,13 @@
             }
             // Add Choices without group first, regardless of sort, otherwise they won't be distinguishable
             // from the last group
-            var choicesWithoutGroup = choices.filter(function (c) { return c.groupId === 0; });
-            if (choicesWithoutGroup.length > 0) {
+            var choicesWithoutGroup = choices.filter(function (c) { return !c.groupId; });
+            if (choicesWithoutGroup.length) {
                 this._createChoicesFragment(choicesWithoutGroup, fragment, false);
             }
             groups.forEach(function (group) {
                 var groupChoices = getGroupChoices(group);
-                if (groupChoices.length >= 1) {
+                if (groupChoices.length) {
                     var dropdownGroup = _this._templates.choiceGroup(_this.config, group);
                     fragment.appendChild(dropdownGroup);
                     _this._createChoicesFragment(groupChoices, fragment, true);
@@ -3573,7 +3580,7 @@
             }
             if (this._isSelectElement) {
                 var backingOptions = choices.filter(function (choice) { return !choice.element; });
-                if (backingOptions.length !== 0) {
+                if (backingOptions.length) {
                     this.passedElement.addOptions(backingOptions);
                 }
             }
@@ -3602,8 +3609,7 @@
                 normalChoices.sort(config.sorter);
             }
             var choiceLimit = rendererableChoices.length;
-            var sortedChoices = this._isSelectOneElement && placeholderChoices.length !== 0
-                ? __spreadArray(__spreadArray([], placeholderChoices, true), normalChoices, true) : normalChoices;
+            var sortedChoices = this._isSelectOneElement && placeholderChoices.length ? __spreadArray(__spreadArray([], placeholderChoices, true), normalChoices, true) : normalChoices;
             if (this._isSearching) {
                 choiceLimit = searchResultLimit;
             }
@@ -3643,7 +3649,7 @@
             };
             // Add each list item to list
             items.forEach(addItemToFragment);
-            if (this._isSelectOneElement && this._hasNonChoicePlaceholder && items.length === 0) {
+            if (this._isSelectOneElement && this._hasNonChoicePlaceholder && !items.length) {
                 addItemToFragment(mapInputToChoice({
                     selected: true,
                     value: '',
@@ -3661,6 +3667,9 @@
                 ((oldNotice.type === type && oldNotice.text === text) ||
                     (oldNotice.type === NoticeTypes.addChoice &&
                         (type === NoticeTypes.noResults || type === NoticeTypes.noChoices)))) {
+                if (openDropdown) {
+                    this.showDropdown(true);
+                }
                 return;
             }
             this._clearNotice();
@@ -3671,7 +3680,7 @@
                 }
                 : undefined;
             this._renderNotice();
-            if (openDropdown) {
+            if (openDropdown && text) {
                 this.showDropdown(true);
             }
         };
@@ -3723,7 +3732,7 @@
         };
         Choices.prototype._handleButtonAction = function (element) {
             var items = this._store.items;
-            if (items.length === 0 || !this.config.removeItems || !this.config.removeItemButton) {
+            if (!items.length || !this.config.removeItems || !this.config.removeItemButton) {
                 return;
             }
             var id = element && parseDataSetId(element.parentNode);
@@ -3748,7 +3757,7 @@
             var _this = this;
             if (hasShiftKey === void 0) { hasShiftKey = false; }
             var items = this._store.items;
-            if (items.length === 0 || !this.config.removeItems || this._isSelectOneElement) {
+            if (!items.length || !this.config.removeItems || this._isSelectOneElement) {
                 return;
             }
             var id = parseDataSetId(element);
@@ -3780,9 +3789,10 @@
             }
             var hasActiveDropdown = this.dropdown.isActive;
             if (!choice.selected) {
-                var canAddItem = this._canAddItem(choice.value);
+                var canAddItem = this._canAddItems();
                 if (!canAddItem.response) {
-                    return false;
+                    this._displayNotice(canAddItem.notice, NoticeTypes.addChoice);
+                    return true; // causes _onEnterKey to early out
                 }
                 this._store.withTxn(function () {
                     _this._addItem(choice, true, true);
@@ -3800,7 +3810,7 @@
         };
         Choices.prototype._handleBackspace = function (items) {
             var config = this.config;
-            if (!config.removeItems || items.length === 0) {
+            if (!config.removeItems || !items.length) {
                 return;
             }
             var lastItem = items[items.length - 1];
@@ -3906,35 +3916,30 @@
                 this._stopSearch();
             }
         };
-        Choices.prototype._canAddItem = function (value) {
+        Choices.prototype._canAddItems = function () {
+            var config = this.config;
+            var maxItemCount = config.maxItemCount, maxItemText = config.maxItemText;
+            var canAddItem = true;
+            var notice = '';
+            if (!config.singleModeForMultiSelect && maxItemCount > 0 && maxItemCount <= this._store.items.length) {
+                canAddItem = false;
+                notice = typeof maxItemText === 'function' ? maxItemText(maxItemCount) : maxItemText;
+            }
+            return {
+                response: canAddItem,
+                notice: notice,
+            };
+        };
+        Choices.prototype._canCreateItem = function (value) {
             var config = this.config;
             var canAddItem = true;
             var notice = '';
-            var items = this._store.items;
-            if (config.maxItemCount > 0 && config.maxItemCount <= items.length) {
-                // If there is a max entry limit and we have reached that limit
-                // don't update
-                if (!config.singleModeForMultiSelect) {
-                    canAddItem = false;
-                    notice =
-                        typeof config.maxItemText === 'function' ? config.maxItemText(config.maxItemCount) : config.maxItemText;
-                }
-            }
-            if (value === '') {
-                return {
-                    response: canAddItem,
-                    notice: '',
-                };
-            }
-            if (canAddItem &&
-                this._canAddUserChoices &&
-                typeof config.addItemFilter === 'function' &&
-                !config.addItemFilter(value)) {
+            if (canAddItem && typeof config.addItemFilter === 'function' && !config.addItemFilter(value)) {
                 canAddItem = false;
                 notice = resolveNoticeFunction(config.customAddItemText, value);
             }
             if (canAddItem) {
-                var foundChoice = this._store.items.find(function (choice) { return config.valueComparer(choice.value, value); });
+                var foundChoice = this._store.choices.find(function (choice) { return config.valueComparer(choice.value, value); });
                 if (this._isSelectElement) {
                     // for exact matches, do not prompt to add it as a custom choice
                     if (foundChoice) {
@@ -3962,7 +3967,7 @@
         Choices.prototype._searchChoices = function (value) {
             var newValue = value.trim().replace(/\s{2,}/, ' ');
             // signal input didn't change search
-            if (newValue.length === 0 || newValue === this._currentValue) {
+            if (!newValue.length || newValue === this._currentValue) {
                 return null;
             }
             var searcher = this._searcher;
@@ -3977,7 +3982,7 @@
             var notice = this._notice;
             var noticeType = notice && notice.type;
             if (noticeType !== NoticeTypes.addChoice) {
-                if (results.length === 0) {
+                if (!results.length) {
                     this._displayNotice(resolveStringFunction(this.config.noResultsText), NoticeTypes.noResults);
                 }
                 else if (noticeType === NoticeTypes.noResults) {
@@ -4141,6 +4146,11 @@
                 this._clearNotice();
                 return;
             }
+            var canAdd = this._canAddItems();
+            if (!canAdd.response) {
+                this._displayNotice(canAdd.notice, 'add-choice');
+                return;
+            }
             if (this._canSearch) {
                 // do the search even if the entered text can not be added
                 this._handleSearch(value);
@@ -4149,8 +4159,8 @@
                 return;
             }
             // determine if a notice needs to be displayed for why a search result can't be added
-            var canAddItem = this._canAddItem(value);
-            this._displayNotice(canAddItem.notice, 'add-choice');
+            var canCreate = this._canCreateItem(value);
+            this._displayNotice(canCreate.notice, 'add-choice');
             if (this._isSelectElement) {
                 this._highlightPosition = 0; // reset to select the notice and/or exact match
                 this._highlightChoice();
@@ -4189,12 +4199,13 @@
             if (highlightedChoice && this._handleChoiceAction(highlightedChoice)) {
                 return;
             }
-            if (!target || value === '') {
+            if (!target || !value) {
                 this.hideDropdown(true);
                 return;
             }
-            var canAdd = this._canAddItem(value);
+            var canAdd = this._canAddItems();
             if (!canAdd.response) {
+                this._displayNotice(canAdd.notice, 'add-choice');
                 return;
             }
             var addedItem = false;
@@ -4202,6 +4213,11 @@
                 addedItem = _this._findAndSelectChoiceByValue(value, true);
                 if (!addedItem) {
                     if (!_this._canAddUserChoices) {
+                        return;
+                    }
+                    var canCreate = _this._canCreateItem(value);
+                    if (!canCreate.response) {
+                        _this._displayNotice(canCreate.notice, 'add-choice');
                         return;
                     }
                     var sanitisedValue = sanitise(value);
@@ -4369,7 +4385,7 @@
                 }
             }
             else {
-                var hasHighlightedItems = this._store.highlightedActiveItems.length > 0;
+                var hasHighlightedItems = !!this._store.highlightedActiveItems.length;
                 if (hasHighlightedItems) {
                     this.unhighlightAll();
                 }
@@ -4462,7 +4478,7 @@
                 _this.clearInput();
                 _this.hideDropdown();
                 _this.refresh(false, false, true);
-                if (_this._initialItems.length !== 0) {
+                if (_this._initialItems.length) {
                     _this.setChoiceByValue(_this._initialItems);
                 }
             });
@@ -4516,7 +4532,7 @@
             if (withEvents === void 0) { withEvents = true; }
             if (userTriggered === void 0) { userTriggered = false; }
             var id = item.id;
-            if (id === 0) {
+            if (!id) {
                 throw new TypeError('item.id must be set before _addItem is called for a choice/item');
             }
             if (this.config.singleModeForMultiSelect || this._isSelectOneElement) {
@@ -4541,7 +4557,7 @@
         Choices.prototype._addChoice = function (choice, withEvents, userTriggered) {
             if (withEvents === void 0) { withEvents = true; }
             if (userTriggered === void 0) { userTriggered = false; }
-            if (choice.id !== 0) {
+            if (choice.id) {
                 throw new TypeError('Can not re-add a choice which has already been added');
             }
             // Generate unique id, in-place update is required so chaining _addItem works as expected
@@ -4566,7 +4582,7 @@
         Choices.prototype._addGroup = function (group, withEvents) {
             var _this = this;
             if (withEvents === void 0) { withEvents = true; }
-            if (group.id !== 0) {
+            if (group.id) {
                 throw new TypeError('Can not re-add a group which has already been added');
             }
             this._store.dispatch(addGroup(group));
