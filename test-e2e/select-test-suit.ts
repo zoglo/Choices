@@ -43,4 +43,8 @@ export class SelectTestSuit extends TestSuit {
   async expectChoiceCount(count: number): Promise<void> {
     await expect(this.selectableChoices).toHaveCount(count);
   }
+
+  getChoiceWithText(text: string): Locator {
+    return this.selectableChoices.filter({ hasText: text });
+  }
 }

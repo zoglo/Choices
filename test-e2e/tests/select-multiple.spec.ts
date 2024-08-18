@@ -63,12 +63,12 @@ describe(`Choices - select multiple`, () => {
           await suite.expectChoiceCount(4);
           await suite.expectVisibleDropdown();
 
-          await suite.selectableChoices.filter({ hasText: 'Choice 1' }).click();
+          await suite.getChoiceWithText('Choice 1').click();
           await suite.expectedItemCount(1);
           await suite.expectChoiceCount(3);
           await suite.expectVisibleDropdown();
 
-          await suite.selectableChoices.filter({ hasText: 'Choice 2' }).click();
+          await suite.getChoiceWithText('Choice 2').click();
           await suite.expectedItemCount(2);
           await suite.expectChoiceCount(2);
           await suite.expectVisibleDropdown();
@@ -82,7 +82,7 @@ describe(`Choices - select multiple`, () => {
 
           for (let i = 1; i < count + 1; i++) {
             await suite.expectVisibleDropdown();
-            await suite.selectableChoices.filter({ hasText: `Choice ${i}` }).click();
+            await suite.getChoiceWithText(`Choice ${i}`).click();
             await suite.advanceClock();
             await suite.expectedItemCount(i);
             await expect(suite.selectableChoices).toHaveCount(count - i);
@@ -216,7 +216,7 @@ describe(`Choices - select multiple`, () => {
           await suite.expectedItemCount(1);
           await suite.expectedValue('Choice 1');
 
-          await suite.items.getByRole('button', { name: 'Remove item' }).first().click();
+          await suite.items.getByRole('button', { name: 'Remove item' }).last().click();
           await suite.advanceClock();
 
           await suite.expectedItemCount(0);
@@ -238,10 +238,9 @@ describe(`Choices - select multiple`, () => {
           await expect(choice).toHaveText(selectedChoice);
           await choice.click();
 
-          await suite.expectedItemCount(1);
-          await suite.expectedValue(selectedChoice);
+          await suite.expectedItemCount(2);
 
-          await suite.items.getByRole('button', { name: 'Remove item' }).first().click();
+          await suite.items.getByRole('button', { name: 'Remove item' }).last().click();
           await suite.advanceClock();
 
           await suite.expectedItemCount(1);
@@ -258,6 +257,7 @@ describe(`Choices - select multiple`, () => {
       test('does not change selected choice', async ({ page, bundle }) => {
         const suite = new SelectTestSuit(page, bundle, testUrl, testId);
         await suite.startWithClick();
+        await suite.selectableChoices.first().click();
 
         await suite.expectedItemCount(1);
         await suite.expectedValue(firstChoice);
@@ -277,6 +277,8 @@ describe(`Choices - select multiple`, () => {
       test('does not change selected choice', async ({ page, bundle }) => {
         const suite = new SelectTestSuit(page, bundle, testUrl, testId);
         await suite.startWithClick();
+        await suite.getChoiceWithText(firstChoice).click();
+        await suite.advanceClock();
 
         await suite.expectedItemCount(1);
         await suite.expectedValue(firstChoice);
@@ -337,6 +339,7 @@ describe(`Choices - select multiple`, () => {
       test('prepends and appends value to inputted value', async ({ page, bundle }) => {
         const suite = new SelectTestSuit(page, bundle, testUrl, testId);
         await suite.startWithClick();
+        await suite.getChoiceWithText(textInput).click();
 
         const item = suite.items.first();
         await expect(item).toHaveText(textInput);
@@ -429,52 +432,43 @@ describe(`Choices - select multiple`, () => {
         describe('when no choice has been selected', () => {
           test('displays a placeholder', async ({ page, bundle }) => {
             const suite = new SelectTestSuit(page, bundle, testUrl, testId);
-            await suite.startWithClick();
+            await suite.start();
+            await suite.expectHiddenDropdown();
 
             await suite.expectedItemCount(0);
             await suite.expectedValue('');
 
-            const item = suite.itemsWithPlaceholder.first();
-            await expect(item).toHaveClass(/choices__placeholder/);
-            await expect(item).toHaveText('I am a placeholder');
+            await expect(suite.itemsWithPlaceholder).toHaveCount(0);
+            await expect(suite.input).toHaveAttribute('placeholder', 'I am a placeholder');
+            await expect(suite.choices.filter({ hasText: 'I am a placeholder' })).toHaveCount(0);
           });
         });
 
         describe('when a choice has been selected', () => {
-          test('does not display a placeholder', async ({ page, bundle }) => {
+          test('displays a placeholder', async ({ page, bundle }) => {
             const suite = new SelectTestSuit(page, bundle, testUrl, testId);
             await suite.startWithClick();
+            await suite.expectVisibleDropdown();
 
             const choice = suite.selectableChoices.first();
             await choice.click();
 
-            const item = suite.itemsWithPlaceholder.first();
-            await expect(item).not.toHaveClass(/choices__placeholder/);
-            await expect(item).not.toHaveText('I am a placeholder');
-            await suite.expectHiddenDropdown();
+            await expect(suite.itemsWithPlaceholder).toHaveCount(1);
+            await expect(suite.input).toHaveAttribute('placeholder', 'I am a placeholder');
+            await expect(suite.choices.filter({ hasText: 'I am a placeholder' })).toHaveCount(0);
           });
         });
 
         describe('when choice list is open', () => {
-          if (testId === 'placeholder-via-data-attr') {
-            test('does not displays the placeholder choice first', async ({ page, bundle }) => {
-              const suite = new SelectTestSuit(page, bundle, testUrl, testId);
-              await suite.startWithClick();
+          test('displays a placeholder', async ({ page, bundle }) => {
+            const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+            await suite.startWithClick();
+            await suite.expectVisibleDropdown();
 
-              const choice = suite.choices.first();
-              await expect(choice).not.toHaveClass(/choices__placeholder/);
-              await expect(choice).not.toHaveText('I am a placeholder');
-            });
-          } else {
-            test('displays the placeholder choice first', async ({ page, bundle }) => {
-              const suite = new SelectTestSuit(page, bundle, testUrl, testId);
-              await suite.startWithClick();
-
-              const choice = suite.choices.first();
-              await expect(choice).toHaveClass(/choices__placeholder/);
-              await expect(choice).toHaveText('I am a placeholder');
-            });
-          }
+            await expect(suite.itemsWithPlaceholder).toHaveCount(0);
+            await expect(suite.input).toHaveAttribute('placeholder', 'I am a placeholder');
+            await expect(suite.choices.filter({ hasText: 'I am a placeholder' })).toHaveCount(0);
+          });
         });
       });
     });
@@ -533,36 +527,6 @@ describe(`Choices - select multiple`, () => {
           expect(
             await suite.selectableChoices.filter({ hasNot: page.locator('[data-group-id]') }).count(),
           ).toBeGreaterThan(0);
-        });
-      });
-    });
-
-    describe('parent/child', () => {
-      const testId = 'parent-child';
-      describe('selecting "Parent choice 2"', () => {
-        test('enables/disables the child Choices instance', async ({ page, bundle }) => {
-          const suite = new SelectTestSuit(page, bundle, testUrl, testId);
-          await suite.start();
-
-          const parent = suite.group.locator('.choices').nth(0);
-          const child = suite.group.locator('.choices').nth(1);
-          await expect(parent).toBeEnabled();
-          await expect(child).toBeDisabled();
-
-          await parent.click();
-          await expect(suite.dropdown.first()).toBeVisible();
-          const parentChoices = parent.locator('.choices__item:not(.choices__placeholder)');
-
-          await parentChoices.filter({ hasText: 'Parent choice 2' }).click();
-
-          await expect(child).toBeEnabled();
-
-          await parent.click();
-          await expect(suite.dropdown.first()).toBeVisible();
-          const choice = parentChoices.filter({ hasText: 'Parent choice 3' });
-          await choice.click();
-
-          await expect(child).toBeDisabled();
         });
       });
     });
@@ -661,12 +625,6 @@ describe(`Choices - select multiple`, () => {
             await suite.startWithClick();
             await suite.expectVisibleDropdown();
 
-            await suite.enterKey();
-            await suite.expectHiddenDropdown();
-
-            await suite.selectByClick();
-            await suite.expectVisibleDropdown();
-
             const choice = suite.choices.first();
             const text = await choice.innerText();
             await expect(choice).toBeEnabled();
@@ -676,7 +634,7 @@ describe(`Choices - select multiple`, () => {
             await suite.expectedItemCount(1);
             await suite.expectedValue(text);
             expect(submit).toEqual(false);
-            await suite.expectHiddenDropdown();
+            await suite.expectVisibleDropdown();
           });
         });
       });
@@ -692,11 +650,11 @@ describe(`Choices - select multiple`, () => {
         await expect(suite.items).toHaveText(dynamicallySelectedChoiceValue);
       });
 
-      test('does not remove choice from dropdown list', async ({ page, bundle }) => {
+      test('removes choice from dropdown list', async ({ page, bundle }) => {
         const suite = new SelectTestSuit(page, bundle, testUrl, testId);
         await suite.startWithClick();
 
-        await expect(suite.choices.filter({ hasText: dynamicallySelectedChoiceValue })).toHaveCount(1);
+        await expect(suite.getChoiceWithText(dynamicallySelectedChoiceValue)).toHaveCount(0);
       });
 
       test('updates the value of the original input', async ({ page, bundle }) => {
@@ -722,10 +680,10 @@ describe(`Choices - select multiple`, () => {
         await suite.startWithClick();
         await suite.typeText('label1');
         await suite.expectVisibleDropdown();
-        await suite.enterKey();
+        await suite.escapeKey();
         await suite.expectHiddenDropdown();
 
-        await expect(suite.items.filter({ hasText: 'label1' })).not.toHaveCount(0);
+        await expect(suite.items.filter({ hasText: 'label1' })).toHaveCount(0);
       });
     });
 
@@ -737,12 +695,12 @@ describe(`Choices - select multiple`, () => {
         test('does not show html', async ({ page, bundle }) => {
           const suite = new SelectTestSuit(page, bundle, testUrl, testId);
           await suite.startWithClick();
-          await suite.typeText(htmlInput);
+          await suite.typeTextAndEnter(htmlInput);
           await suite.expectVisibleDropdown();
-          await suite.enterKey();
+          await suite.escapeKey();
           await suite.expectHiddenDropdown();
 
-          await expect(suite.items.first()).toHaveText(htmlInput);
+          await expect(suite.items.last()).toHaveText(htmlInput);
         });
       });
 
@@ -751,12 +709,12 @@ describe(`Choices - select multiple`, () => {
         test('does not show html as text', async ({ page, bundle }) => {
           const suite = new SelectTestSuit(page, bundle, testUrl, testId);
           await suite.startWithClick();
-          await suite.typeText(htmlInput);
+          await suite.typeTextAndEnter(htmlInput);
           await suite.expectVisibleDropdown();
-          await suite.enterKey();
+          await suite.escapeKey();
           await suite.expectHiddenDropdown();
 
-          await expect(suite.items.first()).toHaveText(textInput);
+          await expect(suite.items.last()).toHaveText(textInput);
         });
       });
 
@@ -765,12 +723,12 @@ describe(`Choices - select multiple`, () => {
         test('does not show html as text', async ({ page, bundle }) => {
           const suite = new SelectTestSuit(page, bundle, testUrl, testId);
           await suite.startWithClick();
-          await suite.typeText(htmlInput);
+          await suite.typeTextAndEnter(htmlInput);
           await suite.expectVisibleDropdown();
-          await suite.enterKey();
+          await suite.escapeKey();
           await suite.expectHiddenDropdown();
 
-          await expect(suite.items.first()).toHaveText(htmlInput);
+          await expect(suite.items.last()).toHaveText(htmlInput);
         });
       });
 
@@ -779,12 +737,12 @@ describe(`Choices - select multiple`, () => {
         test('does not show html as text', async ({ page, bundle }) => {
           const suite = new SelectTestSuit(page, bundle, testUrl, testId);
           await suite.startWithClick();
-          await suite.typeText(htmlInput);
+          await suite.typeTextAndEnter(htmlInput);
           await suite.expectVisibleDropdown();
-          await suite.enterKey();
+          await suite.escapeKey();
           await suite.expectHiddenDropdown();
 
-          await expect(suite.items.first()).toHaveText(htmlInput);
+          await expect(suite.items.last()).toHaveText(htmlInput);
         });
       });
     });

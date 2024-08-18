@@ -155,7 +155,7 @@ describe(`Choices - select one`, () => {
           await suite.expectedItemCount(1);
           await suite.expectedValue('Choice 1');
 
-          await suite.items.getByRole('button', { name: 'Remove item' }).first().click();
+          await suite.items.getByRole('button', { name: 'Remove item' }).last().click();
           await suite.advanceClock();
 
           await suite.expectedItemCount(0);
@@ -179,7 +179,7 @@ describe(`Choices - select one`, () => {
           await suite.expectedItemCount(1);
           await suite.expectedValue(selectedChoice);
 
-          await suite.items.getByRole('button', { name: 'Remove item' }).first().click();
+          await suite.items.getByRole('button', { name: 'Remove item' }).last().click();
 
           await suite.expectedItemCount(0);
           await suite.expectedValue('');
@@ -578,12 +578,6 @@ describe(`Choices - select one`, () => {
             await suite.startWithClick();
             await suite.expectVisibleDropdown();
 
-            await suite.enterKey();
-            await suite.expectHiddenDropdown();
-
-            await suite.selectByClick();
-            await suite.expectVisibleDropdown();
-
             const choice = suite.choices.first();
             const text = await choice.innerText();
             await expect(choice).toBeEnabled();
@@ -614,7 +608,7 @@ describe(`Choices - select one`, () => {
         const suite = new SelectTestSuit(page, bundle, testUrl, testId);
         await suite.startWithClick();
 
-        await expect(suite.choices.filter({ hasText: dynamicallySelectedChoiceValue })).toHaveCount(1);
+        await expect(suite.getChoiceWithText(dynamicallySelectedChoiceValue)).toHaveCount(1);
       });
 
       test('updates the value of the original input', async ({ page, bundle }) => {
@@ -713,9 +707,8 @@ describe(`Choices - select one`, () => {
       test('preserves the choices & items lists', async ({ page, bundle }) => {
         let suite = new SelectTestSuit(page, bundle, testUrl, testId);
         await suite.startWithClick();
-        await suite.typeText(testvalue);
-        await suite.expectVisibleDropdown();
-        await suite.escapeKey();
+        await suite.typeTextAndEnter(testvalue);
+        await suite.expectHiddenDropdown();
         await suite.expectedItemCount(1);
         await suite.expectChoiceCount(3);
 
