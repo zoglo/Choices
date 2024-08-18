@@ -1,4 +1,4 @@
-import { type Locator, type Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 import { TestSuit } from './test-suit';
 
 export class SelectTestSuit extends TestSuit {
@@ -15,7 +15,7 @@ export class SelectTestSuit extends TestSuit {
 
     this.wrappedSelect = this.group.locator('select');
     this.choices = this.dropdown.locator('.choices__item');
-    this.selectableChoices = this.dropdown.locator('.choices__item:not(.choices__placeholder)');
+    this.selectableChoices = this.dropdown.locator('.choices__item:not(.choices__placeholder):not(.choices__notice)');
     this.itemsWithPlaceholder = this.itemList.locator('.choices__item');
   }
 
@@ -38,5 +38,9 @@ export class SelectTestSuit extends TestSuit {
 
   getWrappedElement(): Locator {
     return this.wrappedSelect;
+  }
+
+  async expectChoiceCount(count: number): Promise<void> {
+    await expect(this.selectableChoices).toHaveCount(count);
   }
 }

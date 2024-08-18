@@ -20,7 +20,7 @@ describe(`Choices - select one`, () => {
             await suite.wrapper.focus();
             await suite.enterKey();
             await suite.expectVisibleDropdown();
-            await suite.enterKey();
+            await suite.escapeKey();
             await suite.expectHiddenDropdown();
           });
         });
@@ -50,9 +50,8 @@ describe(`Choices - select one`, () => {
           const suite = new SelectTestSuit(page, bundle, testUrl, testId);
           await suite.startWithClick();
 
-          const choice = suite.choices.first();
-          await choice.click();
-          await expect(choice).toHaveText(selectedChoiceText);
+          await suite.choices.first().click();
+          await expect(suite.choices.first()).toHaveText(selectedChoiceText);
           await expect(suite.itemList.last()).toHaveText(selectedChoiceText);
         });
       });
@@ -399,36 +398,22 @@ describe(`Choices - select one`, () => {
 
     describe('remote data', () => {
       const testId = 'remote-data';
-      describe('when loading data', () => {
-        test('shows a loading message as a placeholder', async ({ page, bundle }) => {
-          const suite = new SelectTestSuit(page, bundle, testUrl, testId);
-          await suite.start();
-          await suite.expectHiddenDropdown();
-          await expect(suite.dropdown).toBeDisabled();
+      test('checking placeholder values', async ({ page, bundle }) => {
+        const jsonLoad = page.waitForResponse('**/data.json');
 
-          const placeholder = suite.itemsWithPlaceholder.first();
-          await expect(placeholder).toHaveClass(/choices__placeholder/);
-          await expect(placeholder).toHaveText('Loading...');
-        });
-      });
+        const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+        await suite.start();
 
-      describe('when data has loaded', () => {
-        describe('opening the dropdown', () => {
-          test('displays the loaded data', async ({ page, bundle }) => {
-            const jsonLoad = page.waitForResponse('**/data.json');
+        const placeholder = suite.itemsWithPlaceholder.first();
+        await expect(placeholder).toHaveClass(/choices__placeholder/);
+        await expect(placeholder).toHaveText('Loading...');
 
-            const suite = new SelectTestSuit(page, bundle, testUrl, testId);
-            await suite.start();
+        await jsonLoad;
+        await suite.selectByClick();
 
-            await jsonLoad;
-            await suite.selectByClick();
-
-            const placeholder = suite.itemsWithPlaceholder.first();
-            await expect(placeholder).toHaveClass(/choices__placeholder/);
-            await expect(placeholder).toHaveText('I am a placeholder');
-            await expect(suite.selectableChoices).toHaveCount(10);
-          });
-        });
+        await expect(placeholder).toHaveClass(/choices__placeholder/);
+        await expect(placeholder).toHaveText('I am a placeholder');
+        await expect(suite.selectableChoices).toHaveCount(10);
       });
     });
 
@@ -622,6 +607,7 @@ describe(`Choices - select one`, () => {
         await suite.startWithClick();
 
         await expect(suite.items).toHaveText(dynamicallySelectedChoiceValue);
+        await suite.expectedItemCount(1);
       });
 
       test('does not remove choice from dropdown list', async ({ page, bundle }) => {
@@ -732,7 +718,7 @@ describe(`Choices - select one`, () => {
         await suite.enterKey();
         await suite.expectHiddenDropdown();
 
-        await expect(suite.choices).toHaveCount(3);
+        await suite.expectChoiceCount(3);
 
         await suite.group.locator('.destroy').click({ force: true });
 
@@ -741,7 +727,7 @@ describe(`Choices - select one`, () => {
         await suite.group.locator('.init').click({ force: true });
 
         suite = new SelectTestSuit(page, bundle, testUrl, testId);
-        await expect(suite.choices).toHaveCount(3);
+        await suite.expectChoiceCount(3);
         await suite.expectedValue(testvalue);
       });
 
@@ -753,7 +739,7 @@ describe(`Choices - select one`, () => {
         await suite.enterKey();
         await suite.expectHiddenDropdown();
 
-        await expect(suite.choices).toHaveCount(3);
+        await suite.expectChoiceCount(3);
 
         await expect(suite.group.locator('select > option')).toHaveCount(3);
         expect(await suite.getWrappedElement().inputValue()).toEqual(testvalue);

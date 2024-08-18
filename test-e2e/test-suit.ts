@@ -47,6 +47,7 @@ export class TestSuit {
     await this.page.goto(this.url);
 
     await this.group.scrollIntoViewIfNeeded();
+    await this.advanceClock();
 
     if (textInput) {
       await this.typeTextAndEnter(textInput);
@@ -101,6 +102,14 @@ export class TestSuit {
     await this.advanceClock();
 
     await this.input.press('Enter');
+    await this.advanceClock();
+  }
+
+  async escapeKey(): Promise<void> {
+    await this.input.focus();
+    await this.advanceClock();
+
+    await this.input.press('Escape');
     await this.advanceClock();
   }
 

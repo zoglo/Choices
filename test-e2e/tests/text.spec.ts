@@ -20,6 +20,13 @@ describe(`Choices - text element`, () => {
           await suite.expectedValue(textInput);
         });
 
+        test('Verify text mode has no choices UI', async ({ page, bundle }) => {
+          const suite = new TextTestSuit(page, bundle, testUrl, testId);
+          await suite.start(textInput);
+          await suite.enterKey();
+          await expect(suite.dropdown).not.toHaveText('No choices to choose from');
+        });
+
         describe('inputting data', () => {
           test('shows a dropdown prompt', async ({ page, bundle }) => {
             const suite = new TextTestSuit(page, bundle, testUrl, testId);
@@ -324,14 +331,14 @@ describe(`Choices - text element`, () => {
         await suite.start(textInput);
         await suite.expectHiddenDropdown();
 
-        await expect(suite.items).toHaveCount(1);
+        await suite.expectedItemCount(1);
 
         await suite.group.locator('.destroy').click({ force: true });
 
         await suite.group.locator('.init').click({ force: true });
 
         suite = new TextTestSuit(page, bundle, testUrl, testId);
-        await expect(suite.items).toHaveCount(1);
+        await suite.expectedItemCount(1);
         await suite.expectedValue(textInput);
       });
 
@@ -340,7 +347,7 @@ describe(`Choices - text element`, () => {
         await suite.start(textInput);
         await suite.expectHiddenDropdown();
 
-        await expect(suite.items).toHaveCount(1);
+        await suite.expectedItemCount(1);
 
         expect(await suite.getWrappedElement().inputValue()).toEqual(textInput);
       });
