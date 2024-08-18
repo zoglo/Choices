@@ -14,10 +14,10 @@ const coerceBool = (arg: unknown, defaultValue: boolean = true): boolean =>
 export const stringToHtmlClass = (input: string | string[] | undefined): string[] | undefined => {
   if (typeof input === 'string') {
     // eslint-disable-next-line no-param-reassign
-    input = input.split(' ').filter((s) => s.length !== 0);
+    input = input.split(' ').filter((s) => s.length);
   }
 
-  if (Array.isArray(input) && input.length !== 0) {
+  if (Array.isArray(input) && input.length) {
     return input;
   }
 
@@ -52,7 +52,7 @@ export const mapInputToChoice = <T extends string | InputChoice | InputGroup>(
     const result: GroupFull = {
       id: 0, // actual ID will be assigned during _addGroup
       label: unwrapStringForRaw(group.label) || group.value,
-      active: choices.length !== 0,
+      active: !!choices.length,
       disabled: !!group.disabled,
       choices,
     };

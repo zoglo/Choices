@@ -87,7 +87,7 @@ export default class WrappedSelect extends WrappedElement<HTMLSelectElement> {
       selected: this.extractPlaceholder ? option.selected : option.hasAttribute('selected'),
       disabled: option.disabled,
       highlighted: false,
-      placeholder: this.extractPlaceholder && (option.value === '' || option.hasAttribute('placeholder')),
+      placeholder: this.extractPlaceholder && (!option.value || option.hasAttribute('placeholder')),
       labelClass: typeof dataset.labelClass !== 'undefined' ? stringToHtmlClass(dataset.labelClass) : undefined,
       labelDescription: typeof dataset.labelDescription !== 'undefined' ? dataset.labelDescription : undefined,
       customProperties: parseCustomProperties(dataset.customProperties),
@@ -102,7 +102,7 @@ export default class WrappedSelect extends WrappedElement<HTMLSelectElement> {
       id: 0,
       label: optgroup.label || '',
       element: optgroup,
-      active: choices.length !== 0,
+      active: !!choices.length,
       disabled: optgroup.disabled,
       choices,
     };

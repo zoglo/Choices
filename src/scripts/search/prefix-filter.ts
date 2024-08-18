@@ -19,12 +19,12 @@ export class SearchByPrefixFilter<T extends object> implements Searcher<T> {
   }
 
   isEmptyIndex(): boolean {
-    return this._haystack.length === 0;
+    return !this._haystack.length;
   }
 
   search(_needle: string): SearchResult<T>[] {
     const fields = this._fields;
-    if (!fields || fields.length === 0 || _needle === '') {
+    if (!fields || !fields.length || !_needle) {
       return [];
     }
     const needle = _needle.toLowerCase();

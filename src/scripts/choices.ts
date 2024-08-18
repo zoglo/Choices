@@ -916,7 +916,7 @@ class Choices {
       choiceListFragment = this._createChoicesFragment(activeChoices, choiceListFragment);
     }
 
-    const noChoices = choiceListFragment.childNodes.length === 0;
+    const noChoices = !!choiceListFragment.childNodes.length;
     const notice = this._notice;
     if (noChoices) {
       if (!notice) {
@@ -946,7 +946,7 @@ class Choices {
     const itemListFragment = this._createItemsFragment(items);
 
     // If we have items to add, append them
-    if (itemListFragment.childNodes.length !== 0) {
+    if (itemListFragment.childNodes.length) {
       this.itemList.append(itemListFragment);
     }
   }
@@ -973,14 +973,14 @@ class Choices {
 
     // Add Choices without group first, regardless of sort, otherwise they won't be distinguishable
     // from the last group
-    const choicesWithoutGroup = choices.filter((c) => c.groupId === 0);
-    if (choicesWithoutGroup.length > 0) {
+    const choicesWithoutGroup = choices.filter((c) => !c.groupId);
+    if (choicesWithoutGroup.length) {
       this._createChoicesFragment(choicesWithoutGroup, fragment, false);
     }
 
     groups.forEach((group) => {
       const groupChoices = getGroupChoices(group);
-      if (groupChoices.length >= 1) {
+      if (groupChoices.length) {
         const dropdownGroup = this._templates.choiceGroup(this.config, group);
         fragment.appendChild(dropdownGroup);
         this._createChoicesFragment(groupChoices, fragment, true);
@@ -1029,7 +1029,7 @@ class Choices {
 
     if (this._isSelectElement) {
       const backingOptions = choices.filter((choice) => !choice.element);
-      if (backingOptions.length !== 0) {
+      if (backingOptions.length) {
         (this.passedElement as WrappedSelect).addOptions(backingOptions);
       }
     }
@@ -1060,7 +1060,7 @@ class Choices {
     let choiceLimit = rendererableChoices.length;
 
     const sortedChoices =
-      this._isSelectOneElement && placeholderChoices.length !== 0
+      this._isSelectOneElement && placeholderChoices.length
         ? [...placeholderChoices, ...normalChoices]
         : normalChoices;
 
@@ -1108,7 +1108,7 @@ class Choices {
     // Add each list item to list
     items.forEach(addItemToFragment);
 
-    if (this._isSelectOneElement && this._hasNonChoicePlaceholder && items.length === 0) {
+    if (this._isSelectOneElement && this._hasNonChoicePlaceholder && !items.length) {
       addItemToFragment(
         mapInputToChoice<InputChoice>(
           {
@@ -1218,7 +1218,7 @@ class Choices {
 
   _handleButtonAction(element?: HTMLElement): void {
     const { items } = this._store;
-    if (items.length === 0 || !this.config.removeItems || !this.config.removeItemButton) {
+    if (!items.length || !this.config.removeItems || !this.config.removeItemButton) {
       return;
     }
 
@@ -1245,7 +1245,7 @@ class Choices {
 
   _handleItemAction(element?: HTMLElement, hasShiftKey = false): void {
     const { items } = this._store;
-    if (items.length === 0 || !this.config.removeItems || this._isSelectOneElement) {
+    if (!items.length || !this.config.removeItems || this._isSelectOneElement) {
       return;
     }
 
@@ -1307,7 +1307,7 @@ class Choices {
 
   _handleBackspace(items: ChoiceFull[]): void {
     const { config } = this;
-    if (!config.removeItems || items.length === 0) {
+    if (!config.removeItems || !items.length) {
       return;
     }
 
@@ -1435,11 +1435,11 @@ class Choices {
     }
 
     if (value === '') {
-      return {
-        response: canAddItem,
-        notice,
-      };
-    }
+    return {
+      response: canAddItem,
+      notice,
+    };
+  }
 
     if (
       canAddItem &&
@@ -1483,7 +1483,7 @@ class Choices {
     const newValue = value.trim().replace(/\s{2,}/, ' ');
 
     // signal input didn't change search
-    if (newValue.length === 0 || newValue === this._currentValue) {
+    if (!newValue.length || newValue === this._currentValue) {
       return null;
     }
 
@@ -1501,7 +1501,7 @@ class Choices {
     const notice = this._notice;
     const noticeType = notice && notice.type;
     if (noticeType !== NoticeTypes.addChoice) {
-      if (results.length === 0) {
+      if (!results.length) {
         this._displayNotice(resolveStringFunction(this.config.noResultsText), NoticeTypes.noResults);
       } else if (noticeType === NoticeTypes.noResults) {
         this._clearNotice();
@@ -1969,7 +1969,7 @@ class Choices {
         this.hideDropdown();
       }
     } else {
-      const hasHighlightedItems = this._store.highlightedActiveItems.length > 0;
+      const hasHighlightedItems = !!this._store.highlightedActiveItems.length;
 
       if (hasHighlightedItems) {
         this.unhighlightAll();
@@ -2065,7 +2065,7 @@ class Choices {
       this.hideDropdown();
       this.refresh(false, false, true);
 
-      if (this._initialItems.length !== 0) {
+      if (this._initialItems.length) {
         this.setChoiceByValue(this._initialItems);
       }
     });
@@ -2123,7 +2123,7 @@ class Choices {
 
   _addItem(item: ChoiceFull, withEvents: boolean = true, userTriggered = false): void {
     const { id } = item;
-    if (id === 0) {
+    if (!id) {
       throw new TypeError('item.id must be set before _addItem is called for a choice/item');
     }
 
@@ -2154,7 +2154,7 @@ class Choices {
   }
 
   _addChoice(choice: ChoiceFull, withEvents: boolean = true, userTriggered = false): void {
-    if (choice.id !== 0) {
+    if (choice.id) {
       throw new TypeError('Can not re-add a choice which has already been added');
     }
 
@@ -2182,7 +2182,7 @@ class Choices {
   }
 
   _addGroup(group: GroupFull, withEvents: boolean = true): void {
-    if (group.id !== 0) {
+    if (group.id) {
       throw new TypeError('Can not re-add a group which has already been added');
     }
 

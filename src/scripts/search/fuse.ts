@@ -33,7 +33,7 @@ export class SearchByFuse<T extends object> implements Searcher<T> {
   }
 
   isEmptyIndex(): boolean {
-    return this._haystack.length === 0;
+    return !this._haystack.length;
   }
 
   search(needle: string): SearchResult<T>[] {
