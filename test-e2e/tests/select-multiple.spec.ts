@@ -798,33 +798,24 @@ describe(`Choices - select multiple`, () => {
         await suite.typeText(testvalue);
         await suite.expectVisibleDropdown();
         await suite.enterKey();
+        await suite.expectedItemCount(1);
+        await suite.expectChoiceCount(2);
+
+        await suite.escapeKey();
         await suite.expectHiddenDropdown();
 
-        await suite.expectChoiceCount(3);
-
         await suite.group.locator('.destroy').click({ force: true });
+        await suite.advanceClock();
 
         await expect(suite.group.locator('select > option')).toHaveCount(3);
 
         await suite.group.locator('.init').click({ force: true });
+        await suite.advanceClock();
 
         suite = new SelectTestSuit(page, bundle, testUrl, testId);
-        await suite.expectChoiceCount(3);
+        await suite.expectedItemCount(1);
+        await suite.expectChoiceCount(2);
         await suite.expectedValue(testvalue);
-      });
-
-      test('preserves the original select element', async ({ page, bundle }) => {
-        const suite = new SelectTestSuit(page, bundle, testUrl, testId);
-        await suite.startWithClick();
-        await suite.typeText(testvalue);
-        await suite.expectVisibleDropdown();
-        await suite.enterKey();
-        await suite.expectHiddenDropdown();
-
-        await suite.expectChoiceCount(3);
-
-        await expect(suite.group.locator('select > option')).toHaveCount(3);
-        expect(await suite.getWrappedElement().inputValue()).toEqual(testvalue);
       });
     });
   });

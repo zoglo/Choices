@@ -334,22 +334,14 @@ describe(`Choices - text element`, () => {
         await suite.expectedItemCount(1);
 
         await suite.group.locator('.destroy').click({ force: true });
+        await suite.advanceClock();
 
         await suite.group.locator('.init').click({ force: true });
+        await suite.advanceClock();
 
         suite = new TextTestSuit(page, bundle, testUrl, testId);
         await suite.expectedItemCount(1);
         await suite.expectedValue(textInput);
-      });
-
-      test('preserves the original select element', async ({ page, bundle }) => {
-        const suite = new TextTestSuit(page, bundle, testUrl, testId);
-        await suite.start(textInput);
-        await suite.expectHiddenDropdown();
-
-        await suite.expectedItemCount(1);
-
-        expect(await suite.getWrappedElement().inputValue()).toEqual(textInput);
       });
     });
   });
