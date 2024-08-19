@@ -359,9 +359,7 @@ const templates: TemplatesInterface = {
     inp.setAttribute('aria-autocomplete', 'list');
     if (placeholderValue) {
       inp.setAttribute('aria-label', placeholderValue);
-    }
-
-    if (!labelId) {
+    } else if (!labelId) {
       addAriaLabel(this._docRoot, this.passedElement.element.id, inp);
     }
 
