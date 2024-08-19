@@ -16,6 +16,7 @@
 
 ### Bug Fixes (from 11.0.0RC6)
 * Fix destroy&init of `choices.js` would lost track of data from the backing `<input>`/`<select>`
+* Update e2e tests
 
 ### Bug Fixes (from 11.0.0RC1)
 * Fix various `select-one` bugs related to how `<select>` initializes and selected values do not match the configured `choices.js`
@@ -23,11 +24,9 @@
 * Fix `data-value` attribute on choices may not be correctly rendered into html
 
 ### Chore
+* Switch e2e tests from `puppeteer`/`selenium`/`cypress` to `playwright`
 * Restructure end-to-end tests so html/script blocks are co-located to improve debugability
 * Enable `@typescript-eslint/explicit-function-return-type` eslint rule
-
-### Chore
-* Switch e2e tests from `puppeteer`/`selenium`/`cypress` `playwright`
 
 ## [11.0.0-rc6] (2024-08-12)
 
