@@ -1875,7 +1875,7 @@ describe('choices', () => {
 
       describe('fuse', () => {
         beforeEach(() => {
-          process.env.SEARCH_FUSE = 'full';
+          process.env.CHOICES_SEARCH_FUSE = 'full';
           instance._searcher = new SearchByFuse(instance.config);
         });
         it('details are passed', () =>

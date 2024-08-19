@@ -1293,6 +1293,24 @@ https://www.jetbrains.com/help/phpstorm/playwright.html
 | `npm run css:watch`       | Watch SCSS files for changes. On a change, run build process |
 | `npm run css:build`       | Compile, minify and prefix SCSS files to CSS                 |
 
+
+### Build flags
+
+Choices supports various environment variables as build-flags to enable/disable features.
+The pre-built bundles these features set, and tree shaking uses the non-used parts.
+
+#### CHOICES_SEARCH_FUSE
+**Values:** `full` / `basic` / `null`
+**Default:** `full`
+
+Fuse.js support a `full`/`basic` profile. `full` adds additional logic operations, which aren't used by default with Choices. The `null` option drops Fuse.js as a dependency and instead uses a simple prefix only search feature.
+
+#### CHOICES_CAN_USE_DOM
+**Values:** `1` / `0`
+**Default:** `1`
+
+Allows loading Choices into a non-browser environment.
+
 ### Interested in contributing?
 
 We're always interested in having more active maintainers.  Please get in touch if you're interested 👍

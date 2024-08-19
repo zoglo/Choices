@@ -4,7 +4,7 @@ import { SearchByPrefixFilter } from './prefix-filter';
 import { SearchByFuse } from './fuse';
 
 export function getSearcher<T extends object>(config: Options): Searcher<T> {
-  if (process.env.SEARCH_FUSE) {
+  if (process.env.CHOICES_SEARCH_FUSE) {
     return new SearchByFuse<T>(config);
   }
 

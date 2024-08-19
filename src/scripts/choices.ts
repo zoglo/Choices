@@ -269,7 +269,7 @@ class Choices {
      */
     this._direction = this.passedElement.dir;
 
-    if (!this._direction && canUseDom) {
+    if (canUseDom && !this._direction) {
       const { direction: elementDirection } = window.getComputedStyle(this.passedElement.element);
       const { direction: documentDirection } = window.getComputedStyle(document.documentElement);
       if (elementDirection !== documentDirection) {

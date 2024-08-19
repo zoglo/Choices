@@ -24,7 +24,7 @@ describe('search', () => {
     let searcher: SearchByFuse<SearchableShape>;
 
     beforeEach(() => {
-      process.env.SEARCH_FUSE = 'full';
+      process.env.CHOICES_SEARCH_FUSE = 'full';
       searcher = new SearchByFuse<SearchableShape>(options);
       searcher.index(haystack);
     });
@@ -74,7 +74,7 @@ describe('search', () => {
   describe('fuse-basic', () => {
     let searcher: SearchByFuse<SearchableShape>;
     beforeEach(() => {
-      process.env.SEARCH_FUSE = 'basic';
+      process.env.CHOICES_SEARCH_FUSE = 'basic';
       searcher = new SearchByFuse<SearchableShape>(options);
       searcher.index(haystack);
     });
@@ -103,7 +103,7 @@ describe('search', () => {
   describe('prefix-filter', () => {
     let searcher: SearchByPrefixFilter<SearchableShape>;
     beforeEach(() => {
-      process.env.SEARCH_FUSE = undefined;
+      process.env.CHOICES_SEARCH_FUSE = undefined;
       searcher = new SearchByPrefixFilter<SearchableShape>(options);
       searcher.index(haystack);
     });

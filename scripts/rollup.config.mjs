@@ -10,7 +10,8 @@ import server from './server.mjs';
 const pckg = require('../package.json');
 
 const buildFeatures = {
-  SEARCH_FUSE: "full", // "basic" / "null"
+  CHOICES_SEARCH_FUSE: "full", // "basic" / "null"
+  CHOICES_CAN_USE_DOM: "1", // "0"
 }
 
 // Allow the following to manual set feature flags;
@@ -29,14 +30,14 @@ const builds = [
     name: "search-basic",
     features: {
       ...buildFeatures,
-      SEARCH_FUSE: "basic"
+      CHOICES_SEARCH_FUSE: "basic"
     }
   },
   {
     name: "search-prefix",
     features: {
       ...buildFeatures,
-      SEARCH_FUSE: "null"
+      CHOICES_SEARCH_FUSE: "null"
     }
   },
 ];
@@ -106,7 +107,7 @@ function genConfig(buildConfig) {
   if ('features' in buildConfig) {
     Object.keys(buildConfig.features).forEach((key) => {
       if (buildConfig.features[key] === 'undefined' || buildConfig.features[key] === 'null') {
-        vars[`process.env.${key}`] = false;
+        vars[`process.env.${key}`] = 'false';
       } else {
         vars[`process.env.${key}`] = JSON.stringify(buildConfig.features[key])
       }
