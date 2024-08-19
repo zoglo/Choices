@@ -20,11 +20,21 @@ export class SelectTestSuit extends TestSuit {
   }
 
   async start(textInput?: string): Promise<void> {
-    await this.page.route('/test/data.json', async (route) => {
+    await this.page.route('**/data.json', async (route) => {
       await new Promise((f) => {
-        setTimeout(f, 1000);
+        setTimeout(f, 250);
       });
-      await route.continue();
+
+      const fakeData = [...new Array(10)].map((_, index) => ({
+        label: `Label ${index + 1}`,
+        value: `Value ${index + 1}`,
+      }));
+
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(fakeData),
+      });
     });
 
     await super.start(textInput);

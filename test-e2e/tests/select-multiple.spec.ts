@@ -482,15 +482,12 @@ describe(`Choices - select multiple`, () => {
         const suite = new SelectTestSuit(page, bundle, testUrl, testId);
         await suite.start();
 
-        const placeholder = suite.itemsWithPlaceholder.first();
-        await expect(placeholder).toHaveClass(/choices__placeholder/);
-        await expect(placeholder).toHaveText('Loading...');
+        await expect(suite.input).toHaveAttribute('placeholder', 'Loading...');
 
         await jsonLoad;
         await suite.selectByClick();
 
-        await expect(placeholder).toHaveClass(/choices__placeholder/);
-        await expect(placeholder).toHaveText('I am a placeholder');
+        await expect(suite.input).toHaveAttribute('placeholder', 'I am a placeholder');
         await expect(suite.selectableChoices).toHaveCount(10);
       });
     });

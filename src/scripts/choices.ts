@@ -1362,24 +1362,14 @@ class Choices {
 
   _handleLoadingState(setLoading = true): void {
     const { config } = this;
-    let placeholderItem = this.itemList.element.querySelector<HTMLElement>(
-      getClassNamesSelector(config.classNames.placeholder),
-    );
 
     if (setLoading) {
       this.disable();
       this.containerOuter.addLoadingState();
 
       if (this._isSelectOneElement) {
-        if (!placeholderItem) {
-          placeholderItem = this._templates.placeholder(config, config.loadingText);
-
-          if (placeholderItem) {
-            this.itemList.append(placeholderItem);
-          }
-        } else {
-          placeholderItem.innerHTML = config.loadingText;
-        }
+        this.itemList.clear();
+        this.itemList.append(this._templates.placeholder(config, config.loadingText));
       } else {
         this.input.placeholder = config.loadingText;
       }
@@ -1387,11 +1377,7 @@ class Choices {
       this.enable();
       this.containerOuter.removeLoadingState();
 
-      if (this._isSelectOneElement) {
-        if (placeholderItem) {
-          placeholderItem.innerHTML = this._placeholderValue || '';
-        }
-      } else {
+      if (!this._isSelectOneElement) {
         this.input.placeholder = this._placeholderValue || '';
       }
     }

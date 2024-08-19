@@ -405,15 +405,14 @@ describe(`Choices - select one`, () => {
         const suite = new SelectTestSuit(page, bundle, testUrl, testId);
         await suite.start();
 
-        const placeholder = suite.itemsWithPlaceholder.first();
-        await expect(placeholder).toHaveClass(/choices__placeholder/);
-        await expect(placeholder).toHaveText('Loading...');
+        await expect(suite.itemList.first()).toHaveText('Loading...');
 
         await jsonLoad;
         await suite.selectByClick();
 
-        await expect(placeholder).toHaveClass(/choices__placeholder/);
-        await expect(placeholder).toHaveText('I am a placeholder');
+        const firstItem = suite.itemsWithPlaceholder.first();
+        await expect(firstItem).toHaveClass(/choices__placeholder/);
+        await expect(firstItem).toHaveText('I am a placeholder');
         await expect(suite.selectableChoices).toHaveCount(10);
       });
     });

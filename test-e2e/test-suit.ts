@@ -1,5 +1,4 @@
 import { expect, type Locator, type Page } from '@playwright/test';
-import { sanitise } from '../src/scripts/lib/utils';
 
 export class TestSuit {
   readonly testId: string;
@@ -48,7 +47,6 @@ export class TestSuit {
     await this.page.goto(this.url);
 
     await this.group.scrollIntoViewIfNeeded();
-    await this.advanceClock();
 
     if (textInput) {
       await this.typeTextAndEnter(textInput);
@@ -121,7 +119,6 @@ export class TestSuit {
     await this.input.press('Backspace');
     await this.advanceClock();
   }
-
 
   async expectVisibleDropdown(text?: string): Promise<void> {
     await this.advanceClock();
