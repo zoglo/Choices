@@ -141,6 +141,10 @@ function genConfig(buildConfig) {
         return;
       }
 
+      if (minify && type.format === 'es') {
+        return;
+      }
+
       let f = `public/assets/scripts/${FILENAME}`;
 
       f = suffix(f, buildConfig.name !== '.' ? buildConfig.name : '');
@@ -160,7 +164,7 @@ function genConfig(buildConfig) {
         config.plugins.push(babel({ babelHelpers: 'bundled' }))
       }
 
-      if (minify) {
+      if (minify && type.format !== 'es') {
         output.plugins.push(terser({
           compress: {
             passes: 2,

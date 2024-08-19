@@ -2,7 +2,6 @@ import { PassedElementType } from './passed-element-type';
 import { StringPreEscaped } from './string-pre-escaped';
 import { ChoiceFull } from './choice-full';
 import { GroupFull } from './group-full';
-import { StringUntrusted } from './string-untrusted';
 import { Options } from './options';
 export type TemplateOptions = Pick<Options, 'classNames' | 'allowHTML' | 'removeItemButtonAlignLeft' | 'removeItemIconText' | 'removeItemLabelText' | 'searchEnabled' | 'labelId'>;
 export declare const NoticeTypes: {
@@ -23,6 +22,6 @@ export interface Templates {
     choice({ allowHTML, classNames: { item, itemChoice, itemSelectable, selectedState, itemDisabled, description, placeholder }, }: TemplateOptions, choice: ChoiceFull, selectText: string): HTMLDivElement;
     input({ classNames: { input, inputCloned }, }: TemplateOptions, placeholderValue: string | null): HTMLInputElement;
     dropdown({ classNames: { list, listDropdown } }: TemplateOptions): HTMLDivElement;
-    notice({ allowHTML, classNames: { item, itemChoice, addChoice, noResults, noChoices }, }: TemplateOptions, innerText: StringUntrusted | StringPreEscaped | string, type: NoticeType): HTMLDivElement;
+    notice({ allowHTML, classNames: { item, itemChoice, addChoice, noResults, noChoices }, }: TemplateOptions, innerText: string, type: NoticeType): HTMLDivElement;
     option(choice: ChoiceFull): HTMLOptionElement;
 }

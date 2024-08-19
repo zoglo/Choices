@@ -1,7 +1,6 @@
 import { Container, Dropdown, Input, List, WrappedInput, WrappedSelect } from './components';
 import { InputChoice } from './interfaces/input-choice';
 import { InputGroup } from './interfaces/input-group';
-import { Notice } from './interfaces/notice';
 import { Options } from './interfaces/options';
 import { StateChangeSet } from './interfaces/state';
 import Store from './store/store';
@@ -11,8 +10,6 @@ import { PassedElementType } from './interfaces';
 import { EventChoice } from './interfaces/event-choice';
 import { NoticeType, Templates } from './interfaces/templates';
 import { Searcher } from './interfaces/search';
-import { StringUntrusted } from './interfaces/string-untrusted';
-import { StringPreEscaped } from './interfaces/string-pre-escaped';
 /**
  * Choices
  * @author Josh Johnson<josh@joshuajohnson.co.uk>
@@ -62,7 +59,7 @@ declare class Choices {
     _searcher: Searcher<ChoiceFull>;
     _notice?: {
         type: NoticeType;
-        text: StringUntrusted | StringPreEscaped | string;
+        text: string;
     };
     _docRoot: ShadowRoot | HTMLElement;
     constructor(element?: string | Element | HTMLInputElement | HTMLSelectElement, userConfig?: Partial<Options>);
@@ -158,7 +155,7 @@ declare class Choices {
     _createGroupsFragment(groups: GroupFull[], choices: ChoiceFull[], fragment?: DocumentFragment): DocumentFragment;
     _createChoicesFragment(choices: ChoiceFull[], fragment?: DocumentFragment, withinGroup?: boolean): DocumentFragment;
     _createItemsFragment(items: InputChoice[], fragment?: DocumentFragment): DocumentFragment;
-    _displayNotice(text: StringUntrusted | StringPreEscaped | string, type: NoticeType, openDropdown?: boolean): void;
+    _displayNotice(text: string, type: NoticeType, openDropdown?: boolean): void;
     _clearNotice(): void;
     _renderNotice(): void;
     _getChoiceForOutput(choice?: ChoiceFull, keyCode?: number): EventChoice | undefined;
@@ -170,8 +167,8 @@ declare class Choices {
     _loadChoices(): void;
     _handleLoadingState(setLoading?: boolean): void;
     _handleSearch(value?: string): void;
-    _canAddItems(): Notice;
-    _canCreateItem(value: string): Notice;
+    _canAddItems(): boolean;
+    _canCreateItem(value: string): boolean;
     _searchChoices(value: string): number | null;
     _stopSearch(): void;
     _addEventListeners(): void;

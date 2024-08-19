@@ -1,6 +1,6 @@
 {
   "name": "choices.js",
-  "version": "11.0.0-rc6",
+  "version": "11.0.0-rc7",
   "description": "A vanilla JS customisable text input/select box plugin",
   "type": "module",
   "main": "./public/assets/scripts/choices.js",
@@ -16,12 +16,12 @@
     },
     "./search-basic": {
       "types": "./public/types/src/index.d.ts",
-      "import": "./public/assets/scripts/choices.search-basic.min.mjs",
+      "import": "./public/assets/scripts/choices.search-basic.mjs",
       "require": "./public/assets/scripts/choices.search-basic.min.js"
     },
     "./search-none": {
       "types": "./public/types/src/index.d.ts",
-      "import": "./public/assets/scripts/choices.search-none.min.mjs",
+      "import": "./public/assets/scripts/choices.search-none.mjs",
       "require": "./public/assets/scripts/choices.search-none.min.js"
     }
   },
