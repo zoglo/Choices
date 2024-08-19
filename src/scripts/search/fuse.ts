@@ -4,6 +4,7 @@ import { default as FuseFull, IFuseOptions } from 'fuse.js';
 import { default as FuseBasic } from 'fuse.js/basic';
 import { Options } from '../interfaces/options';
 import { Searcher, SearchResult } from '../interfaces/search';
+import { searchFuse } from '../interfaces/build-flags';
 
 export class SearchByFuse<T extends object> implements Searcher<T> {
   _fuseOptions: IFuseOptions<T>;
@@ -38,7 +39,7 @@ export class SearchByFuse<T extends object> implements Searcher<T> {
 
   search(needle: string): SearchResult<T>[] {
     if (!this._fuse) {
-      if (process.env.CHOICES_SEARCH_FUSE === 'full') {
+      if (searchFuse === 'full') {
         this._fuse = new FuseFull<T>(this._haystack, this._fuseOptions);
       } else {
         this._fuse = new FuseBasic<T>(this._haystack, this._fuseOptions);

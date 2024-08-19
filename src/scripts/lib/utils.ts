@@ -5,6 +5,7 @@ import { StringUntrusted } from '../interfaces/string-untrusted';
 import { StringPreEscaped } from '../interfaces/string-pre-escaped';
 import { ChoiceFull } from '../interfaces/choice-full';
 import { Types } from '../interfaces/types';
+import { canUseDom } from '../interfaces/build-flags';
 
 const getRandomNumber = (min: number, max: number): number => Math.floor(Math.random() * (max - min) + min);
 
@@ -72,11 +73,6 @@ export const sanitise = <T>(value: T | StringUntrusted | StringPreEscaped | stri
     .replace(/'/g, '&#039;')
     .replace(/"/g, '&quot;');
 };
-
-export const canUseDom =
-  process.env.CHOICES_CAN_USE_DOM !== undefined
-    ? process.env.CHOICES_CAN_USE_DOM === '1'
-    : !!(typeof document !== 'undefined' && document.createElement);
 
 export const strToEl = ((): ((str: string) => Element) => {
   if (!canUseDom) {

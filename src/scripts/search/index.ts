@@ -2,9 +2,10 @@ import { Options } from '../interfaces';
 import { Searcher } from '../interfaces/search';
 import { SearchByPrefixFilter } from './prefix-filter';
 import { SearchByFuse } from './fuse';
+import { searchFuse } from '../interfaces/build-flags';
 
 export function getSearcher<T extends object>(config: Options): Searcher<T> {
-  if (process.env.CHOICES_SEARCH_FUSE) {
+  if (searchFuse) {
     return new SearchByFuse<T>(config);
   }
 

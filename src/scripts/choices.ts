@@ -10,7 +10,6 @@ import { InputGroup } from './interfaces/input-group';
 import { Options, ObjectsInConfig } from './interfaces/options';
 import { StateChangeSet } from './interfaces/state';
 import {
-  canUseDom,
   diff,
   escapeForTemplate,
   generateId,
@@ -36,6 +35,7 @@ import { Searcher } from './interfaces/search';
 import { getSearcher } from './search';
 // eslint-disable-next-line import/no-named-default
 import { default as defaultTemplates } from './templates';
+import { canUseDom } from './interfaces/build-flags';
 
 /** @see {@link http://browserhacks.com/#hack-acea075d0ac6954f275a70023906050c} */
 const IS_IE11 =
