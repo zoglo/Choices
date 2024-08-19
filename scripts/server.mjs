@@ -12,7 +12,7 @@ export default function server() {
     dirs: ['public'],
     host: WATCH_HOST,
     port: WATCH_PORT,
-    force: process.env.CI,
-    // silent: process.env.CI || false
+    force: !!process.env.CI,
+    // silent: !!process.env.CI
   });
 };
