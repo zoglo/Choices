@@ -76,14 +76,12 @@ export default class Input {
   enable(): void {
     const el = this.element;
     el.removeAttribute('disabled');
-    el.hidden = false;
     this.isDisabled = false;
   }
 
   disable(): void {
     const el = this.element;
     el.setAttribute('disabled', '');
-    el.hidden = true;
     this.isDisabled = true;
   }
 
