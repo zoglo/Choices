@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 import { test } from '../bundle-test';
 import { SelectTestSuit } from '../select-test-suit';
+import { sanitise } from '../../src/scripts/lib/utils';
 
 const { describe } = test;
 // describe.configure({ mode: 'serial', retries: 0 });
@@ -88,7 +89,7 @@ describe(`Choices - select multiple`, () => {
             await expect(suite.selectableChoices).toHaveCount(count - i);
           }
 
-          await suite.expectVisibleDropdown('No choices to choose from');
+          await suite.expectVisibleNoticeHtml('No choices to choose from');
         });
       });
 
@@ -173,7 +174,7 @@ describe(`Choices - select multiple`, () => {
               await suite.startWithClick();
               await suite.typeText('faergge');
 
-              await suite.expectVisibleDropdown('No results found');
+              await suite.expectVisibleNoticeHtml('No results found');
             });
           });
         });
@@ -329,7 +330,7 @@ describe(`Choices - select multiple`, () => {
           await suite.advanceClock();
         }
 
-        await suite.expectVisibleDropdown(`Only ${selectionLimit} values can be added`);
+        await suite.expectVisibleNoticeHtml(`Only ${selectionLimit} values can be added`);
       });
     });
 
@@ -672,7 +673,7 @@ describe(`Choices - select multiple`, () => {
         await suite.startWithClick();
         await suite.typeText('item2');
 
-        await suite.expectVisibleDropdown('No results found');
+        await suite.expectVisibleNoticeHtml('No results found');
       });
 
       test('gets a result when searching by label', async ({ page, bundle }) => {
@@ -690,13 +691,14 @@ describe(`Choices - select multiple`, () => {
     describe('html allowed', () => {
       const textInput = 'testing';
       const htmlInput = `<b>${textInput}</b>`;
+      const escapedInput = sanitise(htmlInput);
       describe('set to undefined', () => {
         const testId = 'allowhtml-undefined';
         test('does not show html', async ({ page, bundle }) => {
           const suite = new SelectTestSuit(page, bundle, testUrl, testId);
           await suite.startWithClick();
           await suite.typeText(htmlInput);
-          await suite.expectVisibleDropdown(`Press Enter to add <b>"${textInput}"</b>`);
+          await suite.expectVisibleNoticeHtml(`Press Enter to add <b>"${escapedInput}"</b>`);
           await suite.enterKey();
 
           await expect(suite.items.last()).toHaveText(htmlInput);
@@ -709,7 +711,7 @@ describe(`Choices - select multiple`, () => {
           const suite = new SelectTestSuit(page, bundle, testUrl, testId);
           await suite.startWithClick();
           await suite.typeText(htmlInput);
-          await suite.expectVisibleDropdown(`Press Enter to add <b>"${textInput}"</b>`);
+          await suite.expectVisibleNoticeHtml(`Press Enter to add <b>"${escapedInput}"</b>`);
           await suite.enterKey();
 
           await expect(suite.items.last()).toHaveText(textInput);
@@ -722,7 +724,7 @@ describe(`Choices - select multiple`, () => {
           const suite = new SelectTestSuit(page, bundle, testUrl, testId);
           await suite.startWithClick();
           await suite.typeText(htmlInput);
-          await suite.expectVisibleDropdown(`Press Enter to add <b>"${textInput}"</b>`);
+          await suite.expectVisibleNoticeHtml(`Press Enter to add <b>"${escapedInput}"</b>`);
           await suite.enterKey();
 
           await expect(suite.items.last()).toHaveText(htmlInput);
@@ -735,7 +737,7 @@ describe(`Choices - select multiple`, () => {
           const suite = new SelectTestSuit(page, bundle, testUrl, testId);
           await suite.startWithClick();
           await suite.typeText(htmlInput);
-          await suite.expectVisibleDropdown(`Press Enter to add <b>"${textInput}"</b>`);
+          await suite.expectVisibleNoticeHtml(`Press Enter to add <b>"${escapedInput}"</b>`);
           await suite.enterKey();
 
           await expect(suite.items.last()).toHaveText(htmlInput);

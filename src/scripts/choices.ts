@@ -34,8 +34,6 @@ import { NoticeType, NoticeTypes, Templates } from './interfaces/templates';
 import { isHtmlInputElement, isHtmlSelectElement } from './lib/html-guard-statements';
 import { Searcher } from './interfaces/search';
 import { getSearcher } from './search';
-import { StringUntrusted } from './interfaces/string-untrusted';
-import { StringPreEscaped } from './interfaces/string-pre-escaped';
 // eslint-disable-next-line import/no-named-default
 import { default as defaultTemplates } from './templates';
 
@@ -154,7 +152,7 @@ class Choices {
 
   _notice?: {
     type: NoticeType;
-    text: StringUntrusted | StringPreEscaped | string;
+    text: string;
   };
 
   _docRoot: ShadowRoot | HTMLElement;
@@ -1134,11 +1132,7 @@ class Choices {
     return fragment;
   }
 
-  _displayNotice(
-    text: StringUntrusted | StringPreEscaped | string,
-    type: NoticeType,
-    openDropdown: boolean = true,
-  ): void {
+  _displayNotice(text: string, type: NoticeType, openDropdown: boolean = true): void {
     const oldNotice = this._notice;
     if (
       oldNotice &&

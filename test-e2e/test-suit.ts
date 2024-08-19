@@ -1,4 +1,5 @@
 import { expect, type Locator, type Page } from '@playwright/test';
+import { sanitise } from '../src/scripts/lib/utils';
 
 export class TestSuit {
   readonly testId: string;
@@ -121,9 +122,7 @@ export class TestSuit {
     await this.advanceClock();
   }
 
-  /**
-   * Currently flaky, may indicate the dropdown isn't reliably appearing
-   */
+
   async expectVisibleDropdown(text?: string): Promise<void> {
     await this.advanceClock();
 
@@ -131,6 +130,14 @@ export class TestSuit {
       await expect(this.dropdown).toHaveText(text);
     }
 
+    await this.dropdown.waitFor({ state: 'visible' });
+    await expect(this.dropdown).toBeVisible();
+  }
+
+  async expectVisibleNoticeHtml(html: string): Promise<void> {
+    await this.advanceClock();
+
+    expect(await this.dropdown.locator('.choices__notice').innerHTML()).toEqual(html);
     await this.dropdown.waitFor({ state: 'visible' });
     await expect(this.dropdown).toBeVisible();
   }

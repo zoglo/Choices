@@ -2,8 +2,7 @@ import { PassedElementType } from './passed-element-type';
 import { StringPreEscaped } from './string-pre-escaped';
 import { ChoiceFull } from './choice-full';
 import { GroupFull } from './group-full';
-import { StringUntrusted } from './string-untrusted';
-// eslint-disable-next-line import/no-cycle
+
 import { Options } from './options';
 
 export type TemplateOptions = Pick<
@@ -103,7 +102,7 @@ export interface Templates {
       allowHTML,
       classNames: { item, itemChoice, addChoice, noResults, noChoices },
     }: TemplateOptions,
-    innerText: StringUntrusted | StringPreEscaped | string,
+    innerText: string,
     type: NoticeType,
   ): HTMLDivElement;
 

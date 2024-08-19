@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 import { test } from '../bundle-test';
 import { SelectTestSuit } from '../select-test-suit';
+import { sanitise } from '../../src/scripts/lib/utils';
 
 const { describe } = test;
 
@@ -112,7 +113,7 @@ describe(`Choices - select one`, () => {
               await suite.startWithClick();
               await suite.typeText('faergge');
 
-              await suite.expectVisibleDropdown('No results found');
+              await suite.expectVisibleNoticeHtml('No results found');
             });
           });
         });
@@ -626,7 +627,7 @@ describe(`Choices - select one`, () => {
         await suite.startWithClick();
         await suite.typeText('item2');
 
-        await suite.expectVisibleDropdown('No results found');
+        await suite.expectVisibleNoticeHtml('No results found');
       });
 
       test('gets a result when searching by label', async ({ page, bundle }) => {
@@ -644,13 +645,14 @@ describe(`Choices - select one`, () => {
     describe('html allowed', () => {
       const textInput = 'testing';
       const htmlInput = `<b>${textInput}</b>`;
+      const escapedInput = sanitise(htmlInput);
       describe('set to undefined', () => {
         const testId = 'allowhtml-undefined';
         test('does not show html', async ({ page, bundle }) => {
           const suite = new SelectTestSuit(page, bundle, testUrl, testId);
           await suite.startWithClick();
           await suite.typeText(htmlInput);
-          await suite.expectVisibleDropdown(`Press Enter to add <b>"${textInput}"</b>`);
+          await suite.expectVisibleNoticeHtml(`Press Enter to add <b>"${escapedInput}"</b>`);
           await suite.enterKey();
 
           await expect(suite.items.first()).toHaveText(htmlInput);
@@ -663,7 +665,7 @@ describe(`Choices - select one`, () => {
           const suite = new SelectTestSuit(page, bundle, testUrl, testId);
           await suite.startWithClick();
           await suite.typeText(htmlInput);
-          await suite.expectVisibleDropdown(`Press Enter to add <b>"${textInput}"</b>`);
+          await suite.expectVisibleNoticeHtml(`Press Enter to add <b>"${escapedInput}"</b>`);
           await suite.enterKey();
 
           await expect(suite.items.first()).toHaveText(textInput);
@@ -676,7 +678,7 @@ describe(`Choices - select one`, () => {
           const suite = new SelectTestSuit(page, bundle, testUrl, testId);
           await suite.startWithClick();
           await suite.typeText(htmlInput);
-          await suite.expectVisibleDropdown(`Press Enter to add <b>"${textInput}"</b>`);
+          await suite.expectVisibleNoticeHtml(`Press Enter to add <b>"${escapedInput}"</b>`);
           await suite.enterKey();
 
           await expect(suite.items.first()).toHaveText(htmlInput);
@@ -689,7 +691,7 @@ describe(`Choices - select one`, () => {
           const suite = new SelectTestSuit(page, bundle, testUrl, testId);
           await suite.startWithClick();
           await suite.typeText(htmlInput);
-          await suite.expectVisibleDropdown(`Press Enter to add <b>"${textInput}"</b>`);
+          await suite.expectVisibleNoticeHtml(`Press Enter to add <b>"${escapedInput}"</b>`);
           await suite.enterKey();
 
           await expect(suite.items.first()).toHaveText(htmlInput);

@@ -8,7 +8,6 @@ import { ChoiceFull, CustomProperties } from './interfaces/choice-full';
 import { GroupFull } from './interfaces/group-full';
 import { PassedElementType } from './interfaces/passed-element-type';
 import { StringPreEscaped } from './interfaces/string-pre-escaped';
-import { StringUntrusted } from './interfaces/string-untrusted';
 import { getClassNames, unwrapStringForRaw, resolveNoticeFunction, escapeForTemplate } from './lib/utils';
 import { NoticeType, NoticeTypes, TemplateOptions, Templates as TemplatesInterface } from './interfaces/templates';
 
@@ -380,11 +379,8 @@ const templates: TemplatesInterface = {
   },
 
   notice(
-    {
-      allowHTML,
-      classNames: { item, itemChoice, addChoice, noResults, noChoices, notice: noticeItem },
-    }: TemplateOptions,
-    innerText: StringUntrusted | StringPreEscaped | string,
+    { classNames: { item, itemChoice, addChoice, noResults, noChoices, notice: noticeItem } }: TemplateOptions,
+    innerText: string,
     type: NoticeType = NoticeTypes.generic,
   ): HTMLDivElement {
     const classes = [...getClassNames(item), ...getClassNames(itemChoice), ...getClassNames(noticeItem)];
@@ -403,7 +399,7 @@ const templates: TemplatesInterface = {
     }
 
     const notice = Object.assign(document.createElement('div'), {
-      innerHTML: escapeForTemplate(allowHTML, innerText),
+      innerHTML: innerText,
       className: classes.join(' '),
     });
 

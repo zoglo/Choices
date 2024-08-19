@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 // eslint-disable-next-line import/no-named-default
 import { default as _templates } from '../../src/scripts/templates';
-import { strToEl, getClassNames } from '../../src/scripts/lib/utils';
+import { strToEl, getClassNames, canUseDom } from '../../src/scripts/lib/utils';
 import { DEFAULT_CLASSNAMES, DEFAULT_CONFIG, Options, ClassNames } from '../../src';
 import { NoticeTypes, Templates as TemplatesInterface } from '../../src/scripts/interfaces/templates';
 
