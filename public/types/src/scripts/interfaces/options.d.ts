@@ -304,7 +304,7 @@ export interface Options {
      */
     searchFloor: number;
     /**
-     * The maximum amount of search results to show.
+     * The maximum amount of search results to show. `("-1" indicates no limit)`
      *
      * **Input types affected:** select-one, select-multiple
      *

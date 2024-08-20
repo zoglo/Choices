@@ -481,7 +481,7 @@ Pass an array of objects:
 
 **Input types affected:** `select-one`, `select-multiple`
 
-**Usage:** The maximum amount of search results to show.
+**Usage:** The maximum amount of search results to show  ("-1" indicates no limit).
 
 ### shadowRoot
 

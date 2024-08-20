@@ -2740,7 +2740,7 @@ var templates = {
         if (placeholderValue) {
             inp.setAttribute('aria-label', placeholderValue);
         }
-        if (!labelId) {
+        else if (!labelId) {
             addAriaLabel(this._docRoot, this.passedElement.element.id, inp);
         }
         return inp;
@@ -3600,12 +3600,18 @@ var Choices = /** @class */ (function () {
             normalChoices.sort(config.sorter);
         }
         var choiceLimit = rendererableChoices.length;
+        var limit = choiceLimit;
         var sortedChoices = this._isSelectOneElement && placeholderChoices.length ? __spreadArray(__spreadArray([], placeholderChoices, true), normalChoices, true) : normalChoices;
         if (this._isSearching) {
-            choiceLimit = searchResultLimit;
+            if (searchResultLimit >= 0) {
+                limit = searchResultLimit;
+            }
         }
-        else if (renderChoiceLimit && renderChoiceLimit > 0 && !withinGroup) {
-            choiceLimit = renderChoiceLimit;
+        else if (renderChoiceLimit >= 0 && !withinGroup) {
+            limit = renderChoiceLimit;
+        }
+        if (limit < choiceLimit) {
+            choiceLimit = limit;
         }
         // Add each choice to dropdown within range
         for (var i = 0; i < choiceLimit; i += 1) {

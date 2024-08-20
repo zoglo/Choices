@@ -1066,14 +1066,21 @@ class Choices {
     }
 
     let choiceLimit = rendererableChoices.length;
+    let limit = choiceLimit;
 
     const sortedChoices =
       this._isSelectOneElement && placeholderChoices.length ? [...placeholderChoices, ...normalChoices] : normalChoices;
 
     if (this._isSearching) {
-      choiceLimit = searchResultLimit;
-    } else if (renderChoiceLimit && renderChoiceLimit > 0 && !withinGroup) {
-      choiceLimit = renderChoiceLimit;
+      if (searchResultLimit >= 0) {
+        limit = searchResultLimit;
+      }
+    } else if (renderChoiceLimit >= 0 && !withinGroup) {
+      limit = renderChoiceLimit;
+    }
+
+    if (limit < choiceLimit) {
+      choiceLimit = limit;
     }
 
     // Add each choice to dropdown within range
