@@ -35,7 +35,7 @@ export class SearchByPrefixFilter<T extends object> implements Searcher<T> {
         return {
           item: value,
           score: index,
-          rank: index,
+          rank: index + 1,
         };
       });
   }

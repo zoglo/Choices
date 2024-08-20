@@ -1,7 +1,7 @@
 export interface SearchResult<T extends object> {
   item: T;
   score: number;
-  rank: number;
+  rank: number; // values of 0 means this item is not in the search-result set, and should be discarded
 }
 
 export interface Searcher<T extends object> {

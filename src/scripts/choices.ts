@@ -1004,35 +1004,14 @@ class Choices {
     withinGroup = false,
   ): DocumentFragment {
     // Create a fragment to store our list items (so we don't have to update the DOM for each item)
-    const { config } = this;
-    const { renderSelectedChoices, searchResultLimit, renderChoiceLimit } = config;
+    const { config, _isSearching: isSearching, _isSelectOneElement: isSelectOneElement } = this;
+    const { searchResultLimit, renderChoiceLimit } = config;
     const groupLookup: string[] = [];
-    const appendGroupInSearch = config.appendGroupInSearch && this._isSearching;
+    const appendGroupInSearch = config.appendGroupInSearch && isSearching;
     if (appendGroupInSearch) {
       this._store.groups.forEach((group) => {
         groupLookup[group.id] = group.label;
       });
-    }
-
-    const appendChoice = (choice: ChoiceFull): void => {
-      const shouldRender = renderSelectedChoices === 'auto' ? this._isSelectOneElement || !choice.selected : true;
-
-      if (shouldRender) {
-        const dropdownItem = this._templates.choice(config, choice, config.itemSelectText);
-        if (appendGroupInSearch && choice.groupId > 0) {
-          const groupName: string | undefined = groupLookup[choice.groupId];
-          if (groupName) {
-            dropdownItem.innerHTML += ` (${groupName})`;
-          }
-        }
-        fragment.appendChild(dropdownItem);
-      }
-    };
-
-    let rendererableChoices = choices;
-
-    if (renderSelectedChoices === 'auto' && !this._isSelectOneElement) {
-      rendererableChoices = choices.filter((choice) => !choice.selected);
     }
 
     if (this._isSelectElement) {
@@ -1042,22 +1021,23 @@ class Choices {
       }
     }
 
+    const skipSelected = config.renderSelectedChoices === 'auto' && !isSelectOneElement;
     const placeholderChoices: ChoiceFull[] = [];
-    let normalChoices: ChoiceFull[] = [];
-    if (this._hasNonChoicePlaceholder) {
-      normalChoices = rendererableChoices;
-    } else {
-      // Split array into placeholders and "normal" choices
-      rendererableChoices.forEach((choice) => {
-        if (choice.placeholder) {
-          placeholderChoices.push(choice);
-        } else {
-          normalChoices.push(choice);
-        }
-      });
-    }
+    const normalChoices: ChoiceFull[] = [];
 
-    if (this._isSearching) {
+    choices.forEach((choice) => {
+      if ((isSearching && !choice.rank) || (skipSelected && choice.selected)) {
+        return;
+      }
+
+      if (this._hasNonChoicePlaceholder || !choice.placeholder) {
+        normalChoices.push(choice);
+      } else {
+        placeholderChoices.push(choice);
+      }
+    });
+
+    if (isSearching) {
       // sortByRank is used to ensure stable sorting, as scores are non-unique
       // this additionally ensures fuseOptions.sortFn is not ignored
       normalChoices.sort(sortByRank);
@@ -1065,30 +1045,35 @@ class Choices {
       normalChoices.sort(config.sorter);
     }
 
-    let choiceLimit = rendererableChoices.length;
+    const sortedChoices =
+      isSelectOneElement && placeholderChoices.length ? [...placeholderChoices, ...normalChoices] : normalChoices;
+    let choiceLimit = sortedChoices.length;
     let limit = choiceLimit;
 
-    const sortedChoices =
-      this._isSelectOneElement && placeholderChoices.length ? [...placeholderChoices, ...normalChoices] : normalChoices;
-
-    if (this._isSearching) {
-      if (searchResultLimit >= 0) {
-        limit = searchResultLimit;
-      }
-    } else if (renderChoiceLimit >= 0 && !withinGroup) {
+    if (isSearching && searchResultLimit > 0) {
+      limit = searchResultLimit;
+    } else if (renderChoiceLimit > 0 && !withinGroup) {
       limit = renderChoiceLimit;
     }
 
     if (limit < choiceLimit) {
       choiceLimit = limit;
     }
+    choiceLimit--;
 
     // Add each choice to dropdown within range
-    for (let i = 0; i < choiceLimit; i += 1) {
-      if (sortedChoices[i]) {
-        appendChoice(sortedChoices[i]);
+    sortedChoices.every((choice, index) => {
+      const dropdownItem = this._templates.choice(config, choice, config.itemSelectText);
+      if (appendGroupInSearch && choice.groupId > 0) {
+        const groupName: string | undefined = groupLookup[choice.groupId];
+        if (groupName) {
+          dropdownItem.innerHTML += ` (${groupName})`;
+        }
       }
-    }
+      fragment.appendChild(dropdownItem);
+
+      return index < choiceLimit;
+    });
 
     return fragment;
   }

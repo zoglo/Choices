@@ -51,7 +51,7 @@ export class SearchByFuse<T extends object> implements Searcher<T> {
       return {
         item: value.item,
         score: value.score || 0,
-        rank: i, // If value.score is used for sorting, this can create non-stable sorts!
+        rank: i + 1, // If value.score is used for sorting, this can create non-stable sorts!
       };
     });
   }
