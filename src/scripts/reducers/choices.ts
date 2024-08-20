@@ -31,7 +31,6 @@ export default function choices(s: StateType, action: ActionTypes): StateUpdate<
 
     case ActionType.ADD_ITEM:
     case ActionType.REMOVE_ITEM: {
-      update = true;
       break;
     }
 
