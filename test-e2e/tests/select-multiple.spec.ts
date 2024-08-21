@@ -154,17 +154,18 @@ describe(`Choices - select multiple`, () => {
               await suite.startWithClick();
               await suite.typeText('item2');
 
-              await suite.expectVisibleDropdown('Choice 2');
+              await suite.expectVisibleDropdownWithItem('Choice 2');
             });
           });
 
           describe('searching by value', () => {
             test('displays choices filtered by inputted value', async ({ page, bundle }) => {
               const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+              const searchTerm = 'Choice 3';
               await suite.startWithClick();
-              await suite.typeText('find me');
+              await suite.typeText(searchTerm);
 
-              await suite.expectVisibleDropdown('Choice 3');
+              await suite.expectVisibleDropdownWithItem(searchTerm);
             });
           });
 

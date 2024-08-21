@@ -122,23 +122,25 @@ export class TestSuit {
     await this.advanceClock();
   }
 
-  async expectVisibleDropdown(text?: string): Promise<void> {
+  async expectVisibleDropdown(): Promise<void> {
     await this.advanceClock();
-
-    if (text) {
-      await expect(this.dropdown).toHaveText(text);
-    }
 
     await this.dropdown.waitFor({ state: 'visible' });
     await expect(this.dropdown).toBeVisible();
+  }
+
+  async expectVisibleDropdownWithItem(text: string): Promise<void> {
+    await this.advanceClock();
+
+    await expect(this.dropdown.filter({ hasText: text })).toHaveCount(1);
+    await this.expectVisibleDropdown();
   }
 
   async expectVisibleNoticeHtml(html: string): Promise<void> {
     await this.advanceClock();
 
     expect(await this.dropdown.locator('.choices__notice').innerHTML()).toEqual(html);
-    await this.dropdown.waitFor({ state: 'visible' });
-    await expect(this.dropdown).toBeVisible();
+    await this.expectVisibleDropdown();
   }
 
   async expectHiddenDropdown(): Promise<void> {
