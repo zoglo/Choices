@@ -87,13 +87,8 @@ const config: PlaywrightTestConfig = {
 const bundles = [
   {
     name: '',
-    bundle: '/assets/scripts/choices.js',
-    enabled: !process.env.CI
-  },
-  {
-    name: ' - prod',
-    bundle: '/assets/scripts/choices.min.js',
-    enabled: !!process.env.CI
+    bundle: process.env.CI ? '/assets/scripts/choices.min.js' : '/assets/scripts/choices.js',
+    enabled: true,
   },
 ];
 const projects = config.projects;
