@@ -40,6 +40,8 @@ export class TestSuit {
       await this.page.route('/assets/scripts/choices.min.js', (route) => route.continue({ url: this.choicesBundle }));
     }
 
+    // reduce external network traffic
+    await this.page.route('**polyfill**', (route) => route.abort('blockedbyresponse'));
     // disable google analytics, as it can weirdly fail sometimes
     await this.page.route('https://www.google-analytics.com/analytics.js', (route) => route.abort('blockedbyresponse'));
     await this.page.clock.install();
