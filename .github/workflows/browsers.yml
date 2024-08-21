@@ -27,17 +27,29 @@ jobs:
       run: npm ci --no-audit
       env:
         HUSKY_SKIP_INSTALL: true
+        PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
 
-    - name: Get installed Playwright version
-      id: playwright-version
-      run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').packages['node_modules/@playwright/test'].version)")" >> $GITHUB_ENV
+# https://github.com/microsoft/playwright/issues/7249#issuecomment-2301568516
+    - name: Detect Playwright version (Windows)
+      if: runner.os == 'windows'
+      run: echo "PLAYWRIGHT_VERSION=$(npm ll -p --depth=0 playwright | grep -o '@.*')" | Out-File -FilePath $env:GITHUB_ENV -Append
+    - name: Detect Playwright version (Linux and Mac)
+      if: runner.os != 'windows'
+      run: echo "PLAYWRIGHT_VERSION=$(npm ll -p --depth=0 playwright | grep -o '@.*')" >> $GITHUB_ENV
+    - name: Put $HOME in env
+      if: runner.os == 'windows'
+      run: echo "HOME=$HOME" | Out-File -FilePath $env:GITHUB_ENV -Append
+
     - name: Cache playwright binaries
       uses: actions/cache@v4
       id: playwright-cache
       with:
-        path: |
-          ~/.cache/ms-playwright
+        # see https://playwright.dev/docs/browsers#managing-browser-binaries
+        path: ${{ runner.os == 'Windows' && format('{0}{1}', env.HOME, '\AppData\Local\ms-playwright') || runner.os == 'Linux' && '~/.cache/ms-playwright' || '~/Library/Caches/ms-playwright' }}
         key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
+        restore-keys: |
+          ${{ runner.os }}-playwright-
+
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
       if: steps.playwright-cache.outputs.cache-hit != 'true'
