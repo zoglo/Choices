@@ -25,7 +25,7 @@ import {
   strToEl,
 } from './lib/utils';
 import Store from './store/store';
-import { mapInputToChoice } from './lib/choice-input';
+import { coerceBool, mapInputToChoice } from './lib/choice-input';
 import { ChoiceFull } from './interfaces/choice-full';
 import { GroupFull } from './interfaces/group-full';
 import { EventType, KeyCodeMap, PassedElementType } from './interfaces';
@@ -211,11 +211,10 @@ class Choices {
       config.renderSelectedChoices = 'auto';
     }
 
-    if (!['auto', true, false].includes(config.closeDropdownOnSelect)) {
-      config.closeDropdownOnSelect = 'auto';
-    }
     if (config.closeDropdownOnSelect === 'auto') {
       config.closeDropdownOnSelect = this._isTextElement || this._isSelectOneElement || config.singleModeForMultiSelect;
+    } else {
+      config.closeDropdownOnSelect = coerceBool(config.closeDropdownOnSelect);
     }
 
     if (config.placeholder) {

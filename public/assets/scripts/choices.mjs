@@ -3340,11 +3340,11 @@ var Choices = /** @class */ (function () {
         if (!['auto', 'always'].includes("".concat(config.renderSelectedChoices))) {
             config.renderSelectedChoices = 'auto';
         }
-        if (!['auto', true, false].includes(config.closeDropdownOnSelect)) {
-            config.closeDropdownOnSelect = 'auto';
-        }
         if (config.closeDropdownOnSelect === 'auto') {
             config.closeDropdownOnSelect = this._isTextElement || this._isSelectOneElement || config.singleModeForMultiSelect;
+        }
+        else {
+            config.closeDropdownOnSelect = coerceBool(config.closeDropdownOnSelect);
         }
         if (config.placeholder) {
             if (config.placeholderValue) {
