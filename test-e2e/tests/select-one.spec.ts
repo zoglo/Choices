@@ -400,29 +400,10 @@ describe(`Choices - select one`, () => {
     describe('remote data', () => {
       const testId = 'remote-data';
       test('checking placeholder values', async ({ page, bundle }) => {
-        const jsonLoad = page.waitForResponse('**/data.json');
-
-        let stopJsonWaiting = () => {};
-        const jsonWaiting = new Promise<void>((f) => {
-          stopJsonWaiting = f;
-        });
-
-        await page.route('**/data.json', async (route) => {
-          await jsonWaiting;
-
-          const fakeData = [...new Array(10)].map((_, index) => ({
-            label: `Label ${index + 1}`,
-            value: `Value ${index + 1}`,
-          }));
-
-          await route.fulfill({
-            status: 200,
-            contentType: 'application/json',
-            body: JSON.stringify(fakeData),
-          });
-        });
-
         const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+
+        const jsonLoad = page.waitForResponse('**/data.json');
+        const stopJsonWaiting = await suite.delayData();
         await suite.start();
 
         await expect(suite.itemList.first()).toHaveText('Loading...');

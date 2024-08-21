@@ -477,13 +477,15 @@ describe(`Choices - select multiple`, () => {
     describe('remote data', () => {
       const testId = 'remote-data';
       test('checking placeholder values', async ({ page, bundle }) => {
-        const jsonLoad = page.waitForResponse('**/data.json');
-
         const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+
+        const jsonLoad = page.waitForResponse('**/data.json');
+        const stopJsonWaiting = await suite.delayData();
         await suite.start();
 
         await expect(suite.input).toHaveAttribute('placeholder', 'Loading...');
 
+        stopJsonWaiting();
         await jsonLoad;
         await suite.selectByClick();
 
