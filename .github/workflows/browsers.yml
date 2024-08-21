@@ -30,9 +30,9 @@ jobs:
         PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
 
 # https://github.com/microsoft/playwright/issues/7249#issuecomment-2301568516
-    - name: Detect Playwright version (Windows)
-      if: runner.os == 'windows'
-      run: echo "PLAYWRIGHT_VERSION=$(npm ll -p --depth=0 playwright | grep -o '@.*')" | Out-File -FilePath $env:GITHUB_ENV -Append
+#    - name: Detect Playwright version (Windows)
+#      if: runner.os == 'windows'
+#      run: echo "PLAYWRIGHT_VERSION=$(npm ll -p --depth=0 playwright | grep -o '@.*')" | Out-File -FilePath $env:GITHUB_ENV -Append
     - name: Detect Playwright version (Linux and Mac)
       if: runner.os != 'windows'
       run: echo "PLAYWRIGHT_VERSION=$(npm ll -p --depth=0 playwright | grep -o '@.*')" >> $GITHUB_ENV
