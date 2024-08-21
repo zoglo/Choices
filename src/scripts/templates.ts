@@ -53,9 +53,8 @@ const templates: TemplatesInterface = {
     passedElementType: PassedElementType,
     labelId: string,
   ): HTMLDivElement {
-    const div = Object.assign(document.createElement('div'), {
-      className: getClassNames(containerOuter).join(' '),
-    });
+    const div = document.createElement('div');
+    div.className = getClassNames(containerOuter).join(' ');
 
     div.dataset.type = passedElementType;
 
@@ -87,18 +86,18 @@ const templates: TemplatesInterface = {
   },
 
   containerInner({ classNames: { containerInner } }: TemplateOptions): HTMLDivElement {
-    return Object.assign(document.createElement('div'), {
-      className: getClassNames(containerInner).join(' '),
-    });
+    const div = document.createElement('div');
+    div.className = getClassNames(containerInner).join(' ');
+
+    return div;
   },
 
   itemList(
     { searchEnabled, classNames: { list, listSingle, listItems } }: TemplateOptions,
     isSelectOneElement: boolean,
   ): HTMLDivElement {
-    const div = Object.assign(document.createElement('div'), {
-      className: `${getClassNames(list).join(' ')} ${isSelectOneElement ? getClassNames(listSingle).join(' ') : getClassNames(listItems).join(' ')}`,
-    });
+    const div = document.createElement('div');
+    div.className = `${getClassNames(list).join(' ')} ${isSelectOneElement ? getClassNames(listSingle).join(' ') : getClassNames(listItems).join(' ')}`;
 
     if (this._isSelectElement && searchEnabled) {
       div.setAttribute('role', 'listbox');
@@ -111,10 +110,11 @@ const templates: TemplatesInterface = {
     { allowHTML, classNames: { placeholder } }: TemplateOptions,
     value: StringPreEscaped | string,
   ): HTMLDivElement {
-    return Object.assign(document.createElement('div'), {
-      className: getClassNames(placeholder).join(' '),
-      innerHTML: escapeForTemplate(allowHTML, value),
-    });
+    const div = document.createElement('div');
+    div.className = getClassNames(placeholder).join(' ');
+    div.innerHTML = escapeForTemplate(allowHTML, value);
+
+    return div;
   },
 
   item(
@@ -139,26 +139,22 @@ const templates: TemplatesInterface = {
     removeItemButton: boolean,
   ): HTMLDivElement {
     const rawValue = unwrapStringForRaw(value);
-    const div = Object.assign(document.createElement('div'), {
-      className: getClassNames(item).join(' '),
-    });
+    const div = document.createElement('div');
+    div.className = getClassNames(item).join(' ');
 
     if (labelClass) {
-      const spanLabel = Object.assign(document.createElement('span'), {
-        innerHTML: escapeForTemplate(allowHTML, label),
-        className: getClassNames(labelClass).join(' '),
-      });
+      const spanLabel = document.createElement('span');
+      spanLabel.innerHTML = escapeForTemplate(allowHTML, label);
+      spanLabel.className = getClassNames(labelClass).join(' ');
       div.appendChild(spanLabel);
     } else {
       div.innerHTML = escapeForTemplate(allowHTML, label);
     }
 
     const { dataset } = div;
-    Object.assign(dataset, {
-      item: '',
-      id,
-      value: rawValue,
-    });
+    dataset.item = '';
+    dataset.id = id as unknown as string;
+    dataset.value = rawValue;
 
     if (labelClass) {
       dataset.labelClass = getClassNames(labelClass).join(' ');
@@ -190,13 +186,12 @@ const templates: TemplatesInterface = {
       }
       dataset.deletable = '';
 
-      const REMOVE_ITEM_ICON = resolveNoticeFunction(removeItemIconText, value);
+      const removeButton = document.createElement('button');
+      removeButton.type = 'button';
+      removeButton.className = getClassNames(button).join(' ');
+      removeButton.innerHTML = resolveNoticeFunction(removeItemIconText, value);
+
       const REMOVE_ITEM_LABEL = resolveNoticeFunction(removeItemLabelText, value);
-      const removeButton = Object.assign(document.createElement('button'), {
-        type: 'button',
-        className: getClassNames(button).join(' '),
-        innerHTML: REMOVE_ITEM_ICON,
-      });
       if (REMOVE_ITEM_LABEL) {
         removeButton.setAttribute('aria-label', REMOVE_ITEM_LABEL);
       }
@@ -212,9 +207,8 @@ const templates: TemplatesInterface = {
   },
 
   choiceList({ classNames: { list } }: TemplateOptions, isSelectOneElement: boolean): HTMLDivElement {
-    const div = Object.assign(document.createElement('div'), {
-      className: getClassNames(list).join(' '),
-    });
+    const div = document.createElement('div');
+    div.className = getClassNames(list).join(' ');
 
     if (!isSelectOneElement) {
       div.setAttribute('aria-multiselectable', 'true');
@@ -229,28 +223,24 @@ const templates: TemplatesInterface = {
     { id, label, disabled }: GroupFull,
   ): HTMLDivElement {
     const rawLabel = unwrapStringForRaw(label);
-    const div = Object.assign(document.createElement('div'), {
-      className: `${getClassNames(group).join(' ')} ${disabled ? getClassNames(itemDisabled).join(' ') : ''}`,
-    });
+    const div = document.createElement('div');
+    div.className = `${getClassNames(group).join(' ')} ${disabled ? getClassNames(itemDisabled).join(' ') : ''}`;
 
     div.setAttribute('role', 'group');
 
-    Object.assign(div.dataset, {
-      group: '',
-      id,
-      value: rawLabel,
-    });
+    const { dataset } = div;
+    dataset.group = '';
+    dataset.id = id as unknown as string;
+    dataset.value = rawLabel;
 
     if (disabled) {
       div.setAttribute('aria-disabled', 'true');
     }
 
-    div.appendChild(
-      Object.assign(document.createElement('div'), {
-        className: getClassNames(groupHeading).join(' '),
-        innerHTML: escapeForTemplate(allowHTML, label),
-      }),
-    );
+    const heading = document.createElement('div');
+    heading.className = getClassNames(groupHeading).join(' ');
+    heading.innerHTML = escapeForTemplate(allowHTML, label);
+    div.appendChild(heading);
 
     return div;
   },
@@ -275,17 +265,15 @@ const templates: TemplatesInterface = {
     selectText: string,
   ): HTMLDivElement {
     const rawValue = unwrapStringForRaw(value);
-    const div = Object.assign(document.createElement('div'), {
-      id: elementId,
-      className: `${getClassNames(item).join(' ')} ${getClassNames(itemChoice).join(' ')}`,
-    });
+    const div = document.createElement('div');
+    div.id = elementId as string;
+    div.className = `${getClassNames(item).join(' ')} ${getClassNames(itemChoice).join(' ')}`;
 
     let describedBy: HTMLElement = div;
     if (labelClass) {
-      const spanLabel = Object.assign(document.createElement('span'), {
-        innerHTML: escapeForTemplate(allowHTML, label),
-        className: getClassNames(labelClass).join(' '),
-      });
+      const spanLabel = document.createElement('span');
+      spanLabel.innerHTML = escapeForTemplate(allowHTML, label);
+      spanLabel.className = getClassNames(labelClass).join(' ');
       describedBy = spanLabel;
       div.appendChild(spanLabel);
     } else {
@@ -295,10 +283,9 @@ const templates: TemplatesInterface = {
     if (labelDescription) {
       const descId = `${elementId}-description`;
       describedBy.setAttribute('aria-describedby', descId);
-      const spanDesc = Object.assign(document.createElement('span'), {
-        innerHTML: escapeForTemplate(allowHTML, labelDescription),
-        id: descId,
-      });
+      const spanDesc = document.createElement('span');
+      spanDesc.innerHTML = escapeForTemplate(allowHTML, labelDescription);
+      spanDesc.id = descId;
       spanDesc.classList.add(...getClassNames(description));
       div.appendChild(spanDesc);
     }
@@ -318,12 +305,11 @@ const templates: TemplatesInterface = {
       dataset.groupId = `${groupId}`;
     }
 
-    Object.assign(dataset, {
-      choice: '',
-      id,
-      value: rawValue,
-      selectText,
-    });
+    dataset.choice = '';
+    dataset.id = id as unknown as string;
+    dataset.value = rawValue;
+    dataset.selectText = selectText;
+
     if (labelClass) {
       dataset.labelClass = getClassNames(labelClass).join(' ');
     }
@@ -347,13 +333,12 @@ const templates: TemplatesInterface = {
     { classNames: { input, inputCloned }, labelId }: TemplateOptions,
     placeholderValue: string | null,
   ): HTMLInputElement {
-    const inp = Object.assign(document.createElement('input'), {
-      type: 'search',
-      className: `${getClassNames(input).join(' ')} ${getClassNames(inputCloned).join(' ')}`,
-      autocomplete: 'off',
-      autocapitalize: 'off',
-      spellcheck: false,
-    });
+    const inp = document.createElement('input');
+    inp.type = 'search';
+    inp.className = `${getClassNames(input).join(' ')} ${getClassNames(inputCloned).join(' ')}`;
+    inp.autocomplete = 'off';
+    inp.autocapitalize = 'off';
+    inp.spellcheck = false;
 
     inp.setAttribute('role', 'textbox');
     inp.setAttribute('aria-autocomplete', 'list');
@@ -378,7 +363,7 @@ const templates: TemplatesInterface = {
 
   notice(
     { classNames: { item, itemChoice, addChoice, noResults, noChoices, notice: noticeItem } }: TemplateOptions,
-    innerText: string,
+    innerHTML: string,
     type: NoticeType = NoticeTypes.generic,
   ): HTMLDivElement {
     const classes = [...getClassNames(item), ...getClassNames(itemChoice), ...getClassNames(noticeItem)];
@@ -396,10 +381,9 @@ const templates: TemplatesInterface = {
         break;
     }
 
-    const notice = Object.assign(document.createElement('div'), {
-      innerHTML: innerText,
-      className: classes.join(' '),
-    });
+    const notice = document.createElement('div');
+    notice.innerHTML = innerHTML;
+    notice.className = classes.join(' ');
 
     if (type === NoticeTypes.addChoice) {
       notice.dataset.choiceSelectable = '';
