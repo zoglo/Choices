@@ -14,9 +14,11 @@ jobs:
         browser: [chromium, firefox, webkit]
         exclude:
           - os: windows-latest
-            browser: [webkit, firefox]
+            browser: webkit
+          - os: windows-latest
+            browser: firefox
           - os: macos-latest
-            browser: [firefox]
+            browser: firefox
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4
