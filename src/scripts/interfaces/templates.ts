@@ -26,9 +26,7 @@ export type NoticeType = (typeof NoticeTypes)[keyof typeof NoticeTypes];
 
 export interface Templates {
   containerOuter(
-    {
-      classNames: { containerOuter },
-    }: TemplateOptions,
+    options: TemplateOptions,
     dir: HTMLElement['dir'],
     isSelectElement: boolean,
     isSelectOneElement: boolean,
@@ -39,72 +37,23 @@ export interface Templates {
 
   containerInner({ classNames: { containerInner } }: TemplateOptions): HTMLDivElement;
 
-  itemList(
-    {
-      classNames: { list, listSingle, listItems },
-    }: TemplateOptions,
-    isSelectOneElement: boolean,
-  ): HTMLDivElement;
+  itemList(options: TemplateOptions, isSelectOneElement: boolean): HTMLDivElement;
 
-  placeholder(
-    {
-      allowHTML,
-      classNames: { placeholder },
-    }: TemplateOptions,
-    value: StringPreEscaped | string,
-  ): HTMLDivElement;
+  placeholder(options: TemplateOptions, value: StringPreEscaped | string): HTMLDivElement;
 
-  item(
-    {
-      allowHTML,
-      removeItemButtonAlignLeft,
-      classNames: { item, button, highlightedState, itemSelectable, placeholder },
-    }: TemplateOptions,
-    choice: ChoiceFull,
-    removeItemButton: boolean,
-  ): HTMLDivElement;
+  item(options: TemplateOptions, choice: ChoiceFull, removeItemButton: boolean): HTMLDivElement;
 
-  choiceList(
-    {
-      classNames: { list },
-    }: TemplateOptions,
-    isSelectOneElement: boolean,
-  ): HTMLDivElement;
+  choiceList(options: TemplateOptions, isSelectOneElement: boolean): HTMLDivElement;
 
-  choiceGroup(
-    {
-      allowHTML,
-      classNames: { group, groupHeading, itemDisabled },
-    }: TemplateOptions,
-    { id, label, disabled }: GroupFull,
-  ): HTMLDivElement;
+  choiceGroup(options: TemplateOptions, group: GroupFull): HTMLDivElement;
 
-  choice(
-    {
-      allowHTML,
-      classNames: { item, itemChoice, itemSelectable, selectedState, itemDisabled, description, placeholder },
-    }: TemplateOptions,
-    choice: ChoiceFull,
-    selectText: string,
-  ): HTMLDivElement;
+  choice(options: TemplateOptions, choice: ChoiceFull, selectText: string): HTMLDivElement;
 
-  input(
-    {
-      classNames: { input, inputCloned },
-    }: TemplateOptions,
-    placeholderValue: string | null,
-  ): HTMLInputElement;
+  input(options: TemplateOptions, placeholderValue: string | null): HTMLInputElement;
 
-  dropdown({ classNames: { list, listDropdown } }: TemplateOptions): HTMLDivElement;
+  dropdown(options: TemplateOptions): HTMLDivElement;
 
-  notice(
-    {
-      allowHTML,
-      classNames: { item, itemChoice, addChoice, noResults, noChoices },
-    }: TemplateOptions,
-    innerText: string,
-    type: NoticeType,
-  ): HTMLDivElement;
+  notice(options: TemplateOptions, innerText: string, type: NoticeType): HTMLDivElement;
 
   option(choice: ChoiceFull): HTMLOptionElement;
 }
