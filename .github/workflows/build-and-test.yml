@@ -9,12 +9,12 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 1
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
       - name: Build and run all tests
         run: |
           npm ci
@@ -23,13 +23,13 @@ jobs:
           npm run test:unit:coverage
           npm run test:e2e
         env:
-          CI: true
+          #CI: true
           CI_REPO_NAME: ${{ github.event.repository.name }}
           CI_REPO_OWNER: ${{ github.event.organization.login }}
           CI_COMMIT_SHA: ${{ github.sha }}
           GIT_COMMIT: ${{ github.sha }}
           CI_BRANCH: ${{ github.head_ref }}
-          BUNDLESIZE_GITHUB_TOKEN: ${{secrets.BUNDLESIZE_GITHUB_TOKEN}}
+          #BUNDLESIZE_GITHUB_TOKEN: ${{secrets.BUNDLESIZE_GITHUB_TOKEN}}
           FORCE_COLOR: 2
           HUSKY_SKIP_INSTALL: true
       ##
