@@ -8,7 +8,7 @@ import { ChoiceFull } from './interfaces/choice-full';
 import { GroupFull } from './interfaces/group-full';
 import { PassedElementType } from './interfaces/passed-element-type';
 import { StringPreEscaped } from './interfaces/string-pre-escaped';
-import { getClassNames, unwrapStringForRaw, resolveNoticeFunction, escapeForTemplate } from './lib/utils';
+import { getClassNames, unwrapStringForRaw, resolveNoticeFunction, setElementHtml } from './lib/utils';
 import { NoticeType, NoticeTypes, TemplateOptions, Templates as TemplatesInterface } from './interfaces/templates';
 
 const isEmptyObject = (obj: object): boolean => {
@@ -120,7 +120,7 @@ const templates: TemplatesInterface = {
   ): HTMLDivElement {
     const div = document.createElement('div');
     div.className = getClassNames(placeholder).join(' ');
-    div.innerHTML = escapeForTemplate(allowHTML, value);
+    setElementHtml(div, allowHTML, value);
 
     return div;
   },
@@ -143,11 +143,11 @@ const templates: TemplatesInterface = {
 
     if (labelClass) {
       const spanLabel = document.createElement('span');
-      spanLabel.innerHTML = escapeForTemplate(allowHTML, label);
+      setElementHtml(spanLabel, allowHTML, label);
       spanLabel.className = getClassNames(labelClass).join(' ');
       div.appendChild(spanLabel);
     } else {
-      div.innerHTML = escapeForTemplate(allowHTML, label);
+      setElementHtml(div, allowHTML, label);
     }
 
     const { dataset } = div;
@@ -181,7 +181,7 @@ const templates: TemplatesInterface = {
       const removeButton = document.createElement('button');
       removeButton.type = 'button';
       removeButton.className = getClassNames(button).join(' ');
-      removeButton.innerHTML = resolveNoticeFunction(removeItemIconText, value);
+      setElementHtml(removeButton, true, resolveNoticeFunction(removeItemIconText, value));
 
       const REMOVE_ITEM_LABEL = resolveNoticeFunction(removeItemLabelText, value);
       if (REMOVE_ITEM_LABEL) {
@@ -231,7 +231,7 @@ const templates: TemplatesInterface = {
 
     const heading = document.createElement('div');
     heading.className = getClassNames(groupHeading).join(' ');
-    heading.innerHTML = escapeForTemplate(allowHTML, label);
+    setElementHtml(heading, allowHTML, label);
     div.appendChild(heading);
 
     return div;
@@ -254,19 +254,19 @@ const templates: TemplatesInterface = {
     let describedBy: HTMLElement = div;
     if (labelClass) {
       const spanLabel = document.createElement('span');
-      spanLabel.innerHTML = escapeForTemplate(allowHTML, label);
+      setElementHtml(spanLabel, allowHTML, label);
       spanLabel.className = getClassNames(labelClass).join(' ');
       describedBy = spanLabel;
       div.appendChild(spanLabel);
     } else {
-      div.innerHTML = escapeForTemplate(allowHTML, label);
+      setElementHtml(div, allowHTML, label);
     }
 
     if (labelDescription) {
       const descId = `${elementId}-description`;
       describedBy.setAttribute('aria-describedby', descId);
       const spanDesc = document.createElement('span');
-      spanDesc.innerHTML = escapeForTemplate(allowHTML, labelDescription);
+      setElementHtml(spanDesc, allowHTML, labelDescription);
       spanDesc.id = descId;
       spanDesc.classList.add(...getClassNames(description));
       div.appendChild(spanDesc);
@@ -359,7 +359,7 @@ const templates: TemplatesInterface = {
     }
 
     const notice = document.createElement('div');
-    notice.innerHTML = innerHTML;
+    setElementHtml(notice, true, innerHTML);
     notice.className = classes.join(' ');
 
     if (type === NoticeTypes.addChoice) {

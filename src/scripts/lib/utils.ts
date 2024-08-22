@@ -138,6 +138,14 @@ export const unwrapStringForEscaped = (s?: StringUntrusted | StringPreEscaped | 
 export const escapeForTemplate = (allowHTML: boolean, s: StringUntrusted | StringPreEscaped | string): string =>
   allowHTML ? unwrapStringForEscaped(s) : (sanitise(s) as string);
 
+export const setElementHtml = (
+  el: HTMLElement,
+  allowHtml: boolean,
+  html: StringUntrusted | StringPreEscaped | string,
+): void => {
+  el.innerHTML = escapeForTemplate(allowHtml, html);
+};
+
 export const sortByAlpha = (
   { value, label = value }: Types.RecordToCompare,
   { value: value2, label: label2 = value2 }: Types.RecordToCompare,
