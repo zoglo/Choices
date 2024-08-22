@@ -444,7 +444,9 @@ class Choices {
     this._store.withTxn(() => {
       this._store.items.forEach((item) => {
         if (!item.highlighted) {
-          this.highlightItem(item);
+          this._store.dispatch(highlightItem(item, true));
+
+          this.passedElement.triggerEvent(EventType.highlightItem, this._getChoiceForOutput(item));
         }
       });
     });
@@ -456,7 +458,9 @@ class Choices {
     this._store.withTxn(() => {
       this._store.items.forEach((item) => {
         if (item.highlighted) {
-          this.unhighlightItem(item);
+          this._store.dispatch(highlightItem(item, false));
+
+          this.passedElement.triggerEvent(EventType.highlightItem, this._getChoiceForOutput(item));
         }
       });
     });
