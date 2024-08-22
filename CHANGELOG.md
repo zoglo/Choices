@@ -11,6 +11,7 @@
 ### Bug Fixes (from 10.2.0)
 * Fix edge case where aria-label could be added twice
 * Fix the page scrolls when you press 'space' on a single select input #1103
+* Update typescript definition for `removeActiveItems` to explicitly mark `excludedId` as optional #1116
 
 ### Chore
 * Reduce the number of loops over choices when rendering search results, results in more compact code.

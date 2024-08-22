@@ -1037,7 +1037,7 @@ choices.disable();
 
 **Usage:** Remove each item by a given value.
 
-### removeActiveItems(excludedId: number);
+### removeActiveItems(excludedId?: number);
 
 **Input types affected:** `text`, `select-multiple`
 

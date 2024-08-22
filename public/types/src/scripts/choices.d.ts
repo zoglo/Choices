@@ -72,7 +72,7 @@ declare class Choices {
     highlightAll(): this;
     unhighlightAll(): this;
     removeActiveItemsByValue(value: string): this;
-    removeActiveItems(excludedId: number): this;
+    removeActiveItems(excludedId?: number): this;
     removeHighlightedItems(runEvent?: boolean): this;
     showDropdown(preventInputFocus?: boolean): this;
     hideDropdown(preventInputBlur?: boolean): this;

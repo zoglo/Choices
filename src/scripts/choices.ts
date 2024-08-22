@@ -464,7 +464,7 @@ class Choices {
     return this;
   }
 
-  removeActiveItems(excludedId: number): this {
+  removeActiveItems(excludedId?: number): this {
     this._store.withTxn(() => {
       this._store.items.filter(({ id }) => id !== excludedId).forEach((item) => this._removeItem(item));
     });
