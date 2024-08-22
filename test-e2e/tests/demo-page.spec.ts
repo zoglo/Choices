@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
 import { test } from '../bundle-test';
-import { TestSuit } from '../test-suit';
+import { SelectTestSuit } from '../select-test-suit';
 // import { mkdirSync } from 'fs';
 // import path from 'path';
 
@@ -9,22 +9,22 @@ const { describe } = test;
 
 describe(`Choices`, () => {
   const testUrl = '/index.html';
-  const testId = 'reset-simple';
+  const testId = 'custom-templates';
   test.setTimeout(30000);
 
   test('screenshot', async ({ page, bundle }) => {
-    const suite = new TestSuit(page, bundle, testUrl, testId);
+    const suite = new SelectTestSuit(page, bundle, testUrl, testId);
 
     await page.routeFromHAR('./test-e2e/hars/discogs.har', {
       url: 'https://api.discogs.com/**',
       update: false, // https://playwright.dev/docs/mock#replaying-from-har
     });
 
-    await suite.start();
-
-    await page.click('label[for="choices-single-custom-templates"]');
+    await suite.startWithClick();
+    await suite.expectVisibleDropdown();
     await suite.input.press('ArrowDown');
     await suite.input.press('ArrowDown');
+    await suite.advanceClock();
 
     await expect(page).toHaveScreenshot({
       fullPage: true,
