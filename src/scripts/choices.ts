@@ -379,8 +379,6 @@ class Choices {
       this._addEventListeners();
       this.input.enable();
       containerOuter.enable();
-
-      this._render();
     }
 
     return this;
@@ -397,8 +395,6 @@ class Choices {
       this._removeEventListeners();
       this.input.disable();
       containerOuter.disable();
-
-      this._render();
     }
 
     return this;
@@ -959,7 +955,7 @@ class Choices {
   _renderItems(): void {
     const items = this._store.items || [];
     const itemList = this.itemList.element;
-    const { config } = this;
+    const { config, _isSelectOneElement: isSelectOneElement } = this;
     const fragment: DocumentFragment = document.createDocumentFragment();
 
     const itemFromList = (item: ChoiceFull): HTMLElement | null =>
@@ -978,30 +974,34 @@ class Choices {
     // new items
     items.forEach(addItemToFragment);
 
-    if (
-      this._isSelectOneElement &&
-      this._hasNonChoicePlaceholder &&
-      !fragment.childNodes.length &&
-      !itemList.hasChildNodes()
-    ) {
-      addItemToFragment(
-        mapInputToChoice<InputChoice>(
-          {
-            selected: true,
-            value: '',
-            label: this.config.placeholderValue || '',
-            active: true,
-            placeholder: true,
-          },
-          false,
-        ),
-      );
+    let addItems = !!fragment.childNodes.length;
+    if (isSelectOneElement && this._hasNonChoicePlaceholder) {
+      const existingItems = itemList.children.length;
+      if (addItems || existingItems > 1) {
+        const placeholder = itemList.querySelector<HTMLElement>(getClassNamesSelector(config.classNames.placeholder));
+        if (placeholder) {
+          placeholder.remove();
+        }
+      } else if (!existingItems) {
+        addItems = true;
+        addItemToFragment(
+          mapInputToChoice<InputChoice>(
+            {
+              selected: true,
+              value: '',
+              label: config.placeholderValue || '',
+              placeholder: true,
+            },
+            false,
+          ),
+        );
+      }
     }
 
-    if (fragment.childNodes.length) {
+    if (addItems) {
       itemList.append(fragment);
 
-      if (config.shouldSortItems && !this._isSelectOneElement) {
+      if (config.shouldSortItems && !isSelectOneElement) {
         items.sort(config.sorter);
 
         // push sorting into the DOM
@@ -1371,15 +1371,14 @@ class Choices {
   }
 
   _handleLoadingState(setLoading = true): void {
-    const { config } = this;
+    const { config, _isSelectOneElement: isSelectOneElement, itemList } = this;
 
     if (setLoading) {
       this.disable();
       this.containerOuter.addLoadingState();
-
-      if (this._isSelectOneElement) {
-        this.itemList.clear();
-        this.itemList.element.append(this._templates.placeholder(config, config.loadingText));
+      if (isSelectOneElement) {
+        itemList.clear();
+        itemList.element.append(this._templates.placeholder(config, config.loadingText));
       } else {
         this.input.placeholder = config.loadingText;
       }
@@ -1387,7 +1386,10 @@ class Choices {
       this.enable();
       this.containerOuter.removeLoadingState();
 
-      if (!this._isSelectOneElement) {
+      if (isSelectOneElement) {
+        itemList.clear();
+        this._render();
+      } else {
         this.input.placeholder = this._placeholderValue || '';
       }
     }
