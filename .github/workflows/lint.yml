@@ -4,9 +4,16 @@ on:
   pull_request:
     paths:
       - 'src/scripts/**'
+      - 'src/*.ts'
       - 'src/styles/**'
+      - 'test/**'
+      - 'test-e2e/**'
       - package-lock.json
       - '.browserslistrc'
+      - '.eslintrc.json'
+      - '.editorconfig'
+      - '.prettierrc.json'
+      - '.stylelintrc.json'
 
 jobs:
   lint:

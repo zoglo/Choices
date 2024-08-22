@@ -3,7 +3,16 @@ on:
   push:
     branches: [ main, master ]
   pull_request:
-    branches: [ main, master ]
+    paths:
+      - 'src/**'
+      - 'test-e2e/**'
+      - 'package-lock.json'
+      - '.browserslistrc'
+      - 'babel.config.json'
+      - 'public/index.html'
+      - 'public/**/index.html'
+      - '.github/workflows/browsers.yml'
+      - 'playwright.config.ts'
 jobs:
   test-e2e-playwright:
     timeout-minutes: 60
