@@ -38,6 +38,7 @@ export default class WrappedSelect extends WrappedElement<HTMLSelectElement> {
   }
 
   addOptions(choices: ChoiceFull[]): void {
+    const fragment = document.createDocumentFragment();
     choices.forEach((obj) => {
       const choice = obj;
       if (choice.element) {
@@ -45,9 +46,10 @@ export default class WrappedSelect extends WrappedElement<HTMLSelectElement> {
       }
 
       const option = this.template(choice);
-      this.element.appendChild(option);
+      fragment.appendChild(option);
       choice.element = option;
     });
+    this.element.appendChild(fragment);
   }
 
   optionsAsChoices(): (ChoiceFull | GroupFull)[] {
