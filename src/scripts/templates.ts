@@ -4,7 +4,7 @@
  * `Choices.defaults.templates` allows access to the default template methods from `callbackOnCreateTemplates`
  */
 
-import { ChoiceFull, CustomProperties } from './interfaces/choice-full';
+import { ChoiceFull } from './interfaces/choice-full';
 import { GroupFull } from './interfaces/group-full';
 import { PassedElementType } from './interfaces/passed-element-type';
 import { StringPreEscaped } from './interfaces/string-pre-escaped';
@@ -22,16 +22,24 @@ const isEmptyObject = (obj: object): boolean => {
   return true;
 };
 
-const assignCustomProperties = (el: HTMLElement, customProperties?: CustomProperties): void => {
-  if (!customProperties) {
-    return;
-  }
+const assignCustomProperties = (el: HTMLElement, choice: ChoiceFull, withCustomProperties: boolean): void => {
   const { dataset } = el;
+  const { customProperties, labelClass, labelDescription } = choice;
 
-  if (typeof customProperties === 'string') {
-    dataset.customProperties = customProperties;
-  } else if (typeof customProperties === 'object' && !isEmptyObject(customProperties)) {
-    dataset.customProperties = JSON.stringify(customProperties);
+  if (labelClass) {
+    dataset.labelClass = getClassNames(labelClass).join(' ');
+  }
+
+  if (labelDescription) {
+    dataset.labelDescription = labelDescription;
+  }
+
+  if (withCustomProperties && customProperties) {
+    if (typeof customProperties === 'string') {
+      dataset.customProperties = customProperties;
+    } else if (typeof customProperties === 'object' && !isEmptyObject(customProperties)) {
+      dataset.customProperties = JSON.stringify(customProperties);
+    }
   }
 };
 
@@ -125,19 +133,10 @@ const templates: TemplatesInterface = {
       removeItemLabelText,
       classNames: { item, button, highlightedState, itemSelectable, placeholder },
     }: TemplateOptions,
-    {
-      id,
-      value,
-      label,
-      labelClass,
-      labelDescription,
-      customProperties,
-      disabled,
-      highlighted,
-      placeholder: isPlaceholder,
-    }: ChoiceFull,
+    choice: ChoiceFull,
     removeItemButton: boolean,
   ): HTMLDivElement {
+    const { labelClass, label, disabled, value } = choice;
     const rawValue = unwrapStringForRaw(value);
     const div = document.createElement('div');
     div.className = getClassNames(item).join(' ');
@@ -153,17 +152,10 @@ const templates: TemplatesInterface = {
 
     const { dataset } = div;
     dataset.item = '';
-    dataset.id = id as unknown as string;
+    dataset.id = choice.id as unknown as string;
     dataset.value = rawValue;
 
-    if (labelClass) {
-      dataset.labelClass = getClassNames(labelClass).join(' ');
-    }
-    if (labelDescription) {
-      dataset.labelDescription = labelDescription;
-    }
-
-    assignCustomProperties(div, customProperties);
+    assignCustomProperties(div, choice, true);
 
     if (disabled || this.containerOuter.isDisabled) {
       div.setAttribute('aria-disabled', 'true');
@@ -173,12 +165,12 @@ const templates: TemplatesInterface = {
       div.setAttribute('role', 'option');
     }
 
-    if (isPlaceholder) {
+    if (choice.placeholder) {
       div.classList.add(...getClassNames(placeholder));
       dataset.placeholder = '';
     }
 
-    div.classList.add(...(highlighted ? getClassNames(highlightedState) : getClassNames(itemSelectable)));
+    div.classList.add(...(choice.highlighted ? getClassNames(highlightedState) : getClassNames(itemSelectable)));
 
     if (removeItemButton) {
       if (disabled) {
@@ -250,20 +242,10 @@ const templates: TemplatesInterface = {
       allowHTML,
       classNames: { item, itemChoice, itemSelectable, selectedState, itemDisabled, description, placeholder },
     }: TemplateOptions,
-    {
-      id,
-      value,
-      label,
-      groupId,
-      elementId,
-      labelClass,
-      labelDescription,
-      disabled: isDisabled,
-      selected: isSelected,
-      placeholder: isPlaceholder,
-    }: ChoiceFull,
+    choice: ChoiceFull,
     selectText: string,
   ): HTMLDivElement {
+    const { value, elementId, groupId, label, labelClass, labelDescription } = choice;
     const rawValue = unwrapStringForRaw(value);
     const div = document.createElement('div');
     div.id = elementId as string;
@@ -290,11 +272,11 @@ const templates: TemplatesInterface = {
       div.appendChild(spanDesc);
     }
 
-    if (isSelected) {
+    if (choice.selected) {
       div.classList.add(...getClassNames(selectedState));
     }
 
-    if (isPlaceholder) {
+    if (choice.placeholder) {
       div.classList.add(...getClassNames(placeholder));
     }
 
@@ -306,18 +288,13 @@ const templates: TemplatesInterface = {
     }
 
     dataset.choice = '';
-    dataset.id = id as unknown as string;
+    dataset.id = choice.id as unknown as string;
     dataset.value = rawValue;
     dataset.selectText = selectText;
 
-    if (labelClass) {
-      dataset.labelClass = getClassNames(labelClass).join(' ');
-    }
-    if (labelDescription) {
-      dataset.labelDescription = labelDescription;
-    }
+    assignCustomProperties(div, choice, false);
 
-    if (isDisabled) {
+    if (choice.disabled) {
       div.classList.add(...getClassNames(itemDisabled));
       dataset.choiceDisabled = '';
       div.setAttribute('aria-disabled', 'true');
@@ -386,8 +363,9 @@ const templates: TemplatesInterface = {
     notice.className = classes.join(' ');
 
     if (type === NoticeTypes.addChoice) {
-      notice.dataset.choiceSelectable = '';
-      notice.dataset.choice = '';
+      const { dataset } = notice;
+      dataset.choiceSelectable = '';
+      dataset.choice = '';
     }
 
     return notice;
@@ -398,15 +376,7 @@ const templates: TemplatesInterface = {
     const labelValue = unwrapStringForRaw(choice.label);
 
     const opt = new Option(labelValue, choice.value, false, choice.selected);
-    const { labelClass, labelDescription } = choice;
-    if (labelClass) {
-      opt.dataset.labelClass = getClassNames(labelClass).join(' ');
-    }
-    if (labelDescription) {
-      opt.dataset.labelDescription = labelDescription;
-    }
-
-    assignCustomProperties(opt, choice.customProperties);
+    assignCustomProperties(opt, choice, true);
 
     opt.disabled = choice.disabled;
     if (choice.selected) {
