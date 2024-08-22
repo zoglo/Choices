@@ -7,7 +7,7 @@ export interface ChoiceFull {
   id: number;
   highlighted: boolean;
   element?: HTMLOptionElement | HTMLOptGroupElement;
-  itemEl?: HTMLDivElement;
+  itemEl?: HTMLElement;
   labelClass?: Array<string>;
   labelDescription?: string;
   customProperties?: CustomProperties;

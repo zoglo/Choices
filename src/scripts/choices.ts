@@ -962,11 +962,14 @@ class Choices {
     const { config } = this;
     const fragment: DocumentFragment = document.createDocumentFragment();
 
+    const itemFromList = (item: ChoiceFull): HTMLElement | null =>
+      itemList.querySelector<HTMLElement>(`[data-item][data-id="${item.id}"]`);
+
     const addItemToFragment = (item: ChoiceFull): void => {
       if (item.itemEl) {
         return;
       }
-      const el = this._templates.item(config, item, config.removeItemButton);
+      const el = itemFromList(item) || this._templates.item(config, item, config.removeItemButton);
       item.itemEl = el;
       fragment.appendChild(el);
     };
@@ -1001,8 +1004,8 @@ class Choices {
         items.sort(config.sorter);
 
         // push sorting into the DOM
-        items.forEach((choice) => {
-          const el = itemList.querySelector(`[data-item][data-id="${choice.id}"]`);
+        items.forEach((item) => {
+          const el = itemFromList(item);
           if (el) {
             el.remove();
             fragment.append(el);
