@@ -1,12 +1,14 @@
-export const enum EventType {
-  showDropdown = 'showDropdown',
-  hideDropdown = 'hideDropdown',
-  change = 'change',
-  choice = 'choice',
-  search = 'search',
-  addItem = 'addItem',
-  removeItem = 'removeItem',
-  highlightItem = 'highlightItem',
-  highlightChoice = 'highlightChoice',
-  unhighlightItem = 'unhighlightItem',
-}
+export const EventType = {
+  showDropdown: 'showDropdown',
+  hideDropdown: 'hideDropdown',
+  change: 'change',
+  choice: 'choice',
+  search: 'search',
+  addItem: 'addItem',
+  removeItem: 'removeItem',
+  highlightItem: 'highlightItem',
+  highlightChoice: 'highlightChoice',
+  unhighlightItem: 'unhighlightItem',
+} as const;
+
+export type EventTypes = (typeof EventType)[keyof typeof EventType];

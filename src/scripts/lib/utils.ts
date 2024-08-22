@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { EventType } from '../interfaces/event-type';
+import { EventTypes } from '../interfaces/event-type';
 import { StringUntrusted } from '../interfaces/string-untrusted';
 import { StringPreEscaped } from '../interfaces/string-pre-escaped';
 import { ChoiceFull } from '../interfaces/choice-full';
@@ -164,7 +164,7 @@ export const sortByRank = (a: Pick<ChoiceFull, 'rank'>, b: Pick<ChoiceFull, 'ran
   return a.rank - b.rank;
 };
 
-export const dispatchEvent = (element: HTMLElement, type: EventType, customArgs: object | null = null): boolean => {
+export const dispatchEvent = (element: HTMLElement, type: EventTypes, customArgs: object | null = null): boolean => {
   const event = new CustomEvent(type, {
     detail: customArgs,
     bubbles: true,
