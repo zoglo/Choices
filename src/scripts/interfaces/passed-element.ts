@@ -60,7 +60,7 @@ export interface EventMap {
   change: CustomEvent<{ value: string }>;
 
   /**
-   * Triggered when a user types into an input to search choices.
+   * Triggered when a user types into an input to search choices. When a search is ended, a search event with an empty value with no resultCount is triggered.
    *
    * **Input types affected:** select-one, select-multiple
    *

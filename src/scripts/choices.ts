@@ -1492,6 +1492,11 @@ class Choices {
     this._isSearching = false;
     if (wasSearching) {
       this._store.dispatch(activateChoices(true));
+
+      this.passedElement.triggerEvent(EventType.search, {
+        value: '',
+        resultCount: 0,
+      });
     }
   }
 

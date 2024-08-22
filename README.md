@@ -937,7 +937,7 @@ example.passedElement.element.addEventListener(
 
 ### change
 
-**Payload:** `value`
+**Payload:** `value: string`
 
 **Input types affected:** `text`, `select-one`, `select-multiple`
 
@@ -945,11 +945,11 @@ example.passedElement.element.addEventListener(
 
 ### search
 
-**Payload:** `value`, `resultCount`
+**Payload:** `value: string`, `resultCount: number`
 
 **Input types affected:** `select-one`, `select-multiple`
 
-**Usage:** Triggered when a user types into an input to search choices.
+**Usage:** Triggered when a user types into an input to search choices. When a search is ended, a search event with an empty value with no resultCount is triggered.
 
 ### showDropdown
 
