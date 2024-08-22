@@ -5,9 +5,18 @@ import { ActionType } from '../interfaces';
 import { StateUpdate } from '../interfaces/store';
 import { isHtmlSelectElement } from '../lib/html-guard-statements';
 import { SELECT_ONE_TYPE } from '../constants';
+import { ChoiceFull } from '../interfaces/choice-full';
 
 type ActionTypes = ChoiceActions | ItemActions;
 type StateType = State['items'];
+
+const removeItem = (item: ChoiceFull): void => {
+  const { itemEl } = item;
+  if (itemEl) {
+    itemEl.remove();
+    item.itemEl = undefined;
+  }
+};
 
 export default function items(s: StateType, action: ActionTypes): StateUpdate<StateType> {
   let state = s;
@@ -43,12 +52,16 @@ export default function items(s: StateType, action: ActionTypes): StateUpdate<St
           select.value = '';
         }
       }
+      // this is mixing concerns, but this is *so much faster*
+      removeItem(item);
       state = state.filter((choice) => choice.id !== item.id);
       break;
     }
 
     case ActionType.REMOVE_CHOICE: {
-      state = state.filter((item) => item.id !== action.choice.id);
+      const { choice } = action;
+      state = state.filter((item) => item.id !== choice.id);
+      removeItem(choice);
       break;
     }
 

@@ -958,15 +958,64 @@ class Choices {
 
   _renderItems(): void {
     const items = this._store.items || [];
-    this.itemList.clear();
+    const itemList = this.itemList.element;
+    const { config } = this;
+    const fragment: DocumentFragment = document.createDocumentFragment();
 
-    // Create a fragment to store our list items
-    // (so we don't have to update the DOM for each item)
-    const itemListFragment = this._createItemsFragment(items);
+    const addItemToFragment = (item: ChoiceFull): void => {
+      if (item.itemEl) {
+        return;
+      }
+      const el = this._templates.item(config, item, config.removeItemButton);
+      item.itemEl = el;
+      fragment.appendChild(el);
+    };
 
-    // If we have items to add, append them
-    if (itemListFragment.childNodes.length) {
-      this.itemList.element.append(itemListFragment);
+    // new items
+    items.forEach(addItemToFragment);
+
+    if (
+      this._isSelectOneElement &&
+      this._hasNonChoicePlaceholder &&
+      !fragment.childNodes.length &&
+      !itemList.hasChildNodes()
+    ) {
+      addItemToFragment(
+        mapInputToChoice<InputChoice>(
+          {
+            selected: true,
+            value: '',
+            label: this.config.placeholderValue || '',
+            active: true,
+            placeholder: true,
+          },
+          false,
+        ),
+      );
+    }
+
+    if (fragment.childNodes.length) {
+      itemList.append(fragment);
+
+      if (config.shouldSortItems && !this._isSelectOneElement) {
+        items.sort(config.sorter);
+
+        // push sorting into the DOM
+        items.forEach((choice) => {
+          const el = itemList.querySelector(`[data-item][data-id="${choice.id}"]`);
+          if (el) {
+            el.remove();
+            fragment.append(el);
+          }
+        });
+
+        itemList.append(fragment);
+      }
+    }
+
+    if (this._isTextElement) {
+      // Update the value of the hidden input
+      this.passedElement.value = items.map(({ value }) => value).join(config.delimiter);
     }
   }
 
@@ -1085,52 +1134,6 @@ class Choices {
 
       return index < choiceLimit;
     });
-
-    return fragment;
-  }
-
-  _createItemsFragment(
-    items: InputChoice[],
-    fragment: DocumentFragment = document.createDocumentFragment(),
-  ): DocumentFragment {
-    // Create fragment to add elements to
-    const { config } = this;
-    const { shouldSortItems, sorter, removeItemButton, delimiter } = config;
-
-    // If sorting is enabled, filter items
-    if (shouldSortItems && !this._isSelectOneElement) {
-      items.sort(sorter);
-    }
-
-    if (this._isTextElement) {
-      // Update the value of the hidden input
-      this.passedElement.value = items.map(({ value }) => value).join(delimiter);
-    }
-
-    const addItemToFragment = (item: ChoiceFull): void => {
-      // Create new list element
-      const listItem = this._templates.item(config, item, removeItemButton);
-      // Append it to list
-      fragment.appendChild(listItem);
-    };
-
-    // Add each list item to list
-    items.forEach(addItemToFragment);
-
-    if (this._isSelectOneElement && this._hasNonChoicePlaceholder && !items.length) {
-      addItemToFragment(
-        mapInputToChoice<InputChoice>(
-          {
-            selected: true,
-            value: '',
-            label: this.config.placeholderValue || '',
-            active: true,
-            placeholder: true,
-          },
-          false,
-        ),
-      );
-    }
 
     return fragment;
   }
