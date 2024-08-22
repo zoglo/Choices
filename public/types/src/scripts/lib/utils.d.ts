@@ -7,7 +7,6 @@ export declare const generateId: (element: HTMLInputElement | HTMLSelectElement,
 export declare const getAdjacentEl: (startEl: HTMLElement, selector: string, direction?: number) => HTMLElement | null;
 export declare const isScrolledIntoView: (element: HTMLElement, parent: HTMLElement, direction?: number) => boolean;
 export declare const sanitise: <T>(value: T | StringUntrusted | StringPreEscaped | string) => T | string;
-export declare const canUseDom: boolean;
 export declare const strToEl: (str: string) => Element;
 export declare const resolveNoticeFunction: (fn: Types.NoticeStringFunction | string, value: string) => string;
 export declare const resolveStringFunction: (fn: Types.StringFunction | string) => string;

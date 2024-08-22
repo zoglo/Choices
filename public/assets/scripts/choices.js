@@ -576,9 +576,6 @@
                 this.element.append(node);
             }
         };
-        List.prototype.append = function (node) {
-            this.element.appendChild(node);
-        };
         List.prototype.scrollToTop = function () {
             this.element.scrollTop = 0;
         };
@@ -810,15 +807,17 @@
         });
         WrappedSelect.prototype.addOptions = function (choices) {
             var _this = this;
+            var fragment = document.createDocumentFragment();
             choices.forEach(function (obj) {
                 var choice = obj;
                 if (choice.element) {
                     return;
                 }
                 var option = _this.template(choice);
-                _this.element.appendChild(option);
+                fragment.appendChild(option);
                 choice.element = option;
             });
+            this.element.appendChild(fragment);
         };
         WrappedSelect.prototype.optionsAsChoices = function () {
             var _this = this;
@@ -2997,9 +2996,8 @@
     var templates = {
         containerOuter: function (_a, dir, isSelectElement, isSelectOneElement, searchEnabled, passedElementType, labelId) {
             var containerOuter = _a.classNames.containerOuter;
-            var div = Object.assign(document.createElement('div'), {
-                className: getClassNames(containerOuter).join(' '),
-            });
+            var div = document.createElement('div');
+            div.className = getClassNames(containerOuter).join(' ');
             div.dataset.type = passedElementType;
             if (dir) {
                 div.dir = dir;
@@ -3025,15 +3023,14 @@
         },
         containerInner: function (_a) {
             var containerInner = _a.classNames.containerInner;
-            return Object.assign(document.createElement('div'), {
-                className: getClassNames(containerInner).join(' '),
-            });
+            var div = document.createElement('div');
+            div.className = getClassNames(containerInner).join(' ');
+            return div;
         },
         itemList: function (_a, isSelectOneElement) {
             var searchEnabled = _a.searchEnabled, _b = _a.classNames, list = _b.list, listSingle = _b.listSingle, listItems = _b.listItems;
-            var div = Object.assign(document.createElement('div'), {
-                className: "".concat(getClassNames(list).join(' '), " ").concat(isSelectOneElement ? getClassNames(listSingle).join(' ') : getClassNames(listItems).join(' ')),
-            });
+            var div = document.createElement('div');
+            div.className = "".concat(getClassNames(list).join(' '), " ").concat(isSelectOneElement ? getClassNames(listSingle).join(' ') : getClassNames(listItems).join(' '));
             if (this._isSelectElement && searchEnabled) {
                 div.setAttribute('role', 'listbox');
             }
@@ -3041,35 +3038,31 @@
         },
         placeholder: function (_a, value) {
             var allowHTML = _a.allowHTML, placeholder = _a.classNames.placeholder;
-            return Object.assign(document.createElement('div'), {
-                className: getClassNames(placeholder).join(' '),
-                innerHTML: escapeForTemplate(allowHTML, value),
-            });
+            var div = document.createElement('div');
+            div.className = getClassNames(placeholder).join(' ');
+            div.innerHTML = escapeForTemplate(allowHTML, value);
+            return div;
         },
         item: function (_a, _b, removeItemButton) {
             var _c, _d, _e;
             var allowHTML = _a.allowHTML, removeItemButtonAlignLeft = _a.removeItemButtonAlignLeft, removeItemIconText = _a.removeItemIconText, removeItemLabelText = _a.removeItemLabelText, _f = _a.classNames, item = _f.item, button = _f.button, highlightedState = _f.highlightedState, itemSelectable = _f.itemSelectable, placeholder = _f.placeholder;
             var id = _b.id, value = _b.value, label = _b.label, labelClass = _b.labelClass, labelDescription = _b.labelDescription, customProperties = _b.customProperties, disabled = _b.disabled, highlighted = _b.highlighted, isPlaceholder = _b.placeholder;
             var rawValue = unwrapStringForRaw(value);
-            var div = Object.assign(document.createElement('div'), {
-                className: getClassNames(item).join(' '),
-            });
+            var div = document.createElement('div');
+            div.className = getClassNames(item).join(' ');
             if (labelClass) {
-                var spanLabel = Object.assign(document.createElement('span'), {
-                    innerHTML: escapeForTemplate(allowHTML, label),
-                    className: getClassNames(labelClass).join(' '),
-                });
+                var spanLabel = document.createElement('span');
+                spanLabel.innerHTML = escapeForTemplate(allowHTML, label);
+                spanLabel.className = getClassNames(labelClass).join(' ');
                 div.appendChild(spanLabel);
             }
             else {
                 div.innerHTML = escapeForTemplate(allowHTML, label);
             }
             var dataset = div.dataset;
-            Object.assign(dataset, {
-                item: '',
-                id: id,
-                value: rawValue,
-            });
+            dataset.item = '';
+            dataset.id = id;
+            dataset.value = rawValue;
             if (labelClass) {
                 dataset.labelClass = getClassNames(labelClass).join(' ');
             }
@@ -3094,13 +3087,11 @@
                     (_e = div.classList).remove.apply(_e, getClassNames(itemSelectable));
                 }
                 dataset.deletable = '';
-                var REMOVE_ITEM_ICON = resolveNoticeFunction(removeItemIconText, value);
+                var removeButton = document.createElement('button');
+                removeButton.type = 'button';
+                removeButton.className = getClassNames(button).join(' ');
+                removeButton.innerHTML = resolveNoticeFunction(removeItemIconText, value);
                 var REMOVE_ITEM_LABEL = resolveNoticeFunction(removeItemLabelText, value);
-                var removeButton = Object.assign(document.createElement('button'), {
-                    type: 'button',
-                    className: getClassNames(button).join(' '),
-                    innerHTML: REMOVE_ITEM_ICON,
-                });
                 if (REMOVE_ITEM_LABEL) {
                     removeButton.setAttribute('aria-label', REMOVE_ITEM_LABEL);
                 }
@@ -3116,9 +3107,8 @@
         },
         choiceList: function (_a, isSelectOneElement) {
             var list = _a.classNames.list;
-            var div = Object.assign(document.createElement('div'), {
-                className: getClassNames(list).join(' '),
-            });
+            var div = document.createElement('div');
+            div.className = getClassNames(list).join(' ');
             if (!isSelectOneElement) {
                 div.setAttribute('aria-multiselectable', 'true');
             }
@@ -3129,22 +3119,20 @@
             var allowHTML = _a.allowHTML, _c = _a.classNames, group = _c.group, groupHeading = _c.groupHeading, itemDisabled = _c.itemDisabled;
             var id = _b.id, label = _b.label, disabled = _b.disabled;
             var rawLabel = unwrapStringForRaw(label);
-            var div = Object.assign(document.createElement('div'), {
-                className: "".concat(getClassNames(group).join(' '), " ").concat(disabled ? getClassNames(itemDisabled).join(' ') : ''),
-            });
+            var div = document.createElement('div');
+            div.className = "".concat(getClassNames(group).join(' '), " ").concat(disabled ? getClassNames(itemDisabled).join(' ') : '');
             div.setAttribute('role', 'group');
-            Object.assign(div.dataset, {
-                group: '',
-                id: id,
-                value: rawLabel,
-            });
+            var dataset = div.dataset;
+            dataset.group = '';
+            dataset.id = id;
+            dataset.value = rawLabel;
             if (disabled) {
                 div.setAttribute('aria-disabled', 'true');
             }
-            div.appendChild(Object.assign(document.createElement('div'), {
-                className: getClassNames(groupHeading).join(' '),
-                innerHTML: escapeForTemplate(allowHTML, label),
-            }));
+            var heading = document.createElement('div');
+            heading.className = getClassNames(groupHeading).join(' ');
+            heading.innerHTML = escapeForTemplate(allowHTML, label);
+            div.appendChild(heading);
             return div;
         },
         choice: function (_a, _b, selectText) {
@@ -3152,16 +3140,14 @@
             var allowHTML = _a.allowHTML, _h = _a.classNames, item = _h.item, itemChoice = _h.itemChoice, itemSelectable = _h.itemSelectable, selectedState = _h.selectedState, itemDisabled = _h.itemDisabled, description = _h.description, placeholder = _h.placeholder;
             var id = _b.id, value = _b.value, label = _b.label, groupId = _b.groupId, elementId = _b.elementId, labelClass = _b.labelClass, labelDescription = _b.labelDescription, isDisabled = _b.disabled, isSelected = _b.selected, isPlaceholder = _b.placeholder;
             var rawValue = unwrapStringForRaw(value);
-            var div = Object.assign(document.createElement('div'), {
-                id: elementId,
-                className: "".concat(getClassNames(item).join(' '), " ").concat(getClassNames(itemChoice).join(' ')),
-            });
+            var div = document.createElement('div');
+            div.id = elementId;
+            div.className = "".concat(getClassNames(item).join(' '), " ").concat(getClassNames(itemChoice).join(' '));
             var describedBy = div;
             if (labelClass) {
-                var spanLabel = Object.assign(document.createElement('span'), {
-                    innerHTML: escapeForTemplate(allowHTML, label),
-                    className: getClassNames(labelClass).join(' '),
-                });
+                var spanLabel = document.createElement('span');
+                spanLabel.innerHTML = escapeForTemplate(allowHTML, label);
+                spanLabel.className = getClassNames(labelClass).join(' ');
                 describedBy = spanLabel;
                 div.appendChild(spanLabel);
             }
@@ -3171,10 +3157,9 @@
             if (labelDescription) {
                 var descId = "".concat(elementId, "-description");
                 describedBy.setAttribute('aria-describedby', descId);
-                var spanDesc = Object.assign(document.createElement('span'), {
-                    innerHTML: escapeForTemplate(allowHTML, labelDescription),
-                    id: descId,
-                });
+                var spanDesc = document.createElement('span');
+                spanDesc.innerHTML = escapeForTemplate(allowHTML, labelDescription);
+                spanDesc.id = descId;
                 (_c = spanDesc.classList).add.apply(_c, getClassNames(description));
                 div.appendChild(spanDesc);
             }
@@ -3190,12 +3175,10 @@
             if (showGroupId) {
                 dataset.groupId = "".concat(groupId);
             }
-            Object.assign(dataset, {
-                choice: '',
-                id: id,
-                value: rawValue,
-                selectText: selectText,
-            });
+            dataset.choice = '';
+            dataset.id = id;
+            dataset.value = rawValue;
+            dataset.selectText = selectText;
             if (labelClass) {
                 dataset.labelClass = getClassNames(labelClass).join(' ');
             }
@@ -3215,13 +3198,12 @@
         },
         input: function (_a, placeholderValue) {
             var _b = _a.classNames, input = _b.input, inputCloned = _b.inputCloned, labelId = _a.labelId;
-            var inp = Object.assign(document.createElement('input'), {
-                type: 'search',
-                className: "".concat(getClassNames(input).join(' '), " ").concat(getClassNames(inputCloned).join(' ')),
-                autocomplete: 'off',
-                autocapitalize: 'off',
-                spellcheck: false,
-            });
+            var inp = document.createElement('input');
+            inp.type = 'search';
+            inp.className = "".concat(getClassNames(input).join(' '), " ").concat(getClassNames(inputCloned).join(' '));
+            inp.autocomplete = 'off';
+            inp.autocapitalize = 'off';
+            inp.spellcheck = false;
             inp.setAttribute('role', 'textbox');
             inp.setAttribute('aria-autocomplete', 'list');
             if (placeholderValue) {
@@ -3241,7 +3223,7 @@
             div.setAttribute('aria-expanded', 'false');
             return div;
         },
-        notice: function (_a, innerText, type) {
+        notice: function (_a, innerHTML, type) {
             var _b = _a.classNames, item = _b.item, itemChoice = _b.itemChoice, addChoice = _b.addChoice, noResults = _b.noResults, noChoices = _b.noChoices, noticeItem = _b.notice;
             if (type === void 0) { type = NoticeTypes.generic; }
             var classes = __spreadArray(__spreadArray(__spreadArray([], getClassNames(item), true), getClassNames(itemChoice), true), getClassNames(noticeItem), true);
@@ -3257,10 +3239,9 @@
                     classes.push.apply(classes, getClassNames(noChoices));
                     break;
             }
-            var notice = Object.assign(document.createElement('div'), {
-                innerHTML: innerText,
-                className: classes.join(' '),
-            });
+            var notice = document.createElement('div');
+            notice.innerHTML = innerHTML;
+            notice.className = classes.join(' ');
             if (type === NoticeTypes.addChoice) {
                 notice.dataset.choiceSelectable = '';
                 notice.dataset.choice = '';
@@ -3978,7 +3959,7 @@
             }
             this._renderNotice();
             if (!noChoices) {
-                this.choiceList.append(choiceListFragment);
+                this.choiceList.element.append(choiceListFragment);
                 this._highlightChoice();
             }
         };
@@ -3990,7 +3971,7 @@
             var itemListFragment = this._createItemsFragment(items);
             // If we have items to add, append them
             if (itemListFragment.childNodes.length) {
-                this.itemList.append(itemListFragment);
+                this.itemList.element.append(itemListFragment);
             }
         };
         Choices.prototype._createGroupsFragment = function (groups, choices, fragment) {
@@ -4335,7 +4316,7 @@
                 this.containerOuter.addLoadingState();
                 if (this._isSelectOneElement) {
                     this.itemList.clear();
-                    this.itemList.append(this._templates.placeholder(config, config.loadingText));
+                    this.itemList.element.append(this._templates.placeholder(config, config.loadingText));
                 }
                 else {
                     this.input.placeholder = config.loadingText;
