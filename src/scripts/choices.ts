@@ -408,7 +408,7 @@ class Choices {
     if (!item || !item.id) {
       return this;
     }
-    const choice = this._store.choices.find((c) => c.id === item.id);
+    const choice = this._store.items.find((c) => c.id === item.id);
     if (!choice || choice.highlighted) {
       return this;
     }
@@ -426,7 +426,7 @@ class Choices {
     if (!item || !item.id) {
       return this;
     }
-    const choice = this._store.choices.find((c) => c.id === item.id);
+    const choice = this._store.items.find((c) => c.id === item.id);
     if (!choice || !choice.highlighted) {
       return this;
     }
@@ -442,7 +442,11 @@ class Choices {
 
   highlightAll(): this {
     this._store.withTxn(() => {
-      this._store.items.forEach((item) => this.highlightItem(item));
+      this._store.items.forEach((item) => {
+        if (!item.highlighted) {
+          this.highlightItem(item);
+        }
+      });
     });
 
     return this;
@@ -450,7 +454,11 @@ class Choices {
 
   unhighlightAll(): this {
     this._store.withTxn(() => {
-      this._store.items.forEach((item) => this.unhighlightItem(item));
+      this._store.items.forEach((item) => {
+        if (item.highlighted) {
+          this.unhighlightItem(item);
+        }
+      });
     });
 
     return this;
@@ -1954,14 +1962,9 @@ class Choices {
         this.hideDropdown();
       }
     } else {
-      const hasHighlightedItems = !!this._store.highlightedActiveItems.length;
-
-      if (hasHighlightedItems) {
-        this.unhighlightAll();
-      }
-
       containerOuter.removeFocusState();
       this.hideDropdown(true);
+      this.unhighlightAll();
     }
   }
 
@@ -2004,17 +2007,13 @@ class Choices {
     const blurWasWithinContainer = target && containerOuter.element.contains(target as Node);
 
     if (blurWasWithinContainer && !this._isScrollingOnIe) {
-      const { activeChoices } = this._store;
-      const hasHighlightedItems = activeChoices.some((item) => item.highlighted);
       const targetIsInput = target === this.input.element;
       const blurActions = {
         [TEXT_TYPE]: (): void => {
           if (targetIsInput) {
             containerOuter.removeFocusState();
-            if (hasHighlightedItems) {
-              this.unhighlightAll();
-            }
             this.hideDropdown(true);
+            this.unhighlightAll();
           }
         },
         [SELECT_ONE_TYPE]: (): void => {
@@ -2027,9 +2026,7 @@ class Choices {
           if (targetIsInput) {
             containerOuter.removeFocusState();
             this.hideDropdown(true);
-            if (hasHighlightedItems) {
-              this.unhighlightAll();
-            }
+            this.unhighlightAll();
           }
         },
       };
