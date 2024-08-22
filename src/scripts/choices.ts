@@ -1630,6 +1630,10 @@ class Choices {
           therefore does not have the value of the key.
         */
         this.input.value += event.key;
+        // browsers interpret a space as pagedown
+        if (event.key === ' ') {
+          event.preventDefault();
+        }
       }
     }
 
