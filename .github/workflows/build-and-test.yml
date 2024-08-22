@@ -15,9 +15,18 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+
+      - name: Install dependencies
+        run: npm ci --no-audit
+        env:
+          HUSKY_SKIP_INSTALL: true
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+      - run: npx playwright install-deps
+
       - name: Build and run all tests
         run: |
-          npm ci
           npm run build
           npm run bundlesize
           npm run test:unit:coverage
