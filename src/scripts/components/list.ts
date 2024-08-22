@@ -26,10 +26,6 @@ export default class List {
     }
   }
 
-  append(node: Element | DocumentFragment): void {
-    this.element.appendChild(node);
-  }
-
   scrollToTop(): void {
     this.element.scrollTop = 0;
   }

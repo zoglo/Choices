@@ -60,7 +60,7 @@ describe('components/list', () => {
       const childClass = 'test-element';
       elementToAppend.classList.add(...getClassNames(childClass));
       expect(instance.element.querySelector(`.${childClass}`)).to.equal(null);
-      instance.append(elementToAppend);
+      instance.element.append(elementToAppend);
       expect(instance.element.querySelector(`.${childClass}`)).to.equal(elementToAppend);
     });
   });

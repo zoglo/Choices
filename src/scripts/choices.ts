@@ -939,7 +939,7 @@ class Choices {
     this._renderNotice();
 
     if (!noChoices) {
-      this.choiceList.append(choiceListFragment);
+      this.choiceList.element.append(choiceListFragment);
       this._highlightChoice();
     }
   }
@@ -954,7 +954,7 @@ class Choices {
 
     // If we have items to add, append them
     if (itemListFragment.childNodes.length) {
-      this.itemList.append(itemListFragment);
+      this.itemList.element.append(itemListFragment);
     }
   }
 
@@ -1360,7 +1360,7 @@ class Choices {
 
       if (this._isSelectOneElement) {
         this.itemList.clear();
-        this.itemList.append(this._templates.placeholder(config, config.loadingText));
+        this.itemList.element.append(this._templates.placeholder(config, config.loadingText));
       } else {
         this.input.placeholder = config.loadingText;
       }
