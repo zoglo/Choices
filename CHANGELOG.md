@@ -1,6 +1,22 @@
 # Changelog
 
-## [11.0.0-rc7] (2024-08-)
+## [11.0.0-rc8] (2024-08-)
+
+### ⚠ BREAKING CHANGES
+* Trigger a search event (with empty value and 0 resultCount) when search stops
+
+### Features
+* `searchResultLimit` can be set to `-1` for no limit of search results to display.
+
+### Bug Fixes (from 10.2.0)
+* Fix edge case where aria-label could be added twice
+* Fix the page scrolls when you press 'space' on a single select input #1103
+
+### Chore
+* Reduce the number of loops over choices when rendering search results, results in more compact code.
+* Byte shave bundle sizes down
+
+## [11.0.0-rc7] (2024-08-19)
 
 ### ⚠ BREAKING CHANGES
 * Improve consistency of the `choice` event firing. `choice` event now occurs after the `addItem` event
@@ -13,7 +29,6 @@
 ### Bug Fixes (from 10.2.0)
 * Improve various `[aria-*]` attribute handling for better lighthouse accessibility scores [#1169](https://github.com/Choices-js/Choices/issues/1169)
 * Improve contrast on default CSS by darkening primary item selection color [#924](https://github.com/Choices-js/Choices/issues/924)
-* `searchResultLimit` can be set to `-1` for no limit of search results to display.
 
 ### Bug Fixes (from 11.0.0RC6)
 * Fix destroy&init of `choices.js` would lost track of data from the backing `<input>`/`<select>`
