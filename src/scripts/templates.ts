@@ -1,17 +1,57 @@
 /**
  * Helpers to create HTML elements used by Choices
- * Can be overridden by providing `callbackOnCreateTemplates` option
+ * Can be overridden by providing `callbackOnCreateTemplates` option.
+ * `Choices.defaults.templates` allows access to the default template methods from `callbackOnCreateTemplates`
  */
 
-import { Choice } from './interfaces/choice';
-import { Group } from './interfaces/group';
-import { Item } from './interfaces/item';
+import { ChoiceFull } from './interfaces/choice-full';
+import { GroupFull } from './interfaces/group-full';
 import { PassedElementType } from './interfaces/passed-element-type';
+import { StringPreEscaped } from './interfaces/string-pre-escaped';
+import { getClassNames, unwrapStringForRaw, resolveNoticeFunction, setElementHtml } from './lib/utils';
+import { NoticeType, NoticeTypes, TemplateOptions, Templates as TemplatesInterface } from './interfaces/templates';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type TemplateOptions = Record<'classNames' | 'allowHTML', any>;
+const isEmptyObject = (obj: object): boolean => {
+  // eslint-disable-next-line no-restricted-syntax
+  for (const prop in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+      return false;
+    }
+  }
 
-const templates = {
+  return true;
+};
+
+const assignCustomProperties = (el: HTMLElement, choice: ChoiceFull, withCustomProperties: boolean): void => {
+  const { dataset } = el;
+  const { customProperties, labelClass, labelDescription } = choice;
+
+  if (labelClass) {
+    dataset.labelClass = getClassNames(labelClass).join(' ');
+  }
+
+  if (labelDescription) {
+    dataset.labelDescription = labelDescription;
+  }
+
+  if (withCustomProperties && customProperties) {
+    if (typeof customProperties === 'string') {
+      dataset.customProperties = customProperties;
+    } else if (typeof customProperties === 'object' && !isEmptyObject(customProperties)) {
+      dataset.customProperties = JSON.stringify(customProperties);
+    }
+  }
+};
+
+const addAriaLabel = (docRoot: HTMLElement | ShadowRoot, id: string | undefined, element: HTMLElement): void => {
+  const label = id && docRoot.querySelector<HTMLElement>(`label[for='${id}']`);
+  const text = label && (label as HTMLElement).innerText;
+  if (text) {
+    element.setAttribute('aria-label', text);
+  }
+};
+
+const templates: TemplatesInterface = {
   containerOuter(
     { classNames: { containerOuter } }: TemplateOptions,
     dir: HTMLElement['dir'],
@@ -21,9 +61,8 @@ const templates = {
     passedElementType: PassedElementType,
     labelId: string,
   ): HTMLDivElement {
-    const div = Object.assign(document.createElement('div'), {
-      className: containerOuter,
-    });
+    const div = document.createElement('div');
+    div.className = getClassNames(containerOuter).join(' ');
 
     div.dataset.type = passedElementType;
 
@@ -39,11 +78,14 @@ const templates = {
       div.setAttribute('role', searchEnabled ? 'combobox' : 'listbox');
       if (searchEnabled) {
         div.setAttribute('aria-autocomplete', 'list');
+      } else if (!labelId) {
+        addAriaLabel(this._docRoot, this.passedElement.element.id, div);
       }
+
+      div.setAttribute('aria-haspopup', 'true');
+      div.setAttribute('aria-expanded', 'false');
     }
 
-    div.setAttribute('aria-haspopup', 'true');
-    div.setAttribute('aria-expanded', 'false');
     if (labelId) {
       div.setAttribute('aria-labelledby', labelId);
     }
@@ -51,112 +93,114 @@ const templates = {
     return div;
   },
 
-  containerInner({
-    classNames: { containerInner },
-  }: TemplateOptions): HTMLDivElement {
-    return Object.assign(document.createElement('div'), {
-      className: containerInner,
-    });
+  containerInner({ classNames: { containerInner } }: TemplateOptions): HTMLDivElement {
+    const div = document.createElement('div');
+    div.className = getClassNames(containerInner).join(' ');
+
+    return div;
   },
 
   itemList(
-    { classNames: { list, listSingle, listItems } }: TemplateOptions,
+    { searchEnabled, classNames: { list, listSingle, listItems } }: TemplateOptions,
     isSelectOneElement: boolean,
   ): HTMLDivElement {
-    return Object.assign(document.createElement('div'), {
-      className: `${list} ${isSelectOneElement ? listSingle : listItems}`,
-    });
-  },
+    const div = document.createElement('div');
+    div.className = `${getClassNames(list).join(' ')} ${isSelectOneElement ? getClassNames(listSingle).join(' ') : getClassNames(listItems).join(' ')}`;
 
-  placeholder(
-    { allowHTML, classNames: { placeholder } }: TemplateOptions,
-    value: string,
-  ): HTMLDivElement {
-    return Object.assign(document.createElement('div'), {
-      className: placeholder,
-      [allowHTML ? 'innerHTML' : 'innerText']: value,
-    });
-  },
-
-  item(
-    {
-      allowHTML,
-      classNames: {
-        item,
-        button,
-        highlightedState,
-        itemSelectable,
-        placeholder,
-      },
-    }: TemplateOptions,
-    {
-      id,
-      value,
-      label,
-      customProperties,
-      active,
-      disabled,
-      highlighted,
-      placeholder: isPlaceholder,
-    }: Item,
-    removeItemButton: boolean,
-  ): HTMLDivElement {
-    const div = Object.assign(document.createElement('div'), {
-      className: item,
-      [allowHTML ? 'innerHTML' : 'innerText']: label,
-    });
-
-    Object.assign(div.dataset, {
-      item: '',
-      id,
-      value,
-      customProperties,
-    });
-
-    if (active) {
-      div.setAttribute('aria-selected', 'true');
-    }
-
-    if (disabled) {
-      div.setAttribute('aria-disabled', 'true');
-    }
-
-    if (isPlaceholder) {
-      div.classList.add(placeholder);
-    }
-
-    div.classList.add(highlighted ? highlightedState : itemSelectable);
-
-    if (removeItemButton) {
-      if (disabled) {
-        div.classList.remove(itemSelectable);
-      }
-      div.dataset.deletable = '';
-      /** @todo This MUST be localizable, not hardcoded! */
-      const REMOVE_ITEM_TEXT = 'Remove item';
-      const removeButton = Object.assign(document.createElement('button'), {
-        type: 'button',
-        className: button,
-        [allowHTML ? 'innerHTML' : 'innerText']: REMOVE_ITEM_TEXT,
-      });
-      removeButton.setAttribute(
-        'aria-label',
-        `${REMOVE_ITEM_TEXT}: '${value}'`,
-      );
-      removeButton.dataset.button = '';
-      div.appendChild(removeButton);
+    if (this._isSelectElement && searchEnabled) {
+      div.setAttribute('role', 'listbox');
     }
 
     return div;
   },
 
-  choiceList(
-    { classNames: { list } }: TemplateOptions,
-    isSelectOneElement: boolean,
+  placeholder(
+    { allowHTML, classNames: { placeholder } }: TemplateOptions,
+    value: StringPreEscaped | string,
   ): HTMLDivElement {
-    const div = Object.assign(document.createElement('div'), {
-      className: list,
-    });
+    const div = document.createElement('div');
+    div.className = getClassNames(placeholder).join(' ');
+    setElementHtml(div, allowHTML, value);
+
+    return div;
+  },
+
+  item(
+    {
+      allowHTML,
+      removeItemButtonAlignLeft,
+      removeItemIconText,
+      removeItemLabelText,
+      classNames: { item, button, highlightedState, itemSelectable, placeholder },
+    }: TemplateOptions,
+    choice: ChoiceFull,
+    removeItemButton: boolean,
+  ): HTMLDivElement {
+    const { labelClass, label, disabled, value } = choice;
+    const rawValue = unwrapStringForRaw(value);
+    const div = document.createElement('div');
+    div.className = getClassNames(item).join(' ');
+
+    if (labelClass) {
+      const spanLabel = document.createElement('span');
+      setElementHtml(spanLabel, allowHTML, label);
+      spanLabel.className = getClassNames(labelClass).join(' ');
+      div.appendChild(spanLabel);
+    } else {
+      setElementHtml(div, allowHTML, label);
+    }
+
+    const { dataset } = div;
+    dataset.item = '';
+    dataset.id = choice.id as unknown as string;
+    dataset.value = rawValue;
+
+    assignCustomProperties(div, choice, true);
+
+    if (disabled || this.containerOuter.isDisabled) {
+      div.setAttribute('aria-disabled', 'true');
+    }
+    if (this._isSelectElement) {
+      div.setAttribute('aria-selected', 'true');
+      div.setAttribute('role', 'option');
+    }
+
+    if (choice.placeholder) {
+      div.classList.add(...getClassNames(placeholder));
+      dataset.placeholder = '';
+    }
+
+    div.classList.add(...(choice.highlighted ? getClassNames(highlightedState) : getClassNames(itemSelectable)));
+
+    if (removeItemButton) {
+      if (disabled) {
+        div.classList.remove(...getClassNames(itemSelectable));
+      }
+      dataset.deletable = '';
+
+      const removeButton = document.createElement('button');
+      removeButton.type = 'button';
+      removeButton.className = getClassNames(button).join(' ');
+      setElementHtml(removeButton, true, resolveNoticeFunction(removeItemIconText, value));
+
+      const REMOVE_ITEM_LABEL = resolveNoticeFunction(removeItemLabelText, value);
+      if (REMOVE_ITEM_LABEL) {
+        removeButton.setAttribute('aria-label', REMOVE_ITEM_LABEL);
+      }
+      removeButton.dataset.button = '';
+      if (removeItemButtonAlignLeft) {
+        div.insertAdjacentElement('afterbegin', removeButton);
+      } else {
+        div.appendChild(removeButton);
+      }
+    }
+
+    return div;
+  },
+
+  choiceList({ classNames: { list } }: TemplateOptions, isSelectOneElement: boolean): HTMLDivElement {
+    const div = document.createElement('div');
+    div.className = getClassNames(list).join(' ');
 
     if (!isSelectOneElement) {
       div.setAttribute('aria-multiselectable', 'true');
@@ -167,34 +211,28 @@ const templates = {
   },
 
   choiceGroup(
-    {
-      allowHTML,
-      classNames: { group, groupHeading, itemDisabled },
-    }: TemplateOptions,
-    { id, value, disabled }: Group,
+    { allowHTML, classNames: { group, groupHeading, itemDisabled } }: TemplateOptions,
+    { id, label, disabled }: GroupFull,
   ): HTMLDivElement {
-    const div = Object.assign(document.createElement('div'), {
-      className: `${group} ${disabled ? itemDisabled : ''}`,
-    });
+    const rawLabel = unwrapStringForRaw(label);
+    const div = document.createElement('div');
+    div.className = `${getClassNames(group).join(' ')} ${disabled ? getClassNames(itemDisabled).join(' ') : ''}`;
 
     div.setAttribute('role', 'group');
 
-    Object.assign(div.dataset, {
-      group: '',
-      id,
-      value,
-    });
+    const { dataset } = div;
+    dataset.group = '';
+    dataset.id = id as unknown as string;
+    dataset.value = rawLabel;
 
     if (disabled) {
       div.setAttribute('aria-disabled', 'true');
     }
 
-    div.appendChild(
-      Object.assign(document.createElement('div'), {
-        className: groupHeading,
-        [allowHTML ? 'innerHTML' : 'innerText']: value,
-      }),
-    );
+    const heading = document.createElement('div');
+    heading.className = getClassNames(groupHeading).join(' ');
+    setElementHtml(heading, allowHTML, label);
+    div.appendChild(heading);
 
     return div;
   },
@@ -202,129 +240,148 @@ const templates = {
   choice(
     {
       allowHTML,
-      classNames: {
-        item,
-        itemChoice,
-        itemSelectable,
-        selectedState,
-        itemDisabled,
-        placeholder,
-      },
+      classNames: { item, itemChoice, itemSelectable, selectedState, itemDisabled, description, placeholder },
     }: TemplateOptions,
-    {
-      id,
-      value,
-      label,
-      groupId,
-      elementId,
-      disabled: isDisabled,
-      selected: isSelected,
-      placeholder: isPlaceholder,
-    }: Choice,
+    choice: ChoiceFull,
     selectText: string,
   ): HTMLDivElement {
-    const div = Object.assign(document.createElement('div'), {
-      id: elementId,
-      [allowHTML ? 'innerHTML' : 'innerText']: label,
-      className: `${item} ${itemChoice}`,
-    });
+    const { value, elementId, groupId, label, labelClass, labelDescription } = choice;
+    const rawValue = unwrapStringForRaw(value);
+    const div = document.createElement('div');
+    div.id = elementId as string;
+    div.className = `${getClassNames(item).join(' ')} ${getClassNames(itemChoice).join(' ')}`;
 
-    if (isSelected) {
-      div.classList.add(selectedState);
+    let describedBy: HTMLElement = div;
+    if (labelClass) {
+      const spanLabel = document.createElement('span');
+      setElementHtml(spanLabel, allowHTML, label);
+      spanLabel.className = getClassNames(labelClass).join(' ');
+      describedBy = spanLabel;
+      div.appendChild(spanLabel);
+    } else {
+      setElementHtml(div, allowHTML, label);
     }
 
-    if (isPlaceholder) {
-      div.classList.add(placeholder);
+    if (labelDescription) {
+      const descId = `${elementId}-description`;
+      describedBy.setAttribute('aria-describedby', descId);
+      const spanDesc = document.createElement('span');
+      setElementHtml(spanDesc, allowHTML, labelDescription);
+      spanDesc.id = descId;
+      spanDesc.classList.add(...getClassNames(description));
+      div.appendChild(spanDesc);
     }
 
-    div.setAttribute('role', groupId && groupId > 0 ? 'treeitem' : 'option');
+    if (choice.selected) {
+      div.classList.add(...getClassNames(selectedState));
+    }
 
-    Object.assign(div.dataset, {
-      choice: '',
-      id,
-      value,
-      selectText,
-    });
+    if (choice.placeholder) {
+      div.classList.add(...getClassNames(placeholder));
+    }
 
-    if (isDisabled) {
-      div.classList.add(itemDisabled);
-      div.dataset.choiceDisabled = '';
+    const { dataset } = div;
+    const showGroupId = groupId && groupId > 0;
+    div.setAttribute('role', showGroupId ? 'treeitem' : 'option');
+    if (showGroupId) {
+      dataset.groupId = `${groupId}`;
+    }
+
+    dataset.choice = '';
+    dataset.id = choice.id as unknown as string;
+    dataset.value = rawValue;
+    dataset.selectText = selectText;
+
+    assignCustomProperties(div, choice, false);
+
+    if (choice.disabled) {
+      div.classList.add(...getClassNames(itemDisabled));
+      dataset.choiceDisabled = '';
       div.setAttribute('aria-disabled', 'true');
     } else {
-      div.classList.add(itemSelectable);
-      div.dataset.choiceSelectable = '';
+      div.classList.add(...getClassNames(itemSelectable));
+      dataset.choiceSelectable = '';
     }
 
     return div;
   },
 
   input(
-    { classNames: { input, inputCloned } }: TemplateOptions,
-    placeholderValue: string,
+    { classNames: { input, inputCloned }, labelId }: TemplateOptions,
+    placeholderValue: string | null,
   ): HTMLInputElement {
-    const inp = Object.assign(document.createElement('input'), {
-      type: 'search',
-      name: 'search_terms',
-      className: `${input} ${inputCloned}`,
-      autocomplete: 'off',
-      autocapitalize: 'off',
-      spellcheck: false,
-    });
+    const inp = document.createElement('input');
+    inp.type = 'search';
+    inp.className = `${getClassNames(input).join(' ')} ${getClassNames(inputCloned).join(' ')}`;
+    inp.autocomplete = 'off';
+    inp.autocapitalize = 'off';
+    inp.spellcheck = false;
 
     inp.setAttribute('role', 'textbox');
     inp.setAttribute('aria-autocomplete', 'list');
-    inp.setAttribute('aria-label', placeholderValue);
+    if (placeholderValue) {
+      inp.setAttribute('aria-label', placeholderValue);
+    } else if (!labelId) {
+      addAriaLabel(this._docRoot, this.passedElement.element.id, inp);
+    }
 
     return inp;
   },
 
-  dropdown({
-    classNames: { list, listDropdown },
-  }: TemplateOptions): HTMLDivElement {
+  dropdown({ classNames: { list, listDropdown } }: TemplateOptions): HTMLDivElement {
     const div = document.createElement('div');
 
-    div.classList.add(list, listDropdown);
+    div.classList.add(...getClassNames(list));
+    div.classList.add(...getClassNames(listDropdown));
     div.setAttribute('aria-expanded', 'false');
 
     return div;
   },
 
   notice(
-    {
-      allowHTML,
-      classNames: { item, itemChoice, noResults, noChoices },
-    }: TemplateOptions,
-    innerText: string,
-    type: 'no-choices' | 'no-results' | '' = '',
+    { classNames: { item, itemChoice, addChoice, noResults, noChoices, notice: noticeItem } }: TemplateOptions,
+    innerHTML: string,
+    type: NoticeType = NoticeTypes.generic,
   ): HTMLDivElement {
-    const classes = [item, itemChoice];
+    const classes = [...getClassNames(item), ...getClassNames(itemChoice), ...getClassNames(noticeItem)];
 
-    if (type === 'no-choices') {
-      classes.push(noChoices);
-    } else if (type === 'no-results') {
-      classes.push(noResults);
+    // eslint-disable-next-line default-case
+    switch (type) {
+      case NoticeTypes.addChoice:
+        classes.push(...getClassNames(addChoice));
+        break;
+      case NoticeTypes.noResults:
+        classes.push(...getClassNames(noResults));
+        break;
+      case NoticeTypes.noChoices:
+        classes.push(...getClassNames(noChoices));
+        break;
     }
 
-    return Object.assign(document.createElement('div'), {
-      [allowHTML ? 'innerHTML' : 'innerText']: innerText,
-      className: classes.join(' '),
-    });
+    const notice = document.createElement('div');
+    setElementHtml(notice, true, innerHTML);
+    notice.className = classes.join(' ');
+
+    if (type === NoticeTypes.addChoice) {
+      const { dataset } = notice;
+      dataset.choiceSelectable = '';
+      dataset.choice = '';
+    }
+
+    return notice;
   },
 
-  option({
-    label,
-    value,
-    customProperties,
-    active,
-    disabled,
-  }: Item): HTMLOptionElement {
-    const opt = new Option(label, value, false, active);
+  option(choice: ChoiceFull): HTMLOptionElement {
+    // HtmlOptionElement's label value does not support HTML, so the avoid double escaping unwrap the untrusted string.
+    const labelValue = unwrapStringForRaw(choice.label);
 
-    if (customProperties) {
-      opt.dataset.customProperties = `${customProperties}`;
+    const opt = new Option(labelValue, choice.value, false, choice.selected);
+    assignCustomProperties(opt, choice, true);
+
+    opt.disabled = choice.disabled;
+    if (choice.selected) {
+      opt.setAttribute('selected', '');
     }
-
-    opt.disabled = !!disabled;
 
     return opt;
   },

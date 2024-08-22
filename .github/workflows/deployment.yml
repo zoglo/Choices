@@ -17,7 +17,6 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - run: npm ci
         env:
-          CYPRESS_INSTALL_BINARY: 0
           HUSKY_SKIP_INSTALL: true
       - run: npm publish
         env:
