@@ -1,18 +1,22 @@
-import { AnyAction, Store as IStore, StoreListener } from '../interfaces/store';
-import { StateChangeSet, State } from '../interfaces/state';
-import { ChoiceFull } from '../interfaces/choice-full';
-import { GroupFull } from '../interfaces/group-full';
-export default class Store implements IStore {
-    _state: State;
-    _listeners: StoreListener[];
-    _txn: number;
-    _changeSet?: StateChangeSet;
-    get defaultState(): State;
-    changeSet(init: boolean): StateChangeSet;
-    reset(): void;
-    subscribe(onChange: StoreListener): void;
+import { StateChangeSet, State } from './state';
+import { ChoiceFull } from './choice-full';
+import { GroupFull } from './group-full';
+import { ActionTypes } from './action-type';
+export interface AnyAction<A extends ActionTypes = ActionTypes> {
+    type: A;
+}
+export interface StateUpdate<T> {
+    update: boolean;
+    state: T;
+}
+export type Reducer<T> = (state: T, action: AnyAction) => StateUpdate<T>;
+export type StoreListener = (changes: StateChangeSet) => void;
+export interface Store {
     dispatch(action: AnyAction): void;
+    subscribe(onChange: StoreListener): void;
     withTxn(func: () => void): void;
+    reset(): void;
+    get defaultState(): State;
     /**
      * Get store object
      */
@@ -45,6 +49,9 @@ export default class Store implements IStore {
      * Get active groups from store
      */
     get activeGroups(): GroupFull[];
+    /**
+     * Get loading state from store
+     */
     inTxn(): boolean;
     /**
      * Get single choice by it's ID
