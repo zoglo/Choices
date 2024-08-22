@@ -13,6 +13,7 @@ export declare const resolveStringFunction: (fn: Types.StringFunction | string) 
 export declare const unwrapStringForRaw: (s?: StringUntrusted | StringPreEscaped | string) => string;
 export declare const unwrapStringForEscaped: (s?: StringUntrusted | StringPreEscaped | string) => string;
 export declare const escapeForTemplate: (allowHTML: boolean, s: StringUntrusted | StringPreEscaped | string) => string;
+export declare const setElementHtml: (el: HTMLElement, allowHtml: boolean, html: StringUntrusted | StringPreEscaped | string) => void;
 export declare const sortByAlpha: ({ value, label }: Types.RecordToCompare, { value: value2, label: label2 }: Types.RecordToCompare) => number;
 export declare const sortByScore: (a: Pick<ChoiceFull, "score">, b: Pick<ChoiceFull, "score">) => number;
 export declare const sortByRank: (a: Pick<ChoiceFull, "rank">, b: Pick<ChoiceFull, "rank">) => number;
