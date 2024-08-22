@@ -7,7 +7,7 @@
 * `enter` key now consistently opens/closes the dropdown instead of the behavior varying depending on backing element or internal state of the highlighted choice
 
 ### Features
-* Add closeDropdownOnSelect option, controls how the dropdown is close after selection is made. [#636](https://github.com/Choices-js/Choices/issues/636) [#973](https://github.com/Choices-js/Choices/issues/873) [#1012](https://github.com/Choices-js/Choices/issues/1012)
+* Add `closeDropdownOnSelect` option, controls how the dropdown is close after selection is made. [#636](https://github.com/Choices-js/Choices/issues/636) [#973](https://github.com/Choices-js/Choices/issues/873) [#1012](https://github.com/Choices-js/Choices/issues/1012)
 * Allow choices.js to be imported on nodejs, useful for tests and also server side rendering. As windows.document is by default not defined, the default template rendering will not function. The `callbackOnCreateTemplates` callback must be used. [#861](https://github.com/Choices-js/Choices/issues/861)
 
 ### Bug Fixes (from 10.2.0)
@@ -31,6 +31,9 @@
 
 ## [11.0.0-rc6] (2024-08-12)
 
+### ⚠ BREAKING CHANGES
+* Mutation APIs `setChoiceByValue`/`setChoices`/`setValue` now throw an error if the Choices instance was not initialized or multiple choices instances where initialized on the same element. Prevents bad internal states from triggering unexpected errors [#1129](https://github.com/Choices-js/Choices/issues/1129)
+
 ### Features
 * Improve performance of search/filtering with large number of choices.
 
@@ -38,7 +41,6 @@
 * Fix Choices does not accept an element from an iframe [#1057](https://github.com/Choices-js/Choices/issues/1057)
 * Fix Choices was not disable in a `<fieldset disabled>` [#1132](https://github.com/Choices-js/Choices/issues/1132)
 * Fix `silent` option does not silence warnings about unknown options [#1119](https://github.com/Choices-js/Choices/issues/1119)
-* Fix mutation APIs `setChoiceByValue`/`setChoices`/`setValue` now throw an error the Choices instance was not initialized or multiple choices instances where initialized on the same element. Prevents bad internal states from triggering unexpected errors [#1129](https://github.com/Choices-js/Choices/issues/1129)
 * Fix documentation that suggests duplicateItemsAllowed works with select-multiple, when it only works for text. [#1123](https://github.com/Choices-js/Choices/issues/1123)
 * Fix quadratic algorithm complexity (aka O(N^2) ) when filtering/search choices.
 * Fix search results could be unexpectedly unstable, and that `fuseOptions.sortFn` was effectively ignored [#1106](https://github.com/Choices-js/Choices/issues/1106)
@@ -100,7 +102,7 @@
 * Remove unused code
 * Use constant enum instead of repeating strings and type information
 * For test html pages, prevent a failing `fetch()` from breaking the rest of the examples
-* Tweak _render loop to avoid duplicating has-changed checks
+* Tweak `_render()` loop to avoid duplicating has-changed checks
 
 ## [11.0.0 RC1] (2024-08-02)
 
@@ -117,7 +119,6 @@
 * `config.classNames` now accept arrays to support multiple classes. [#1121](https://github.com/Choices-js/Choices/issues/1121) [#1074](https://github.com/Choices-js/Choices/issues/1074) [#907](https://github.com/Choices-js/Choices/issues/907) [#832](https://github.com/Choices-js/Choices/issues/832)
 * The original option list for the select is not destroyed, and all loaded choices are serialised to HTML for better compatibility with external javascript. [#1053](https://github.com/Choices-js/Choices/issues/1053) [#1023](https://github.com/Choices-js/Choices/issues/1023)
 * New `singleModeForMultiSelect` feature to treat a `select-single` as if it was a `select-multiple` with a max item count of `1`, and still auto-close the dropdown and swap the active item on selection. [#1136](https://github.com/Choices-js/Choices/issues/1136) [#904](https://github.com/Choices-js/Choices/issues/904)
-* Remove `deepMerge` dependency.
 * `Remove item text` can be localized.
 * Allow user-created choices for selects. [#1117](https://github.com/Choices-js/Choices/issues/1117) [#1114](https://github.com/Choices-js/Choices/issues/1114)
     * User input is escaped by default. At the risk of XSS attacks this can be disabled by `allowHtmlUserInput`.
@@ -152,3 +153,6 @@
 * Fix `aria-label` for placeholders was set to the string `null`
 * Fix `searchEnable` flag was not respected for `select-multiple` [#1042](https://github.com/Choices-js/Choices/issues/1042)
 * Fix poor error message when Choices is passed a string selector which fails to find the element for Choices to attach to.
+
+### Chore
+* Remove `deepMerge` dependency.
