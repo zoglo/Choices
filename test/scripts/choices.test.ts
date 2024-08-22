@@ -752,6 +752,7 @@ describe('choices', () => {
       let storeDispatchSpy;
       let storeGetGroupByIdStub;
       let choicesStub;
+      let itemsStub;
       const groupIdValue = 'Test';
       const item: ChoiceFull = {
         groupId: 0,
@@ -769,6 +770,7 @@ describe('choices', () => {
 
       beforeEach(() => {
         choicesStub = stub(instance._store, 'choices').get(() => [item]);
+        itemsStub = stub(instance._store, 'items').get(() => [item]);
         passedElementTriggerEventStub = stub();
         storeGetGroupByIdStub = stub().returns({
           id: 4321,
@@ -782,6 +784,7 @@ describe('choices', () => {
 
       afterEach(() => {
         choicesStub.reset();
+        itemsStub.reset();
         storeDispatchSpy.restore();
         instance._store.getGroupById.reset();
         instance.passedElement.triggerEvent.reset();
@@ -877,6 +880,7 @@ describe('choices', () => {
 
     describe('unhighlightItem', () => {
       let choicesStub;
+      let itemsStub;
       let passedElementTriggerEventStub;
       let storeDispatchSpy;
       let storeGetGroupByIdStub;
@@ -897,6 +901,7 @@ describe('choices', () => {
 
       beforeEach(() => {
         choicesStub = stub(instance._store, 'choices').get(() => [item]);
+        itemsStub = stub(instance._store, 'items').get(() => [item]);
         passedElementTriggerEventStub = stub();
         storeGetGroupByIdStub = stub().returns({
           id: 4321,
@@ -910,6 +915,7 @@ describe('choices', () => {
 
       afterEach(() => {
         choicesStub.reset();
+        itemsStub.reset();
         storeDispatchSpy.restore();
         instance._store.getGroupById.reset();
         instance.passedElement.triggerEvent.reset();
@@ -1002,32 +1008,51 @@ describe('choices', () => {
     });
 
     describe('highlightAll', () => {
-      let storeGetItemsStub;
-      let highlightItemStub;
+      let choicesStub;
+      let itemsStub;
+      let storeDispatchSpy;
 
-      const items = [
+      const items: ChoiceFull[] = [
         {
           id: 1,
           value: 'Test 1',
+          highlighted: false,
+          disabled: false,
+          active: false,
+          groupId: 0,
+          label: '',
+          placeholder: false,
+          selected: false,
+          score: 0,
+          rank: 0,
         },
         {
           id: 2,
           value: 'Test 2',
+          highlighted: false,
+          disabled: false,
+          active: false,
+          groupId: 0,
+          label: '',
+          placeholder: false,
+          selected: false,
+          score: 0,
+          rank: 0,
         },
       ];
 
       beforeEach(() => {
-        storeGetItemsStub = stub(instance._store, 'items').get(() => items);
-        highlightItemStub = stub();
-
-        instance.highlightItem = highlightItemStub;
+        choicesStub = stub(instance._store, 'choices').get(() => items);
+        itemsStub = stub(instance._store, 'items').get(() => items);
+        storeDispatchSpy = spy(instance._store, 'dispatch');
 
         output = instance.highlightAll();
       });
 
       afterEach(() => {
-        highlightItemStub.reset();
-        storeGetItemsStub.reset();
+        storeDispatchSpy.restore();
+        choicesStub.reset();
+        itemsStub.reset();
       });
 
       it('returns this', () => {
@@ -1035,39 +1060,66 @@ describe('choices', () => {
       });
 
       it('highlights each item in store', () => {
-        expect(highlightItemStub.callCount).to.equal(items.length);
-        expect(highlightItemStub.firstCall.args[0]).to.equal(items[0]);
-        expect(highlightItemStub.lastCall.args[0]).to.equal(items[1]);
+        expect(storeDispatchSpy.callCount).to.equal(items.length);
+        expect(storeDispatchSpy.firstCall.args[0]).to.deep.contains({
+          type: ActionType.HIGHLIGHT_ITEM,
+          item: items[0],
+          highlighted: true,
+        });
+        expect(storeDispatchSpy.lastCall.args[0]).to.deep.contains({
+          type: ActionType.HIGHLIGHT_ITEM,
+          item: items[1],
+          highlighted: true,
+        });
       });
     });
 
     describe('unhighlightAll', () => {
-      let storeGetItemsStub;
-      let unhighlightItemStub;
+      let choicesStub;
+      let itemsStub;
+      let storeDispatchSpy;
 
-      const items = [
+      const items: ChoiceFull[] = [
         {
           id: 1,
           value: 'Test 1',
+          highlighted: true,
+          disabled: false,
+          active: false,
+          groupId: 0,
+          label: '',
+          placeholder: false,
+          selected: false,
+          score: 0,
+          rank: 0,
         },
         {
           id: 2,
           value: 'Test 2',
+          highlighted: true,
+          disabled: false,
+          active: false,
+          groupId: 0,
+          label: '',
+          placeholder: false,
+          selected: false,
+          score: 0,
+          rank: 0,
         },
       ];
 
       beforeEach(() => {
-        storeGetItemsStub = stub(instance._store, 'items').get(() => items);
-        unhighlightItemStub = stub();
-
-        instance.unhighlightItem = unhighlightItemStub;
+        choicesStub = stub(instance._store, 'choices').get(() => items);
+        itemsStub = stub(instance._store, 'items').get(() => items);
+        storeDispatchSpy = spy(instance._store, 'dispatch');
 
         output = instance.unhighlightAll();
       });
 
       afterEach(() => {
-        instance.unhighlightItem.reset();
-        storeGetItemsStub.reset();
+        storeDispatchSpy.restore();
+        choicesStub.reset();
+        itemsStub.reset();
       });
 
       it('returns this', () => {
@@ -1075,9 +1127,17 @@ describe('choices', () => {
       });
 
       it('unhighlights each item in store', () => {
-        expect(unhighlightItemStub.callCount).to.equal(items.length);
-        expect(unhighlightItemStub.firstCall.args[0]).to.equal(items[0]);
-        expect(unhighlightItemStub.lastCall.args[0]).to.equal(items[1]);
+        expect(storeDispatchSpy.callCount).to.equal(items.length);
+        expect(storeDispatchSpy.firstCall.args[0]).to.deep.contains({
+          type: ActionType.HIGHLIGHT_ITEM,
+          item: items[0],
+          highlighted: false,
+        });
+        expect(storeDispatchSpy.lastCall.args[0]).to.deep.contains({
+          type: ActionType.HIGHLIGHT_ITEM,
+          item: items[1],
+          highlighted: false,
+        });
       });
     });
 
