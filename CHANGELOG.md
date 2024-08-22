@@ -1,6 +1,6 @@
 # Changelog
 
-## [11.0.0-rc8] (2024-08-)
+## [11.0.0-rc8] (2024-08-23)
 
 ### ⚠ BREAKING CHANGES
 * Trigger a search event (with empty value and 0 resultCount) when search stops
