@@ -966,10 +966,11 @@ class Choices {
       itemList.querySelector<HTMLElement>(`[data-item][data-id="${item.id}"]`);
 
     const addItemToFragment = (item: ChoiceFull): void => {
-      if (item.itemEl) {
+      let el = item.itemEl;
+      if (el && el.parentElement) {
         return;
       }
-      const el = itemFromList(item) || this._templates.item(config, item, config.removeItemButton);
+      el = itemFromList(item) || this._templates.item(config, item, config.removeItemButton);
       item.itemEl = el;
       fragment.appendChild(el);
     };
