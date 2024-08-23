@@ -114,7 +114,7 @@ class Choices {
 
   _canAddUserChoices: boolean;
 
-  _store: Store;
+  _store: Store<Options>;
 
   _templates: Templates;
 
@@ -250,7 +250,7 @@ class Choices {
 
     this.initialised = false;
 
-    this._store = new Store();
+    this._store = new Store(config);
     this._currentValue = '';
     config.searchEnabled = (!this._isTextElement && config.searchEnabled) || this._elementType === SELECT_MULTIPLE_TYPE;
     this._canSearch = config.searchEnabled;

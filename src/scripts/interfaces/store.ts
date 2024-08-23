@@ -12,7 +12,7 @@ export interface StateUpdate<T> {
   state: T;
 }
 
-export type Reducer<T> = (state: T, action: AnyAction) => StateUpdate<T>;
+export type Reducer<T> = (state: T, action: AnyAction, context?: unknown) => StateUpdate<T>;
 
 export type StoreListener = (changes: StateChangeSet) => void;
 

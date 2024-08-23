@@ -2,6 +2,7 @@ import { AnyAction, Reducer, Store as IStore, StoreListener } from '../interface
 import { StateChangeSet, State } from '../interfaces/state';
 import { ChoiceFull } from '../interfaces/choice-full';
 import { GroupFull } from '../interfaces/group-full';
+// eslint-disable-next-line import/no-cycle
 import items from '../reducers/items';
 import groups from '../reducers/groups';
 import choices from '../reducers/choices';
@@ -14,7 +15,7 @@ const reducers: ReducerList = {
   choices,
 } as const;
 
-export default class Store implements IStore {
+export default class Store<T> implements IStore {
   _state: State = this.defaultState;
 
   _listeners: StoreListener[] = [];
@@ -22,6 +23,12 @@ export default class Store implements IStore {
   _txn: number = 0;
 
   _changeSet?: StateChangeSet;
+
+  _context: T;
+
+  constructor(context: T) {
+    this._context = context;
+  }
 
   // eslint-disable-next-line class-methods-use-this
   get defaultState(): State {
@@ -61,7 +68,7 @@ export default class Store implements IStore {
     const changes = this._changeSet || this.changeSet(false);
 
     Object.keys(reducers).forEach((key: string) => {
-      const stateUpdate = (reducers[key] as Reducer<unknown>)(state[key], action);
+      const stateUpdate = (reducers[key] as Reducer<unknown>)(state[key], action, this._context);
       if (stateUpdate.update) {
         hasChanges = true;
         changes[key] = true;

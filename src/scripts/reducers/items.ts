@@ -1,11 +1,12 @@
 import { ItemActions } from '../actions/items';
 import { State } from '../interfaces/state';
 import { ChoiceActions } from '../actions/choices';
-import { ActionType } from '../interfaces';
+import { ActionType, Options } from '../interfaces';
 import { StateUpdate } from '../interfaces/store';
 import { isHtmlSelectElement } from '../lib/html-guard-statements';
 import { SELECT_ONE_TYPE } from '../constants';
 import { ChoiceFull } from '../interfaces/choice-full';
+import { updateClassList } from '../lib/utils';
 
 type ActionTypes = ChoiceActions | ItemActions;
 type StateType = State['items'];
@@ -18,7 +19,7 @@ const removeItem = (item: ChoiceFull): void => {
   }
 };
 
-export default function items(s: StateType, action: ActionTypes): StateUpdate<StateType> {
+export default function items(s: StateType, action: ActionTypes, context?: Options): StateUpdate<StateType> {
   let state = s;
   let update = true;
 
@@ -66,12 +67,21 @@ export default function items(s: StateType, action: ActionTypes): StateUpdate<St
     }
 
     case ActionType.HIGHLIGHT_ITEM: {
-      const highlightItemAction = action;
-      state.forEach((choice) => {
-        if (choice.id === highlightItemAction.item.id) {
-          choice.highlighted = highlightItemAction.highlighted;
+      const { highlighted } = action;
+      const item = state.find((obj) => obj.id === action.item.id);
+      if (item && item.highlighted !== highlighted) {
+        item.highlighted = highlighted;
+        if (context) {
+          const { classNames } = context;
+          const { highlightedState, selectedState } = classNames;
+          updateClassList(
+            item,
+            highlighted ? highlightedState : selectedState,
+            highlighted ? selectedState : highlightedState,
+          );
         }
-      });
+      }
+
       break;
     }
 

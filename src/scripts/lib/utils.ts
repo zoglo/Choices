@@ -213,3 +213,11 @@ export const parseCustomProperties = (customProperties?: string): object | strin
 
   return {};
 };
+
+export const updateClassList = (item: ChoiceFull, add: string | string[], remove: string | string[]): void => {
+  const { itemEl } = item;
+  if (itemEl) {
+    itemEl.classList.remove(...getClassNames(remove));
+    itemEl.classList.add(...getClassNames(add));
+  }
+};

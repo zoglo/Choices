@@ -2,12 +2,18 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import { beforeEach } from 'vitest';
 import Store from '../../../src/scripts/store/store';
-import { ActionType, State } from '../../../src';
+// eslint-disable-next-line import/no-named-default
+import { ActionType, State, default as Choices } from '../../../src';
 import { cloneObject } from '../../../src/scripts/lib/utils';
 import { AnyAction, StoreListener } from '../../../src/scripts/interfaces/store';
+import { Options } from '../../../src/scripts/interfaces/options';
+
+function shimStore() {
+  return new Store(Choices.defaults.allOptions);
+}
 
 describe('reducers/store', () => {
-  let instance: Store;
+  let instance: Store<Options>;
   let subscribeStub: sinon.SinonStub<[listener: StoreListener], void>;
   let dispatchStub: sinon.SinonStub<[action: AnyAction], void>;
   let getStateStub: sinon.SinonStub<any[], State>;
@@ -15,7 +21,7 @@ describe('reducers/store', () => {
   let state: State;
 
   beforeEach(() => {
-    instance = new Store();
+    instance = shimStore();
     subscribeStub = sinon.stub(instance, 'subscribe');
     dispatchStub = sinon.stub(instance, 'dispatch');
     getStateStub = sinon.stub(instance, 'state');
