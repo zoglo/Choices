@@ -231,7 +231,7 @@ const templates: TemplatesInterface = {
 
     const heading = document.createElement('div');
     heading.className = getClassNames(groupHeading).join(' ');
-    setElementHtml(heading, allowHTML, label);
+    setElementHtml(heading, allowHTML, label || '');
     div.appendChild(heading);
 
     return div;

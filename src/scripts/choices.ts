@@ -914,31 +914,101 @@ class Choices {
       return; // block rendering choices if the input limit is reached.
     }
 
-    const { config } = this;
-    const { activeGroups, activeChoices } = this._store;
+    const { config, _templates: templates, _isSearching: isSearching } = this;
+    const { activeGroups: groups, activeChoices } = this._store;
+    const { searchResultLimit, renderChoiceLimit } = config;
 
-    let choiceListFragment = document.createDocumentFragment();
+    let renderLimit = 0;
+    if (isSearching && searchResultLimit > 0) {
+      renderLimit = searchResultLimit;
+    } else if (renderChoiceLimit > 0) {
+      renderLimit = renderChoiceLimit;
+    }
+
+    const groupLookup: string[] = [];
+    const appendGroupInSearch = config.appendGroupInSearch && isSearching;
+    if (appendGroupInSearch) {
+      groups.forEach((group) => {
+        if (group.label) {
+          groupLookup[group.id] = group.label;
+        }
+      });
+    }
+
+    if (this._isSelectElement) {
+      const backingOptions = activeChoices.filter((choice) => !choice.element);
+      if (backingOptions.length) {
+        (this.passedElement as WrappedSelect).addOptions(backingOptions);
+      }
+    }
+
+    const fragment = document.createDocumentFragment();
+    const skipSelected = config.renderSelectedChoices === 'auto' && !this._isSelectOneElement;
+    const renderableChoices = (choices: ChoiceFull[]): ChoiceFull[] =>
+      choices.filter((choice) => choice.active && !(isSearching && !choice.rank) && !(skipSelected && choice.selected));
+
+    const renderChoices = (choices: ChoiceFull[], withinGroup: boolean): void => {
+      if (isSearching) {
+        // sortByRank is used to ensure stable sorting, as scores are non-unique
+        // this additionally ensures fuseOptions.sortFn is not ignored
+        choices.sort(sortByRank);
+      } else if (config.shouldSort) {
+        choices.sort(config.sorter);
+      }
+
+      let choiceLimit = choices.length;
+      choiceLimit = !withinGroup && renderLimit && choiceLimit > renderLimit ? renderLimit : choiceLimit;
+      choiceLimit--;
+
+      // Add each choice to dropdown within range
+      choices.every((choice, index) => {
+        const dropdownItem = templates.choice(config, choice, config.itemSelectText);
+        if (appendGroupInSearch && choice.groupId > 0) {
+          const groupName = groupLookup[choice.groupId];
+          if (groupName) {
+            dropdownItem.innerHTML += ` (${groupName})`;
+          }
+        }
+        fragment.appendChild(dropdownItem);
+
+        return index < choiceLimit;
+      });
+    };
+
     let noChoices = true;
     if (activeChoices.length) {
       if (config.resetScrollPosition) {
         requestAnimationFrame(() => this.choiceList.scrollToTop());
       }
-      // If we have grouped options
-      if (activeGroups.length && !this._isSearching) {
-        if (!this._hasNonChoicePlaceholder) {
-          // If we have a placeholder choice along with groups
-          const activePlaceholders = activeChoices.filter(
-            (activeChoice) => activeChoice.placeholder && activeChoice.groupId === -1,
-          );
-          if (activePlaceholders.length) {
-            choiceListFragment = this._createChoicesFragment(activePlaceholders, choiceListFragment);
-          }
-        }
-        choiceListFragment = this._createGroupsFragment(activeGroups, activeChoices, choiceListFragment);
-      } else {
-        choiceListFragment = this._createChoicesFragment(activeChoices, choiceListFragment);
+
+      if (!this._hasNonChoicePlaceholder && !isSearching) {
+        // If we have a placeholder choice along with groups
+        renderChoices(
+          activeChoices.filter((choice) => choice.placeholder && choice.groupId === -1),
+          false,
+        );
       }
-      noChoices = !choiceListFragment.childNodes.length;
+
+      // If we have grouped options
+      if (groups.length && !isSearching) {
+        if (config.shouldSort) {
+          groups.sort(config.sorter);
+        }
+
+        groups.forEach((group) => {
+          const groupChoices = renderableChoices(group.choices);
+          if (groupChoices.length) {
+            if (group.label) {
+              const dropdownGroup = templates.choiceGroup(this.config, group);
+              fragment.appendChild(dropdownGroup);
+            }
+            renderChoices(groupChoices, true);
+          }
+        });
+      } else {
+        renderChoices(renderableChoices(activeChoices), false);
+      }
+      noChoices = !fragment.childNodes.length;
     }
 
     const notice = this._notice;
@@ -956,7 +1026,7 @@ class Choices {
     this._renderNotice();
 
     if (!noChoices) {
-      this.choiceList.element.append(choiceListFragment);
+      this.choiceList.element.append(fragment);
       this._highlightChoice();
     }
   }
@@ -1030,125 +1100,6 @@ class Choices {
       // Update the value of the hidden input
       this.passedElement.value = items.map(({ value }) => value).join(config.delimiter);
     }
-  }
-
-  _createGroupsFragment(
-    groups: GroupFull[],
-    choices: ChoiceFull[],
-    fragment: DocumentFragment = document.createDocumentFragment(),
-  ): DocumentFragment {
-    const { config } = this;
-    const getGroupChoices = (group: GroupFull): ChoiceFull[] =>
-      choices.filter((choice) => {
-        if (this._isSelectOneElement) {
-          return choice.groupId === group.id;
-        }
-
-        return choice.groupId === group.id && (config.renderSelectedChoices === 'always' || !choice.selected);
-      });
-
-    // If sorting is enabled, filter groups
-    if (config.shouldSort) {
-      groups.sort(config.sorter);
-    }
-
-    // Add Choices without group first, regardless of sort, otherwise they won't be distinguishable
-    // from the last group
-    const choicesWithoutGroup = choices.filter((c) => !c.groupId);
-    if (choicesWithoutGroup.length) {
-      this._createChoicesFragment(choicesWithoutGroup, fragment, false);
-    }
-
-    groups.forEach((group) => {
-      const groupChoices = getGroupChoices(group);
-      if (groupChoices.length) {
-        const dropdownGroup = this._templates.choiceGroup(this.config, group);
-        fragment.appendChild(dropdownGroup);
-        this._createChoicesFragment(groupChoices, fragment, true);
-      }
-    });
-
-    return fragment;
-  }
-
-  _createChoicesFragment(
-    choices: ChoiceFull[],
-    fragment: DocumentFragment = document.createDocumentFragment(),
-    withinGroup = false,
-  ): DocumentFragment {
-    // Create a fragment to store our list items (so we don't have to update the DOM for each item)
-    const { config, _isSearching: isSearching, _isSelectOneElement: isSelectOneElement } = this;
-    const { searchResultLimit, renderChoiceLimit } = config;
-    const groupLookup: string[] = [];
-    const appendGroupInSearch = config.appendGroupInSearch && isSearching;
-    if (appendGroupInSearch) {
-      this._store.groups.forEach((group) => {
-        groupLookup[group.id] = group.label;
-      });
-    }
-
-    if (this._isSelectElement) {
-      const backingOptions = choices.filter((choice) => !choice.element);
-      if (backingOptions.length) {
-        (this.passedElement as WrappedSelect).addOptions(backingOptions);
-      }
-    }
-
-    const skipSelected = config.renderSelectedChoices === 'auto' && !isSelectOneElement;
-    const placeholderChoices: ChoiceFull[] = [];
-    const normalChoices: ChoiceFull[] = [];
-
-    choices.forEach((choice) => {
-      if ((isSearching && !choice.rank) || (skipSelected && choice.selected)) {
-        return;
-      }
-
-      if (this._hasNonChoicePlaceholder || !choice.placeholder) {
-        normalChoices.push(choice);
-      } else {
-        placeholderChoices.push(choice);
-      }
-    });
-
-    if (isSearching) {
-      // sortByRank is used to ensure stable sorting, as scores are non-unique
-      // this additionally ensures fuseOptions.sortFn is not ignored
-      normalChoices.sort(sortByRank);
-    } else if (config.shouldSort) {
-      normalChoices.sort(config.sorter);
-    }
-
-    const sortedChoices =
-      isSelectOneElement && placeholderChoices.length ? [...placeholderChoices, ...normalChoices] : normalChoices;
-    let choiceLimit = sortedChoices.length;
-    let limit = choiceLimit;
-
-    if (isSearching && searchResultLimit > 0) {
-      limit = searchResultLimit;
-    } else if (renderChoiceLimit > 0 && !withinGroup) {
-      limit = renderChoiceLimit;
-    }
-
-    if (limit < choiceLimit) {
-      choiceLimit = limit;
-    }
-    choiceLimit--;
-
-    // Add each choice to dropdown within range
-    sortedChoices.every((choice, index) => {
-      const dropdownItem = this._templates.choice(config, choice, config.itemSelectText);
-      if (appendGroupInSearch && choice.groupId > 0) {
-        const groupName: string | undefined = groupLookup[choice.groupId];
-        if (groupName) {
-          dropdownItem.innerHTML += ` (${groupName})`;
-        }
-      }
-      fragment.appendChild(dropdownItem);
-
-      return index < choiceLimit;
-    });
-
-    return fragment;
   }
 
   _displayNotice(text: string, type: NoticeType, openDropdown: boolean = true): void {
