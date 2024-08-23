@@ -23,7 +23,7 @@ A vanilla, lightweight (~19.9kb gzipped 🎉), configurable select box/text inpu
 
 <p align="center">
   <a href="https://forums.sufficientvelocity.com/" target="_blank" rel="noopener noreferrer">
-    <img src="https://forums.sufficientvelocity.com/data/assets/static_light_logo.svg" alt="Sufficient Velocity" width="155" height="54">
+    <img src="https://forums.sufficientvelocity.com/data/assets/static_light_logo.svg" alt="Sufficient Velocity" width="310" height="108">
   </a>
 </p>
 
