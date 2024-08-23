@@ -944,6 +944,7 @@ class Choices {
 
     const fragment = document.createDocumentFragment();
     const skipSelected = config.renderSelectedChoices === 'auto' && !this._isSelectOneElement;
+
     const renderableChoices = (choices: ChoiceFull[]): ChoiceFull[] =>
       choices.filter((choice) => choice.active && !(isSearching && !choice.rank) && !(skipSelected && choice.selected));
 
@@ -962,7 +963,8 @@ class Choices {
 
       // Add each choice to dropdown within range
       choices.every((choice, index) => {
-        const dropdownItem = templates.choice(config, choice, config.itemSelectText);
+        const dropdownItem = choice.choiceEl || templates.choice(config, choice, config.itemSelectText);
+        choice.choiceEl = dropdownItem;
         if (appendGroupInSearch && choice.groupId > 0) {
           const groupName = groupLookup[choice.groupId];
           if (groupName) {
@@ -999,7 +1001,9 @@ class Choices {
           const groupChoices = renderableChoices(group.choices);
           if (groupChoices.length) {
             if (group.label) {
-              const dropdownGroup = templates.choiceGroup(this.config, group);
+              const dropdownGroup = group.groupEl || templates.choiceGroup(this.config, group);
+              group.groupEl = dropdownGroup;
+              dropdownGroup.remove();
               fragment.appendChild(dropdownGroup);
             }
             renderChoices(groupChoices, true);

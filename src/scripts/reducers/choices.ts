@@ -31,6 +31,13 @@ export default function choices(s: StateType, action: ActionTypes): StateUpdate<
 
     case ActionType.ADD_ITEM:
     case ActionType.REMOVE_ITEM: {
+      const { item } = action;
+      const { choiceEl } =  item;
+      if (choiceEl) {
+        choiceEl.remove();
+        item.choiceEl = undefined;
+      }
+
       break;
     }
 

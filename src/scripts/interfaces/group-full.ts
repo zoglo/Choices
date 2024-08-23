@@ -8,5 +8,6 @@ export interface GroupFull {
   disabled: boolean;
   label?: string;
   element?: HTMLOptGroupElement;
+  groupEl?: HTMLElement;
   choices: ChoiceFull[];
 }
