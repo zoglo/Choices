@@ -2187,11 +2187,9 @@ class Choices {
     const g = group;
     this._lastAddedGroupId++;
     g.id = this._lastAddedGroupId;
-    const { id, choices } = group;
-    g.choices = [];
 
-    choices.forEach((item: ChoiceFull) => {
-      item.groupId = id;
+    group.choices.forEach((item: ChoiceFull) => {
+      item.groupId = group.id;
       if (group.disabled) {
         item.disabled = true;
       }
