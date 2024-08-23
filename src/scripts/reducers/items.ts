@@ -34,9 +34,6 @@ export default function items(s: StateType, action: ActionTypes, context?: Optio
       }
 
       state.push(item);
-      state.forEach((choice) => {
-        choice.highlighted = false;
-      });
       break;
     }
 

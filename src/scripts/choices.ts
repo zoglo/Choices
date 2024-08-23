@@ -581,6 +581,7 @@ class Choices {
 
       // Loop through each value and
       choiceValue.forEach((val) => this._findAndSelectChoiceByValue(val));
+      this.unhighlightAll();
     });
 
     // @todo integrate with Store
@@ -748,6 +749,7 @@ class Choices {
 
     // @todo integrate with Store
     this._searcher.reset();
+    this.unhighlightAll();
 
     return this;
   }
@@ -1250,6 +1252,7 @@ class Choices {
       const placeholderChoice = this._store.choices.reverse().find((choice) => !choice.disabled && choice.placeholder);
       if (placeholderChoice) {
         this._addItem(placeholderChoice);
+        this.unhighlightAll();
         if (placeholderChoice.value) {
           this._triggerChange(placeholderChoice.value);
         }
