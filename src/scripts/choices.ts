@@ -195,24 +195,30 @@ class Choices {
       throw TypeError(`Expected one of the following types text|select-one|select-multiple`);
     }
 
-    this._elementType = passedElement.type as PassedElementType;
-    this._isTextElement = this._elementType === TEXT_TYPE;
-    if (this._isTextElement || config.maxItemCount !== 1) {
+    let elementType = passedElement.type as PassedElementType;
+    const isText = elementType === TEXT_TYPE;
+    if (isText || config.maxItemCount !== 1) {
       config.singleModeForMultiSelect = false;
     }
     if (config.singleModeForMultiSelect) {
-      this._elementType = SELECT_MULTIPLE_TYPE;
+      elementType = SELECT_MULTIPLE_TYPE;
     }
-    this._isSelectOneElement = this._elementType === SELECT_ONE_TYPE;
-    this._isSelectMultipleElement = this._elementType === SELECT_MULTIPLE_TYPE;
-    this._isSelectElement = this._isSelectOneElement || this._isSelectMultipleElement;
-    this._canAddUserChoices = (this._isTextElement && config.addItems) || (this._isSelectElement && config.addChoices);
+    const isSelectOne = elementType === SELECT_ONE_TYPE;
+    const isSelectMultiple = elementType === SELECT_MULTIPLE_TYPE;
+    const isSelect = isSelectOne || isSelectMultiple;
+
+    this._elementType = elementType;
+    this._isTextElement = isText;
+    this._isSelectOneElement = isSelectOne;
+    this._isSelectMultipleElement = isSelectMultiple;
+    this._isSelectElement = isSelectOne || isSelectMultiple;
+    this._canAddUserChoices = (isText && config.addItems) || (isSelect && config.addChoices);
     if (!['auto', 'always'].includes(`${config.renderSelectedChoices}`)) {
       config.renderSelectedChoices = 'auto';
     }
 
     if (config.closeDropdownOnSelect === 'auto') {
-      config.closeDropdownOnSelect = this._isTextElement || this._isSelectOneElement || config.singleModeForMultiSelect;
+      config.closeDropdownOnSelect = isText || isSelectOne || config.singleModeForMultiSelect;
     } else {
       config.closeDropdownOnSelect = coerceBool(config.closeDropdownOnSelect);
     }
@@ -252,7 +258,7 @@ class Choices {
 
     this._store = new Store(config);
     this._currentValue = '';
-    config.searchEnabled = (!this._isTextElement && config.searchEnabled) || this._elementType === SELECT_MULTIPLE_TYPE;
+    config.searchEnabled = (!isText && config.searchEnabled) || isSelectMultiple;
     this._canSearch = config.searchEnabled;
     this._isScrollingOnIe = false;
     this._highlightPosition = 0;
@@ -264,10 +270,10 @@ class Choices {
      * setting direction in cases where it's explicitly set on passedElement
      * or when calculated direction is different from the document
      */
-    this._direction = this.passedElement.dir;
+    this._direction = passedElement.dir;
 
     if (canUseDom && !this._direction) {
-      const { direction: elementDirection } = window.getComputedStyle(this.passedElement.element);
+      const { direction: elementDirection } = window.getComputedStyle(passedElement);
       const { direction: documentDirection } = window.getComputedStyle(document.documentElement);
       if (elementDirection !== documentDirection) {
         this._direction = elementDirection;
