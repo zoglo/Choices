@@ -2,6 +2,16 @@ name: End-to-end tests (playwright)
 on:
   push:
     branches: [ main, master ]
+    paths:
+      - 'src/**'
+      - 'test-e2e/**'
+      - 'package-lock.json'
+      - '.browserslistrc'
+      - 'babel.config.json'
+      - 'public/index.html'
+      - 'public/**/index.html'
+      - '.github/workflows/browsers.yml'
+      - 'playwright.config.ts'
   pull_request:
     paths:
       - 'src/**'

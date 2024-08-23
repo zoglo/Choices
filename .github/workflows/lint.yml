@@ -1,14 +1,30 @@
 name: Code linting
 
 on:
-  pull_request:
+  push:
+    branches: [ main, master ]
     paths:
+      - '.github/workflows/lint.yml'
       - 'src/scripts/**'
       - 'src/*.ts'
       - 'src/styles/**'
       - 'test/**'
       - 'test-e2e/**'
-      - package-lock.json
+      - 'package-lock.json'
+      - '.browserslistrc'
+      - '.eslintrc.json'
+      - '.editorconfig'
+      - '.prettierrc.json'
+      - '.stylelintrc.json'
+  pull_request:
+    paths:
+      - '.github/workflows/lint.yml'
+      - 'src/scripts/**'
+      - 'src/*.ts'
+      - 'src/styles/**'
+      - 'test/**'
+      - 'test-e2e/**'
+      - 'package-lock.json'
       - '.browserslistrc'
       - '.eslintrc.json'
       - '.editorconfig'

@@ -1,8 +1,17 @@
 name: Bundle size checks
 
 on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - '.github/workflows/bundlesize.yml'
+      - 'src/scripts/**'
+      - 'src/styles/**'
+      - 'package-lock.json'
+      - '.browserslistrc'
   pull_request:
     paths:
+      - '.github/workflows/bundlesize.yml'
       - 'src/scripts/**'
       - 'src/styles/**'
       - 'package-lock.json'
