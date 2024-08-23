@@ -1992,30 +1992,23 @@ class Choices {
       return;
     }
     const targetIsInput = target === this.input.element;
-
-    const focusActions = {
-      [TEXT_TYPE]: (): void => {
-        if (targetIsInput) {
-          containerOuter.addFocusState();
-        }
-      },
-      [SELECT_ONE_TYPE]: (): void => {
+    if (this._isTextElement) {
+      if (targetIsInput) {
         containerOuter.addFocusState();
-        if (targetIsInput) {
-          this.showDropdown(true);
-        }
-      },
-      [SELECT_MULTIPLE_TYPE]: (): void => {
-        if (targetIsInput) {
-          this.showDropdown(true);
-          // If element is a select box, the focused element is the container and the dropdown
-          // isn't already open, focus and show dropdown
-          containerOuter.addFocusState();
-        }
-      },
-    };
-
-    focusActions[this._elementType]();
+      }
+    } else if (this._isSelectMultipleElement) {
+      if (targetIsInput) {
+        this.showDropdown(true);
+        // If element is a select box, the focused element is the container and the dropdown
+        // isn't already open, focus and show dropdown
+        containerOuter.addFocusState();
+      }
+    } else {
+      containerOuter.addFocusState();
+      if (targetIsInput) {
+        this.showDropdown(true);
+      }
+    }
   }
 
   _onBlur({ target }: Pick<FocusEvent, 'target'>): void {
@@ -2024,30 +2017,19 @@ class Choices {
 
     if (blurWasWithinContainer && !this._isScrollingOnIe) {
       const targetIsInput = target === this.input.element;
-      const blurActions = {
-        [TEXT_TYPE]: (): void => {
-          if (targetIsInput) {
-            containerOuter.removeFocusState();
-            this.hideDropdown(true);
-            this.unhighlightAll();
-          }
-        },
-        [SELECT_ONE_TYPE]: (): void => {
-          containerOuter.removeFocusState();
-          if (targetIsInput || (target === containerOuter.element && !this._canSearch)) {
-            this.hideDropdown(true);
-          }
-        },
-        [SELECT_MULTIPLE_TYPE]: (): void => {
-          if (targetIsInput) {
-            containerOuter.removeFocusState();
-            this.hideDropdown(true);
-            this.unhighlightAll();
-          }
-        },
-      };
 
-      blurActions[this._elementType]();
+      if (this._isTextElement || this._isSelectMultipleElement) {
+        if (targetIsInput) {
+          containerOuter.removeFocusState();
+          this.hideDropdown(true);
+          this.unhighlightAll();
+        }
+      } else {
+        containerOuter.removeFocusState();
+        if (targetIsInput || (target === containerOuter.element && !this._canSearch)) {
+          this.hideDropdown(true);
+        }
+      }
     } else {
       // On IE11, clicking the scollbar blurs our input and thus
       // closes the dropdown. To stop this, we refocus our input
