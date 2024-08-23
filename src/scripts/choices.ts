@@ -745,11 +745,12 @@ class Choices {
           this._addChoice(mapInputToChoice(choice, false));
         }
       });
+
+      this.unhighlightAll();
     });
 
     // @todo integrate with Store
     this._searcher.reset();
-    this.unhighlightAll();
 
     return this;
   }
@@ -1244,20 +1245,24 @@ class Choices {
       return;
     }
 
-    // Remove item associated with button
-    this._removeItem(itemToRemove);
-    this._triggerChange(itemToRemove.value);
+    this._store.withTxn(() => {
+      // Remove item associated with button
+      this._removeItem(itemToRemove);
+      this._triggerChange(itemToRemove.value);
 
-    if (this._isSelectOneElement && !this._hasNonChoicePlaceholder) {
-      const placeholderChoice = this._store.choices.reverse().find((choice) => !choice.disabled && choice.placeholder);
-      if (placeholderChoice) {
-        this._addItem(placeholderChoice);
-        this.unhighlightAll();
-        if (placeholderChoice.value) {
-          this._triggerChange(placeholderChoice.value);
+      if (this._isSelectOneElement && !this._hasNonChoicePlaceholder) {
+        const placeholderChoice = this._store.choices
+          .reverse()
+          .find((choice) => !choice.disabled && choice.placeholder);
+        if (placeholderChoice) {
+          this._addItem(placeholderChoice);
+          this.unhighlightAll();
+          if (placeholderChoice.value) {
+            this._triggerChange(placeholderChoice.value);
+          }
         }
       }
-    }
+    });
   }
 
   _handleItemAction(element?: HTMLElement, hasShiftKey = false): void {
