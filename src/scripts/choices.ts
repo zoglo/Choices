@@ -946,7 +946,9 @@ class Choices {
     const skipSelected = config.renderSelectedChoices === 'auto' && !this._isSelectOneElement;
 
     const renderableChoices = (choices: ChoiceFull[]): ChoiceFull[] =>
-      choices.filter((choice) => choice.active && !(isSearching && !choice.rank) && !(skipSelected && choice.selected));
+      choices.filter(
+        (choice) => !choice.placeholder && !(isSearching && !choice.rank) && !(skipSelected && choice.selected),
+      );
 
     const renderChoices = (choices: ChoiceFull[], withinGroup: boolean): void => {
       if (isSearching) {
@@ -983,10 +985,10 @@ class Choices {
         requestAnimationFrame(() => this.choiceList.scrollToTop());
       }
 
-      if (!this._hasNonChoicePlaceholder && !isSearching) {
+      if (!this._hasNonChoicePlaceholder && !isSearching && this._isSelectOneElement) {
         // If we have a placeholder choice along with groups
         renderChoices(
-          activeChoices.filter((choice) => choice.placeholder && choice.groupId === -1),
+          activeChoices.filter((choice) => choice.placeholder && !choice.groupId),
           false,
         );
       }
