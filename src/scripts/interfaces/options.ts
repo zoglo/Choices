@@ -497,7 +497,7 @@ export interface Options {
   noChoicesText: string | Types.StringFunction;
 
   /**
-   * The text that is shown when a user hovers over a selectable choice.
+   * The text that is shown when a user hovers over a selectable choice. Set to empty to not reserve space for this text.
    *
    * **Input types affected:** select-multiple, select-one
    *

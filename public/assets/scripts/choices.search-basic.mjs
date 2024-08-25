@@ -2693,7 +2693,9 @@ var templates = {
         dataset.choice = '';
         dataset.id = choice.id;
         dataset.value = rawValue;
-        dataset.selectText = selectText;
+        if (selectText) {
+            dataset.selectText = selectText;
+        }
         assignCustomProperties(div, choice, false);
         if (choice.disabled) {
             (_e = div.classList).add.apply(_e, getClassNames(itemDisabled));
