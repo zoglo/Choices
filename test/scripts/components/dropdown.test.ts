@@ -41,45 +41,6 @@ describe('components/dropdown', () => {
     });
   });
 
-  describe('distanceFromTopWindow', () => {
-    let top: number;
-    let dimensions;
-    let getBoundingClientRectStub;
-
-    beforeEach(() => {
-      expect(instance).to.not.be.null;
-      if (!instance) {
-        return;
-      }
-
-      top = 100;
-      dimensions = {
-        bottom: 121,
-        height: 0,
-        left: 0,
-        right: 0,
-        top,
-        width: 0,
-      };
-
-      getBoundingClientRectStub = sinon.stub(instance.element, 'getBoundingClientRect').returns(dimensions);
-    });
-
-    afterEach(() => {
-      getBoundingClientRectStub.restore();
-    });
-
-    it('determines how far the top of our element is from the top of the viewport', () => {
-      expect(instance).to.not.be.null;
-      if (!instance) {
-        return;
-      }
-      const expectedResponse = dimensions.bottom;
-      const actualResponse = instance.distanceFromTopWindow;
-      expect(actualResponse).to.equal(expectedResponse);
-    });
-  });
-
   describe('show', () => {
     let actualResponse;
 

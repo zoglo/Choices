@@ -27,13 +27,6 @@ export default class Dropdown {
   }
 
   /**
-   * Bottom position of dropdown in viewport coordinates
-   */
-  get distanceFromTopWindow(): number {
-    return this.element.getBoundingClientRect().bottom;
-  }
-
-  /**
    * Show dropdown to user by adding active state class
    */
   show(): this {

@@ -508,7 +508,8 @@ class Choices {
 
     requestAnimationFrame(() => {
       this.dropdown.show();
-      this.containerOuter.open(this.dropdown.distanceFromTopWindow);
+      const rect = this.dropdown.element.getBoundingClientRect();
+      this.containerOuter.open(rect.bottom, rect.height);
 
       if (!preventInputFocus && this._canSearch) {
         this.input.focus();
