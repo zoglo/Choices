@@ -1583,10 +1583,7 @@ class Choices {
 
   _onKeyDown(event: KeyboardEvent): void {
     const { keyCode } = event;
-    const { items } = this._store;
-    const hasFocusedInput = this.input.isFocussed;
     const hasActiveDropdown = this.dropdown.isActive;
-    const hasItems = this.itemList.element.hasChildNodes();
     /*
     See:
     https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key
@@ -1639,7 +1636,7 @@ class Choices {
 
     switch (keyCode) {
       case KeyCodeMap.A_KEY:
-        return this._onSelectKey(event, hasItems);
+        return this._onSelectKey(event, this.itemList.element.hasChildNodes());
       case KeyCodeMap.ENTER_KEY:
         return this._onEnterKey(event, hasActiveDropdown);
       case KeyCodeMap.ESC_KEY:
@@ -1651,7 +1648,7 @@ class Choices {
         return this._onDirectionKey(event, hasActiveDropdown);
       case KeyCodeMap.DELETE_KEY:
       case KeyCodeMap.BACK_KEY:
-        return this._onDeleteKey(event, items, hasFocusedInput);
+        return this._onDeleteKey(event, this._store.items, this.input.isFocussed);
       default:
     }
   }

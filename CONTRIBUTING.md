@@ -27,6 +27,26 @@ An example of changing what js:watch will bind to:
 npm run js:watch -- --environment WATCH_HOST:0.0.0.0
 ```
 
+## Build flags
+
+The following build flags are supported via environment variables:
+
+### CHOICES_SEARCH_FUSE
+**Values:**: **"full" / "basic" / "null" **
+**Usage:** The level of integration with fuse. `full` is the entire fuse.js build, `basic` is fuse.js with just standard fuzzy searching. `null` is a basic prefix string search with no fuse.js
+**Example**:
+```
+npm run js:watch -- --environment CHOICES_SEARCH_FUSE:basic
+```
+
+### CHOICES_CAN_USE_DOM
+**Values:**: **"1" / "0" **
+**Usage:** Indicates if DOM methods are supported in the global namespace. Useful if importing into DOM or the e2e tests without a DOM implementation available.
+**Example**:
+```
+npm run js:watch -- --environment CHOICES_CAN_USE_DOM:1
+```
+
 ## Pull requests
 When submitting a pull request that resolves a bug, feel free to use the following template:
 

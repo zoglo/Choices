@@ -4005,10 +4005,7 @@ var Choices = /** @class */ (function () {
     };
     Choices.prototype._onKeyDown = function (event) {
         var keyCode = event.keyCode;
-        var items = this._store.items;
-        var hasFocusedInput = this.input.isFocussed;
         var hasActiveDropdown = this.dropdown.isActive;
-        var hasItems = this.itemList.element.hasChildNodes();
         /*
         See:
         https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key
@@ -4057,7 +4054,7 @@ var Choices = /** @class */ (function () {
         }
         switch (keyCode) {
             case 65 /* KeyCodeMap.A_KEY */:
-                return this._onSelectKey(event, hasItems);
+                return this._onSelectKey(event, this.itemList.element.hasChildNodes());
             case 13 /* KeyCodeMap.ENTER_KEY */:
                 return this._onEnterKey(event, hasActiveDropdown);
             case 27 /* KeyCodeMap.ESC_KEY */:
@@ -4069,7 +4066,7 @@ var Choices = /** @class */ (function () {
                 return this._onDirectionKey(event, hasActiveDropdown);
             case 8 /* KeyCodeMap.DELETE_KEY */:
             case 46 /* KeyCodeMap.BACK_KEY */:
-                return this._onDeleteKey(event, items, hasFocusedInput);
+                return this._onDeleteKey(event, this._store.items, this.input.isFocussed);
         }
     };
     Choices.prototype._onKeyUp = function ( /* event: KeyboardEvent */) {
