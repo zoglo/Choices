@@ -25,19 +25,19 @@ export default function choices(s: StateType, action: ActionTypes): StateUpdate<
     }
 
     case ActionType.REMOVE_CHOICE: {
+      const { choice } = action;
+      const { choiceEl } =  choice;
+      if (choiceEl) {
+        choiceEl.remove();
+        choice.choiceEl = undefined;
+      }
+
       state = state.filter((obj) => obj.id !== action.choice.id);
       break;
     }
 
     case ActionType.ADD_ITEM:
     case ActionType.REMOVE_ITEM: {
-      const { item } = action;
-      const { choiceEl } =  item;
-      if (choiceEl) {
-        choiceEl.remove();
-        item.choiceEl = undefined;
-      }
-
       break;
     }
 
