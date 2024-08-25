@@ -11,10 +11,6 @@ export default class Dropdown {
         classNames: ClassNames;
     });
     /**
-     * Bottom position of dropdown in viewport coordinates
-     */
-    get distanceFromTopWindow(): number;
-    /**
      * Show dropdown to user by adding active state class
      */
     show(): this;

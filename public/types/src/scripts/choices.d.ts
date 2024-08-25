@@ -38,7 +38,7 @@ declare class Choices {
     _isSelectElement: boolean;
     _hasNonChoicePlaceholder: boolean;
     _canAddUserChoices: boolean;
-    _store: Store;
+    _store: Store<Options>;
     _templates: Templates;
     _lastAddedChoiceId: number;
     _lastAddedGroupId: number;
@@ -152,12 +152,9 @@ declare class Choices {
     _render(changes?: StateChangeSet): void;
     _renderChoices(): void;
     _renderItems(): void;
-    _createGroupsFragment(groups: GroupFull[], choices: ChoiceFull[], fragment?: DocumentFragment): DocumentFragment;
-    _createChoicesFragment(choices: ChoiceFull[], fragment?: DocumentFragment, withinGroup?: boolean): DocumentFragment;
-    _createItemsFragment(items: InputChoice[], fragment?: DocumentFragment): DocumentFragment;
     _displayNotice(text: string, type: NoticeType, openDropdown?: boolean): void;
     _clearNotice(): void;
-    _renderNotice(): void;
+    _renderNotice(fragment?: DocumentFragment): void;
     _getChoiceForOutput(choice?: ChoiceFull, keyCode?: number): EventChoice | undefined;
     _triggerChange(value: any): void;
     _handleButtonAction(element?: HTMLElement): void;

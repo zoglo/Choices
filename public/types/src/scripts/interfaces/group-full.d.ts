@@ -3,7 +3,8 @@ export interface GroupFull {
     id: number;
     active: boolean;
     disabled: boolean;
-    label: string;
+    label?: string;
     element?: HTMLOptGroupElement;
+    groupEl?: HTMLElement;
     choices: ChoiceFull[];
 }
