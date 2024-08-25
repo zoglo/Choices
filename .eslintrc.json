@@ -115,7 +115,8 @@
       "CustomEvent",
       "Element.prototype.classList",
       "Element.prototype.closest",
-      "Element.prototype.dataset"
+      "Element.prototype.dataset",
+      "Element.prototype.replaceChildren"
     ],
     "import/resolver": {
       "node": {

@@ -909,13 +909,11 @@ class Choices {
   }
 
   _renderChoices(): void {
-    this.choiceList.clear();
-
     if (!this._canAddItems()) {
       return; // block rendering choices if the input limit is reached.
     }
 
-    const { config, _templates: templates, _isSearching: isSearching } = this;
+    const { config, _templates: templates, _isSearching: isSearching, choiceList } = this;
     const { activeGroups: groups, activeChoices } = this._store;
     const { searchResultLimit, renderChoiceLimit } = config;
 
@@ -984,7 +982,7 @@ class Choices {
     let noChoices = true;
     if (activeChoices.length) {
       if (config.resetScrollPosition) {
-        requestAnimationFrame(() => this.choiceList.scrollToTop());
+        requestAnimationFrame(() => choiceList.scrollToTop());
       }
 
       if (!this._hasNonChoicePlaceholder && !isSearching && this._isSelectOneElement) {
@@ -1031,10 +1029,10 @@ class Choices {
       this._notice = undefined;
     }
 
-    this._renderNotice();
+    this._renderNotice(fragment);
+    choiceList.element.replaceChildren(fragment);
 
     if (!noChoices) {
-      this.choiceList.element.append(fragment);
       this._highlightChoice();
     }
   }
@@ -1156,11 +1154,15 @@ class Choices {
     this._notice = undefined;
   }
 
-  _renderNotice(): void {
+  _renderNotice(fragment?: DocumentFragment): void {
     const noticeConf = this._notice;
     if (noticeConf) {
       const notice = this._templates.notice(this.config, noticeConf.text, noticeConf.type);
-      this.choiceList.prepend(notice);
+      if (fragment) {
+        fragment.append(notice);
+      } else {
+        this.choiceList.prepend(notice);
+      }
     }
   }
 
@@ -1397,6 +1399,7 @@ class Choices {
     const { maxItemCount, maxItemText } = config;
 
     if (!config.singleModeForMultiSelect && maxItemCount > 0 && maxItemCount <= this._store.items.length) {
+      this.choiceList.clear();
       this._displayNotice(
         typeof maxItemText === 'function' ? maxItemText(maxItemCount) : maxItemText,
         NoticeTypes.addChoice,

@@ -1250,7 +1250,7 @@ I suggest including a polyfill from [cdnjs.cloudflare.com/polyfill](https://cdnj
 **Polyfill example used for the demo:**
 
 ```html
-<script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=Array.from%2Ces5%2Ces6%2CSymbol%2CSymbol.iterator%2CDOMTokenList%2CObject.assign%2CCustomEvent%2CElement.prototype.classList%2CElement.prototype.closest%2CElement.prototype.dataset%2CArray.prototype.find%2CArray.prototype.includes"></script>
+<script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?version=4.8.0&features=Array.from%2CArray.prototype.find%2CArray.prototype.includes%2CSymbol%2CSymbol.iterator%2CDOMTokenList%2CObject.assign%2CCustomEvent%2CElement.prototype.classList%2CElement.prototype.closest%2CElement.prototype.dataset%2CElement.prototype.replaceChildren"></script>
 ```
 
 **Features used in Choices:**
@@ -1267,6 +1267,7 @@ CustomEvent
 Element.prototype.classList
 Element.prototype.closest
 Element.prototype.dataset
+Element.prototype.replaceChildren
 ```
 
 ## Development
