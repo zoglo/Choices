@@ -3,7 +3,6 @@ import { SELECT_ONE_TYPE } from '../constants';
 import { ClassNames } from '../interfaces/class-names';
 import { PositionOptionsType } from '../interfaces/position-options-type';
 import { PassedElementType } from '../interfaces/passed-element-type';
-import { canUseDom } from '../interfaces/build-flags';
 
 export default class Container {
   element: HTMLElement;
@@ -51,7 +50,7 @@ export default class Container {
     // If flip is enabled and the dropdown bottom position is
     // greater than the window height flip the dropdown.
     let shouldFlip = false;
-    if (canUseDom && this.position === 'auto') {
+    if (this.position === 'auto') {
       shouldFlip = !window.matchMedia(`(min-height: ${dropdownPos + 1}px)`).matches;
     } else if (this.position === 'top') {
       shouldFlip = true;
