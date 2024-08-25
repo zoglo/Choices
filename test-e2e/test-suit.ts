@@ -34,6 +34,12 @@ export class TestSuit {
     this.dropdown = this.group.locator('.choices__list.choices__list--dropdown');
   }
 
+  logConsole(): void {
+    this.page.on('console', (msg) => {
+      console.log(msg);
+    });
+  }
+
   async start(textInput?: string): Promise<void> {
     if (this.choicesBundle) {
       await this.page.route('/assets/scripts/choices.js', (route) => route.continue({ url: this.choicesBundle }));

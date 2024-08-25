@@ -44,7 +44,7 @@ describe(`Choices - select multiple`, () => {
           await suite.startWithClick();
 
           await suite.choices.first().click();
-          await expect(suite.itemList.last()).toHaveText(selectedChoiceText);
+          await expect(suite.items.last()).toHaveText(selectedChoiceText);
         });
 
         test('remove selected choice from dropdown list', async ({ page, bundle }) => {
@@ -53,10 +53,10 @@ describe(`Choices - select multiple`, () => {
 
           await suite.choices.first().click();
           await expect(suite.choices.first()).not.toHaveText(selectedChoiceText);
-          await expect(suite.itemList.last()).toHaveText(selectedChoiceText);
+          await expect(suite.items.last()).toHaveText(selectedChoiceText);
         });
 
-        test('selecting multiple choices', async ({ page, bundle }) => {
+        test('multiple choices', async ({ page, bundle }) => {
           const suite = new SelectTestSuit(page, bundle, testUrl, testId);
           await suite.startWithClick();
 
@@ -75,7 +75,7 @@ describe(`Choices - select multiple`, () => {
           await suite.expectVisibleDropdown();
         });
 
-        test('selecting all available choices', async ({ page, bundle }) => {
+        test('all available choices', async ({ page, bundle }) => {
           const suite = new SelectTestSuit(page, bundle, testUrl, testId);
           await suite.startWithClick();
 

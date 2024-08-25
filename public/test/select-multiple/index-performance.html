@@ -55,26 +55,43 @@
   <body>
     <div class="container">
       <div class="section">
-        <h2>Select one inputs</h2>
+        <h2>Select multiple inputs</h2>
         <div data-test-hook="basic">
           <label for="choices-basic">Basic</label>
-          <select class="form-control" name="choices-basic" id="choices-basic" multiple>
+          <button class="disable push-bottom">Disable</button>
+          <button class="enable push-bottom">Enable</button>
+          <select
+            class="form-control"
+            name="choices-basic"
+            id="choices-basic"
+            multiple
+          >
           </select>
           <script>
             document.addEventListener('DOMContentLoaded', function() {
 
               const options = [...new Array(2000)].map((_, index) => ({
                 selected: !!(index % 2),
-                label: `Choice ${index + 1}`,
-                value: `Choice ${index + 1}`,
+                label: `Choice ${index + 1}$`,
+                value: `Choice ${index + 1}$`,
               }));
 
               const choices = new Choices('#choices-basic', {
                 allowHTML: true,
                 shouldSort: false,
-                removeItemButton: true,
-                choices: options
+                choices: options,
               });
+              document
+                .querySelector('button.disable')
+                .addEventListener('click', () => {
+                  choices.disable();
+                });
+
+              document
+                .querySelector('button.enable')
+                .addEventListener('click', () => {
+                  choices.enable();
+                });
             });
           </script>
         </div>

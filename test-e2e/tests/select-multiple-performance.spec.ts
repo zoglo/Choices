@@ -7,7 +7,7 @@ const { describe } = test;
 const testUrl = '/test/select-multiple/index-performance.html';
 
 describe(`Choices - select multiple (performance tests)`, () => {
-  test.setTimeout(30000);
+  // test.setTimeout(30000);
 
   describe('scenarios', () => {
     describe('basic', () => {
@@ -38,23 +38,63 @@ describe(`Choices - select multiple (performance tests)`, () => {
       });
 
       describe('selecting choices', () => {
-        const selectedChoiceText = 'Choice 1';
+        const selectedChoiceText = 'Choice 1$';
 
         test('allows selecting choices from dropdown', async ({ page, bundle }) => {
           const suite = new SelectTestSuit(page, bundle, testUrl, testId);
           await suite.startWithClick();
 
           await suite.choices.first().click();
-          await expect(suite.itemList.last()).toHaveText(selectedChoiceText);
+          await expect(suite.items.last()).toHaveText(selectedChoiceText);
         });
 
-        test('does not remove selected choice from dropdown list', async ({ page, bundle }) => {
+        test('remove selected choice from dropdown list', async ({ page, bundle }) => {
           const suite = new SelectTestSuit(page, bundle, testUrl, testId);
           await suite.startWithClick();
 
           await suite.choices.first().click();
-          await expect(suite.choices.first()).toHaveText(selectedChoiceText);
-          await expect(suite.itemList.last()).toHaveText(selectedChoiceText);
+          await expect(suite.choices.first()).not.toHaveText(selectedChoiceText);
+          await expect(suite.items.last()).toHaveText(selectedChoiceText);
+        });
+
+        test('multiple choices', async ({ page, bundle }) => {
+          const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+          await suite.startWithClick();
+
+          await suite.expectedItemCount(1000);
+          await suite.expectChoiceCount(1000);
+          await suite.expectVisibleDropdown();
+
+          await suite.getChoiceWithText('Choice 1$').click();
+          await suite.expectedItemCount(1001);
+          await suite.expectChoiceCount(999);
+          await suite.expectVisibleDropdown();
+
+          await suite.getChoiceWithText('Choice 3$').click();
+          await suite.expectedItemCount(1002);
+          await suite.expectChoiceCount(998);
+          await suite.expectVisibleDropdown();
+        });
+
+        describe('slowly', () => {
+          test.setTimeout(30000);
+          test('all available choices', async ({ page, bundle }) => {
+            const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+            await suite.startWithClick();
+
+            const itemCount = await suite.items.count();
+            const count = await suite.choices.count();
+
+            for (let i = 1; i < count + 1; i++) {
+              await suite.expectVisibleDropdown();
+              await suite.getChoiceWithText(`Choice ${i * 2 - 1}$`).click();
+              await suite.advanceClock();
+              await suite.expectedItemCount(itemCount + i);
+              await expect(suite.selectableChoices).toHaveCount(count - i);
+            }
+
+            await suite.expectVisibleNoticeHtml('No choices to choose from');
+          });
         });
       });
 
