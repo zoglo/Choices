@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { ActionType, State } from '../interfaces';
+import { ActionType, Options, State } from '../interfaces';
 import { StateUpdate } from '../interfaces/store';
 import { ChoiceActions } from '../actions/choices';
 import { ItemActions } from '../actions/items';
@@ -9,7 +9,7 @@ import { ChoiceFull } from '../interfaces/choice-full';
 type ActionTypes = ChoiceActions | ItemActions;
 type StateType = State['choices'];
 
-export default function choices(s: StateType, action: ActionTypes): StateUpdate<StateType> {
+export default function choices(s: StateType, action: ActionTypes, context?: Options): StateUpdate<StateType> {
   let state = s;
   let update = true;
 
@@ -59,6 +59,9 @@ export default function choices(s: StateType, action: ActionTypes): StateUpdate<
           choice.rank = 0;
           choice.active = false;
         }
+        if (context && context.appendGroupInSearch) {
+          choice.choiceEl = undefined;
+        }
       });
 
       break;
@@ -67,6 +70,9 @@ export default function choices(s: StateType, action: ActionTypes): StateUpdate<
     case ActionType.ACTIVATE_CHOICES: {
       state.forEach((choice) => {
         choice.active = action.active;
+        if (context && context.appendGroupInSearch) {
+          choice.choiceEl = undefined;
+        }
       });
       break;
     }

@@ -8,8 +8,9 @@ import { ChoiceFull } from './interfaces/choice-full';
 import { GroupFull } from './interfaces/group-full';
 import { PassedElementType } from './interfaces/passed-element-type';
 import { StringPreEscaped } from './interfaces/string-pre-escaped';
-import { getClassNames, unwrapStringForRaw, resolveNoticeFunction, setElementHtml } from './lib/utils';
+import { getClassNames, unwrapStringForRaw, resolveNoticeFunction, setElementHtml, escapeForTemplate } from './lib/utils';
 import { NoticeType, NoticeTypes, TemplateOptions, Templates as TemplatesInterface } from './interfaces/templates';
+import { StringUntrusted } from './interfaces/string-untrusted';
 
 const isEmptyObject = (obj: object): boolean => {
   // eslint-disable-next-line no-restricted-syntax
@@ -244,12 +245,21 @@ const templates: TemplatesInterface = {
     }: TemplateOptions,
     choice: ChoiceFull,
     selectText: string,
+    groupName?: string,
   ): HTMLDivElement {
-    const { value, elementId, groupId, label, labelClass, labelDescription } = choice;
+    // eslint-disable-next-line prefer-destructuring
+    let label: string | StringUntrusted | StringPreEscaped = choice.label;
+    const { value, elementId, groupId, labelClass, labelDescription } = choice;
     const rawValue = unwrapStringForRaw(value);
     const div = document.createElement('div');
     div.id = elementId as string;
     div.className = `${getClassNames(item).join(' ')} ${getClassNames(itemChoice).join(' ')}`;
+
+    if (groupName && typeof label === 'string') {
+      label = escapeForTemplate(allowHTML, label);
+      label += ` (${groupName})`;
+      label = { trusted: label };
+    }
 
     let describedBy: HTMLElement = div;
     if (labelClass) {
@@ -281,9 +291,8 @@ const templates: TemplatesInterface = {
     }
 
     const { dataset } = div;
-    const showGroupId = groupId && groupId > 0;
-    div.setAttribute('role', showGroupId ? 'treeitem' : 'option');
-    if (showGroupId) {
+    div.setAttribute('role', groupId ? 'treeitem' : 'option');
+    if (groupId) {
       dataset.groupId = `${groupId}`;
     }
 

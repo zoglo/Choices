@@ -966,14 +966,15 @@ class Choices {
 
       // Add each choice to dropdown within range
       choices.every((choice, index) => {
-        const dropdownItem = choice.choiceEl || templates.choice(config, choice, config.itemSelectText);
+        const dropdownItem =
+          choice.choiceEl ||
+          templates.choice(
+            config,
+            choice,
+            config.itemSelectText,
+            appendGroupInSearch && choice.groupId ? groupLookup[choice.groupId] : undefined,
+          );
         choice.choiceEl = dropdownItem;
-        if (appendGroupInSearch && choice.groupId > 0) {
-          const groupName = groupLookup[choice.groupId];
-          if (groupName) {
-            dropdownItem.innerHTML += ` (${groupName})`;
-          }
-        }
         fragment.appendChild(dropdownItem);
 
         return index < choiceLimit;
@@ -1168,7 +1169,7 @@ class Choices {
       return undefined;
     }
 
-    const group = choice.groupId > 0 ? this._store.getGroupById(choice.groupId) : null;
+    const group = choice.groupId ? this._store.getGroupById(choice.groupId) : null;
 
     return {
       id: choice.id,

@@ -754,7 +754,7 @@ describe('choices', () => {
       let itemsStub;
       const groupIdValue = 'Test';
       const item: ChoiceFull = {
-        groupId: 0,
+        groupId: 1,
         highlighted: false,
         active: false,
         disabled: false,
@@ -827,7 +827,7 @@ describe('choices', () => {
 
         describe('item with negative groupId', () => {
           beforeEach(() => {
-            item.groupId = -1;
+            item.groupId = 0;
             output = instance.highlightItem(item);
           });
 
@@ -885,7 +885,7 @@ describe('choices', () => {
       let storeGetGroupByIdStub;
       const groupIdValue = 'Test';
       const item: ChoiceFull = {
-        groupId: 0,
+        groupId: 1,
         highlighted: true,
         active: false,
         disabled: false,
@@ -958,7 +958,7 @@ describe('choices', () => {
 
         describe('item with negative groupId', () => {
           beforeEach(() => {
-            item.groupId = -1;
+            item.groupId = 0;
             output = instance.unhighlightItem(item);
           });
 

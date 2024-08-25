@@ -47,7 +47,7 @@ export interface Templates {
 
   choiceGroup(options: TemplateOptions, group: GroupFull): HTMLDivElement;
 
-  choice(options: TemplateOptions, choice: ChoiceFull, selectText: string): HTMLDivElement;
+  choice(options: TemplateOptions, choice: ChoiceFull, selectText: string, groupText?: string): HTMLDivElement;
 
   input(options: TemplateOptions, placeholderValue: string | null): HTMLInputElement;
 
