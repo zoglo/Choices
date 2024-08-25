@@ -290,7 +290,9 @@ const templates: TemplatesInterface = {
     dataset.choice = '';
     dataset.id = choice.id as unknown as string;
     dataset.value = rawValue;
-    dataset.selectText = selectText;
+    if (selectText) {
+      dataset.selectText = selectText;
+    }
 
     assignCustomProperties(div, choice, false);
 

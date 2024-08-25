@@ -675,7 +675,7 @@ For backward compatibility, `<option value="">This is a placeholder</option>` an
 
 **Input types affected:** `select-multiple`, `select-one`
 
-**Usage:** The text that is shown when a user hovers over a selectable choice.
+**Usage:** The text that is shown when a user hovers over a selectable choice. Set to empty to not reserve space for this text.
 
 ### addItemText
 
