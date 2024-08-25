@@ -250,7 +250,7 @@ $choices-z-index: 1 !default;
 }
 
 %choices-dropdown {
-  visibility: hidden;
+  display: none;
   z-index: $choices-z-index;
   position: absolute;
   width: 100%;
@@ -265,7 +265,7 @@ $choices-z-index: 1 !default;
   will-change: visibility;
 
   &.is-active {
-    visibility: visible;
+    display: block;
   }
 
   .is-open & {
