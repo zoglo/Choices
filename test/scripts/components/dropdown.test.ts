@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-import sinon from 'sinon';
 import { DEFAULT_CLASSNAMES } from '../../../src';
 import Dropdown from '../../../src/scripts/components/dropdown';
 import { getClassNames } from '../../../src/scripts/lib/utils';

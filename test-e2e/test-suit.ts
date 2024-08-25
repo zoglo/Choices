@@ -36,6 +36,7 @@ export class TestSuit {
 
   logConsole(): void {
     this.page.on('console', (msg) => {
+      // eslint-disable-next-line no-console
       console.log(msg);
     });
   }

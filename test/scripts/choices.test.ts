@@ -7,7 +7,6 @@ import { WrappedSelect, WrappedInput } from '../../src/scripts/components/index'
 import { removeItem } from '../../src/scripts/actions/items';
 import templates from '../../src/scripts/templates';
 import { ChoiceFull } from '../../src/scripts/interfaces/choice-full';
-import { GroupFull } from '../../src/scripts/interfaces/group-full';
 import { SearchByFuse } from '../../src/scripts/search/fuse';
 import { SearchByPrefixFilter } from '../../src/scripts/search/prefix-filter';
 
