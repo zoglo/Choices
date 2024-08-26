@@ -8,7 +8,13 @@ import { ChoiceFull } from './interfaces/choice-full';
 import { GroupFull } from './interfaces/group-full';
 import { PassedElementType } from './interfaces/passed-element-type';
 import { StringPreEscaped } from './interfaces/string-pre-escaped';
-import { getClassNames, unwrapStringForRaw, resolveNoticeFunction, setElementHtml, escapeForTemplate } from './lib/utils';
+import {
+  getClassNames,
+  unwrapStringForRaw,
+  resolveNoticeFunction,
+  setElementHtml,
+  escapeForTemplate,
+} from './lib/utils';
 import { NoticeType, NoticeTypes, TemplateOptions, Templates as TemplatesInterface } from './interfaces/templates';
 import { StringUntrusted } from './interfaces/string-untrusted';
 
