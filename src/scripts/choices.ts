@@ -212,8 +212,9 @@ class Choices {
     this._isSelectMultipleElement = isSelectMultiple;
     this._isSelectElement = isSelectOne || isSelectMultiple;
     this._canAddUserChoices = (isText && config.addItems) || (isSelect && config.addChoices);
-    if (!['auto', 'always'].includes(`${config.renderSelectedChoices}`)) {
-      config.renderSelectedChoices = 'auto';
+
+    if (typeof config.renderSelectedChoices !== 'boolean') {
+      config.renderSelectedChoices = config.renderSelectedChoices === 'always' || isSelectOne;
     }
 
     if (config.closeDropdownOnSelect === 'auto') {
@@ -941,11 +942,10 @@ class Choices {
     }
 
     const fragment = document.createDocumentFragment();
-    const skipSelected = config.renderSelectedChoices === 'auto' && !this._isSelectOneElement;
-
     const renderableChoices = (choices: ChoiceFull[]): ChoiceFull[] =>
       choices.filter(
-        (choice) => !choice.placeholder && !(isSearching && !choice.rank) && !(skipSelected && choice.selected),
+        (choice) =>
+          !choice.placeholder && !(isSearching && !choice.rank) && (config.renderSelectedChoices || !choice.selected),
       );
 
     const renderChoices = (choices: ChoiceFull[], withinGroup: boolean): void => {

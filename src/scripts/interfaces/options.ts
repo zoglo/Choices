@@ -467,7 +467,7 @@ export interface Options {
    *
    * @default 'auto';
    */
-  renderSelectedChoices: 'auto' | 'always';
+  renderSelectedChoices: 'auto' | 'always' | boolean;
 
   /**
    * The text that is shown whilst choices are being populated via AJAX.
