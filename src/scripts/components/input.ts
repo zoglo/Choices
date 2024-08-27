@@ -1,6 +1,5 @@
-import { SELECT_ONE_TYPE } from '../constants';
 import { ClassNames } from '../interfaces/class-names';
-import { PassedElementType } from '../interfaces/passed-element-type';
+import { PassedElementType, PassedElementTypes } from '../interfaces/passed-element-type';
 
 export default class Input {
   element: HTMLInputElement;
@@ -126,7 +125,7 @@ export default class Input {
   }
 
   _onInput(): void {
-    if (this.type !== SELECT_ONE_TYPE) {
+    if (this.type !== PassedElementTypes.SelectOne) {
       this.setWidth();
     }
   }

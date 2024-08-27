@@ -1,10 +1,9 @@
 import { ItemActions } from '../actions/items';
 import { State } from '../interfaces/state';
 import { ChoiceActions } from '../actions/choices';
-import { ActionType, Options } from '../interfaces';
+import { ActionType, Options, PassedElementTypes } from '../interfaces';
 import { StateUpdate } from '../interfaces/store';
 import { isHtmlSelectElement } from '../lib/html-guard-statements';
-import { SELECT_ONE_TYPE } from '../constants';
 import { ChoiceFull } from '../interfaces/choice-full';
 import { updateClassList } from '../lib/utils';
 
@@ -46,7 +45,7 @@ export default function items(s: StateType, action: ActionTypes, context?: Optio
         el.removeAttribute('selected');
         // For a select-one, if all options are deselected, the first item is selected. To set a black value, select.value needs to be set
         const select = el.parentElement;
-        if (select && isHtmlSelectElement(select) && select.type === SELECT_ONE_TYPE) {
+        if (select && isHtmlSelectElement(select) && select.type === PassedElementTypes.SelectOne) {
           select.value = '';
         }
       }

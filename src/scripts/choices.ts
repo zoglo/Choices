@@ -3,7 +3,6 @@ import { activateChoices, addChoice, removeChoice, clearChoices, filterChoices }
 import { addGroup } from './actions/groups';
 import { addItem, highlightItem, removeItem } from './actions/items';
 import { Container, Dropdown, Input, List, WrappedInput, WrappedSelect } from './components';
-import { SELECT_MULTIPLE_TYPE, SELECT_ONE_TYPE, TEXT_TYPE } from './constants';
 import { DEFAULT_CONFIG } from './defaults';
 import { InputChoice } from './interfaces/input-choice';
 import { InputGroup } from './interfaces/input-group';
@@ -27,7 +26,7 @@ import Store from './store/store';
 import { coerceBool, mapInputToChoice } from './lib/choice-input';
 import { ChoiceFull } from './interfaces/choice-full';
 import { GroupFull } from './interfaces/group-full';
-import { EventType, KeyCodeMap, PassedElementType } from './interfaces';
+import { EventType, KeyCodeMap, PassedElementType, PassedElementTypes } from './interfaces';
 import { EventChoice } from './interfaces/event-choice';
 import { NoticeType, NoticeTypes, Templates } from './interfaces/templates';
 import { isHtmlInputElement, isHtmlSelectElement } from './lib/html-guard-statements';
@@ -196,15 +195,15 @@ class Choices {
     }
 
     let elementType = passedElement.type as PassedElementType;
-    const isText = elementType === TEXT_TYPE;
+    const isText = elementType === PassedElementTypes.Text;
     if (isText || config.maxItemCount !== 1) {
       config.singleModeForMultiSelect = false;
     }
     if (config.singleModeForMultiSelect) {
-      elementType = SELECT_MULTIPLE_TYPE;
+      elementType = PassedElementTypes.SelectMultiple;
     }
-    const isSelectOne = elementType === SELECT_ONE_TYPE;
-    const isSelectMultiple = elementType === SELECT_MULTIPLE_TYPE;
+    const isSelectOne = elementType === PassedElementTypes.SelectOne;
+    const isSelectMultiple = elementType === PassedElementTypes.SelectMultiple;
     const isSelect = isSelectOne || isSelectMultiple;
 
     this._elementType = elementType;

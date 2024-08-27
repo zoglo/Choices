@@ -1,8 +1,7 @@
 import { getClassNames } from '../lib/utils';
-import { SELECT_ONE_TYPE } from '../constants';
 import { ClassNames } from '../interfaces/class-names';
 import { PositionOptionsType } from '../interfaces/position-options-type';
-import { PassedElementType } from '../interfaces/passed-element-type';
+import { PassedElementType, PassedElementTypes } from '../interfaces/passed-element-type';
 
 export default class Container {
   element: HTMLElement;
@@ -104,7 +103,7 @@ export default class Container {
   enable(): void {
     this.element.classList.remove(...getClassNames(this.classNames.disabledState));
     this.element.removeAttribute('aria-disabled');
-    if (this.type === SELECT_ONE_TYPE) {
+    if (this.type === PassedElementTypes.SelectOne) {
       this.element.setAttribute('tabindex', '0');
     }
     this.isDisabled = false;
@@ -113,7 +112,7 @@ export default class Container {
   disable(): void {
     this.element.classList.add(...getClassNames(this.classNames.disabledState));
     this.element.setAttribute('aria-disabled', 'true');
-    if (this.type === SELECT_ONE_TYPE) {
+    if (this.type === PassedElementTypes.SelectOne) {
       this.element.setAttribute('tabindex', '-1');
     }
     this.isDisabled = true;
