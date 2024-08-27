@@ -945,9 +945,10 @@ class Choices {
     const renderableChoices = (choices: ChoiceFull[]): ChoiceFull[] =>
       choices.filter(
         (choice) =>
-          !choice.placeholder && !(isSearching && !choice.rank) && (config.renderSelectedChoices || !choice.selected),
+          !choice.placeholder && (isSearching ? !!choice.rank : config.renderSelectedChoices || !choice.selected),
       );
 
+    let selectableChoices = this._isSelectOneElement;
     const renderChoices = (choices: ChoiceFull[], withinGroup: boolean): void => {
       if (isSearching) {
         // sortByRank is used to ensure stable sorting, as scores are non-unique
@@ -961,8 +962,8 @@ class Choices {
       choiceLimit = !withinGroup && renderLimit && choiceLimit > renderLimit ? renderLimit : choiceLimit;
       choiceLimit--;
 
-      // Add each choice to dropdown within range
       choices.every((choice, index) => {
+        // choiceEl being empty signals the contents has probably significantly changed
         const dropdownItem =
           choice.choiceEl ||
           templates.choice(
@@ -973,12 +974,14 @@ class Choices {
           );
         choice.choiceEl = dropdownItem;
         fragment.appendChild(dropdownItem);
+        if (isSearching || !choice.selected) {
+          selectableChoices = true;
+        }
 
         return index < choiceLimit;
       });
     };
 
-    let noChoices = true;
     if (activeChoices.length) {
       if (config.resetScrollPosition) {
         requestAnimationFrame(() => choiceList.scrollToTop());
@@ -1013,17 +1016,17 @@ class Choices {
       } else {
         renderChoices(renderableChoices(activeChoices), false);
       }
-      noChoices = !fragment.childNodes.length;
     }
 
     const notice = this._notice;
-    if (noChoices) {
+    if (!selectableChoices) {
       if (!notice) {
         this._notice = {
           text: resolveStringFunction(config.noChoicesText),
           type: NoticeTypes.noChoices,
         };
       }
+      fragment.replaceChildren('');
     } else if (notice && notice.type === NoticeTypes.noChoices) {
       this._notice = undefined;
     }
@@ -1031,7 +1034,7 @@ class Choices {
     this._renderNotice(fragment);
     choiceList.element.replaceChildren(fragment);
 
-    if (!noChoices) {
+    if (selectableChoices) {
       this._highlightChoice();
     }
   }
