@@ -563,7 +563,7 @@ describe('templates', () => {
             ${data.label}
           </div>
         `);
-        const actualOutput = templates.choice(choiceOptions, data, itemSelectText, "Group text");
+        const actualOutput = templates.choice(choiceOptions, data, itemSelectText, 'Group text');
 
         expectEqualElements(actualOutput, expectedOutput);
       });
