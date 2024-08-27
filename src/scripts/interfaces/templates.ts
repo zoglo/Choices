@@ -4,6 +4,7 @@ import { ChoiceFull } from './choice-full';
 import { GroupFull } from './group-full';
 
 import { Options } from './options';
+import { Types } from './types';
 
 export type TemplateOptions = Pick<
   Options,
@@ -22,7 +23,7 @@ export const NoticeTypes = {
   addChoice: 'add-choice',
   generic: '',
 } as const;
-export type NoticeType = (typeof NoticeTypes)[keyof typeof NoticeTypes];
+export type NoticeType = Types.ValueOf<typeof NoticeTypes>;
 
 export interface Templates {
   containerOuter(

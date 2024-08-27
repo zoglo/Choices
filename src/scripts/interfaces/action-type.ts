@@ -1,3 +1,5 @@
+import { Types } from './types';
+
 export const ActionType = {
   ADD_CHOICE: 'ADD_CHOICE',
   REMOVE_CHOICE: 'REMOVE_CHOICE',
@@ -10,4 +12,4 @@ export const ActionType = {
   HIGHLIGHT_ITEM: 'HIGHLIGHT_ITEM',
 } as const;
 
-export type ActionTypes = (typeof ActionType)[keyof typeof ActionType];
+export type ActionTypes = Types.ValueOf<typeof ActionType>;

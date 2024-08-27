@@ -1,3 +1,5 @@
+import { Types } from './types';
+
 export const EventType = {
   showDropdown: 'showDropdown',
   hideDropdown: 'hideDropdown',
@@ -11,4 +13,4 @@ export const EventType = {
   unhighlightItem: 'unhighlightItem',
 } as const;
 
-export type EventTypes = (typeof EventType)[keyof typeof EventType];
+export type EventTypes = Types.ValueOf<typeof EventType>;

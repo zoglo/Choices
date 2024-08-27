@@ -14,4 +14,5 @@ export namespace Types {
     value?: StringUntrusted | string;
     label?: StringUntrusted | string;
   }
+  export type ValueOf<T extends object> = T[keyof T];
 }
