@@ -1,3 +1,4 @@
+import { Types } from './types';
 export declare const ActionType: {
     readonly ADD_CHOICE: "ADD_CHOICE";
     readonly REMOVE_CHOICE: "REMOVE_CHOICE";
@@ -9,4 +10,4 @@ export declare const ActionType: {
     readonly REMOVE_ITEM: "REMOVE_ITEM";
     readonly HIGHLIGHT_ITEM: "HIGHLIGHT_ITEM";
 };
-export type ActionTypes = (typeof ActionType)[keyof typeof ActionType];
+export type ActionTypes = Types.ValueOf<typeof ActionType>;
