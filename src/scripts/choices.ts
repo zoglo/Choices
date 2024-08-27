@@ -968,7 +968,8 @@ class Choices {
         // If we have a placeholder choice along with groups
         renderChoices(
           this._store.activeChoices.filter((choice) => choice.placeholder && !choice.groupId),
-          false, undefined,
+          false,
+          undefined,
         );
       }
 
