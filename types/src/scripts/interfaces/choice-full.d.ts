@@ -4,6 +4,8 @@ export interface ChoiceFull {
     id: number;
     highlighted: boolean;
     element?: HTMLOptionElement | HTMLOptGroupElement;
+    itemEl?: HTMLElement;
+    choiceEl?: HTMLElement;
     labelClass?: Array<string>;
     labelDescription?: string;
     customProperties?: CustomProperties;

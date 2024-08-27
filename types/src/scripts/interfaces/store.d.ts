@@ -9,7 +9,7 @@ export interface StateUpdate<T> {
     update: boolean;
     state: T;
 }
-export type Reducer<T> = (state: T, action: AnyAction) => StateUpdate<T>;
+export type Reducer<T> = (state: T, action: AnyAction, context?: unknown) => StateUpdate<T>;
 export type StoreListener = (changes: StateChangeSet) => void;
 export interface Store {
     dispatch(action: AnyAction): void;

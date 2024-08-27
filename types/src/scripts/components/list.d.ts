@@ -5,7 +5,6 @@ export default class List {
     constructor({ element }: {
         element: HTMLElement;
     });
-    clear(): void;
     prepend(node: Element | DocumentFragment): void;
     scrollToTop(): void;
     scrollToChildElement(element: HTMLElement, direction: 1 | -1): void;
