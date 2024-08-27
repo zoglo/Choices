@@ -1,4 +1,4 @@
-/*! choices.js v11.0.0-rc8 | © 2024 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
+/*! choices.js v11.0.0 | © 2024 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
 
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -3962,15 +3962,6 @@
             else if (config.renderChoiceLimit > 0) {
                 renderLimit = config.renderChoiceLimit;
             }
-            var groupLookup = [];
-            var appendGroupInSearch = config.appendGroupInSearch && isSearching;
-            if (appendGroupInSearch) {
-                this._store.activeGroups.forEach(function (group) {
-                    if (group.label) {
-                        groupLookup[group.id] = group.label;
-                    }
-                });
-            }
             if (this._isSelectElement) {
                 var backingOptions = this._store.activeChoices.filter(function (choice) { return !choice.element; });
                 if (backingOptions.length) {
@@ -3984,7 +3975,7 @@
                 });
             };
             var selectableChoices = this._isSelectOneElement;
-            var renderChoices = function (choices, withinGroup) {
+            var renderChoices = function (choices, withinGroup, groupLabel) {
                 if (isSearching) {
                     // sortByRank is used to ensure stable sorting, as scores are non-unique
                     // this additionally ensures fuseOptions.sortFn is not ignored
@@ -3998,8 +3989,7 @@
                 choiceLimit--;
                 choices.every(function (choice, index) {
                     // choiceEl being empty signals the contents has probably significantly changed
-                    var dropdownItem = choice.choiceEl ||
-                        _this._templates.choice(config, choice, config.itemSelectText, appendGroupInSearch && choice.groupId ? groupLookup[choice.groupId] : undefined);
+                    var dropdownItem = choice.choiceEl || _this._templates.choice(config, choice, config.itemSelectText, groupLabel);
                     choice.choiceEl = dropdownItem;
                     fragment.appendChild(dropdownItem);
                     if (isSearching || !choice.selected) {
@@ -4014,7 +4004,7 @@
                 }
                 if (!this._hasNonChoicePlaceholder && !isSearching && this._isSelectOneElement) {
                     // If we have a placeholder choice along with groups
-                    renderChoices(this._store.activeChoices.filter(function (choice) { return choice.placeholder && !choice.groupId; }), false);
+                    renderChoices(this._store.activeChoices.filter(function (choice) { return choice.placeholder && !choice.groupId; }), false, undefined);
                 }
                 // If we have grouped options
                 if (this._store.activeGroups.length && !isSearching) {
@@ -4030,12 +4020,12 @@
                                 dropdownGroup.remove();
                                 fragment.appendChild(dropdownGroup);
                             }
-                            renderChoices(groupChoices, true);
+                            renderChoices(groupChoices, true, config.appendGroupInSearch && isSearching ? group.label : undefined);
                         }
                     });
                 }
                 else {
-                    renderChoices(renderableChoices(this._store.activeChoices), false);
+                    renderChoices(renderableChoices(this._store.activeChoices), false, undefined);
                 }
             }
             var notice = this._notice;
@@ -5173,7 +5163,7 @@
                 throw new TypeError("".concat(caller, " called for an element which has multiple instances of Choices initialised on it"));
             }
         };
-        Choices.version = '11.0.0-rc8';
+        Choices.version = '11.0.0';
         return Choices;
     }());
 

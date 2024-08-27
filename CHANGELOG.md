@@ -1,9 +1,10 @@
 # Changelog
 
-## [11.0.0]
+## [11.0.0] (2024-08-28)
 
 ### ⚠ BREAKING CHANGES
 * Update polyfills to include `Element.prototype.replaceChildren`
+* Number of internal APIs have changed
 
 ### Bug Fixes (from 10.2.0)
 * Reduce work done for `unhighlightAll` during on-click handler (batching in v11.0.0-rc8 would also have helped) [#522](https://github.com/Choices-js/Choices/issues/522) [#599](https://github.com/Choices-js/Choices/issues/599)
