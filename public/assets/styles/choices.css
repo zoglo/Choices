@@ -209,7 +209,6 @@
   border-bottom-right-radius: 2.5px;
   overflow: hidden;
   word-break: break-all;
-  will-change: visibility;
 }
 .is-active.choices__list--dropdown, .is-active.choices__list[aria-expanded] {
   display: block;

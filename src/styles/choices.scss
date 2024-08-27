@@ -262,7 +262,6 @@ $choices-z-index: 1 !default;
   border-bottom-right-radius: $choices-border-radius;
   overflow: hidden;
   word-break: break-all;
-  will-change: visibility;
 
   &.is-active {
     display: block;
