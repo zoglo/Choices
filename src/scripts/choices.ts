@@ -917,16 +917,6 @@ class Choices {
       renderLimit = config.renderChoiceLimit;
     }
 
-    const groupLookup: string[] = [];
-    const appendGroupInSearch = config.appendGroupInSearch && isSearching;
-    if (appendGroupInSearch) {
-      this._store.activeGroups.forEach((group) => {
-        if (group.label) {
-          groupLookup[group.id] = group.label;
-        }
-      });
-    }
-
     if (this._isSelectElement) {
       const backingOptions = this._store.activeChoices.filter((choice) => !choice.element);
       if (backingOptions.length) {
@@ -942,7 +932,7 @@ class Choices {
       );
 
     let selectableChoices = this._isSelectOneElement;
-    const renderChoices = (choices: ChoiceFull[], withinGroup: boolean): void => {
+    const renderChoices = (choices: ChoiceFull[], withinGroup: boolean, groupLabel?: string): void => {
       if (isSearching) {
         // sortByRank is used to ensure stable sorting, as scores are non-unique
         // this additionally ensures fuseOptions.sortFn is not ignored
@@ -958,13 +948,7 @@ class Choices {
       choices.every((choice, index) => {
         // choiceEl being empty signals the contents has probably significantly changed
         const dropdownItem =
-          choice.choiceEl ||
-          this._templates.choice(
-            config,
-            choice,
-            config.itemSelectText,
-            appendGroupInSearch && choice.groupId ? groupLookup[choice.groupId] : undefined,
-          );
+          choice.choiceEl || this._templates.choice(config, choice, config.itemSelectText, groupLabel);
         choice.choiceEl = dropdownItem;
         fragment.appendChild(dropdownItem);
         if (isSearching || !choice.selected) {
@@ -984,7 +968,7 @@ class Choices {
         // If we have a placeholder choice along with groups
         renderChoices(
           this._store.activeChoices.filter((choice) => choice.placeholder && !choice.groupId),
-          false,
+          false, undefined,
         );
       }
 
@@ -1003,11 +987,11 @@ class Choices {
               dropdownGroup.remove();
               fragment.appendChild(dropdownGroup);
             }
-            renderChoices(groupChoices, true);
+            renderChoices(groupChoices, true, config.appendGroupInSearch && isSearching ? group.label : undefined);
           }
         });
       } else {
-        renderChoices(renderableChoices(this._store.activeChoices), false);
+        renderChoices(renderableChoices(this._store.activeChoices), false, undefined);
       }
     }
 
