@@ -246,13 +246,15 @@ describe(`Choices - select multiple`, () => {
           for (let i = 1; i < count + 1; i++) {
             await suite.expectVisibleDropdown();
             await suite.getChoiceWithText(`Choice ${i}`).click();
-            await expect(suite.getChoiceWithText(`Choice ${i}`)).toHaveClass(/is-selected/);
             await suite.advanceClock();
             await suite.expectedItemCount(i);
-            await expect(suite.selectableChoices).toHaveCount(count);
+            if (i < count) {
+              await expect(suite.getChoiceWithText(`Choice ${i}`)).toHaveClass(/is-selected/);
+              await expect(suite.selectableChoices).toHaveCount(count);
+            } else {
+              await suite.expectVisibleNoticeHtml('No choices to choose from');
+            }
           }
-
-          await suite.expectVisibleNoticeHtml('No choices to choose from');
         });
       });
 

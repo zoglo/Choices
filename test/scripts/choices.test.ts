@@ -45,6 +45,7 @@ describe('choices', () => {
             ...DEFAULT_CONFIG,
             searchEnabled: false,
             closeDropdownOnSelect: true,
+            renderSelectedChoices: false,
           });
         });
       });
@@ -65,6 +66,7 @@ describe('choices', () => {
             ...DEFAULT_CONFIG,
             searchEnabled: false,
             closeDropdownOnSelect: true,
+            renderSelectedChoices: false,
             ...config,
           });
         });
@@ -109,7 +111,7 @@ describe('choices', () => {
               renderSelectedChoices: 'test' as any,
             });
 
-            expect(instance.config.renderSelectedChoices).to.equal('auto');
+            expect(instance.config.renderSelectedChoices).to.equal(false);
           });
         });
       });

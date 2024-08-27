@@ -11,13 +11,13 @@ import { NoticeTypes, Templates as TemplatesInterface } from '../../src/scripts/
  */
 function expectEqualElements(element1, element2): void {
   expect(element1.tagName).to.equal(element2.tagName);
-  expect(element1.attributes.length).to.equal(element2.attributes.length);
   expect(Object.keys(element1.dataset)).to.have.members(Object.keys(element2.dataset));
   expect(element1.classList).to.include(element2.classList);
   // compare attributes values
   for (const attribute of Object.values(element1.attributes)) {
     expect(element1.getAttribute(attribute)).to.equal(element2.getAttribute(attribute));
   }
+  expect(element1.attributes.length).to.equal(element2.attributes.length);
 }
 
 function createOptionsWithPartialClasses(classNames: Partial<ClassNames>, options: Partial<Options> = {}): Options {
@@ -563,7 +563,7 @@ describe('templates', () => {
             ${data.label}
           </div>
         `);
-        const actualOutput = templates.choice(choiceOptions, data, itemSelectText);
+        const actualOutput = templates.choice(choiceOptions, data, itemSelectText, "Group text");
 
         expectEqualElements(actualOutput, expectedOutput);
       });
