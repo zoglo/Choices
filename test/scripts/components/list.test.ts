@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-import { getClassNames } from '../../../src/scripts/lib/utils';
 import List from '../../../src/scripts/components/list';
 
 describe('components/list', () => {
