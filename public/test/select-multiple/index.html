@@ -91,6 +91,29 @@
           </script>
         </div>
 
+        <div data-test-hook="render-selected-choices">
+          <label for="choices-remove-button">Render selected choices</label>
+          <select
+            class="form-control"
+            name="render-selected-choices"
+            id="render-selected-choices"
+            multiple
+          >
+            <option value="Choice 1" selected>Choice 1</option>
+            <option value="Choice 2">Choice 2</option>
+            <option value="Choice 3">Choice 3</option>
+            <option value="Choice 4">Choice 4</option>
+          </select>
+          <script>
+            document.addEventListener('DOMContentLoaded', function() {
+              new Choices('#render-selected-choices', {
+                allowHTML: true,
+                renderSelectedChoices: true,
+              });
+            });
+          </script>
+        </div>
+
         <div data-test-hook="remove-button">
           <label for="choices-remove-button">Remove button</label>
           <select

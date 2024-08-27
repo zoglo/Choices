@@ -207,6 +207,84 @@ describe(`Choices - select multiple`, () => {
       });
     });
 
+    describe('render selected choices', () => {
+      const testId = 'render-selected-choices';
+      describe('selecting choices', () => {
+        const selectedChoiceText = 'Choice 1';
+
+        test('not removing selected choice from dropdown list', async ({ page, bundle }) => {
+          const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+          await suite.startWithClick();
+
+          await expect(suite.choices.first()).toHaveText(selectedChoiceText);
+          await expect(suite.choices.first()).toHaveClass(/is-selected/);
+          await expect(suite.items.last()).toHaveText(selectedChoiceText);
+        });
+
+        test('multiple choices', async ({ page, bundle }) => {
+          const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+          await suite.startWithClick();
+
+          await expect(suite.getChoiceWithText(selectedChoiceText)).toHaveClass(/is-selected/);
+          await suite.expectedItemCount(1);
+          await suite.expectChoiceCount(4);
+          await suite.expectVisibleDropdown();
+
+          await suite.getChoiceWithText('Choice 2').click();
+          await expect(suite.getChoiceWithText('Choice 2')).toHaveClass(/is-selected/);
+          await suite.expectedItemCount(2);
+          await suite.expectChoiceCount(4);
+          await suite.expectVisibleDropdown();
+        });
+
+        test('all available choices', async ({ page, bundle }) => {
+          const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+          await suite.startWithClick();
+
+          const count = await suite.choices.count();
+
+          for (let i = 1; i < count + 1; i++) {
+            await suite.expectVisibleDropdown();
+            await suite.getChoiceWithText(`Choice ${i}`).click();
+            await expect(suite.getChoiceWithText(`Choice ${i}`)).toHaveClass(/is-selected/);
+            await suite.advanceClock();
+            await suite.expectedItemCount(i);
+            await expect(suite.selectableChoices).toHaveCount(count);
+          }
+
+          await suite.expectVisibleNoticeHtml('No choices to choose from');
+        });
+      });
+
+      describe('keys for choice', () => {
+        test('up/down arrows for selection', async ({ page, bundle }) => {
+          const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+          await suite.startWithClick();
+
+          await suite.input.press('ArrowDown');
+          await expect(suite.choices.first()).not.toHaveClass(/is-highlighted/);
+          await expect(suite.choices.nth(1)).toHaveClass(/is-highlighted/);
+
+          await suite.input.press('ArrowUp');
+          await expect(suite.choices.first()).toHaveClass(/is-highlighted/);
+          await expect(suite.choices.nth(1)).not.toHaveClass(/is-highlighted/);
+        });
+
+        test('page-up/page-down arrows for selection', async ({ page, bundle }) => {
+          const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+          await suite.startWithClick();
+
+          await suite.input.press('PageDown');
+          await expect(suite.choices.first()).not.toHaveClass(/is-highlighted/);
+          await expect(suite.choices.last()).toHaveClass(/is-highlighted/);
+
+          await suite.input.press('PageUp');
+          await expect(suite.choices.first()).toHaveClass(/is-highlighted/);
+          await expect(suite.choices.last()).not.toHaveClass(/is-highlighted/);
+        });
+      });
+    });
+
     describe('remove button', () => {
       const testId = 'remove-button';
       describe('on click', () => {
