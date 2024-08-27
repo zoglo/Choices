@@ -2,7 +2,6 @@ import { AnyAction, Reducer, Store as IStore, StoreListener } from '../interface
 import { StateChangeSet, State } from '../interfaces/state';
 import { ChoiceFull } from '../interfaces/choice-full';
 import { GroupFull } from '../interfaces/group-full';
-// eslint-disable-next-line import/no-cycle
 import items from '../reducers/items';
 import groups from '../reducers/groups';
 import choices from '../reducers/choices';
