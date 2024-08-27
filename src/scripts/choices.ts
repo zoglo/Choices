@@ -1367,8 +1367,6 @@ class Choices {
       return;
     }
 
-    const hasUnactiveChoices = this._store.choices.some((option) => !option.active);
-
     // Check that we have a value to search and the input was an alphanumeric character
     if (value !== null && typeof value !== 'undefined' && value.length >= this.config.searchFloor) {
       const resultCount = this.config.searchChoices ? this._searchChoices(value) : 0;
@@ -1379,7 +1377,7 @@ class Choices {
           resultCount,
         });
       }
-    } else if (hasUnactiveChoices) {
+    } else if (this._store.choices.some((option) => !option.active)) {
       this._stopSearch();
     }
   }

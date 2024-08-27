@@ -13,10 +13,6 @@ export default class List {
     this.height = this.element.offsetHeight;
   }
 
-  clear(): void {
-    this.element.innerHTML = '';
-  }
-
   prepend(node: Element | DocumentFragment): void {
     const child = this.element.firstElementChild;
     if (child) {
