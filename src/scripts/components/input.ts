@@ -111,9 +111,9 @@ export default class Input {
    */
   setWidth(): void {
     // Resize input to contents or placeholder
-    const { style, value, placeholder } = this.element;
-    style.minWidth = `${placeholder.length + 1}ch`;
-    style.width = `${value.length + 1}ch`;
+    const { element } = this;
+    element.style.minWidth = `${element.placeholder.length + 1}ch`;
+    element.style.width = `${element.value.length + 1}ch`;
   }
 
   setActiveDescendant(activeDescendantID: string): void {

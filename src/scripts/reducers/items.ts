@@ -24,22 +24,20 @@ export default function items(s: StateType, action: ActionTypes, context?: Optio
 
   switch (action.type) {
     case ActionType.ADD_ITEM: {
-      const { item } = action;
-      item.selected = true;
-      const el = item.element as HTMLOptionElement | undefined;
+      action.item.selected = true;
+      const el = action.item.element as HTMLOptionElement | undefined;
       if (el) {
         el.selected = true;
         el.setAttribute('selected', '');
       }
 
-      state.push(item);
+      state.push(action.item);
       break;
     }
 
     case ActionType.REMOVE_ITEM: {
-      const { item } = action;
-      item.selected = false;
-      const el = item.element as HTMLOptionElement | undefined;
+      action.item.selected = false;
+      const el = action.item.element as HTMLOptionElement | undefined;
       if (el) {
         el.selected = false;
         el.removeAttribute('selected');
@@ -50,15 +48,14 @@ export default function items(s: StateType, action: ActionTypes, context?: Optio
         }
       }
       // this is mixing concerns, but this is *so much faster*
-      removeItem(item);
-      state = state.filter((choice) => choice.id !== item.id);
+      removeItem(action.item);
+      state = state.filter((choice) => choice.id !== action.item.id);
       break;
     }
 
     case ActionType.REMOVE_CHOICE: {
-      const { choice } = action;
-      state = state.filter((item) => item.id !== choice.id);
-      removeItem(choice);
+      state = state.filter((item) => item.id !== action.choice.id);
+      removeItem(action.choice);
       break;
     }
 
@@ -68,12 +65,10 @@ export default function items(s: StateType, action: ActionTypes, context?: Optio
       if (item && item.highlighted !== highlighted) {
         item.highlighted = highlighted;
         if (context) {
-          const { classNames } = context;
-          const { highlightedState, selectedState } = classNames;
           updateClassList(
             item,
-            highlighted ? highlightedState : selectedState,
-            highlighted ? selectedState : highlightedState,
+            highlighted ? context.classNames.highlightedState : context.classNames.selectedState,
+            highlighted ? context.classNames.selectedState : context.classNames.highlightedState,
           );
         }
       }

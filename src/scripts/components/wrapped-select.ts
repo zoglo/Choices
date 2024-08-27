@@ -74,7 +74,6 @@ export default class WrappedSelect extends WrappedElement<HTMLSelectElement> {
       option.setAttribute('value', '');
       option.value = '';
     }
-    const { dataset } = option;
 
     return {
       id: 0,
@@ -90,9 +89,11 @@ export default class WrappedSelect extends WrappedElement<HTMLSelectElement> {
       disabled: option.disabled,
       highlighted: false,
       placeholder: this.extractPlaceholder && (!option.value || option.hasAttribute('placeholder')),
-      labelClass: typeof dataset.labelClass !== 'undefined' ? stringToHtmlClass(dataset.labelClass) : undefined,
-      labelDescription: typeof dataset.labelDescription !== 'undefined' ? dataset.labelDescription : undefined,
-      customProperties: parseCustomProperties(dataset.customProperties),
+      labelClass:
+        typeof option.dataset.labelClass !== 'undefined' ? stringToHtmlClass(option.dataset.labelClass) : undefined,
+      labelDescription:
+        typeof option.dataset.labelDescription !== 'undefined' ? option.dataset.labelDescription : undefined,
+      customProperties: parseCustomProperties(option.dataset.customProperties),
     };
   }
 

@@ -143,28 +143,26 @@ const templates: TemplatesInterface = {
     choice: ChoiceFull,
     removeItemButton: boolean,
   ): HTMLDivElement {
-    const { labelClass, label, disabled, value } = choice;
-    const rawValue = unwrapStringForRaw(value);
+    const rawValue = unwrapStringForRaw(choice.value);
     const div = document.createElement('div');
     div.className = getClassNames(item).join(' ');
 
-    if (labelClass) {
+    if (choice.labelClass) {
       const spanLabel = document.createElement('span');
-      setElementHtml(spanLabel, allowHTML, label);
-      spanLabel.className = getClassNames(labelClass).join(' ');
+      setElementHtml(spanLabel, allowHTML, choice.label);
+      spanLabel.className = getClassNames(choice.labelClass).join(' ');
       div.appendChild(spanLabel);
     } else {
-      setElementHtml(div, allowHTML, label);
+      setElementHtml(div, allowHTML, choice.label);
     }
 
-    const { dataset } = div;
-    dataset.item = '';
-    dataset.id = choice.id as unknown as string;
-    dataset.value = rawValue;
+    div.dataset.item = '';
+    div.dataset.id = choice.id as unknown as string;
+    div.dataset.value = rawValue;
 
     assignCustomProperties(div, choice, true);
 
-    if (disabled || this.containerOuter.isDisabled) {
+    if (choice.disabled || this.containerOuter.isDisabled) {
       div.setAttribute('aria-disabled', 'true');
     }
     if (this._isSelectElement) {
@@ -174,23 +172,23 @@ const templates: TemplatesInterface = {
 
     if (choice.placeholder) {
       div.classList.add(...getClassNames(placeholder));
-      dataset.placeholder = '';
+      div.dataset.placeholder = '';
     }
 
     div.classList.add(...(choice.highlighted ? getClassNames(highlightedState) : getClassNames(itemSelectable)));
 
     if (removeItemButton) {
-      if (disabled) {
+      if (choice.disabled) {
         div.classList.remove(...getClassNames(itemSelectable));
       }
-      dataset.deletable = '';
+      div.dataset.deletable = '';
 
       const removeButton = document.createElement('button');
       removeButton.type = 'button';
       removeButton.className = getClassNames(button).join(' ');
-      setElementHtml(removeButton, true, resolveNoticeFunction(removeItemIconText, value));
+      setElementHtml(removeButton, true, resolveNoticeFunction(removeItemIconText, choice.value));
 
-      const REMOVE_ITEM_LABEL = resolveNoticeFunction(removeItemLabelText, value);
+      const REMOVE_ITEM_LABEL = resolveNoticeFunction(removeItemLabelText, choice.value);
       if (REMOVE_ITEM_LABEL) {
         removeButton.setAttribute('aria-label', REMOVE_ITEM_LABEL);
       }
@@ -227,10 +225,9 @@ const templates: TemplatesInterface = {
 
     div.setAttribute('role', 'group');
 
-    const { dataset } = div;
-    dataset.group = '';
-    dataset.id = id as unknown as string;
-    dataset.value = rawLabel;
+    div.dataset.group = '';
+    div.dataset.id = id as unknown as string;
+    div.dataset.value = rawLabel;
 
     if (disabled) {
       div.setAttribute('aria-disabled', 'true');
@@ -255,34 +252,34 @@ const templates: TemplatesInterface = {
   ): HTMLDivElement {
     // eslint-disable-next-line prefer-destructuring
     let label: string | StringUntrusted | StringPreEscaped = choice.label;
-    const { value, elementId, groupId, labelClass, labelDescription } = choice;
-    const rawValue = unwrapStringForRaw(value);
+    const rawValue = unwrapStringForRaw(choice.value);
     const div = document.createElement('div');
-    div.id = elementId as string;
+    div.id = choice.elementId as string;
     div.className = `${getClassNames(item).join(' ')} ${getClassNames(itemChoice).join(' ')}`;
 
     if (groupName && typeof label === 'string') {
       label = escapeForTemplate(allowHTML, label);
       label += ` (${groupName})`;
       label = { trusted: label };
+      div.dataset.groupId = `${choice.groupId}`;
     }
 
     let describedBy: HTMLElement = div;
-    if (labelClass) {
+    if (choice.labelClass) {
       const spanLabel = document.createElement('span');
       setElementHtml(spanLabel, allowHTML, label);
-      spanLabel.className = getClassNames(labelClass).join(' ');
+      spanLabel.className = getClassNames(choice.labelClass).join(' ');
       describedBy = spanLabel;
       div.appendChild(spanLabel);
     } else {
       setElementHtml(div, allowHTML, label);
     }
 
-    if (labelDescription) {
-      const descId = `${elementId}-description`;
+    if (choice.labelDescription) {
+      const descId = `${choice.elementId}-description`;
       describedBy.setAttribute('aria-describedby', descId);
       const spanDesc = document.createElement('span');
-      setElementHtml(spanDesc, allowHTML, labelDescription);
+      setElementHtml(spanDesc, allowHTML, choice.labelDescription);
       spanDesc.id = descId;
       spanDesc.classList.add(...getClassNames(description));
       div.appendChild(spanDesc);
@@ -296,28 +293,24 @@ const templates: TemplatesInterface = {
       div.classList.add(...getClassNames(placeholder));
     }
 
-    const { dataset } = div;
-    div.setAttribute('role', groupId ? 'treeitem' : 'option');
-    if (groupId) {
-      dataset.groupId = `${groupId}`;
-    }
+    div.setAttribute('role', choice.groupId ? 'treeitem' : 'option');
 
-    dataset.choice = '';
-    dataset.id = choice.id as unknown as string;
-    dataset.value = rawValue;
+    div.dataset.choice = '';
+    div.dataset.id = choice.id as unknown as string;
+    div.dataset.value = rawValue;
     if (selectText) {
-      dataset.selectText = selectText;
+      div.dataset.selectText = selectText;
     }
 
     assignCustomProperties(div, choice, false);
 
     if (choice.disabled) {
       div.classList.add(...getClassNames(itemDisabled));
-      dataset.choiceDisabled = '';
+      div.dataset.choiceDisabled = '';
       div.setAttribute('aria-disabled', 'true');
     } else {
       div.classList.add(...getClassNames(itemSelectable));
-      dataset.choiceSelectable = '';
+      div.dataset.choiceSelectable = '';
     }
 
     return div;
@@ -380,9 +373,8 @@ const templates: TemplatesInterface = {
     notice.className = classes.join(' ');
 
     if (type === NoticeTypes.addChoice) {
-      const { dataset } = notice;
-      dataset.choiceSelectable = '';
-      dataset.choice = '';
+      notice.dataset.choiceSelectable = '';
+      notice.dataset.choice = '';
     }
 
     return notice;
