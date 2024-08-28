@@ -97,36 +97,40 @@ export class TestSuit {
     await this.advanceClock();
   }
 
-  async ctrlA(): Promise<void> {
-    await this.input.focus();
+  async keyPress(key: string, _locator?: Locator): Promise<void> {
+    const locator = _locator || this.input;
+    await locator.focus();
     await this.advanceClock();
-
-    await this.input.press('ControlOrMeta+a');
-    await this.advanceClock();
-  }
-
-  async enterKey(): Promise<void> {
-    await this.input.focus();
-    await this.advanceClock();
-
-    await this.input.press('Enter');
+    await locator.press(key);
     await this.advanceClock();
   }
 
-  async escapeKey(): Promise<void> {
-    await this.input.focus();
-    await this.advanceClock();
-
-    await this.input.press('Escape');
-    await this.advanceClock();
+  ctrlA(locator?: Locator): Promise<void> {
+    return this.keyPress('ControlOrMeta+KeyA', locator);
   }
 
-  async backspaceKey(): Promise<void> {
-    await this.input.focus();
-    await this.advanceClock();
+  ctrlX(locator?: Locator): Promise<void> {
+    return this.keyPress('ControlOrMeta+KeyX', locator);
+  }
 
-    await this.input.press('Backspace');
-    await this.advanceClock();
+  ctrlC(locator?: Locator): Promise<void> {
+    return this.keyPress('ControlOrMeta+KeyC', locator);
+  }
+
+  ctrlV(locator?: Locator): Promise<void> {
+    return this.keyPress('ControlOrMeta+KeyV', locator);
+  }
+
+  enterKey(locator?: Locator): Promise<void> {
+    return this.keyPress('Enter', locator);
+  }
+
+  escapeKey(locator?: Locator): Promise<void> {
+    return this.keyPress('Escape', locator);
+  }
+
+  backspaceKey(locator?: Locator): Promise<void> {
+    return this.keyPress('Backspace', locator);
   }
 
   async expectVisibleDropdown(): Promise<void> {

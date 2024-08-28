@@ -614,26 +614,47 @@ describe(`Choices - select multiple`, () => {
 
     describe('custom properties via config', () => {
       const testId = 'custom-properties';
+      const cities = [
+        {
+          country: 'Germany',
+          city: 'Berlin',
+        },
+        {
+          country: 'United Kingdom',
+          city: 'London',
+        },
+        {
+          country: 'Portugal',
+          city: 'Lisbon',
+        },
+      ];
       describe('on input', () => {
-        [
-          {
-            country: 'Germany',
-            city: 'Berlin',
-          },
-          {
-            country: 'United Kingdom',
-            city: 'London',
-          },
-          {
-            country: 'Portugal',
-            city: 'Lisbon',
-          },
-        ].forEach(({ country, city }) => {
+        cities.forEach(({ country, city }) => {
           test(`filters choices - ${country} = ${city}`, async ({ page, bundle }) => {
             const suite = new SelectTestSuit(page, bundle, testUrl, testId);
             await suite.startWithClick();
             await suite.typeText(country);
             await suite.expectVisibleDropdown();
+
+            const choice = suite.selectableChoices.first();
+            await expect(choice).toHaveText(city);
+          });
+        });
+      });
+
+      describe('on paste', () => {
+        // playwright lacks clipboard isolation, so use serial mode to try to work around it.
+        // https://github.com/microsoft/playwright/issues/13097
+        describe.configure({ mode: 'serial' });
+
+        cities.forEach(({ country, city }) => {
+          test(`filters choices - ${country} = ${city}`, async ({ page, bundle }) => {
+            const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+            await suite.startWithClick();
+            await suite.expectVisibleDropdown();
+
+            await page.evaluate(`navigator.clipboard.writeText('${country}')`);
+            await suite.ctrlV();
 
             const choice = suite.selectableChoices.first();
             await expect(choice).toHaveText(city);
