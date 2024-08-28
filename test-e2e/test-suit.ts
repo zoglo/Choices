@@ -1,4 +1,6 @@
 import { expect, type Locator, type Page } from '@playwright/test';
+import { lock } from 'cross-process-lock';
+import { writeFileSync, existsSync } from 'fs';
 
 export class TestSuit {
   readonly testId: string;
@@ -175,5 +177,21 @@ export class TestSuit {
 
   async expectedItemCount(count: number): Promise<void> {
     await expect(this.items).toHaveCount(count);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  async crossProcessLock(func: () => Promise<void>): Promise<void> {
+    // playwright lacks clipboard isolation, so use a lock to ensure other tests don't modify the clipboard at the same time
+    // https://github.com/microsoft/playwright/issues/13097#issuecomment-1445271511
+    const name = 'test-results/clipboard';
+    if (!existsSync(name)) {
+      writeFileSync(name, '', 'utf8');
+    }
+    const unlock = await lock(name, { waitTimeout: 30000 });
+    try {
+      await func();
+    } finally {
+      await unlock();
+    }
   }
 }

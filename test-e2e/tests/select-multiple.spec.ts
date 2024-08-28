@@ -653,8 +653,10 @@ describe(`Choices - select multiple`, () => {
             await suite.startWithClick();
             await suite.expectVisibleDropdown();
 
-            await page.evaluate(`navigator.clipboard.writeText('${country}')`);
-            await suite.ctrlV();
+            await suite.crossProcessLock(async () => {
+              await page.evaluate(`navigator.clipboard.writeText('${country}')`);
+              await suite.ctrlV();
+            });
 
             const choice = suite.selectableChoices.first();
             await expect(choice).toHaveText(city);
