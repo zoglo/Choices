@@ -86,25 +86,29 @@ describe(`Choices - select one`, () => {
       });
 
       describe('searching choices', () => {
+        const validValue = 'item2';
+        const validLabelForValue = 'Choice 2';
+        const validLabel = 'Choice 3';
+        const invalidLabel = 'faergge';
+
         describe('on input', () => {
           describe('searching by label', () => {
             test('displays choices filtered by inputted value', async ({ page, bundle }) => {
               const suite = new SelectTestSuit(page, bundle, testUrl, testId);
               await suite.startWithClick();
-              await suite.typeText('item2');
+              await suite.typeText(validValue);
 
-              await suite.expectVisibleDropdownWithItem('Choice 2');
+              await suite.expectVisibleDropdownWithItem(validLabelForValue);
             });
           });
 
           describe('searching by value', () => {
             test('displays choices filtered by inputted value', async ({ page, bundle }) => {
               const suite = new SelectTestSuit(page, bundle, testUrl, testId);
-              const searchTerm = 'Choice 3';
               await suite.startWithClick();
-              await suite.typeText(searchTerm);
+              await suite.typeText(validLabel);
 
-              await suite.expectVisibleDropdownWithItem(searchTerm);
+              await suite.expectVisibleDropdownWithItem(validLabel);
             });
           });
 
@@ -112,9 +116,47 @@ describe(`Choices - select one`, () => {
             test('displays "no results found" prompt', async ({ page, bundle }) => {
               const suite = new SelectTestSuit(page, bundle, testUrl, testId);
               await suite.startWithClick();
-              await suite.typeText('faergge');
+              await suite.typeText(invalidLabel);
 
-              await suite.expectVisibleNoticeHtml('No results found');
+              await suite.expectVisibleNoticeHtml('No results found', true);
+            });
+          });
+        });
+        describe('on paste', () => {
+          // playwright lacks clipboard isolation, so use serial mode to try to work around it.
+          // https://github.com/microsoft/playwright/issues/13097
+          describe.configure({ mode: 'serial' });
+
+          describe('searching by label', () => {
+            test('displays choices filtered by inputted value', async ({ page, bundle }) => {
+              const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+              await suite.startWithClick();
+
+              await suite.pasteText(validValue);
+
+              await suite.expectVisibleDropdownWithItem(validLabelForValue);
+            });
+          });
+
+          describe('searching by value', () => {
+            test('displays choices filtered by inputted value', async ({ page, bundle }) => {
+              const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+              await suite.startWithClick();
+
+              await suite.pasteText(validLabel);
+
+              await suite.expectVisibleDropdownWithItem(validLabel);
+            });
+          });
+
+          describe('no results found', () => {
+            test('displays "no results found" prompt', async ({ page, bundle }) => {
+              const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+              await suite.startWithClick();
+
+              await suite.pasteText(invalidLabel);
+
+              await suite.expectVisibleNoticeHtml('No results found', true);
             });
           });
         });
@@ -528,10 +570,7 @@ describe(`Choices - select one`, () => {
             await suite.startWithClick();
             await suite.expectVisibleDropdown();
 
-            await suite.crossProcessLock(async () => {
-              await page.evaluate(`navigator.clipboard.writeText('${country}')`);
-              await suite.ctrlV();
-            });
+            await suite.pasteText(country);
 
             const choice = suite.selectableChoices.first();
             await expect(choice).toHaveText(city);
@@ -652,7 +691,7 @@ describe(`Choices - select one`, () => {
         await suite.startWithClick();
         await suite.typeText('item2');
 
-        await suite.expectVisibleNoticeHtml('No results found');
+        await suite.expectVisibleNoticeHtml('No results found', true);
       });
 
       test('gets a result when searching by label', async ({ page, bundle }) => {

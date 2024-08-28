@@ -94,7 +94,7 @@ describe(`Choices - select multiple (performance tests)`, () => {
               await expect(suite.selectableChoices).toHaveCount(count - i);
             }
 
-            await suite.expectVisibleNoticeHtml('No choices to choose from');
+            await suite.expectVisibleNoticeHtml('No choices to choose from', true)
           });
         });
         */
@@ -169,7 +169,7 @@ describe(`Choices - select multiple (performance tests)`, () => {
               await suite.startWithClick();
               await suite.typeText('faergge');
 
-              await suite.expectVisibleNoticeHtml('No results found');
+              await suite.expectVisibleNoticeHtml('No results found', true);
             });
           });
         });

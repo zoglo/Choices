@@ -149,9 +149,12 @@ export class TestSuit {
     await this.expectVisibleDropdown();
   }
 
-  async expectVisibleNoticeHtml(html: string): Promise<void> {
+  async expectVisibleNoticeHtml(html: string, singleItem: boolean = false): Promise<void> {
     await this.advanceClock();
 
+    if (singleItem) {
+      await expect(this.dropdown.locator('> *:not(input)')).toHaveCount(1);
+    }
     expect(await this.dropdown.locator('.choices__notice').innerHTML()).toEqual(html);
     await this.expectVisibleDropdown();
   }
@@ -193,5 +196,16 @@ export class TestSuit {
     } finally {
       await unlock();
     }
+  }
+
+  async pasteText(text: string, _locator?: Locator): Promise<void> {
+    const locator = _locator || this.input;
+    await locator.focus();
+
+    await this.crossProcessLock(async () => {
+      await this.page.evaluate(`navigator.clipboard.writeText('${text}')`);
+      await this.ctrlV(locator);
+    });
+    await expect(locator).toHaveValue(text);
   }
 }
