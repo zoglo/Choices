@@ -31,13 +31,6 @@ jobs:
       matrix:
         os: [windows-latest, macos-latest, ubuntu-latest]
         browser: [chromium, firefox, webkit]
-        exclude:
-          - os: windows-latest
-            browser: webkit
-          - os: windows-latest
-            browser: firefox
-          - os: macos-latest
-            browser: firefox
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4
