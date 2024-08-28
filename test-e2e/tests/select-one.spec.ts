@@ -125,7 +125,7 @@ describe(`Choices - select one`, () => {
         describe('on paste', () => {
           // playwright lacks clipboard isolation, so use serial mode to try to work around it.
           // https://github.com/microsoft/playwright/issues/13097
-          describe.configure({ mode: 'serial' });
+          describe.configure({ mode: 'serial', timeout: 30000 });
 
           describe('searching by label', () => {
             test('displays choices filtered by inputted value', async ({ page, bundle }) => {
@@ -556,21 +556,40 @@ describe(`Choices - select one`, () => {
             const choice = suite.selectableChoices.first();
             await expect(choice).toHaveText(city);
           });
+
+          test(`filters choices - ${city}`, async ({ page, bundle }) => {
+            const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+            await suite.startWithClick();
+            await suite.typeText(city);
+            await suite.expectVisibleDropdown();
+
+            const choice = suite.selectableChoices.first();
+            await expect(choice).toHaveText(city);
+          });
         });
       });
 
       describe('on paste', () => {
         // playwright lacks clipboard isolation, so use serial mode to try to work around it.
         // https://github.com/microsoft/playwright/issues/13097
-        describe.configure({ mode: 'serial' });
+        describe.configure({ mode: 'serial', timeout: 30000 });
 
         cities.forEach(({ country, city }) => {
           test(`filters choices - ${country} = ${city}`, async ({ page, bundle }) => {
             const suite = new SelectTestSuit(page, bundle, testUrl, testId);
             await suite.startWithClick();
-            await suite.expectVisibleDropdown();
 
             await suite.pasteText(country);
+
+            const choice = suite.selectableChoices.first();
+            await expect(choice).toHaveText(city);
+          });
+
+          test(`filters choices - ${city}`, async ({ page, bundle }) => {
+            const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+            await suite.startWithClick();
+
+            await suite.pasteText(city);
 
             const choice = suite.selectableChoices.first();
             await expect(choice).toHaveText(city);

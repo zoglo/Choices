@@ -200,12 +200,23 @@ export class TestSuit {
 
   async pasteText(text: string, _locator?: Locator): Promise<void> {
     const locator = _locator || this.input;
-    await locator.focus();
-    await this.advanceClock();
+
+    await this.page.evaluate(() => {
+      if (!document.querySelector('textarea#pasteTarget')) {
+        document.body.insertAdjacentHTML('afterbegin', "<textarea id='pasteTarget'></textarea>");
+      }
+    });
+
+    const target = this.page.locator('textarea#pasteTarget');
+    await target.fill(''); // empty any value
+    await target.fill(text);
 
     await this.crossProcessLock(async () => {
-      await this.page.evaluate(`navigator.clipboard.writeText('${text}')`);
-      await this.advanceClock();
+      await target.selectText(); // Focus & Ctrl+a
+      await this.ctrlC(target);
+
+      await this.selectByClick();
+
       await this.ctrlV(locator);
     });
 
