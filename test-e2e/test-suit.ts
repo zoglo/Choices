@@ -201,11 +201,15 @@ export class TestSuit {
   async pasteText(text: string, _locator?: Locator): Promise<void> {
     const locator = _locator || this.input;
     await locator.focus();
+    await this.advanceClock();
 
     await this.crossProcessLock(async () => {
       await this.page.evaluate(`navigator.clipboard.writeText('${text}')`);
+      await this.advanceClock();
       await this.ctrlV(locator);
     });
+
+    await this.advanceClock();
     await expect(locator).toHaveValue(text);
   }
 }
