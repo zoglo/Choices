@@ -89,7 +89,7 @@ describe(`Choices - select multiple`, () => {
             await expect(suite.selectableChoices).toHaveCount(count - i);
           }
 
-          await suite.expectVisibleNoticeHtml('No choices to choose from', true)
+          await suite.expectVisibleNoticeHtml('No choices to choose from', true);
         });
       });
 
@@ -294,7 +294,7 @@ describe(`Choices - select multiple`, () => {
               await expect(suite.getChoiceWithText(`Choice ${i}`)).toHaveClass(/is-selected/);
               await expect(suite.selectableChoices).toHaveCount(count);
             } else {
-              await suite.expectVisibleNoticeHtml('No choices to choose from', true)
+              await suite.expectVisibleNoticeHtml('No choices to choose from', true);
             }
           }
         });
