@@ -109,9 +109,6 @@ var activateChoices = function (active) {
         active: active,
     });
 };
-var clearChoices = function () { return ({
-    type: ActionType.CLEAR_CHOICES,
-}); };
 
 var addGroup = function (group) { return ({
     type: ActionType.ADD_GROUP,
@@ -3843,19 +3840,19 @@ var Choices = /** @class */ (function () {
                     }
                 });
             }
+            _this.clearStore();
             choicesFromOptions.forEach(function (groupOrChoice) {
                 if ('choices' in groupOrChoice) {
                     return;
                 }
                 var choice = groupOrChoice;
                 if (deselectAll) {
-                    choice.selected = false;
+                    _this._store.dispatch(removeItem$1(choice));
                 }
                 else if (existingItems[choice.value]) {
                     choice.selected = true;
                 }
             });
-            _this.clearStore();
             /* @todo only generate add events for the added options instead of all
             if (withEvents) {
               items.forEach((choice) => {
@@ -3891,13 +3888,13 @@ var Choices = /** @class */ (function () {
         return this;
     };
     Choices.prototype.clearChoices = function () {
-        this.passedElement.element.innerHTML = '';
-        this._store.dispatch(clearChoices());
-        // @todo integrate with Store
-        this._searcher.reset();
-        return this;
+        this.passedElement.element.replaceChildren('');
+        return this.clearStore();
     };
     Choices.prototype.clearStore = function () {
+        this.itemList.element.replaceChildren('');
+        this.choiceList.element.replaceChildren('');
+        this._clearNotice();
         this._store.reset();
         this._lastAddedChoiceId = 0;
         this._lastAddedGroupId = 0;
@@ -3949,6 +3946,7 @@ var Choices = /** @class */ (function () {
             return; // block rendering choices if the input limit is reached.
         }
         var _a = this, config = _a.config, isSearching = _a._isSearching;
+        var _b = this._store, activeGroups = _b.activeGroups, activeChoices = _b.activeChoices;
         var renderLimit = 0;
         if (isSearching && config.searchResultLimit > 0) {
             renderLimit = config.searchResultLimit;
@@ -3957,7 +3955,7 @@ var Choices = /** @class */ (function () {
             renderLimit = config.renderChoiceLimit;
         }
         if (this._isSelectElement) {
-            var backingOptions = this._store.activeChoices.filter(function (choice) { return !choice.element; });
+            var backingOptions = activeChoices.filter(function (choice) { return !choice.element; });
             if (backingOptions.length) {
                 this.passedElement.addOptions(backingOptions);
             }
@@ -3992,20 +3990,20 @@ var Choices = /** @class */ (function () {
                 return index < choiceLimit;
             });
         };
-        if (this._store.activeChoices.length) {
+        if (activeChoices.length) {
             if (config.resetScrollPosition) {
                 requestAnimationFrame(function () { return _this.choiceList.scrollToTop(); });
             }
             if (!this._hasNonChoicePlaceholder && !isSearching && this._isSelectOneElement) {
                 // If we have a placeholder choice along with groups
-                renderChoices(this._store.activeChoices.filter(function (choice) { return choice.placeholder && !choice.groupId; }), false, undefined);
+                renderChoices(activeChoices.filter(function (choice) { return choice.placeholder && !choice.groupId; }), false, undefined);
             }
             // If we have grouped options
-            if (this._store.activeGroups.length && !isSearching) {
+            if (activeGroups.length && !isSearching) {
                 if (config.shouldSort) {
-                    this._store.activeGroups.sort(config.sorter);
+                    activeGroups.sort(config.sorter);
                 }
-                this._store.activeGroups.forEach(function (group) {
+                activeGroups.forEach(function (group) {
                     var groupChoices = renderableChoices(group.choices);
                     if (groupChoices.length) {
                         if (group.label) {
@@ -4019,7 +4017,7 @@ var Choices = /** @class */ (function () {
                 });
             }
             else {
-                renderChoices(renderableChoices(this._store.activeChoices), false, undefined);
+                renderChoices(renderableChoices(activeChoices), false, undefined);
             }
         }
         var notice = this._notice;

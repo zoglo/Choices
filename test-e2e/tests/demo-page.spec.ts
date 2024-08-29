@@ -14,7 +14,6 @@ describe(`Choices`, () => {
     const testId = 'custom-templates';
 
     test('screenshot', async ({ page, bundle }) => {
-
       const suite = new SelectTestSuit(page, bundle, testUrl, testId);
 
       await page.routeFromHAR('./test-e2e/hars/discogs.har', {
