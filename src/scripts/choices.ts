@@ -9,13 +9,14 @@ import { InputGroup } from './interfaces/input-group';
 import { Options, ObjectsInConfig } from './interfaces/options';
 import { StateChangeSet } from './interfaces/state';
 import {
+  addClassesToElement,
   diff,
   escapeForTemplate,
   generateId,
   getAdjacentEl,
-  getClassNames,
   getClassNamesSelector,
   isScrolledIntoView,
+  removeClassesFromElement,
   resolveNoticeFunction,
   resolveStringFunction,
   sanitise,
@@ -1995,14 +1996,14 @@ class Choices {
     }
 
     let passedEl = el;
-    const highlightedState = getClassNames(this.config.classNames.highlightedState);
+    const { highlightedState } = this.config.classNames;
     const highlightedChoices = Array.from(
       this.dropdown.element.querySelectorAll<HTMLElement>(getClassNamesSelector(highlightedState)),
     );
 
     // Remove any highlighted choices
     highlightedChoices.forEach((choice) => {
-      choice.classList.remove(...highlightedState);
+      removeClassesFromElement(choice, highlightedState);
       choice.setAttribute('aria-selected', 'false');
     });
 
@@ -2023,7 +2024,7 @@ class Choices {
       }
     }
 
-    passedEl.classList.add(...highlightedState);
+    addClassesToElement(passedEl, highlightedState);
     passedEl.setAttribute('aria-selected', 'true');
     this.passedElement.triggerEvent(EventType.highlightChoice, {
       el: passedEl,

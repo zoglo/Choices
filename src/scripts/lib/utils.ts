@@ -202,6 +202,14 @@ export const getClassNamesSelector = (option: string | Array<string> | null): st
   return `.${option}`;
 };
 
+export const addClassesToElement = (element: HTMLElement, className: Array<string> | string): void => {
+  element.classList.add(...getClassNames(className));
+};
+
+export const removeClassesFromElement = (element: HTMLElement, className: Array<string> | string): void => {
+  element.classList.remove(...getClassNames(className));
+};
+
 export const parseCustomProperties = (customProperties?: string): object | string => {
   if (typeof customProperties !== 'undefined') {
     try {
@@ -217,7 +225,7 @@ export const parseCustomProperties = (customProperties?: string): object | strin
 export const updateClassList = (item: ChoiceFull, add: string | string[], remove: string | string[]): void => {
   const { itemEl } = item;
   if (itemEl) {
-    itemEl.classList.remove(...getClassNames(remove));
-    itemEl.classList.add(...getClassNames(add));
+    removeClassesFromElement(itemEl, remove);
+    addClassesToElement(itemEl, add);
   }
 };
