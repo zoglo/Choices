@@ -2,7 +2,7 @@ name: Bundle size checks
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main ]
     paths:
       - '.github/workflows/bundlesize.yml'
       - 'src/scripts/**'

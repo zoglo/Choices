@@ -1,7 +1,7 @@
 name: End-to-end tests (playwright)
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main ]
     paths:
       - 'src/**'
       - 'test-e2e/**'
