@@ -1,5 +1,10 @@
 # Changelog
 
+## [11.0.1] (2024-08-)
+
+### Bug Fixes (from 11.0.0)
+* Fix the rendered item list was not cleared when `clearStore` was called. This impacted the on-form-reset and `refresh` features.
+
 ## [11.0.0] (2024-08-28)
 
 ### ⚠ BREAKING CHANGES
