@@ -5,6 +5,9 @@
 ### Bug Fixes (from 11.0.0)
 * Fix the rendered item list was not cleared when `clearStore` was called. This impacted the on-form-reset and `refresh` features.
 
+### Chore
+* Add e2e test for 'form reset' and 'on paste & search'
+
 ## [11.0.0] (2024-08-28)
 
 ### ⚠ BREAKING CHANGES
