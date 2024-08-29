@@ -909,6 +909,7 @@ class Choices {
     }
 
     const { config, _isSearching: isSearching } = this;
+    const { activeGroups, activeChoices } = this._store;
 
     let renderLimit = 0;
     if (isSearching && config.searchResultLimit > 0) {
@@ -918,7 +919,7 @@ class Choices {
     }
 
     if (this._isSelectElement) {
-      const backingOptions = this._store.activeChoices.filter((choice) => !choice.element);
+      const backingOptions = activeChoices.filter((choice) => !choice.element);
       if (backingOptions.length) {
         (this.passedElement as WrappedSelect).addOptions(backingOptions);
       }
@@ -959,7 +960,7 @@ class Choices {
       });
     };
 
-    if (this._store.activeChoices.length) {
+    if (activeChoices.length) {
       if (config.resetScrollPosition) {
         requestAnimationFrame(() => this.choiceList.scrollToTop());
       }
@@ -967,19 +968,19 @@ class Choices {
       if (!this._hasNonChoicePlaceholder && !isSearching && this._isSelectOneElement) {
         // If we have a placeholder choice along with groups
         renderChoices(
-          this._store.activeChoices.filter((choice) => choice.placeholder && !choice.groupId),
+          activeChoices.filter((choice) => choice.placeholder && !choice.groupId),
           false,
           undefined,
         );
       }
 
       // If we have grouped options
-      if (this._store.activeGroups.length && !isSearching) {
+      if (activeGroups.length && !isSearching) {
         if (config.shouldSort) {
-          this._store.activeGroups.sort(config.sorter);
+          activeGroups.sort(config.sorter);
         }
 
-        this._store.activeGroups.forEach((group) => {
+        activeGroups.forEach((group) => {
           const groupChoices = renderableChoices(group.choices);
           if (groupChoices.length) {
             if (group.label) {
@@ -992,7 +993,7 @@ class Choices {
           }
         });
       } else {
-        renderChoices(renderableChoices(this._store.activeChoices), false, undefined);
+        renderChoices(renderableChoices(activeChoices), false, undefined);
       }
     }
 
