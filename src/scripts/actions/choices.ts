@@ -26,6 +26,9 @@ export interface ActivateChoicesAction extends AnyAction<typeof ActionType.ACTIV
   active: boolean;
 }
 
+/**
+ * @deprecated use clearStore() or clearChoices() instead.
+ */
 export interface ClearChoicesAction extends AnyAction<typeof ActionType.CLEAR_CHOICES> {}
 
 export const addChoice = (choice: ChoiceFull): AddChoiceAction => ({
@@ -48,6 +51,9 @@ export const activateChoices = (active = true): ActivateChoicesAction => ({
   active,
 });
 
+/**
+ * @deprecated use clearStore() or clearChoices() instead.
+ */
 export const clearChoices = (): ClearChoicesAction => ({
   type: ActionType.CLEAR_CHOICES,
 });

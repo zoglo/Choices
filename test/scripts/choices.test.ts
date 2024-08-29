@@ -1143,17 +1143,17 @@ describe('choices', () => {
     });
 
     describe('clearChoices', () => {
-      let storeDispatchStub;
+      let storeResetStub;
 
       beforeEach(() => {
-        storeDispatchStub = stub();
-        instance._store.dispatch = storeDispatchStub;
+        storeResetStub = stub();
+        instance._store.reset = storeResetStub;
 
         output = instance.clearChoices();
       });
 
       afterEach(() => {
-        instance._store.dispatch.reset();
+        instance._store.reset.reset();
       });
 
       it('returns this', () => {
@@ -1161,9 +1161,7 @@ describe('choices', () => {
       });
 
       it('dispatches clearChoices action', () => {
-        expect(storeDispatchStub.lastCall.args[0]).to.deep.equal({
-          type: ActionType.CLEAR_CHOICES,
-        });
+        expect(storeResetStub.callCount).to.be.eq(1);
       });
     });
 

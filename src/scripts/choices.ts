@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { activateChoices, addChoice, removeChoice, clearChoices, filterChoices } from './actions/choices';
+import { activateChoices, addChoice, removeChoice, filterChoices } from './actions/choices';
 import { addGroup } from './actions/groups';
 import { addItem, highlightItem, removeItem } from './actions/items';
 import { Container, Dropdown, Input, List, WrappedInput, WrappedSelect } from './components';
@@ -780,20 +780,20 @@ class Choices {
         });
       }
 
+      this.clearStore();
+
       choicesFromOptions.forEach((groupOrChoice) => {
         if ('choices' in groupOrChoice) {
           return;
         }
-
         const choice = groupOrChoice;
         if (deselectAll) {
-          choice.selected = false;
+          this._store.dispatch(removeItem(choice));
         } else if (existingItems[choice.value]) {
           choice.selected = true;
         }
       });
 
-      this.clearStore();
       /* @todo only generate add events for the added options instead of all
       if (withEvents) {
         items.forEach((choice) => {
@@ -836,15 +836,15 @@ class Choices {
   }
 
   clearChoices(): this {
-    this.passedElement.element.innerHTML = '';
-    this._store.dispatch(clearChoices());
-    // @todo integrate with Store
-    this._searcher.reset();
+    this.passedElement.element.replaceChildren('');
 
-    return this;
+    return this.clearStore();
   }
 
   clearStore(): this {
+    this.itemList.element.replaceChildren('');
+    this.choiceList.element.replaceChildren('');
+    this._clearNotice();
     this._store.reset();
     this._lastAddedChoiceId = 0;
     this._lastAddedGroupId = 0;
@@ -909,6 +909,7 @@ class Choices {
     }
 
     const { config, _isSearching: isSearching } = this;
+    const { activeGroups, activeChoices } = this._store;
 
     let renderLimit = 0;
     if (isSearching && config.searchResultLimit > 0) {
@@ -918,7 +919,7 @@ class Choices {
     }
 
     if (this._isSelectElement) {
-      const backingOptions = this._store.activeChoices.filter((choice) => !choice.element);
+      const backingOptions = activeChoices.filter((choice) => !choice.element);
       if (backingOptions.length) {
         (this.passedElement as WrappedSelect).addOptions(backingOptions);
       }
@@ -959,7 +960,7 @@ class Choices {
       });
     };
 
-    if (this._store.activeChoices.length) {
+    if (activeChoices.length) {
       if (config.resetScrollPosition) {
         requestAnimationFrame(() => this.choiceList.scrollToTop());
       }
@@ -967,19 +968,19 @@ class Choices {
       if (!this._hasNonChoicePlaceholder && !isSearching && this._isSelectOneElement) {
         // If we have a placeholder choice along with groups
         renderChoices(
-          this._store.activeChoices.filter((choice) => choice.placeholder && !choice.groupId),
+          activeChoices.filter((choice) => choice.placeholder && !choice.groupId),
           false,
           undefined,
         );
       }
 
       // If we have grouped options
-      if (this._store.activeGroups.length && !isSearching) {
+      if (activeGroups.length && !isSearching) {
         if (config.shouldSort) {
-          this._store.activeGroups.sort(config.sorter);
+          activeGroups.sort(config.sorter);
         }
 
-        this._store.activeGroups.forEach((group) => {
+        activeGroups.forEach((group) => {
           const groupChoices = renderableChoices(group.choices);
           if (groupChoices.length) {
             if (group.label) {
@@ -992,7 +993,7 @@ class Choices {
           }
         });
       } else {
-        renderChoices(renderableChoices(this._store.activeChoices), false, undefined);
+        renderChoices(renderableChoices(activeChoices), false, undefined);
       }
     }
 
@@ -1980,7 +1981,6 @@ class Choices {
       this.clearInput();
       this.hideDropdown();
       this.refresh(false, false, true);
-
       if (this._initialItems.length) {
         this.setChoiceByValue(this._initialItems);
       }
