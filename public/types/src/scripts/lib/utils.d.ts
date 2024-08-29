@@ -25,5 +25,7 @@ export declare const cloneObject: <T>(obj: T) => T;
 export declare const diff: (a: Record<string, any>, b: Record<string, any>) => string[];
 export declare const getClassNames: (ClassNames: Array<string> | string) => Array<string>;
 export declare const getClassNamesSelector: (option: string | Array<string> | null) => string;
+export declare const addClassesToElement: (element: HTMLElement, className: Array<string> | string) => void;
+export declare const removeClassesFromElement: (element: HTMLElement, className: Array<string> | string) => void;
 export declare const parseCustomProperties: (customProperties?: string) => object | string;
 export declare const updateClassList: (item: ChoiceFull, add: string | string[], remove: string | string[]) => void;

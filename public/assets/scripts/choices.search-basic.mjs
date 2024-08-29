@@ -1,4 +1,4 @@
-/*! choices.js v11.0.0 | © 2024 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
+/*! choices.js v11.0.1 | © 2024 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
 
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -280,6 +280,14 @@ var getClassNamesSelector = function (option) {
     }
     return ".".concat(option);
 };
+var addClassesToElement = function (element, className) {
+    var _a;
+    (_a = element.classList).add.apply(_a, getClassNames(className));
+};
+var removeClassesFromElement = function (element, className) {
+    var _a;
+    (_a = element.classList).remove.apply(_a, getClassNames(className));
+};
 var parseCustomProperties = function (customProperties) {
     if (typeof customProperties !== 'undefined') {
         try {
@@ -292,11 +300,10 @@ var parseCustomProperties = function (customProperties) {
     return {};
 };
 var updateClassList = function (item, add, remove) {
-    var _a, _b;
     var itemEl = item.itemEl;
     if (itemEl) {
-        (_a = itemEl.classList).remove.apply(_a, getClassNames(remove));
-        (_b = itemEl.classList).add.apply(_b, getClassNames(add));
+        removeClassesFromElement(itemEl, remove);
+        addClassesToElement(itemEl, add);
     }
 };
 
@@ -312,8 +319,7 @@ var Dropdown = /** @class */ (function () {
      * Show dropdown to user by adding active state class
      */
     Dropdown.prototype.show = function () {
-        var _a;
-        (_a = this.element.classList).add.apply(_a, getClassNames(this.classNames.activeState));
+        addClassesToElement(this.element, this.classNames.activeState);
         this.element.setAttribute('aria-expanded', 'true');
         this.isActive = true;
         return this;
@@ -322,8 +328,7 @@ var Dropdown = /** @class */ (function () {
      * Hide dropdown from user
      */
     Dropdown.prototype.hide = function () {
-        var _a;
-        (_a = this.element.classList).remove.apply(_a, getClassNames(this.classNames.activeState));
+        removeClassesFromElement(this.element, this.classNames.activeState);
         this.element.setAttribute('aria-expanded', 'false');
         this.isActive = false;
         return this;
@@ -368,38 +373,33 @@ var Container = /** @class */ (function () {
         this.element.removeAttribute('aria-activedescendant');
     };
     Container.prototype.open = function (dropdownPos, dropdownHeight) {
-        var _a, _b;
-        (_a = this.element.classList).add.apply(_a, getClassNames(this.classNames.openState));
+        addClassesToElement(this.element, this.classNames.openState);
         this.element.setAttribute('aria-expanded', 'true');
         this.isOpen = true;
         if (this.shouldFlip(dropdownPos, dropdownHeight)) {
-            (_b = this.element.classList).add.apply(_b, getClassNames(this.classNames.flippedState));
+            addClassesToElement(this.element, this.classNames.flippedState);
             this.isFlipped = true;
         }
     };
     Container.prototype.close = function () {
-        var _a, _b;
-        (_a = this.element.classList).remove.apply(_a, getClassNames(this.classNames.openState));
+        removeClassesFromElement(this.element, this.classNames.openState);
         this.element.setAttribute('aria-expanded', 'false');
         this.removeActiveDescendant();
         this.isOpen = false;
         // A dropdown flips if it does not have space within the page
         if (this.isFlipped) {
-            (_b = this.element.classList).remove.apply(_b, getClassNames(this.classNames.flippedState));
+            removeClassesFromElement(this.element, this.classNames.flippedState);
             this.isFlipped = false;
         }
     };
     Container.prototype.addFocusState = function () {
-        var _a;
-        (_a = this.element.classList).add.apply(_a, getClassNames(this.classNames.focusState));
+        addClassesToElement(this.element, this.classNames.focusState);
     };
     Container.prototype.removeFocusState = function () {
-        var _a;
-        (_a = this.element.classList).remove.apply(_a, getClassNames(this.classNames.focusState));
+        removeClassesFromElement(this.element, this.classNames.focusState);
     };
     Container.prototype.enable = function () {
-        var _a;
-        (_a = this.element.classList).remove.apply(_a, getClassNames(this.classNames.disabledState));
+        removeClassesFromElement(this.element, this.classNames.disabledState);
         this.element.removeAttribute('aria-disabled');
         if (this.type === PassedElementTypes.SelectOne) {
             this.element.setAttribute('tabindex', '0');
@@ -407,8 +407,7 @@ var Container = /** @class */ (function () {
         this.isDisabled = false;
     };
     Container.prototype.disable = function () {
-        var _a;
-        (_a = this.element.classList).add.apply(_a, getClassNames(this.classNames.disabledState));
+        addClassesToElement(this.element, this.classNames.disabledState);
         this.element.setAttribute('aria-disabled', 'true');
         if (this.type === PassedElementTypes.SelectOne) {
             this.element.setAttribute('tabindex', '-1');
@@ -439,14 +438,12 @@ var Container = /** @class */ (function () {
         }
     };
     Container.prototype.addLoadingState = function () {
-        var _a;
-        (_a = this.element.classList).add.apply(_a, getClassNames(this.classNames.loadingState));
+        addClassesToElement(this.element, this.classNames.loadingState);
         this.element.setAttribute('aria-busy', 'true');
         this.isLoading = true;
     };
     Container.prototype.removeLoadingState = function () {
-        var _a;
-        (_a = this.element.classList).remove.apply(_a, getClassNames(this.classNames.loadingState));
+        removeClassesFromElement(this.element, this.classNames.loadingState);
         this.element.removeAttribute('aria-busy');
         this.isLoading = false;
     };
@@ -674,10 +671,9 @@ var WrappedElement = /** @class */ (function () {
         configurable: true
     });
     WrappedElement.prototype.conceal = function () {
-        var _a;
         var el = this.element;
         // Hide passed input
-        (_a = el.classList).add.apply(_a, getClassNames(this.classNames.input));
+        addClassesToElement(el, this.classNames.input);
         el.hidden = true;
         // Remove element from tab index
         el.tabIndex = -1;
@@ -689,10 +685,9 @@ var WrappedElement = /** @class */ (function () {
         el.setAttribute('data-choice', 'active');
     };
     WrappedElement.prototype.reveal = function () {
-        var _a;
         var el = this.element;
         // Reinstate passed element
-        (_a = el.classList).remove.apply(_a, getClassNames(this.classNames.input));
+        removeClassesFromElement(el, this.classNames.input);
         el.hidden = false;
         el.removeAttribute('tabindex');
         // Recover original styles if any
@@ -2544,7 +2539,7 @@ var templates = {
     containerOuter: function (_a, dir, isSelectElement, isSelectOneElement, searchEnabled, passedElementType, labelId) {
         var containerOuter = _a.classNames.containerOuter;
         var div = document.createElement('div');
-        div.className = getClassNames(containerOuter).join(' ');
+        addClassesToElement(div, containerOuter);
         div.dataset.type = passedElementType;
         if (dir) {
             div.dir = dir;
@@ -2571,13 +2566,14 @@ var templates = {
     containerInner: function (_a) {
         var containerInner = _a.classNames.containerInner;
         var div = document.createElement('div');
-        div.className = getClassNames(containerInner).join(' ');
+        addClassesToElement(div, containerInner);
         return div;
     },
     itemList: function (_a, isSelectOneElement) {
         var searchEnabled = _a.searchEnabled, _b = _a.classNames, list = _b.list, listSingle = _b.listSingle, listItems = _b.listItems;
         var div = document.createElement('div');
-        div.className = "".concat(getClassNames(list).join(' '), " ").concat(isSelectOneElement ? getClassNames(listSingle).join(' ') : getClassNames(listItems).join(' '));
+        addClassesToElement(div, list);
+        addClassesToElement(div, isSelectOneElement ? listSingle : listItems);
         if (this._isSelectElement && searchEnabled) {
             div.setAttribute('role', 'listbox');
         }
@@ -2586,20 +2582,19 @@ var templates = {
     placeholder: function (_a, value) {
         var allowHTML = _a.allowHTML, placeholder = _a.classNames.placeholder;
         var div = document.createElement('div');
-        div.className = getClassNames(placeholder).join(' ');
+        addClassesToElement(div, placeholder);
         setElementHtml(div, allowHTML, value);
         return div;
     },
     item: function (_a, choice, removeItemButton) {
-        var _b, _c, _d;
-        var allowHTML = _a.allowHTML, removeItemButtonAlignLeft = _a.removeItemButtonAlignLeft, removeItemIconText = _a.removeItemIconText, removeItemLabelText = _a.removeItemLabelText, _e = _a.classNames, item = _e.item, button = _e.button, highlightedState = _e.highlightedState, itemSelectable = _e.itemSelectable, placeholder = _e.placeholder;
+        var allowHTML = _a.allowHTML, removeItemButtonAlignLeft = _a.removeItemButtonAlignLeft, removeItemIconText = _a.removeItemIconText, removeItemLabelText = _a.removeItemLabelText, _b = _a.classNames, item = _b.item, button = _b.button, highlightedState = _b.highlightedState, itemSelectable = _b.itemSelectable, placeholder = _b.placeholder;
         var rawValue = unwrapStringForRaw(choice.value);
         var div = document.createElement('div');
-        div.className = getClassNames(item).join(' ');
+        addClassesToElement(div, item);
         if (choice.labelClass) {
             var spanLabel = document.createElement('span');
             setElementHtml(spanLabel, allowHTML, choice.label);
-            spanLabel.className = getClassNames(choice.labelClass).join(' ');
+            addClassesToElement(spanLabel, choice.labelClass);
             div.appendChild(spanLabel);
         }
         else {
@@ -2617,18 +2612,18 @@ var templates = {
             div.setAttribute('role', 'option');
         }
         if (choice.placeholder) {
-            (_b = div.classList).add.apply(_b, getClassNames(placeholder));
+            addClassesToElement(div, placeholder);
             div.dataset.placeholder = '';
         }
-        (_c = div.classList).add.apply(_c, (choice.highlighted ? getClassNames(highlightedState) : getClassNames(itemSelectable)));
+        addClassesToElement(div, choice.highlighted ? highlightedState : itemSelectable);
         if (removeItemButton) {
             if (choice.disabled) {
-                (_d = div.classList).remove.apply(_d, getClassNames(itemSelectable));
+                removeClassesFromElement(div, itemSelectable);
             }
             div.dataset.deletable = '';
             var removeButton = document.createElement('button');
             removeButton.type = 'button';
-            removeButton.className = getClassNames(button).join(' ');
+            addClassesToElement(removeButton, button);
             setElementHtml(removeButton, true, resolveNoticeFunction(removeItemIconText, choice.value));
             var REMOVE_ITEM_LABEL = resolveNoticeFunction(removeItemLabelText, choice.value);
             if (REMOVE_ITEM_LABEL) {
@@ -2647,7 +2642,7 @@ var templates = {
     choiceList: function (_a, isSelectOneElement) {
         var list = _a.classNames.list;
         var div = document.createElement('div');
-        div.className = getClassNames(list).join(' ');
+        addClassesToElement(div, list);
         if (!isSelectOneElement) {
             div.setAttribute('aria-multiselectable', 'true');
         }
@@ -2659,7 +2654,10 @@ var templates = {
         var id = _b.id, label = _b.label, disabled = _b.disabled;
         var rawLabel = unwrapStringForRaw(label);
         var div = document.createElement('div');
-        div.className = "".concat(getClassNames(group).join(' '), " ").concat(disabled ? getClassNames(itemDisabled).join(' ') : '');
+        addClassesToElement(div, group);
+        if (disabled) {
+            addClassesToElement(div, itemDisabled);
+        }
         div.setAttribute('role', 'group');
         div.dataset.group = '';
         div.dataset.id = id;
@@ -2668,20 +2666,20 @@ var templates = {
             div.setAttribute('aria-disabled', 'true');
         }
         var heading = document.createElement('div');
-        heading.className = getClassNames(groupHeading).join(' ');
+        addClassesToElement(heading, groupHeading);
         setElementHtml(heading, allowHTML, label || '');
         div.appendChild(heading);
         return div;
     },
     choice: function (_a, choice, selectText, groupName) {
-        var _b, _c, _d, _e, _f;
-        var allowHTML = _a.allowHTML, _g = _a.classNames, item = _g.item, itemChoice = _g.itemChoice, itemSelectable = _g.itemSelectable, selectedState = _g.selectedState, itemDisabled = _g.itemDisabled, description = _g.description, placeholder = _g.placeholder;
+        var allowHTML = _a.allowHTML, _b = _a.classNames, item = _b.item, itemChoice = _b.itemChoice, itemSelectable = _b.itemSelectable, selectedState = _b.selectedState, itemDisabled = _b.itemDisabled, description = _b.description, placeholder = _b.placeholder;
         // eslint-disable-next-line prefer-destructuring
         var label = choice.label;
         var rawValue = unwrapStringForRaw(choice.value);
         var div = document.createElement('div');
         div.id = choice.elementId;
-        div.className = "".concat(getClassNames(item).join(' '), " ").concat(getClassNames(itemChoice).join(' '));
+        addClassesToElement(div, item);
+        addClassesToElement(div, itemChoice);
         if (groupName && typeof label === 'string') {
             label = escapeForTemplate(allowHTML, label);
             label += " (".concat(groupName, ")");
@@ -2692,7 +2690,7 @@ var templates = {
         if (choice.labelClass) {
             var spanLabel = document.createElement('span');
             setElementHtml(spanLabel, allowHTML, label);
-            spanLabel.className = getClassNames(choice.labelClass).join(' ');
+            addClassesToElement(spanLabel, choice.labelClass);
             describedBy = spanLabel;
             div.appendChild(spanLabel);
         }
@@ -2705,14 +2703,14 @@ var templates = {
             var spanDesc = document.createElement('span');
             setElementHtml(spanDesc, allowHTML, choice.labelDescription);
             spanDesc.id = descId;
-            (_b = spanDesc.classList).add.apply(_b, getClassNames(description));
+            addClassesToElement(spanDesc, description);
             div.appendChild(spanDesc);
         }
         if (choice.selected) {
-            (_c = div.classList).add.apply(_c, getClassNames(selectedState));
+            addClassesToElement(div, selectedState);
         }
         if (choice.placeholder) {
-            (_d = div.classList).add.apply(_d, getClassNames(placeholder));
+            addClassesToElement(div, placeholder);
         }
         div.setAttribute('role', choice.groupId ? 'treeitem' : 'option');
         div.dataset.choice = '';
@@ -2723,12 +2721,12 @@ var templates = {
         }
         assignCustomProperties(div, choice, false);
         if (choice.disabled) {
-            (_e = div.classList).add.apply(_e, getClassNames(itemDisabled));
+            addClassesToElement(div, itemDisabled);
             div.dataset.choiceDisabled = '';
             div.setAttribute('aria-disabled', 'true');
         }
         else {
-            (_f = div.classList).add.apply(_f, getClassNames(itemSelectable));
+            addClassesToElement(div, itemSelectable);
             div.dataset.choiceSelectable = '';
         }
         return div;
@@ -2737,7 +2735,8 @@ var templates = {
         var _b = _a.classNames, input = _b.input, inputCloned = _b.inputCloned, labelId = _a.labelId;
         var inp = document.createElement('input');
         inp.type = 'search';
-        inp.className = "".concat(getClassNames(input).join(' '), " ").concat(getClassNames(inputCloned).join(' '));
+        addClassesToElement(inp, input);
+        addClassesToElement(inp, inputCloned);
         inp.autocomplete = 'off';
         inp.autocapitalize = 'off';
         inp.spellcheck = false;
@@ -2752,33 +2751,33 @@ var templates = {
         return inp;
     },
     dropdown: function (_a) {
-        var _b, _c;
-        var _d = _a.classNames, list = _d.list, listDropdown = _d.listDropdown;
+        var _b = _a.classNames, list = _b.list, listDropdown = _b.listDropdown;
         var div = document.createElement('div');
-        (_b = div.classList).add.apply(_b, getClassNames(list));
-        (_c = div.classList).add.apply(_c, getClassNames(listDropdown));
+        addClassesToElement(div, list);
+        addClassesToElement(div, listDropdown);
         div.setAttribute('aria-expanded', 'false');
         return div;
     },
     notice: function (_a, innerHTML, type) {
         var _b = _a.classNames, item = _b.item, itemChoice = _b.itemChoice, addChoice = _b.addChoice, noResults = _b.noResults, noChoices = _b.noChoices, noticeItem = _b.notice;
         if (type === void 0) { type = NoticeTypes.generic; }
-        var classes = __spreadArray(__spreadArray(__spreadArray([], getClassNames(item), true), getClassNames(itemChoice), true), getClassNames(noticeItem), true);
+        var notice = document.createElement('div');
+        setElementHtml(notice, true, innerHTML);
+        addClassesToElement(notice, item);
+        addClassesToElement(notice, itemChoice);
+        addClassesToElement(notice, noticeItem);
         // eslint-disable-next-line default-case
         switch (type) {
             case NoticeTypes.addChoice:
-                classes.push.apply(classes, getClassNames(addChoice));
+                addClassesToElement(notice, addChoice);
                 break;
             case NoticeTypes.noResults:
-                classes.push.apply(classes, getClassNames(noResults));
+                addClassesToElement(notice, noResults);
                 break;
             case NoticeTypes.noChoices:
-                classes.push.apply(classes, getClassNames(noChoices));
+                addClassesToElement(notice, noChoices);
                 break;
         }
-        var notice = document.createElement('div');
-        setElementHtml(notice, true, innerHTML);
-        notice.className = classes.join(' ');
         if (type === NoticeTypes.addChoice) {
             notice.dataset.choiceSelectable = '';
             notice.dataset.choice = '';
@@ -4396,19 +4395,17 @@ var Choices = /** @class */ (function () {
         });
     };
     Choices.prototype._highlightChoice = function (el) {
-        var _a;
         if (el === void 0) { el = null; }
         var choices = Array.from(this.dropdown.element.querySelectorAll(selectableChoiceIdentifier));
         if (!choices.length) {
             return;
         }
         var passedEl = el;
-        var highlightedState = getClassNames(this.config.classNames.highlightedState);
+        var highlightedState = this.config.classNames.highlightedState;
         var highlightedChoices = Array.from(this.dropdown.element.querySelectorAll(getClassNamesSelector(highlightedState)));
         // Remove any highlighted choices
         highlightedChoices.forEach(function (choice) {
-            var _a;
-            (_a = choice.classList).remove.apply(_a, highlightedState);
+            removeClassesFromElement(choice, highlightedState);
             choice.setAttribute('aria-selected', 'false');
         });
         if (passedEl) {
@@ -4428,7 +4425,7 @@ var Choices = /** @class */ (function () {
                 passedEl = choices[0];
             }
         }
-        (_a = passedEl.classList).add.apply(_a, highlightedState);
+        addClassesToElement(passedEl, highlightedState);
         passedEl.setAttribute('aria-selected', 'true');
         this.passedElement.triggerEvent(EventType.highlightChoice, {
             el: passedEl,
@@ -4673,7 +4670,7 @@ var Choices = /** @class */ (function () {
             throw new TypeError("".concat(caller, " called for an element which has multiple instances of Choices initialised on it"));
         }
     };
-    Choices.version = '11.0.0';
+    Choices.version = '11.0.1';
     return Choices;
 }());
 
