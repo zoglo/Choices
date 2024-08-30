@@ -488,9 +488,9 @@ export interface Options {
   noResultsText: string | Types.StringFunction;
 
   /**
-   * The text that is shown when a user has selected all possible choices. Optionally pass a function returning a string.
+   * The text that is shown when a user has selected all possible choices, or no choices exist. Optionally pass a function returning a string.
    *
-   * **Input types affected:** select-multiple
+   * **Input types affected:** select-multiple, select-one
    *
    * @default 'No choices to choose from'
    */

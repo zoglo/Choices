@@ -665,9 +665,9 @@ For backward compatibility, `<option value="">This is a placeholder</option>` an
 
 **Type:** `String/Function` **Default:** `No choices to choose from`
 
-**Input types affected:** `select-multiple`
+**Input types affected:** `select-multiple`, `select-one`
 
-**Usage:** The text that is shown when a user has selected all possible choices. Optionally pass a function returning a string.
+**Usage:** The text that is shown when a user has selected all possible choices, or no choices exist. Optionally pass a function returning a string.
 
 ### itemSelectText
 
