@@ -57,8 +57,10 @@ export default class Store<T> implements IStore {
     }
   }
 
-  subscribe(onChange: StoreListener): void {
+  subscribe(onChange: StoreListener): this {
     this._listeners.push(onChange);
+
+    return this;
   }
 
   dispatch(action: AnyAction): void {

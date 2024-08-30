@@ -2227,9 +2227,7 @@ class Choices {
   }
 
   _initStore(): void {
-    this._store.subscribe(this._render);
-
-    this._store.withTxn(() => {
+    this._store.subscribe(this._render).withTxn(() => {
       this._addPredefinedChoices(
         this._presetChoices,
         this._isSelectOneElement && !this._hasNonChoicePlaceholder,
