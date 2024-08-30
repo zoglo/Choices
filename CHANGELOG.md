@@ -1,5 +1,12 @@
 # Changelog
 
+## [11.0.2]
+
+### Bug Fixes (from 11.0.0)
+
+### Chore
+* Add e2e tests for "no choices" behavior to match v10
+
 ## [11.0.1] (2024-08-30)
 
 ### Bug Fixes (from 11.0.0)

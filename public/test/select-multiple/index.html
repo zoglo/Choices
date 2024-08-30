@@ -161,6 +161,19 @@
           </script>
         </div>
 
+        <div data-test-hook="no-choices">
+          <label for="no-choices">No choices</label>
+          <select class="form-control" name="no-choices" id="no-choices">
+          </select>
+          <script>
+            document.addEventListener('DOMContentLoaded', function() {
+              new Choices('#no-choices', {
+                allowHTML: true,
+              });
+            });
+          </script>
+        </div>
+
         <div data-test-hook="disabled-choice">
           <label for="choices-disabled-choice">Disabled choice</label>
           <select
