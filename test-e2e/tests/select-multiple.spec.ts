@@ -386,6 +386,17 @@ describe(`Choices - select multiple`, () => {
       });
     });
 
+    describe('No choices (besides selected)', () => {
+      const testId = 'no-choices2';
+      test('shows no choices banner', async ({ page, bundle }) => {
+        const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+        await suite.startWithClick();
+
+        await expect(suite.selectableChoices).toHaveCount(0);
+        await suite.expectVisibleNoticeHtml('No choices to choose from');
+      });
+    });
+
     describe('disabled choice', () => {
       const testId = 'disabled-choice';
       const firstChoice = 'Choice 1';
