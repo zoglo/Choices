@@ -1054,11 +1054,6 @@ function choices(s, action, context) {
     var update = true;
     switch (action.type) {
         case ActionType.ADD_CHOICE: {
-            /*
-              A disabled choice appears in the choice dropdown but cannot be selected
-              A selected choice has been added to the passed input's value (added as an item)
-              An active choice appears within the choice dropdown
-            */
             state.push(action.choice);
             break;
         }
@@ -1161,6 +1156,7 @@ var Store = /** @class */ (function () {
     };
     Store.prototype.subscribe = function (onChange) {
         this._listeners.push(onChange);
+        return this;
     };
     Store.prototype.dispatch = function (action) {
         var _this = this;
@@ -3483,7 +3479,7 @@ var Choices = /** @class */ (function () {
                 return !choice.placeholder && (isSearching ? !!choice.rank : config.renderSelectedChoices || !choice.selected);
             });
         };
-        var selectableChoices = this._isSelectOneElement;
+        var selectableChoices = false;
         var renderChoices = function (choices, withinGroup, groupLabel) {
             if (isSearching) {
                 // sortByRank is used to ensure stable sorting, as scores are non-unique
@@ -3501,7 +3497,7 @@ var Choices = /** @class */ (function () {
                 var dropdownItem = choice.choiceEl || _this._templates.choice(config, choice, config.itemSelectText, groupLabel);
                 choice.choiceEl = dropdownItem;
                 fragment.appendChild(dropdownItem);
-                if (isSearching || !choice.selected) {
+                if (!choice.disabled && (isSearching || !choice.selected)) {
                     selectableChoices = true;
                 }
                 return index < choiceLimit;
@@ -4593,12 +4589,11 @@ var Choices = /** @class */ (function () {
     };
     Choices.prototype._initStore = function () {
         var _this = this;
-        this._store.subscribe(this._render);
-        this._store.withTxn(function () {
+        this._store.subscribe(this._render).withTxn(function () {
             _this._addPredefinedChoices(_this._presetChoices, _this._isSelectOneElement && !_this._hasNonChoicePlaceholder, false);
         });
-        if (this._isSelectOneElement && this._hasNonChoicePlaceholder) {
-            this._render({ choices: false, groups: false, items: true });
+        if (!this._store.choices.length || (this._isSelectOneElement && this._hasNonChoicePlaceholder)) {
+            this._render();
         }
     };
     Choices.prototype._addPredefinedChoices = function (choices, selectFirstOption, withEvents) {
