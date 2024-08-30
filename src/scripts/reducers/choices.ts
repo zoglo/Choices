@@ -15,11 +15,6 @@ export default function choices(s: StateType, action: ActionTypes, context?: Opt
 
   switch (action.type) {
     case ActionType.ADD_CHOICE: {
-      /*
-        A disabled choice appears in the choice dropdown but cannot be selected
-        A selected choice has been added to the passed input's value (added as an item)
-        An active choice appears within the choice dropdown
-      */
       state.push(action.choice);
       break;
     }
