@@ -4,6 +4,7 @@
 
 ### Bug Fixes (from 11.0.0)
 * Fix choice disable state wasn't considered when showing the "no choices to choose from" notice
+* Fix regression "no choices to choose from" notice not triggering when no selectable choices exist for select-one. [#1185](https://github.com/Choices-js/Choices/issues/1185)
 
 ### Chore
 * Add e2e tests for "no choices" behavior to match v10

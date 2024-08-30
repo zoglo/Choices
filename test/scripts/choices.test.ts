@@ -343,8 +343,8 @@ describe('choices', () => {
           expect(storeSubscribeSpy.lastCall.args[0]).to.equal(instance._render);
         });
 
-        it('does not fire initial render with no items or choices', () => {
-          expect(renderSpy.called).to.equal(false);
+        it('fire initial render with no items or choices', () => {
+          expect(renderSpy.called).to.equal(true);
         });
 
         it('adds event listeners', () => {

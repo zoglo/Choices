@@ -933,7 +933,7 @@ class Choices {
           !choice.placeholder && (isSearching ? !!choice.rank : config.renderSelectedChoices || !choice.selected),
       );
 
-    let selectableChoices = this._isSelectOneElement;
+    let selectableChoices = false;
     const renderChoices = (choices: ChoiceFull[], withinGroup: boolean, groupLabel?: string): void => {
       if (isSearching) {
         // sortByRank is used to ensure stable sorting, as scores are non-unique
@@ -2237,8 +2237,8 @@ class Choices {
       );
     });
 
-    if (this._isSelectOneElement && this._hasNonChoicePlaceholder) {
-      this._render({ choices: false, groups: false, items: true });
+    if (!this._store.choices.length || (this._isSelectOneElement && this._hasNonChoicePlaceholder)) {
+      this._render();
     }
   }
 
