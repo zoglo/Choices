@@ -3,6 +3,7 @@
 ## [11.0.2]
 
 ### Bug Fixes (from 11.0.0)
+* Fix choice disable state wasn't considered when showing the "no choices to choose from" notice
 
 ### Chore
 * Add e2e tests for "no choices" behavior to match v10
