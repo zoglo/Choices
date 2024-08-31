@@ -239,7 +239,7 @@ describe(`Choices - select one`, () => {
         await suite.startWithClick();
 
         await expect(suite.selectableChoices).toHaveCount(0);
-        await suite.expectVisibleNoticeHtml('No choices to choose from');
+        await suite.expectVisibleNoticeHtml('No choices to choose from', true);
       });
     });
 
@@ -250,7 +250,21 @@ describe(`Choices - select one`, () => {
         await suite.startWithClick();
 
         await expect(suite.selectableChoices).toHaveCount(0);
-        await suite.expectVisibleNoticeHtml('No choices to choose from');
+        await suite.expectVisibleNoticeHtml('No choices to choose from', true);
+      });
+
+      test('shows no results banner and then no choices banner', async ({ page, bundle }) => {
+        const invalidLabel = 'faergge';
+        const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+        await suite.startWithClick();
+
+        await suite.typeText(invalidLabel);
+        await expect(suite.selectableChoices).toHaveCount(0);
+        await suite.expectVisibleNoticeHtml('No results found', true);
+
+        await suite.typeText('');
+        await expect(suite.selectableChoices).toHaveCount(0);
+        await suite.expectVisibleNoticeHtml('No choices to choose from', true);
       });
     });
 
