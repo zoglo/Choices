@@ -2,7 +2,7 @@ import { PassedElementType } from './passed-element-type';
 import { StringPreEscaped } from './string-pre-escaped';
 import { ChoiceFull } from './choice-full';
 import { GroupFull } from './group-full';
-
+// eslint-disable-next-line import/no-cycle
 import { Options } from './options';
 import { Types } from './types';
 
@@ -24,6 +24,12 @@ export const NoticeTypes = {
   generic: '',
 } as const;
 export type NoticeType = Types.ValueOf<typeof NoticeTypes>;
+
+export type CallbackOnCreateTemplatesFn = (
+  template: Types.StrToEl,
+  escapeForTemplate: Types.EscapeForTemplateFn,
+  getClassNames: Types.GetClassNamesFn,
+) => Partial<Templates>;
 
 export interface Templates {
   containerOuter(

@@ -12,6 +12,7 @@ export declare const NoticeTypes: {
     readonly generic: "";
 };
 export type NoticeType = Types.ValueOf<typeof NoticeTypes>;
+export type CallbackOnCreateTemplatesFn = (template: Types.StrToEl, escapeForTemplate: Types.EscapeForTemplateFn, getClassNames: Types.GetClassNamesFn) => Partial<Templates>;
 export interface Templates {
     containerOuter(options: TemplateOptions, dir: HTMLElement['dir'], isSelectElement: boolean, isSelectOneElement: boolean, searchEnabled: boolean, passedElementType: PassedElementType, labelId: string): HTMLDivElement;
     containerInner({ classNames: { containerInner } }: TemplateOptions): HTMLDivElement;
