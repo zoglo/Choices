@@ -846,7 +846,7 @@ class Choices {
   clearStore(): this {
     this.itemList.element.replaceChildren('');
     this.choiceList.element.replaceChildren('');
-    this._clearNotice();
+    this._stopSearch();
     this._store.reset();
     this._lastAddedChoiceId = 0;
     this._lastAddedGroupId = 0;
@@ -859,11 +859,7 @@ class Choices {
   clearInput(): this {
     const shouldSetInputWidth = !this._isSelectOneElement;
     this.input.clear(shouldSetInputWidth);
-    this._clearNotice();
-
-    if (this._isSearching) {
-      this._stopSearch();
-    }
+    this._stopSearch();
 
     return this;
   }
@@ -999,17 +995,14 @@ class Choices {
       }
     }
 
-    const notice = this._notice;
     if (!selectableChoices) {
-      if (!notice) {
+      if (!this._notice) {
         this._notice = {
-          text: resolveStringFunction(config.noChoicesText),
-          type: NoticeTypes.noChoices,
+          text: resolveStringFunction(isSearching ? config.noResultsText : config.noChoicesText),
+          type: isSearching ? NoticeTypes.noResults : NoticeTypes.noChoices,
         };
       }
       fragment.replaceChildren('');
-    } else if (notice && notice.type === NoticeTypes.noChoices) {
-      this._notice = undefined;
     }
 
     this._renderNotice(fragment);
@@ -1464,6 +1457,7 @@ class Choices {
     this._currentValue = '';
     this._isSearching = false;
     if (wasSearching) {
+      this._clearNotice();
       this._store.dispatch(activateChoices(true));
 
       this.passedElement.triggerEvent(EventType.search, {
@@ -1638,8 +1632,6 @@ class Choices {
       } else {
         this._stopSearch();
       }
-
-      this._clearNotice();
 
       return;
     }
