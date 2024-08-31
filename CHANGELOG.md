@@ -2,6 +2,9 @@
 
 ## [11.0.2]
 
+### Features (from 11.0.0)
+* Pass `getClassNames` as the 3rd argument to `callbackOnCreateTemplates` callback
+
 ### Bug Fixes (from 11.0.0)
 * Fix choice disable state wasn't considered when showing the "no choices to choose from" notice
 * Fix regression "no choices to choose from" notice not triggering when no selectable choices exist for select-one. [#1185](https://github.com/Choices-js/Choices/issues/1185)

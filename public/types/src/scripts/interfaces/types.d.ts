@@ -3,6 +3,7 @@ import { StringPreEscaped } from './string-pre-escaped';
 export declare namespace Types {
     type StrToEl = (str: string) => HTMLElement | HTMLInputElement | HTMLOptionElement;
     type EscapeForTemplateFn = (allowHTML: boolean, s: StringUntrusted | StringPreEscaped | string) => string;
+    type GetClassNamesFn = (s: string | Array<string>) => string;
     type StringFunction = () => string;
     type NoticeStringFunction = (value: string, valueRaw: string) => string;
     type NoticeLimitFunction = (maxItemCount: number) => string;

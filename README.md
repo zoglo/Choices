@@ -793,7 +793,7 @@ classNames: {
 
 **Usage:** Function to run once Choices initialises.
 
-### callbackOnCreateTemplates(strToEl: (str: string) => HTMLElement, escapeForTemplate: (allowHTML: boolean, s: StringUntrusted | StringPreEscaped | string) => string)
+### callbackOnCreateTemplates(strToEl: (str: string) => HTMLElement, escapeForTemplate: (allowHTML: boolean, s: StringUntrusted | StringPreEscaped | string) => string, getClassNames: (s: Array<string> | string) => string)
 
 **Type:** `Function` **Default:** `null` **Arguments:** `strToEl`, `escapeForTemplate`
 
@@ -811,7 +811,7 @@ Templates receive the full Choices config as the first argument to any template,
 
 ```js
 const example = new Choices(element, {
-  callbackOnCreateTemplates: (strToEl, escapeForTemplate) => ({
+  callbackOnCreateTemplates: (strToEl, escapeForTemplate, getClassNames) => ({
     input: (...args) =>
       Object.assign(Choices.defaults.templates.input.call(this, ...args), {
         type: 'email',
@@ -824,7 +824,7 @@ or more complex:
 
 ```js
 const example = new Choices(element, {
-  callbackOnCreateTemplates: function(strToEl, escapeForTemplate) {
+  callbackOnCreateTemplates: function(strToEl, escapeForTemplate, getClassNames) {
     return {
       item: ({ classNames }, data) => {
         return template(`

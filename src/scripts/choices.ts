@@ -14,6 +14,7 @@ import {
   escapeForTemplate,
   generateId,
   getAdjacentEl,
+  getClassNames,
   getClassNamesSelector,
   isScrolledIntoView,
   removeClassesFromElement,
@@ -2123,13 +2124,13 @@ class Choices {
 
   _createTemplates(): void {
     const { callbackOnCreateTemplates } = this.config;
-    let userTemplates = {};
+    let userTemplates: Partial<Templates> = {};
 
     if (typeof callbackOnCreateTemplates === 'function') {
-      userTemplates = callbackOnCreateTemplates.call(this, strToEl, escapeForTemplate);
+      userTemplates = callbackOnCreateTemplates.call(this, strToEl, escapeForTemplate, getClassNames);
     }
 
-    const templating = {};
+    const templating: Partial<Templates> = {};
     Object.keys(this._templates).forEach((name) => {
       if (name in userTemplates) {
         templating[name] = userTemplates[name].bind(this);

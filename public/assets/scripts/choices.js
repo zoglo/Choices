@@ -4996,7 +4996,7 @@
             var callbackOnCreateTemplates = this.config.callbackOnCreateTemplates;
             var userTemplates = {};
             if (typeof callbackOnCreateTemplates === 'function') {
-                userTemplates = callbackOnCreateTemplates.call(this, strToEl, escapeForTemplate);
+                userTemplates = callbackOnCreateTemplates.call(this, strToEl, escapeForTemplate, getClassNames);
             }
             var templating = {};
             Object.keys(this._templates).forEach(function (name) {

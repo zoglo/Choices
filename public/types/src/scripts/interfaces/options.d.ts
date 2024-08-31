@@ -3,6 +3,7 @@ import { InputChoice } from './input-choice';
 import { ClassNames } from './class-names';
 import { PositionOptionsType } from './position-options-type';
 import { Types } from './types';
+import { Templates } from './templates';
 export declare const ObjectsInConfig: string[];
 /**
  * Choices options interface
@@ -560,6 +561,6 @@ export interface Options {
      *
      * @default null
      */
-    callbackOnCreateTemplates: ((template: Types.StrToEl, escapeForTemplate: Types.EscapeForTemplateFn) => void) | null;
+    callbackOnCreateTemplates: ((template: Types.StrToEl, escapeForTemplate: Types.EscapeForTemplateFn, getClassNames: Types.GetClassNamesFn) => Partial<Templates>) | null;
     appendGroupInSearch: false;
 }
