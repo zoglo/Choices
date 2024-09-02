@@ -826,6 +826,7 @@ class Choices {
     if (!choice) {
       return this;
     }
+    this._clearNotice();
     this._store.dispatch(removeChoice(choice));
     // @todo integrate with Store
     this._searcher.reset();
@@ -1456,8 +1457,8 @@ class Choices {
     const wasSearching = this._isSearching;
     this._currentValue = '';
     this._isSearching = false;
+    this._clearNotice();
     if (wasSearching) {
-      this._clearNotice();
       this._store.dispatch(activateChoices(true));
 
       this.passedElement.triggerEvent(EventType.search, {
