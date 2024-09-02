@@ -2082,6 +2082,7 @@ class Choices {
       (choice.element as HTMLOptionElement).value = choice.value;
     }
 
+    this._clearNotice();
     this._store.dispatch(addChoice(choice));
 
     if (choice.selected) {
