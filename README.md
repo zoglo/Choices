@@ -106,6 +106,20 @@ Or include Choices directly:
 <script src="/public/assets/scripts/choices.min.js"></script>
 ```
 
+### CSS/SCSS
+
+The use of `import` of css/scss is supported from webpack.
+
+In .scss:
+```scss
+@import "choices.js/src/styles/choices";
+```
+
+In .js/.ts:
+```javascript
+import "choices.js/public/assets/styles/choices.css";
+```
+
 ## Setup
 
 **Note:** If you pass a selector which targets multiple elements, the first matching element will be used. Versions prior to 8.x.x would return multiple Choices instances.
