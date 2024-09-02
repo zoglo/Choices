@@ -12,7 +12,9 @@
     ".": {
       "types": "./public/types/src/index.d.ts",
       "import": "./public/assets/scripts/choices.mjs",
-      "require": "./public/assets/scripts/choices.js"
+      "require": "./public/assets/scripts/choices.js",
+      "style": "./public/assets/styles/choices.css",
+      "sass": "./src/styles/choices.scss"
     },
     "./search-basic": {
       "types": "./public/types/src/index.d.ts",
@@ -23,9 +25,15 @@
       "types": "./public/types/src/index.d.ts",
       "import": "./public/assets/scripts/choices.search-none.mjs",
       "require": "./public/assets/scripts/choices.search-none.min.js"
-    }
+    },
+    "./public/assets/styles/*.css": "./public/assets/styles/*.css",
+    "./src/styles/*.scss": "./src/styles/*.scss",
+    "./src/styles/*": "./src/styles/*.scss"
   },
-  "sideEffects": false,
+  "sideEffects": [
+    "*.scss",
+    "*.css"
+  ],
   "scripts": {
     "start": "run-p js:watch css:watch",
     "build": "run-p js:build css:build",
