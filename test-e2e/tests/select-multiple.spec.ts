@@ -971,5 +971,23 @@ describe(`Choices - select multiple`, () => {
         await suite.expectedValue(testvalue);
       });
     });
+
+    describe('autocomplete', () => {
+      const testId = 'autocomplete';
+      test('Expected notice results', async ({ page, bundle }) => {
+        const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+        await suite.startWithClick();
+        await suite.typeText('f');
+        await expect(suite.input).toHaveValue('f');
+        await suite.expectVisibleNoticeHtml('No results found');
+        await suite.typeText('fo');
+        await expect(suite.input).toHaveValue('fo');
+        await suite.expectVisibleDropdownWithItem('Found');
+
+        await suite.keyPress('Backspace');
+        await suite.keyPress('Backspace');
+        await suite.expectVisibleNoticeHtml('No choices to choose from');
+      });
+    });
   });
 });

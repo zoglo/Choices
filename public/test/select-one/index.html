@@ -924,8 +924,49 @@
               });
             });
           </script>
-        </div>
       </div>
+
+      <div data-test-hook="autocomplete">
+        <label for="choices-autocomplete">Autocomplete example</label>
+        <select
+          class="form-control"
+          name="choices-autocomplete"
+          id="choices-autocomplete"
+        >
+        </select>
+        <script>
+          document.addEventListener('DOMContentLoaded', function() {
+            const choices = new Choices('#choices-autocomplete', {
+              shouldSort: false,
+            });
+            choices.passedElement.element.addEventListener(
+              'search',
+              function(e) {
+                const query = e.detail.value
+
+                if (query.length < 2) {
+                  choices.clearChoices()
+                  return
+                }
+
+                let result = []
+                if (query.slice(0, 2) === 'fo') {
+                  result = [{ value: 'found', label: 'Found' }]
+                }
+
+                choices.setChoices(
+                  result,
+                  'value',
+                  'label',
+                  true
+                )
+              }
+            )
+          });
+        </script>
+      </div>
+
+
     </div>
   </body>
 </html>
