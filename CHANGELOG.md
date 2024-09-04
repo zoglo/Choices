@@ -4,6 +4,7 @@
 
 ### Features (from 11.0.0)
 * Pass `getClassNames` as the 3rd argument to `callbackOnCreateTemplates` callback
+* `duplicateItemsAllowed` option is now respected by `setChoices()` method [#855](https://github.com/Choices-js/Choices/issues/855)
 
 ### Bug Fixes (from 11.0.0)
 * Fix choice disable state wasn't considered when showing the "no choices to choose from" notice

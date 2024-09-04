@@ -2078,12 +2078,20 @@ class Choices {
       throw new TypeError('Can not re-add a choice which has already been added');
     }
 
+    const { config } = this;
+    if (
+      (this._isSelectElement || !config.duplicateItemsAllowed) &&
+      this._store.choices.find((c) => config.valueComparer(c.value, choice.value))
+    ) {
+      return;
+    }
+
     // Generate unique id, in-place update is required so chaining _addItem works as expected
     this._lastAddedChoiceId++;
     choice.id = this._lastAddedChoiceId;
     choice.elementId = `${this._baseId}-${this._idNames.itemChoice}-${choice.id}`;
 
-    const { prependValue, appendValue } = this.config;
+    const { prependValue, appendValue } = config;
     if (prependValue) {
       choice.value = prependValue + choice.value;
     }
