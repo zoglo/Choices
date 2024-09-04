@@ -966,7 +966,7 @@ describe('choices', () => {
 
           it('triggers event with null groupValue', () => {
             expect(passedElementTriggerEventStub.called).to.equal(true);
-            expect(passedElementTriggerEventStub.lastCall.args[0]).to.equal(EventType.highlightItem);
+            expect(passedElementTriggerEventStub.lastCall.args[0]).to.equal(EventType.unhighlightItem);
             expect(passedElementTriggerEventStub.lastCall.args[1]).to.contains({
               value: item.value,
               label: item.label,
@@ -983,7 +983,7 @@ describe('choices', () => {
 
           it('triggers event with groupValue', () => {
             expect(passedElementTriggerEventStub.called).to.equal(true);
-            expect(passedElementTriggerEventStub.lastCall.args[0]).to.equal(EventType.highlightItem);
+            expect(passedElementTriggerEventStub.lastCall.args[0]).to.equal(EventType.unhighlightItem);
             expect(passedElementTriggerEventStub.lastCall.args[1]).to.contains({
               value: item.value,
               label: item.label,
