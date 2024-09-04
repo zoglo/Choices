@@ -1172,7 +1172,7 @@ example.setChoices(
 
 **Input types affected:** `select-one`, `select-multiple`
 
-**Usage:** Clear all choices from select
+**Usage:** Clear all choices from select. Does **not** reset the search state.
 
 ### getValue(valueOnly?: boolean): string[] | EventChoice[] | EventChoice | string;
 
@@ -1234,7 +1234,7 @@ example.setChoiceByValue('Two'); // Choice with value of 'Two' has now been sele
 
 **Input types affected:** `text`, `select-one`, `select-multiple`
 
-**Usage:** Removes all items, choices and groups. Use with caution.
+**Usage:** Removes all items, choices and groups. Resets the search state. Use with caution.
 
 ### clearInput();
 
