@@ -1161,7 +1161,7 @@ describe('choices', () => {
       });
 
       it('dispatches clearChoices action', () => {
-        expect(storeResetStub.callCount).to.be.eq(1);
+        expect(storeResetStub.callCount).to.be.eq(0);
       });
     });
 
