@@ -1443,7 +1443,7 @@ class Choices {
     if (noticeType !== NoticeTypes.addChoice) {
       if (!results.length) {
         this._displayNotice(resolveStringFunction(this.config.noResultsText), NoticeTypes.noResults);
-      } else if (noticeType === NoticeTypes.noResults) {
+      } else {
         this._clearNotice();
       }
     }
