@@ -663,8 +663,9 @@ class Choices {
       | (InputChoice | InputGroup)[]
       | ((instance: Choices) => (InputChoice | InputGroup)[] | Promise<(InputChoice | InputGroup)[]>) = [],
     value: string | null = 'value',
-    label = 'label',
-    replaceChoices = false,
+    label: string = 'label',
+    replaceChoices: boolean = false,
+    clearSearchFlag: boolean = true,
   ): this | Promise<this> {
     if (!this.initialisedOK) {
       this._warnChoicesInitFailed('setChoices');
@@ -724,6 +725,9 @@ class Choices {
     this.containerOuter.removeLoadingState();
 
     this._store.withTxn(() => {
+      if (clearSearchFlag) {
+        this._isSearching = false;
+      }
       const isDefaultValue = value === 'value';
       const isDefaultLabel = label === 'label';
 
