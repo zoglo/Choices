@@ -3483,7 +3483,7 @@ var Choices = /** @class */ (function () {
         this.passedElement.reveal();
         this.containerOuter.unwrap(this.passedElement.element);
         this._store._listeners = []; // prevents select/input value being wiped
-        this.clearStore();
+        this.clearStore(false);
         this._stopSearch();
         this._templates = Choices.defaults.templates;
         this.initialised = false;
@@ -3739,12 +3739,13 @@ var Choices = /** @class */ (function () {
      * }], 'value', 'label', false);
      * ```
      */
-    Choices.prototype.setChoices = function (choicesArrayOrFetcher, value, label, replaceChoices) {
+    Choices.prototype.setChoices = function (choicesArrayOrFetcher, value, label, replaceChoices, clearSearchFlag) {
         var _this = this;
         if (choicesArrayOrFetcher === void 0) { choicesArrayOrFetcher = []; }
         if (value === void 0) { value = 'value'; }
         if (label === void 0) { label = 'label'; }
         if (replaceChoices === void 0) { replaceChoices = false; }
+        if (clearSearchFlag === void 0) { clearSearchFlag = true; }
         if (!this.initialisedOK) {
             this._warnChoicesInitFailed('setChoices');
             return this;
@@ -3789,6 +3790,9 @@ var Choices = /** @class */ (function () {
         }
         this.containerOuter.removeLoadingState();
         this._store.withTxn(function () {
+            if (clearSearchFlag) {
+                _this._isSearching = false;
+            }
             var isDefaultValue = value === 'value';
             var isDefaultLabel = label === 'label';
             choicesArrayOrFetcher.forEach(function (groupOrChoice) {
@@ -3835,7 +3839,7 @@ var Choices = /** @class */ (function () {
                     }
                 });
             }
-            _this.clearStore();
+            _this.clearStore(false);
             choicesFromOptions.forEach(function (groupOrChoice) {
                 if ('choices' in groupOrChoice) {
                     return;
@@ -3884,13 +3888,26 @@ var Choices = /** @class */ (function () {
         return this;
     };
     Choices.prototype.clearChoices = function () {
-        this.passedElement.element.replaceChildren('');
-        return this.clearStore();
+        var _this = this;
+        this._store.withTxn(function () {
+            _this._store.choices.forEach(function (choice) {
+                if (!choice.selected) {
+                    _this._store.dispatch(removeChoice(choice));
+                }
+            });
+        });
+        // @todo integrate with Store
+        this._searcher.reset();
+        return this;
     };
-    Choices.prototype.clearStore = function () {
+    Choices.prototype.clearStore = function (clearOptions) {
+        if (clearOptions === void 0) { clearOptions = true; }
+        this._stopSearch();
+        if (clearOptions) {
+            this.passedElement.element.replaceChildren('');
+        }
         this.itemList.element.replaceChildren('');
         this.choiceList.element.replaceChildren('');
-        this._stopSearch();
         this._store.reset();
         this._lastAddedChoiceId = 0;
         this._lastAddedGroupId = 0;
@@ -4404,7 +4421,7 @@ var Choices = /** @class */ (function () {
             if (!results.length) {
                 this._displayNotice(resolveStringFunction(this.config.noResultsText), NoticeTypes.noResults);
             }
-            else if (noticeType === NoticeTypes.noResults) {
+            else {
                 this._clearNotice();
             }
         }
@@ -4412,11 +4429,10 @@ var Choices = /** @class */ (function () {
         return results.length;
     };
     Choices.prototype._stopSearch = function () {
-        var wasSearching = this._isSearching;
-        this._currentValue = '';
-        this._isSearching = false;
-        this._clearNotice();
-        if (wasSearching) {
+        if (this._isSearching) {
+            this._currentValue = '';
+            this._isSearching = false;
+            this._clearNotice();
             this._store.dispatch(activateChoices(true));
             this.passedElement.triggerEvent(EventType.search, {
                 value: '',
@@ -4939,11 +4955,16 @@ var Choices = /** @class */ (function () {
         if (choice.id) {
             throw new TypeError('Can not re-add a choice which has already been added');
         }
+        var config = this.config;
+        if ((this._isSelectElement || !config.duplicateItemsAllowed) &&
+            this._store.choices.find(function (c) { return config.valueComparer(c.value, choice.value); })) {
+            return;
+        }
         // Generate unique id, in-place update is required so chaining _addItem works as expected
         this._lastAddedChoiceId++;
         choice.id = this._lastAddedChoiceId;
         choice.elementId = "".concat(this._baseId, "-").concat(this._idNames.itemChoice, "-").concat(choice.id);
-        var _a = this.config, prependValue = _a.prependValue, appendValue = _a.appendValue;
+        var prependValue = config.prependValue, appendValue = config.appendValue;
         if (prependValue) {
             choice.value = prependValue + choice.value;
         }
