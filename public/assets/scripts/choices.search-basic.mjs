@@ -1,4 +1,4 @@
-/*! choices.js v11.0.1 | © 2024 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
+/*! choices.js v11.0.2 | © 2024 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
 
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -3055,7 +3055,7 @@ var Choices = /** @class */ (function () {
         }
         this._store.dispatch(highlightItem(choice, false));
         if (runEvent) {
-            this.passedElement.triggerEvent(EventType.highlightItem, this._getChoiceForOutput(choice));
+            this.passedElement.triggerEvent(EventType.unhighlightItem, this._getChoiceForOutput(choice));
         }
         return this;
     };
@@ -3392,6 +3392,7 @@ var Choices = /** @class */ (function () {
         if (!choice) {
             return this;
         }
+        this._clearNotice();
         this._store.dispatch(removeChoice(choice));
         // @todo integrate with Store
         this._searcher.reset();
@@ -3407,7 +3408,7 @@ var Choices = /** @class */ (function () {
     Choices.prototype.clearStore = function () {
         this.itemList.element.replaceChildren('');
         this.choiceList.element.replaceChildren('');
-        this._clearNotice();
+        this._stopSearch();
         this._store.reset();
         this._lastAddedChoiceId = 0;
         this._lastAddedGroupId = 0;
@@ -3418,10 +3419,7 @@ var Choices = /** @class */ (function () {
     Choices.prototype.clearInput = function () {
         var shouldSetInputWidth = !this._isSelectOneElement;
         this.input.clear(shouldSetInputWidth);
-        this._clearNotice();
-        if (this._isSearching) {
-            this._stopSearch();
-        }
+        this._stopSearch();
         return this;
     };
     Choices.prototype._validateConfig = function () {
@@ -3533,18 +3531,14 @@ var Choices = /** @class */ (function () {
                 renderChoices(renderableChoices(activeChoices), false, undefined);
             }
         }
-        var notice = this._notice;
         if (!selectableChoices) {
-            if (!notice) {
+            if (!this._notice) {
                 this._notice = {
-                    text: resolveStringFunction(config.noChoicesText),
-                    type: NoticeTypes.noChoices,
+                    text: resolveStringFunction(isSearching ? config.noResultsText : config.noChoicesText),
+                    type: isSearching ? NoticeTypes.noResults : NoticeTypes.noChoices,
                 };
             }
             fragment.replaceChildren('');
-        }
-        else if (notice && notice.type === NoticeTypes.noChoices) {
-            this._notice = undefined;
         }
         this._renderNotice(fragment);
         this.choiceList.element.replaceChildren(fragment);
@@ -3939,6 +3933,7 @@ var Choices = /** @class */ (function () {
         var wasSearching = this._isSearching;
         this._currentValue = '';
         this._isSearching = false;
+        this._clearNotice();
         if (wasSearching) {
             this._store.dispatch(activateChoices(true));
             this.passedElement.triggerEvent(EventType.search, {
@@ -4091,7 +4086,6 @@ var Choices = /** @class */ (function () {
             else {
                 this._stopSearch();
             }
-            this._clearNotice();
             return;
         }
         if (!this._canAddItems()) {
@@ -4477,6 +4471,7 @@ var Choices = /** @class */ (function () {
         if ((prependValue || appendValue) && choice.element) {
             choice.element.value = choice.value;
         }
+        this._clearNotice();
         this._store.dispatch(addChoice(choice));
         if (choice.selected) {
             this._addItem(choice, withEvents, userTriggered);
@@ -4665,7 +4660,7 @@ var Choices = /** @class */ (function () {
             throw new TypeError("".concat(caller, " called for an element which has multiple instances of Choices initialised on it"));
         }
     };
-    Choices.version = '11.0.1';
+    Choices.version = '11.0.2';
     return Choices;
 }());
 
