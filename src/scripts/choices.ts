@@ -853,13 +853,14 @@ class Choices {
     return this;
   }
 
-  clearStore(): this {
+  clearStore(clearOptions: boolean = true): this {
     this._stopSearch();
 
-    this.passedElement.element.replaceChildren('');
+    if (clearOptions) {
+      this.passedElement.element.replaceChildren('');
+    }
     this.itemList.element.replaceChildren('');
     this.choiceList.element.replaceChildren('');
-    this._stopSearch();
     this._store.reset();
     this._lastAddedChoiceId = 0;
     this._lastAddedGroupId = 0;
