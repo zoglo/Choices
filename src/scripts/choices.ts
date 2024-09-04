@@ -368,7 +368,7 @@ class Choices {
     this.containerOuter.unwrap(this.passedElement.element);
 
     this._store._listeners = []; // prevents select/input value being wiped
-    this.clearStore();
+    this.clearStore(false);
     this._stopSearch();
 
     this._templates = Choices.defaults.templates;
@@ -782,7 +782,7 @@ class Choices {
         });
       }
 
-      this.clearStore();
+      this.clearStore(false);
 
       choicesFromOptions.forEach((groupOrChoice) => {
         if ('choices' in groupOrChoice) {
@@ -839,12 +839,24 @@ class Choices {
   }
 
   clearChoices(): this {
-    this.passedElement.element.replaceChildren('');
+    this._store.withTxn(() => {
+      this._store.choices.forEach((choice) => {
+        if (!choice.selected) {
+          this._store.dispatch(removeChoice(choice));
+        }
+      });
+    });
 
-    return this.clearStore();
+    // @todo integrate with Store
+    this._searcher.reset();
+
+    return this;
   }
 
   clearStore(): this {
+    this._stopSearch();
+
+    this.passedElement.element.replaceChildren('');
     this.itemList.element.replaceChildren('');
     this.choiceList.element.replaceChildren('');
     this._stopSearch();
@@ -1454,11 +1466,10 @@ class Choices {
   }
 
   _stopSearch(): void {
-    const wasSearching = this._isSearching;
-    this._currentValue = '';
-    this._isSearching = false;
-    this._clearNotice();
-    if (wasSearching) {
+    if (this._isSearching) {
+      this._currentValue = '';
+      this._isSearching = false;
+      this._clearNotice();
       this._store.dispatch(activateChoices(true));
 
       this.passedElement.triggerEvent(EventType.search, {
