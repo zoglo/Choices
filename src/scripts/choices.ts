@@ -434,7 +434,7 @@ class Choices {
     this._store.dispatch(highlightItem(choice, false));
 
     if (runEvent) {
-      this.passedElement.triggerEvent(EventType.highlightItem, this._getChoiceForOutput(choice));
+      this.passedElement.triggerEvent(EventType.unhighlightItem, this._getChoiceForOutput(choice));
     }
 
     return this;
