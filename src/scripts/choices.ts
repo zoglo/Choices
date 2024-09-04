@@ -826,6 +826,7 @@ class Choices {
     if (!choice) {
       return this;
     }
+    this._clearNotice();
     this._store.dispatch(removeChoice(choice));
     // @todo integrate with Store
     this._searcher.reset();
@@ -846,7 +847,7 @@ class Choices {
   clearStore(): this {
     this.itemList.element.replaceChildren('');
     this.choiceList.element.replaceChildren('');
-    this._clearNotice();
+    this._stopSearch();
     this._store.reset();
     this._lastAddedChoiceId = 0;
     this._lastAddedGroupId = 0;
@@ -859,11 +860,7 @@ class Choices {
   clearInput(): this {
     const shouldSetInputWidth = !this._isSelectOneElement;
     this.input.clear(shouldSetInputWidth);
-    this._clearNotice();
-
-    if (this._isSearching) {
-      this._stopSearch();
-    }
+    this._stopSearch();
 
     return this;
   }
@@ -999,17 +996,14 @@ class Choices {
       }
     }
 
-    const notice = this._notice;
     if (!selectableChoices) {
-      if (!notice) {
+      if (!this._notice) {
         this._notice = {
-          text: resolveStringFunction(config.noChoicesText),
-          type: NoticeTypes.noChoices,
+          text: resolveStringFunction(isSearching ? config.noResultsText : config.noChoicesText),
+          type: isSearching ? NoticeTypes.noResults : NoticeTypes.noChoices,
         };
       }
       fragment.replaceChildren('');
-    } else if (notice && notice.type === NoticeTypes.noChoices) {
-      this._notice = undefined;
     }
 
     this._renderNotice(fragment);
@@ -1463,6 +1457,7 @@ class Choices {
     const wasSearching = this._isSearching;
     this._currentValue = '';
     this._isSearching = false;
+    this._clearNotice();
     if (wasSearching) {
       this._store.dispatch(activateChoices(true));
 
@@ -1638,8 +1633,6 @@ class Choices {
       } else {
         this._stopSearch();
       }
-
-      this._clearNotice();
 
       return;
     }
@@ -2090,6 +2083,7 @@ class Choices {
       (choice.element as HTMLOptionElement).value = choice.value;
     }
 
+    this._clearNotice();
     this._store.dispatch(addChoice(choice));
 
     if (choice.selected) {
