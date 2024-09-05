@@ -14,4 +14,5 @@ export declare namespace Types {
         label?: StringUntrusted | string;
     }
     type ValueOf<T extends object> = T[keyof T];
+    type CustomProperties = Record<string, any> | string;
 }

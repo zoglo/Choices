@@ -129,7 +129,6 @@ var highlightItem = function (item, highlighted) { return ({
     highlighted: highlighted,
 }); };
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 var getRandomNumber = function (min, max) { return Math.floor(Math.random() * (max - min) + min); };
 var generateChars = function (length) {
     return Array.from({ length: length }, function () { return getRandomNumber(0, 36).toString(36); }).join('');
@@ -262,6 +261,7 @@ var dispatchEvent = function (element, type, customArgs) {
 /**
  * Returns an array of keys present on the first but missing on the second object
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 var diff = function (a, b) {
     var aKeys = Object.keys(a).sort();
     var bKeys = Object.keys(b).sort();
@@ -767,7 +767,7 @@ var mapInputToChoice = function (value, allowGroup) {
     var choice = groupOrChoice;
     var result = {
         id: 0, // actual ID will be assigned during _addChoice
-        groupId: 0, // actual ID will be assigned during _addGroup but before _addChoice
+        group: null, // actual group will be assigned during _addGroup but before _addChoice
         score: 0, // used in search
         rank: 0, // used in search, stable sort order
         value: choice.value,
@@ -844,7 +844,7 @@ var WrappedSelect = /** @class */ (function (_super) {
         }
         return {
             id: 0,
-            groupId: 0,
+            group: null,
             score: 0,
             rank: 0,
             value: option.value,
@@ -1005,8 +1005,8 @@ function items(s, action, context) {
             break;
         }
         case ActionType.REMOVE_CHOICE: {
-            state = state.filter(function (item) { return item.id !== action.choice.id; });
             removeItem(action.choice);
+            state = state.filter(function (item) { return item.id !== action.choice.id; });
             break;
         }
         case ActionType.HIGHLIGHT_ITEM: {
@@ -1059,6 +1059,9 @@ function choices(s, action, context) {
         }
         case ActionType.REMOVE_CHOICE: {
             action.choice.choiceEl = undefined;
+            if (action.choice.group) {
+                action.choice.group.choices = action.choice.group.choices.filter(function (obj) { return obj.id !== action.choice.id; });
+            }
             state = state.filter(function (obj) { return obj.id !== action.choice.id; });
             break;
         }
@@ -2680,7 +2683,6 @@ var templates = {
             label = escapeForTemplate(allowHTML, label);
             label += " (".concat(groupName, ")");
             label = { trusted: label };
-            div.dataset.groupId = "".concat(choice.groupId);
         }
         var describedBy = div;
         if (choice.labelClass) {
@@ -2708,12 +2710,15 @@ var templates = {
         if (choice.placeholder) {
             addClassesToElement(div, placeholder);
         }
-        div.setAttribute('role', choice.groupId ? 'treeitem' : 'option');
+        div.setAttribute('role', choice.group ? 'treeitem' : 'option');
         div.dataset.choice = '';
         div.dataset.id = choice.id;
         div.dataset.value = rawValue;
         if (selectText) {
             div.dataset.selectText = selectText;
+        }
+        if (choice.group) {
+            div.dataset.groupId = "".concat(choice.group.id);
         }
         assignCustomProperties(div, choice, false);
         if (choice.disabled) {
@@ -3149,12 +3154,9 @@ var Choices = /** @class */ (function () {
     };
     Choices.prototype.getValue = function (valueOnly) {
         var _this = this;
-        if (valueOnly === void 0) { valueOnly = false; }
-        var values = this._store.items.reduce(function (selectedItems, item) {
-            var itemValue = valueOnly ? item.value : _this._getChoiceForOutput(item);
-            selectedItems.push(itemValue);
-            return selectedItems;
-        }, []);
+        var values = this._store.items.map(function (item) {
+            return (valueOnly ? item.value : _this._getChoiceForOutput(item));
+        });
         return this._isSelectOneElement || this.config.singleModeForMultiSelect ? values[0] : values;
     };
     Choices.prototype.setValue = function (items) {
@@ -3358,17 +3360,20 @@ var Choices = /** @class */ (function () {
                 });
             }
             _this.clearStore(false);
-            choicesFromOptions.forEach(function (groupOrChoice) {
-                if ('choices' in groupOrChoice) {
-                    return;
-                }
-                var choice = groupOrChoice;
+            var updateChoice = function (choice) {
                 if (deselectAll) {
                     _this._store.dispatch(removeItem$1(choice));
                 }
                 else if (existingItems[choice.value]) {
                     choice.selected = true;
                 }
+            };
+            choicesFromOptions.forEach(function (groupOrChoice) {
+                if ('choices' in groupOrChoice) {
+                    groupOrChoice.choices.forEach(updateChoice);
+                    return;
+                }
+                updateChoice(groupOrChoice);
             });
             /* @todo only generate add events for the added options instead of all
             if (withEvents) {
@@ -3524,13 +3529,16 @@ var Choices = /** @class */ (function () {
             }
             if (!this._hasNonChoicePlaceholder && !isSearching && this._isSelectOneElement) {
                 // If we have a placeholder choice along with groups
-                renderChoices(activeChoices.filter(function (choice) { return choice.placeholder && !choice.groupId; }), false, undefined);
+                renderChoices(activeChoices.filter(function (choice) { return choice.placeholder && !choice.group; }), false, undefined);
             }
             // If we have grouped options
             if (activeGroups.length && !isSearching) {
                 if (config.shouldSort) {
                     activeGroups.sort(config.sorter);
                 }
+                // render Choices without group first, regardless of sort, otherwise they won't be distinguishable
+                // from the last group
+                renderChoices(activeChoices.filter(function (choice) { return !choice.placeholder && !choice.group; }), false, undefined);
                 activeGroups.forEach(function (group) {
                     var groupChoices = renderableChoices(group.choices);
                     if (groupChoices.length) {
@@ -3671,11 +3679,8 @@ var Choices = /** @class */ (function () {
             }
         }
     };
+    // eslint-disable-next-line class-methods-use-this
     Choices.prototype._getChoiceForOutput = function (choice, keyCode) {
-        if (!choice) {
-            return undefined;
-        }
-        var group = choice.groupId ? this._store.getGroupById(choice.groupId) : null;
         return {
             id: choice.id,
             highlighted: choice.highlighted,
@@ -3687,7 +3692,7 @@ var Choices = /** @class */ (function () {
             label: choice.label,
             placeholder: choice.placeholder,
             value: choice.value,
-            groupValue: group && group.label ? group.label : undefined,
+            groupValue: choice.group ? choice.group.label : undefined,
             element: choice.element,
             keyCode: keyCode,
         };
@@ -3706,7 +3711,7 @@ var Choices = /** @class */ (function () {
         if (!items.length || !this.config.removeItems || !this.config.removeItemButton) {
             return;
         }
-        var id = element && parseDataSetId(element.parentNode);
+        var id = element && parseDataSetId(element.parentElement);
         var itemToRemove = id && items.find(function (item) { return item.id === id; });
         if (!itemToRemove) {
             return;
@@ -4512,7 +4517,7 @@ var Choices = /** @class */ (function () {
         this._lastAddedGroupId++;
         group.id = this._lastAddedGroupId;
         group.choices.forEach(function (item) {
-            item.groupId = group.id;
+            item.group = group;
             if (group.disabled) {
                 item.disabled = true;
             }

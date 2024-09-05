@@ -6,7 +6,7 @@ import { StateChangeSet } from './interfaces/state';
 import Store from './store/store';
 import { ChoiceFull } from './interfaces/choice-full';
 import { GroupFull } from './interfaces/group-full';
-import { PassedElementType } from './interfaces';
+import { EventChoiceValueType, PassedElementType } from './interfaces';
 import { EventChoice } from './interfaces/event-choice';
 import { NoticeType, Templates } from './interfaces/templates';
 import { Searcher } from './interfaces/search';
@@ -76,7 +76,7 @@ declare class Choices {
     removeHighlightedItems(runEvent?: boolean): this;
     showDropdown(preventInputFocus?: boolean): this;
     hideDropdown(preventInputBlur?: boolean): this;
-    getValue(valueOnly?: boolean): string[] | EventChoice[] | EventChoice | string;
+    getValue<B extends boolean = false>(valueOnly?: B): EventChoiceValueType<B> | EventChoiceValueType<B>[];
     setValue(items: string[] | InputChoice[]): this;
     setChoiceByValue(value: string | string[]): this;
     /**
@@ -155,11 +155,11 @@ declare class Choices {
     _displayNotice(text: string, type: NoticeType, openDropdown?: boolean): void;
     _clearNotice(): void;
     _renderNotice(fragment?: DocumentFragment): void;
-    _getChoiceForOutput(choice?: ChoiceFull, keyCode?: number): EventChoice | undefined;
+    _getChoiceForOutput(choice: ChoiceFull, keyCode?: number): EventChoice;
     _triggerChange(value: any): void;
-    _handleButtonAction(element?: HTMLElement): void;
-    _handleItemAction(element?: HTMLElement, hasShiftKey?: boolean): void;
-    _handleChoiceAction(element?: HTMLElement): boolean;
+    _handleButtonAction(element: HTMLElement): void;
+    _handleItemAction(element: HTMLElement, hasShiftKey?: boolean): void;
+    _handleChoiceAction(element: HTMLElement): boolean;
     _handleBackspace(items: ChoiceFull[]): void;
     _loadChoices(): void;
     _handleLoadingState(setLoading?: boolean): void;
