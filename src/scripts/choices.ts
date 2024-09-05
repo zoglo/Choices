@@ -996,6 +996,13 @@ class Choices {
         if (config.shouldSort) {
           activeGroups.sort(config.sorter);
         }
+        // render Choices without group first, regardless of sort, otherwise they won't be distinguishable
+        // from the last group
+        renderChoices(
+          activeChoices.filter((choice) => !choice.placeholder && !choice.group),
+          false,
+          undefined,
+        );
 
         activeGroups.forEach((group) => {
           const groupChoices = renderableChoices(group.choices);

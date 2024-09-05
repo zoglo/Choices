@@ -961,7 +961,8 @@ describe(`Choices - select multiple`, () => {
         await suite.group.locator('.destroy').click({ force: true });
         await suite.advanceClock();
 
-        await expect(suite.group.locator('select > option')).toHaveCount(3);
+        await expect(suite.group.locator('select > optgroup > option')).toHaveCount(1);
+        await expect(suite.group.locator('select > option')).toHaveCount(2);
 
         await suite.group.locator('.init').click({ force: true });
         await suite.advanceClock();
