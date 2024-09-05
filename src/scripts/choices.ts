@@ -1160,11 +1160,7 @@ class Choices {
     }
   }
 
-  _getChoiceForOutput(choice?: ChoiceFull, keyCode?: number): EventChoice | undefined {
-    if (!choice) {
-      return undefined;
-    }
-
+  _getChoiceForOutput(choice: ChoiceFull, keyCode?: number): EventChoice {
     const group = choice.groupId ? this._store.getGroupById(choice.groupId) : null;
 
     return {
