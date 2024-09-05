@@ -406,7 +406,7 @@ describe('templates', () => {
     beforeEach(() => {
       data = {
         id: 1,
-        groupId: 0,
+        group: null,
         disabled: false,
         elementId: 'test',
         label: 'test',
@@ -541,7 +541,7 @@ describe('templates', () => {
       beforeEach(() => {
         data = {
           ...data,
-          groupId: 1,
+          group: { id: 1, label: 'test' },
         };
       });
 

@@ -299,7 +299,7 @@ const templates: TemplatesInterface = {
       addClassesToElement(div, placeholder);
     }
 
-    div.setAttribute('role', choice.groupId ? 'treeitem' : 'option');
+    div.setAttribute('role', choice.group ? 'treeitem' : 'option');
 
     div.dataset.choice = '';
     div.dataset.id = choice.id as unknown as string;
@@ -307,8 +307,8 @@ const templates: TemplatesInterface = {
     if (selectText) {
       div.dataset.selectText = selectText;
     }
-    if (choice.groupId) {
-      div.dataset.groupId = `${choice.groupId}`;
+    if (choice.group) {
+      div.dataset.groupId = `${choice.group.id}`;
     }
 
     assignCustomProperties(div, choice, false);

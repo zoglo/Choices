@@ -79,7 +79,7 @@ describe('reducers/items', () => {
       state = [
         {
           id: 1,
-          groupId: 0,
+          group: null,
           score: 0,
           rank: 0,
           value: 'Item one',
@@ -93,7 +93,7 @@ describe('reducers/items', () => {
         },
         {
           id: 2,
-          groupId: 0,
+          group: null,
           score: 0,
           rank: 0,
           value: 'Item one',

@@ -54,8 +54,8 @@ export default function items(s: StateType, action: ActionTypes, context?: Optio
     }
 
     case ActionType.REMOVE_CHOICE: {
-      state = state.filter((item) => item.id !== action.choice.id);
       removeItem(action.choice);
+      state = state.filter((item) => item.id !== action.choice.id);
       break;
     }
 

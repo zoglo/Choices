@@ -985,7 +985,7 @@ class Choices {
       if (!this._hasNonChoicePlaceholder && !isSearching && this._isSelectOneElement) {
         // If we have a placeholder choice along with groups
         renderChoices(
-          activeChoices.filter((choice) => choice.placeholder && !choice.groupId),
+          activeChoices.filter((choice) => choice.placeholder && !choice.group),
           false,
           undefined,
         );
@@ -1161,9 +1161,8 @@ class Choices {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   _getChoiceForOutput(choice: ChoiceFull, keyCode?: number): EventChoice {
-    const group = choice.groupId ? this._store.getGroupById(choice.groupId) : null;
-
     return {
       id: choice.id,
       highlighted: choice.highlighted,
@@ -1175,7 +1174,7 @@ class Choices {
       label: choice.label,
       placeholder: choice.placeholder,
       value: choice.value,
-      groupValue: group && group.label ? group.label : undefined,
+      groupValue: choice.group ? choice.group.label : undefined,
       element: choice.element,
       keyCode,
     };
@@ -2128,7 +2127,7 @@ class Choices {
     group.id = this._lastAddedGroupId;
 
     group.choices.forEach((item: ChoiceFull) => {
-      item.groupId = group.id;
+      item.group = group;
       if (group.disabled) {
         item.disabled = true;
       }

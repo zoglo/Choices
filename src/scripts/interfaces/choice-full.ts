@@ -1,5 +1,7 @@
 import { StringUntrusted } from './string-untrusted';
 import { Types } from './types';
+// eslint-disable-next-line import/no-cycle
+import { GroupFull } from './group-full';
 
 /*
   A disabled choice appears in the choice dropdown but cannot be selected
@@ -18,7 +20,7 @@ export interface ChoiceFull {
   disabled: boolean;
   active: boolean;
   elementId?: string;
-  groupId: number;
+  group: GroupFull | null;
   label: StringUntrusted | string;
   placeholder: boolean;
   selected: boolean;
