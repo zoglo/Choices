@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { ChoiceFull } from './choice-full';
 
 export interface GroupFull {

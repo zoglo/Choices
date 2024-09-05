@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { InputChoice } from './input-choice';
 import { StringUntrusted } from './string-untrusted';
 

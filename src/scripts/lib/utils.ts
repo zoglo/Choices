@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { EventTypes } from '../interfaces/event-type';
 import { StringUntrusted } from '../interfaces/string-untrusted';
 import { StringPreEscaped } from '../interfaces/string-pre-escaped';
@@ -179,6 +177,7 @@ export const cloneObject = <T>(obj: T): T => (obj !== undefined ? JSON.parse(JSO
 /**
  * Returns an array of keys present on the first but missing on the second object
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const diff = (a: Record<string, any>, b: Record<string, any>): string[] => {
   const aKeys = Object.keys(a).sort();
   const bKeys = Object.keys(b).sort();

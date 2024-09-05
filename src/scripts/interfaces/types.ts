@@ -16,4 +16,6 @@ export namespace Types {
     label?: StringUntrusted | string;
   }
   export type ValueOf<T extends object> = T[keyof T];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  export type CustomProperties = Record<string, any> | string;
 }
