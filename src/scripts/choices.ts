@@ -784,16 +784,21 @@ class Choices {
 
       this.clearStore(false);
 
-      choicesFromOptions.forEach((groupOrChoice) => {
-        if ('choices' in groupOrChoice) {
-          return;
-        }
-        const choice = groupOrChoice;
+      const updateChoice = (choice: ChoiceFull): void => {
         if (deselectAll) {
           this._store.dispatch(removeItem(choice));
         } else if (existingItems[choice.value]) {
           choice.selected = true;
         }
+      };
+
+      choicesFromOptions.forEach((groupOrChoice) => {
+        if ('choices' in groupOrChoice) {
+          groupOrChoice.choices.forEach(updateChoice);
+
+          return;
+        }
+        updateChoice(groupOrChoice);
       });
 
       /* @todo only generate add events for the added options instead of all
