@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { activateChoices, addChoice, removeChoice, filterChoices } from './actions/choices';
 import { addGroup } from './actions/groups';
 import { addItem, highlightItem, removeItem } from './actions/items';
@@ -28,7 +27,7 @@ import Store from './store/store';
 import { coerceBool, mapInputToChoice } from './lib/choice-input';
 import { ChoiceFull } from './interfaces/choice-full';
 import { GroupFull } from './interfaces/group-full';
-import { EventType, KeyCodeMap, PassedElementType, PassedElementTypes } from './interfaces';
+import { EventChoiceValueType, EventType, KeyCodeMap, PassedElementType, PassedElementTypes } from './interfaces';
 import { EventChoice } from './interfaces/event-choice';
 import { NoticeType, NoticeTypes, Templates } from './interfaces/templates';
 import { isHtmlInputElement, isHtmlSelectElement } from './lib/html-guard-statements';
@@ -539,13 +538,10 @@ class Choices {
     return this;
   }
 
-  getValue(valueOnly = false): string[] | EventChoice[] | EventChoice | string {
-    const values = this._store.items.reduce<any[]>((selectedItems, item) => {
-      const itemValue = valueOnly ? item.value : this._getChoiceForOutput(item);
-      selectedItems.push(itemValue);
-
-      return selectedItems;
-    }, []);
+  getValue<B extends boolean = false>(valueOnly?: B): EventChoiceValueType<B> | EventChoiceValueType<B>[] {
+    const values = this._store.items.map((item) => {
+      return (valueOnly ? item.value : this._getChoiceForOutput(item)) as EventChoiceValueType<B>;
+    });
 
     return this._isSelectOneElement || this.config.singleModeForMultiSelect ? values[0] : values;
   }
@@ -788,16 +784,21 @@ class Choices {
 
       this.clearStore(false);
 
-      choicesFromOptions.forEach((groupOrChoice) => {
-        if ('choices' in groupOrChoice) {
-          return;
-        }
-        const choice = groupOrChoice;
+      const updateChoice = (choice: ChoiceFull): void => {
         if (deselectAll) {
           this._store.dispatch(removeItem(choice));
         } else if (existingItems[choice.value]) {
           choice.selected = true;
         }
+      };
+
+      choicesFromOptions.forEach((groupOrChoice) => {
+        if ('choices' in groupOrChoice) {
+          groupOrChoice.choices.forEach(updateChoice);
+
+          return;
+        }
+        updateChoice(groupOrChoice);
       });
 
       /* @todo only generate add events for the added options instead of all
@@ -984,7 +985,7 @@ class Choices {
       if (!this._hasNonChoicePlaceholder && !isSearching && this._isSelectOneElement) {
         // If we have a placeholder choice along with groups
         renderChoices(
-          activeChoices.filter((choice) => choice.placeholder && !choice.groupId),
+          activeChoices.filter((choice) => choice.placeholder && !choice.group),
           false,
           undefined,
         );
@@ -995,6 +996,13 @@ class Choices {
         if (config.shouldSort) {
           activeGroups.sort(config.sorter);
         }
+        // render Choices without group first, regardless of sort, otherwise they won't be distinguishable
+        // from the last group
+        renderChoices(
+          activeChoices.filter((choice) => !choice.placeholder && !choice.group),
+          false,
+          undefined,
+        );
 
         activeGroups.forEach((group) => {
           const groupChoices = renderableChoices(group.choices);
@@ -1160,13 +1168,8 @@ class Choices {
     }
   }
 
-  _getChoiceForOutput(choice?: ChoiceFull, keyCode?: number): EventChoice | undefined {
-    if (!choice) {
-      return undefined;
-    }
-
-    const group = choice.groupId ? this._store.getGroupById(choice.groupId) : null;
-
+  // eslint-disable-next-line class-methods-use-this
+  _getChoiceForOutput(choice: ChoiceFull, keyCode?: number): EventChoice {
     return {
       id: choice.id,
       highlighted: choice.highlighted,
@@ -1178,7 +1181,7 @@ class Choices {
       label: choice.label,
       placeholder: choice.placeholder,
       value: choice.value,
-      groupValue: group && group.label ? group.label : undefined,
+      groupValue: choice.group ? choice.group.label : undefined,
       element: choice.element,
       keyCode,
     };
@@ -2131,7 +2134,7 @@ class Choices {
     group.id = this._lastAddedGroupId;
 
     group.choices.forEach((item: ChoiceFull) => {
-      item.groupId = group.id;
+      item.group = group;
       if (group.disabled) {
         item.disabled = true;
       }

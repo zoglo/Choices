@@ -14,7 +14,7 @@ describe('reducers/choices', () => {
         label: 'test',
         id: 1,
         elementId: '1',
-        groupId: 1,
+        group: null,
         active: false,
         disabled: false,
         placeholder: true,
@@ -73,7 +73,7 @@ describe('reducers/choices', () => {
         {
           id: 1,
           elementId: 'choices-test-1',
-          groupId: 0,
+          group: null,
           value: 'Choice 1',
           label: 'Choice 1',
           disabled: false,
@@ -88,7 +88,7 @@ describe('reducers/choices', () => {
         {
           id: 2,
           elementId: 'choices-test-2',
-          groupId: 0,
+          group: null,
           value: 'Choice 2',
           label: 'Choice 2',
           disabled: false,

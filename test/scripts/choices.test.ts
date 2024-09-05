@@ -756,7 +756,7 @@ describe('choices', () => {
       let itemsStub;
       const groupIdValue = 'Test';
       const item: ChoiceFull = {
-        groupId: 1,
+        group: null,
         highlighted: false,
         active: false,
         disabled: false,
@@ -827,9 +827,9 @@ describe('choices', () => {
           });
         });
 
-        describe('item with negative groupId', () => {
+        describe('item with no group', () => {
           beforeEach(() => {
-            item.groupId = 0;
+            item.group = null;
             output = instance.highlightItem(item);
           });
 
@@ -845,9 +845,17 @@ describe('choices', () => {
           });
         });
 
-        describe('item without groupId', () => {
+        describe('item with group', () => {
           beforeEach(() => {
-            item.groupId = 4321;
+            item.group = {
+              active: true,
+              choices: [],
+              disabled: false,
+              element: undefined,
+              groupEl: undefined,
+              id: 4321,
+              label: groupIdValue,
+            };
             output = instance.highlightItem(item);
           });
 
@@ -887,7 +895,7 @@ describe('choices', () => {
       let storeGetGroupByIdStub;
       const groupIdValue = 'Test';
       const item: ChoiceFull = {
-        groupId: 1,
+        group: null,
         highlighted: true,
         active: false,
         disabled: false,
@@ -958,9 +966,9 @@ describe('choices', () => {
           });
         });
 
-        describe('item with negative groupId', () => {
+        describe('item without group', () => {
           beforeEach(() => {
-            item.groupId = 0;
+            item.group = null;
             output = instance.unhighlightItem(item);
           });
 
@@ -975,9 +983,17 @@ describe('choices', () => {
           });
         });
 
-        describe('item without groupId', () => {
+        describe('item with group', () => {
           beforeEach(() => {
-            item.groupId = 4321;
+            item.group = {
+              active: true,
+              choices: [],
+              disabled: false,
+              element: undefined,
+              groupEl: undefined,
+              id: 4321,
+              label: groupIdValue,
+            };
             output = instance.unhighlightItem(item);
           });
 
@@ -1020,7 +1036,7 @@ describe('choices', () => {
           highlighted: false,
           disabled: false,
           active: false,
-          groupId: 0,
+          group: null,
           label: '',
           placeholder: false,
           selected: false,
@@ -1033,7 +1049,7 @@ describe('choices', () => {
           highlighted: false,
           disabled: false,
           active: false,
-          groupId: 0,
+          group: null,
           label: '',
           placeholder: false,
           selected: false,
@@ -1087,7 +1103,7 @@ describe('choices', () => {
           highlighted: true,
           disabled: false,
           active: false,
-          groupId: 0,
+          group: null,
           label: '',
           placeholder: false,
           selected: false,
@@ -1100,7 +1116,7 @@ describe('choices', () => {
           highlighted: true,
           disabled: false,
           active: false,
-          groupId: 0,
+          group: null,
           label: '',
           placeholder: false,
           selected: false,
@@ -2213,7 +2229,7 @@ describe('choices', () => {
           id: 1111,
           value: 'test value',
           label: 'test label',
-          groupId: 3333,
+          group: null,
           customProperties: {},
           score: 0,
           rank: 0,
@@ -2253,7 +2269,7 @@ describe('choices', () => {
           const itemWithGroup = {
             ...item,
             value: 'testing',
-            groupId: group.id,
+            group,
           };
 
           beforeEach(() => {

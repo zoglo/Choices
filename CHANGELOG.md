@@ -12,6 +12,8 @@
 * Fix regression "no choices to choose from"/"no results found" notice did not reliably trigger. [#1185](https://github.com/Choices-js/Choices/issues/1185) [#1191](https://github.com/Choices-js/Choices/issues/1191)
 * Fix regression of `UnhighlightItem` event not firing [#1173](https://github.com/Choices-js/Choices/issues/1173)
 * Fix `clearChoices()` would remove items, and clear the search flag.
+* Fixes for opt-group handling/rendering
+* Fix `removeChoice()` did not properly remove a choice which was part of a group
 
 ### Chore
 * Add e2e tests for "no choices" behavior to match v10

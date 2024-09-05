@@ -683,9 +683,10 @@ describe(`Choices - select multiple`, () => {
           await suite.startWithClick();
 
           await expect(suite.dropdown.locator('.choices__group[data-group]')).toHaveCount(1);
-          expect(
-            await suite.selectableChoices.filter({ hasNot: page.locator('[data-group-id]') }).count(),
-          ).toBeGreaterThan(0);
+          expect(await suite.dropdown.locator('.choices__item--choice[data-group-id]').count()).toEqual(1);
+          expect(await suite.dropdown.locator('.choices__item--choice:not([data-group-id])').count()).toBeGreaterThan(
+            1,
+          );
         });
       });
     });
@@ -960,7 +961,8 @@ describe(`Choices - select multiple`, () => {
         await suite.group.locator('.destroy').click({ force: true });
         await suite.advanceClock();
 
-        await expect(suite.group.locator('select > option')).toHaveCount(3);
+        await expect(suite.group.locator('select > optgroup > option')).toHaveCount(1);
+        await expect(suite.group.locator('select > option')).toHaveCount(2);
 
         await suite.group.locator('.init').click({ force: true });
         await suite.advanceClock();

@@ -64,7 +64,7 @@ export const mapInputToChoice = <T extends string | InputChoice | InputGroup>(
 
   const result: ChoiceFull = {
     id: 0, // actual ID will be assigned during _addChoice
-    groupId: 0, // actual ID will be assigned during _addGroup but before _addChoice
+    group: null, // actual group will be assigned during _addGroup but before _addChoice
     score: 0, // used in search
     rank: 0, // used in search, stable sort order
     value: choice.value,

@@ -22,6 +22,9 @@ export default function choices(s: StateType, action: ActionTypes, context?: Opt
     case ActionType.REMOVE_CHOICE: {
       action.choice.choiceEl = undefined;
 
+      if (action.choice.group) {
+        action.choice.group.choices = action.choice.group.choices.filter((obj) => obj.id !== action.choice.id);
+      }
       state = state.filter((obj) => obj.id !== action.choice.id);
       break;
     }

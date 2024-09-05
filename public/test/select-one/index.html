@@ -870,7 +870,9 @@
             id="choices-new-destroy-init"
           >
             <option value="Choice 1">Choice 1</option>
-            <option value="Choice 2">Choice 2</option>
+            <optgroup label="test">
+              <option value="Choice 2">Choice 2</option>
+            </optgroup>
             <option value="Choice 3">Choice 3</option>
           </select>
           <button class="destroy">Destroy</button>
@@ -926,7 +928,7 @@
           </script>
       </div>
 
-      <div data-test-hook="autocomplete">
+        <div data-test-hook="autocomplete">
         <label for="choices-autocomplete">Autocomplete example</label>
         <select
           class="form-control"
@@ -966,7 +968,7 @@
         </script>
       </div>
 
-
+      </div>
     </div>
   </body>
 </html>

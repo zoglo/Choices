@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
+// eslint-disable-next-line import/no-cycle
 import { ChoiceFull } from './choice-full';
 
 export interface GroupFull {
