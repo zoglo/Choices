@@ -268,7 +268,6 @@ const templates: TemplatesInterface = {
       label = escapeForTemplate(allowHTML, label);
       label += ` (${groupName})`;
       label = { trusted: label };
-      div.dataset.groupId = `${choice.groupId}`;
     }
 
     let describedBy: HTMLElement = div;
@@ -307,6 +306,9 @@ const templates: TemplatesInterface = {
     div.dataset.value = rawValue;
     if (selectText) {
       div.dataset.selectText = selectText;
+    }
+    if (choice.groupId) {
+      div.dataset.groupId = `${choice.groupId}`;
     }
 
     assignCustomProperties(div, choice, false);
