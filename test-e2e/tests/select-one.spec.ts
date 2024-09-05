@@ -528,9 +528,10 @@ describe(`Choices - select one`, () => {
           await suite.startWithClick();
 
           await expect(suite.dropdown.locator('.choices__group[data-group]')).toHaveCount(1);
-          expect(
-            await suite.selectableChoices.filter({ hasNot: page.locator('[data-group-id]') }).count(),
-          ).toBeGreaterThan(0);
+          expect(await suite.dropdown.locator('.choices__item--choice[data-group-id]').count()).toEqual(1);
+          expect(await suite.dropdown.locator('.choices__item--choice:not([data-group-id])').count()).toBeGreaterThan(
+            1,
+          );
         });
       });
     });
