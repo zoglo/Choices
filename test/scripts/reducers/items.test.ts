@@ -13,7 +13,7 @@ describe('reducers/items', () => {
         value: 'Item one',
         label: 'Item one',
         id: 1234,
-        groupId: 1,
+        group: null,
         score: 0,
         rank: 0,
         customProperties: {

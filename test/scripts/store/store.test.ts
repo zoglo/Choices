@@ -14,7 +14,7 @@ function shimStore() {
 
 describe('reducers/store', () => {
   let instance: Store<Options>;
-  let subscribeStub: sinon.SinonStub<[listener: StoreListener], void>;
+  let subscribeStub: sinon.SinonStub<[listener: StoreListener], Store<Options>>;
   let dispatchStub: sinon.SinonStub<[action: AnyAction], void>;
   let getStateStub: sinon.SinonStub<any[], State>;
   let emptyState: State;

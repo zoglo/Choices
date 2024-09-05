@@ -14,7 +14,7 @@ describe('reducers/choices', () => {
         label: 'test',
         id: 1,
         elementId: '1',
-        groupId: 1,
+        group: null,
         active: false,
         disabled: false,
         placeholder: true,
