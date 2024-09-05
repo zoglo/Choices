@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { activateChoices, addChoice, removeChoice, filterChoices } from './actions/choices';
 import { addGroup } from './actions/groups';
 import { addItem, highlightItem, removeItem } from './actions/items';
@@ -28,7 +27,7 @@ import Store from './store/store';
 import { coerceBool, mapInputToChoice } from './lib/choice-input';
 import { ChoiceFull } from './interfaces/choice-full';
 import { GroupFull } from './interfaces/group-full';
-import { EventType, KeyCodeMap, PassedElementType, PassedElementTypes } from './interfaces';
+import { EventChoiceValueType, EventType, KeyCodeMap, PassedElementType, PassedElementTypes } from './interfaces';
 import { EventChoice } from './interfaces/event-choice';
 import { NoticeType, NoticeTypes, Templates } from './interfaces/templates';
 import { isHtmlInputElement, isHtmlSelectElement } from './lib/html-guard-statements';
@@ -539,13 +538,10 @@ class Choices {
     return this;
   }
 
-  getValue(valueOnly = false): string[] | EventChoice[] | EventChoice | string {
-    const values = this._store.items.reduce<any[]>((selectedItems, item) => {
-      const itemValue = valueOnly ? item.value : this._getChoiceForOutput(item);
-      selectedItems.push(itemValue);
-
-      return selectedItems;
-    }, []);
+  getValue<B extends boolean = false>(valueOnly?: B): EventChoiceValueType<B> | EventChoiceValueType<B>[] {
+    const values = this._store.items.map((item) => {
+      return (valueOnly ? item.value : this._getChoiceForOutput(item)) as EventChoiceValueType<B>;
+    });
 
     return this._isSelectOneElement || this.config.singleModeForMultiSelect ? values[0] : values;
   }
