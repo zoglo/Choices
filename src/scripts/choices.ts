@@ -46,7 +46,7 @@ const IS_IE11 =
 
 const USER_DEFAULTS: Partial<Options> = {};
 
-const parseDataSetId = (element?: HTMLElement): number | undefined => {
+const parseDataSetId = (element: HTMLElement | null): number | undefined => {
   if (!element) {
     return undefined;
   }
@@ -1194,13 +1194,13 @@ class Choices {
     });
   }
 
-  _handleButtonAction(element?: HTMLElement): void {
+  _handleButtonAction(element: HTMLElement): void {
     const { items } = this._store;
     if (!items.length || !this.config.removeItems || !this.config.removeItemButton) {
       return;
     }
 
-    const id = element && parseDataSetId(element.parentNode as HTMLElement);
+    const id = element && parseDataSetId(element.parentElement);
     const itemToRemove = id && items.find((item) => item.id === id);
     if (!itemToRemove) {
       return;
@@ -1226,7 +1226,7 @@ class Choices {
     });
   }
 
-  _handleItemAction(element?: HTMLElement, hasShiftKey = false): void {
+  _handleItemAction(element: HTMLElement, hasShiftKey = false): void {
     const { items } = this._store;
     if (!items.length || !this.config.removeItems || this._isSelectOneElement) {
       return;
@@ -1253,7 +1253,7 @@ class Choices {
     this.input.focus();
   }
 
-  _handleChoiceAction(element?: HTMLElement): boolean {
+  _handleChoiceAction(element: HTMLElement): boolean {
     // If we are clicking on an option
     const id = parseDataSetId(element);
     const choice = id && this._store.getChoiceById(id);
