@@ -1,4 +1,4 @@
-/*! choices.js v11.0.1 | © 2024 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
+/*! choices.js v11.0.2 | © 2024 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
 
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -120,7 +120,6 @@ var highlightItem = function (item, highlighted) { return ({
     highlighted: highlighted,
 }); };
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 var getRandomNumber = function (min, max) { return Math.floor(Math.random() * (max - min) + min); };
 var generateChars = function (length) {
     return Array.from({ length: length }, function () { return getRandomNumber(0, 36).toString(36); }).join('');
@@ -253,6 +252,7 @@ var dispatchEvent = function (element, type, customArgs) {
 /**
  * Returns an array of keys present on the first but missing on the second object
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 var diff = function (a, b) {
     var aKeys = Object.keys(a).sort();
     var bKeys = Object.keys(b).sort();
@@ -758,7 +758,7 @@ var mapInputToChoice = function (value, allowGroup) {
     var choice = groupOrChoice;
     var result = {
         id: 0, // actual ID will be assigned during _addChoice
-        groupId: 0, // actual ID will be assigned during _addGroup but before _addChoice
+        group: null, // actual group will be assigned during _addGroup but before _addChoice
         score: 0, // used in search
         rank: 0, // used in search, stable sort order
         value: choice.value,
@@ -835,7 +835,7 @@ var WrappedSelect = /** @class */ (function (_super) {
         }
         return {
             id: 0,
-            groupId: 0,
+            group: null,
             score: 0,
             rank: 0,
             value: option.value,
@@ -996,8 +996,8 @@ function items(s, action, context) {
             break;
         }
         case ActionType.REMOVE_CHOICE: {
-            state = state.filter(function (item) { return item.id !== action.choice.id; });
             removeItem(action.choice);
+            state = state.filter(function (item) { return item.id !== action.choice.id; });
             break;
         }
         case ActionType.HIGHLIGHT_ITEM: {
@@ -1045,16 +1045,14 @@ function choices(s, action, context) {
     var update = true;
     switch (action.type) {
         case ActionType.ADD_CHOICE: {
-            /*
-              A disabled choice appears in the choice dropdown but cannot be selected
-              A selected choice has been added to the passed input's value (added as an item)
-              An active choice appears within the choice dropdown
-            */
             state.push(action.choice);
             break;
         }
         case ActionType.REMOVE_CHOICE: {
             action.choice.choiceEl = undefined;
+            if (action.choice.group) {
+                action.choice.group.choices = action.choice.group.choices.filter(function (obj) { return obj.id !== action.choice.id; });
+            }
             state = state.filter(function (obj) { return obj.id !== action.choice.id; });
             break;
         }
@@ -1152,6 +1150,7 @@ var Store = /** @class */ (function () {
     };
     Store.prototype.subscribe = function (onChange) {
         this._listeners.push(onChange);
+        return this;
     };
     Store.prototype.dispatch = function (action) {
         var _this = this;
@@ -1526,7 +1525,6 @@ var templates = {
             label = escapeForTemplate(allowHTML, label);
             label += " (".concat(groupName, ")");
             label = { trusted: label };
-            div.dataset.groupId = "".concat(choice.groupId);
         }
         var describedBy = div;
         if (choice.labelClass) {
@@ -1554,12 +1552,15 @@ var templates = {
         if (choice.placeholder) {
             addClassesToElement(div, placeholder);
         }
-        div.setAttribute('role', choice.groupId ? 'treeitem' : 'option');
+        div.setAttribute('role', choice.group ? 'treeitem' : 'option');
         div.dataset.choice = '';
         div.dataset.id = choice.id;
         div.dataset.value = rawValue;
         if (selectText) {
             div.dataset.selectText = selectText;
+        }
+        if (choice.group) {
+            div.dataset.groupId = "".concat(choice.group.id);
         }
         assignCustomProperties(div, choice, false);
         if (choice.disabled) {
@@ -1847,7 +1848,7 @@ var Choices = /** @class */ (function () {
         this.passedElement.reveal();
         this.containerOuter.unwrap(this.passedElement.element);
         this._store._listeners = []; // prevents select/input value being wiped
-        this.clearStore();
+        this.clearStore(false);
         this._stopSearch();
         this._templates = Choices.defaults.templates;
         this.initialised = false;
@@ -1901,7 +1902,7 @@ var Choices = /** @class */ (function () {
         }
         this._store.dispatch(highlightItem(choice, false));
         if (runEvent) {
-            this.passedElement.triggerEvent(EventType.highlightItem, this._getChoiceForOutput(choice));
+            this.passedElement.triggerEvent(EventType.unhighlightItem, this._getChoiceForOutput(choice));
         }
         return this;
     };
@@ -1995,12 +1996,9 @@ var Choices = /** @class */ (function () {
     };
     Choices.prototype.getValue = function (valueOnly) {
         var _this = this;
-        if (valueOnly === void 0) { valueOnly = false; }
-        var values = this._store.items.reduce(function (selectedItems, item) {
-            var itemValue = valueOnly ? item.value : _this._getChoiceForOutput(item);
-            selectedItems.push(itemValue);
-            return selectedItems;
-        }, []);
+        var values = this._store.items.map(function (item) {
+            return (valueOnly ? item.value : _this._getChoiceForOutput(item));
+        });
         return this._isSelectOneElement || this.config.singleModeForMultiSelect ? values[0] : values;
     };
     Choices.prototype.setValue = function (items) {
@@ -2103,12 +2101,13 @@ var Choices = /** @class */ (function () {
      * }], 'value', 'label', false);
      * ```
      */
-    Choices.prototype.setChoices = function (choicesArrayOrFetcher, value, label, replaceChoices) {
+    Choices.prototype.setChoices = function (choicesArrayOrFetcher, value, label, replaceChoices, clearSearchFlag) {
         var _this = this;
         if (choicesArrayOrFetcher === void 0) { choicesArrayOrFetcher = []; }
         if (value === void 0) { value = 'value'; }
         if (label === void 0) { label = 'label'; }
         if (replaceChoices === void 0) { replaceChoices = false; }
+        if (clearSearchFlag === void 0) { clearSearchFlag = true; }
         if (!this.initialisedOK) {
             this._warnChoicesInitFailed('setChoices');
             return this;
@@ -2153,6 +2152,9 @@ var Choices = /** @class */ (function () {
         }
         this.containerOuter.removeLoadingState();
         this._store.withTxn(function () {
+            if (clearSearchFlag) {
+                _this._isSearching = false;
+            }
             var isDefaultValue = value === 'value';
             var isDefaultLabel = label === 'label';
             choicesArrayOrFetcher.forEach(function (groupOrChoice) {
@@ -2199,18 +2201,21 @@ var Choices = /** @class */ (function () {
                     }
                 });
             }
-            _this.clearStore();
-            choicesFromOptions.forEach(function (groupOrChoice) {
-                if ('choices' in groupOrChoice) {
-                    return;
-                }
-                var choice = groupOrChoice;
+            _this.clearStore(false);
+            var updateChoice = function (choice) {
                 if (deselectAll) {
                     _this._store.dispatch(removeItem$1(choice));
                 }
                 else if (existingItems[choice.value]) {
                     choice.selected = true;
                 }
+            };
+            choicesFromOptions.forEach(function (groupOrChoice) {
+                if ('choices' in groupOrChoice) {
+                    groupOrChoice.choices.forEach(updateChoice);
+                    return;
+                }
+                updateChoice(groupOrChoice);
             });
             /* @todo only generate add events for the added options instead of all
             if (withEvents) {
@@ -2238,6 +2243,7 @@ var Choices = /** @class */ (function () {
         if (!choice) {
             return this;
         }
+        this._clearNotice();
         this._store.dispatch(removeChoice(choice));
         // @todo integrate with Store
         this._searcher.reset();
@@ -2247,13 +2253,26 @@ var Choices = /** @class */ (function () {
         return this;
     };
     Choices.prototype.clearChoices = function () {
-        this.passedElement.element.replaceChildren('');
-        return this.clearStore();
+        var _this = this;
+        this._store.withTxn(function () {
+            _this._store.choices.forEach(function (choice) {
+                if (!choice.selected) {
+                    _this._store.dispatch(removeChoice(choice));
+                }
+            });
+        });
+        // @todo integrate with Store
+        this._searcher.reset();
+        return this;
     };
-    Choices.prototype.clearStore = function () {
+    Choices.prototype.clearStore = function (clearOptions) {
+        if (clearOptions === void 0) { clearOptions = true; }
+        this._stopSearch();
+        if (clearOptions) {
+            this.passedElement.element.replaceChildren('');
+        }
         this.itemList.element.replaceChildren('');
         this.choiceList.element.replaceChildren('');
-        this._clearNotice();
         this._store.reset();
         this._lastAddedChoiceId = 0;
         this._lastAddedGroupId = 0;
@@ -2264,10 +2283,7 @@ var Choices = /** @class */ (function () {
     Choices.prototype.clearInput = function () {
         var shouldSetInputWidth = !this._isSelectOneElement;
         this.input.clear(shouldSetInputWidth);
-        this._clearNotice();
-        if (this._isSearching) {
-            this._stopSearch();
-        }
+        this._stopSearch();
         return this;
     };
     Choices.prototype._validateConfig = function () {
@@ -2325,7 +2341,7 @@ var Choices = /** @class */ (function () {
                 return !choice.placeholder && (isSearching ? !!choice.rank : config.renderSelectedChoices || !choice.selected);
             });
         };
-        var selectableChoices = this._isSelectOneElement;
+        var selectableChoices = false;
         var renderChoices = function (choices, withinGroup, groupLabel) {
             if (isSearching) {
                 // sortByRank is used to ensure stable sorting, as scores are non-unique
@@ -2343,7 +2359,7 @@ var Choices = /** @class */ (function () {
                 var dropdownItem = choice.choiceEl || _this._templates.choice(config, choice, config.itemSelectText, groupLabel);
                 choice.choiceEl = dropdownItem;
                 fragment.appendChild(dropdownItem);
-                if (isSearching || !choice.selected) {
+                if (!choice.disabled && (isSearching || !choice.selected)) {
                     selectableChoices = true;
                 }
                 return index < choiceLimit;
@@ -2355,13 +2371,16 @@ var Choices = /** @class */ (function () {
             }
             if (!this._hasNonChoicePlaceholder && !isSearching && this._isSelectOneElement) {
                 // If we have a placeholder choice along with groups
-                renderChoices(activeChoices.filter(function (choice) { return choice.placeholder && !choice.groupId; }), false, undefined);
+                renderChoices(activeChoices.filter(function (choice) { return choice.placeholder && !choice.group; }), false, undefined);
             }
             // If we have grouped options
             if (activeGroups.length && !isSearching) {
                 if (config.shouldSort) {
                     activeGroups.sort(config.sorter);
                 }
+                // render Choices without group first, regardless of sort, otherwise they won't be distinguishable
+                // from the last group
+                renderChoices(activeChoices.filter(function (choice) { return !choice.placeholder && !choice.group; }), false, undefined);
                 activeGroups.forEach(function (group) {
                     var groupChoices = renderableChoices(group.choices);
                     if (groupChoices.length) {
@@ -2379,18 +2398,14 @@ var Choices = /** @class */ (function () {
                 renderChoices(renderableChoices(activeChoices), false, undefined);
             }
         }
-        var notice = this._notice;
         if (!selectableChoices) {
-            if (!notice) {
+            if (!this._notice) {
                 this._notice = {
-                    text: resolveStringFunction(config.noChoicesText),
-                    type: NoticeTypes.noChoices,
+                    text: resolveStringFunction(isSearching ? config.noResultsText : config.noChoicesText),
+                    type: isSearching ? NoticeTypes.noResults : NoticeTypes.noChoices,
                 };
             }
             fragment.replaceChildren('');
-        }
-        else if (notice && notice.type === NoticeTypes.noChoices) {
-            this._notice = undefined;
         }
         this._renderNotice(fragment);
         this.choiceList.element.replaceChildren(fragment);
@@ -2506,11 +2521,8 @@ var Choices = /** @class */ (function () {
             }
         }
     };
+    // eslint-disable-next-line class-methods-use-this
     Choices.prototype._getChoiceForOutput = function (choice, keyCode) {
-        if (!choice) {
-            return undefined;
-        }
-        var group = choice.groupId ? this._store.getGroupById(choice.groupId) : null;
         return {
             id: choice.id,
             highlighted: choice.highlighted,
@@ -2522,7 +2534,7 @@ var Choices = /** @class */ (function () {
             label: choice.label,
             placeholder: choice.placeholder,
             value: choice.value,
-            groupValue: group && group.label ? group.label : undefined,
+            groupValue: choice.group ? choice.group.label : undefined,
             element: choice.element,
             keyCode: keyCode,
         };
@@ -2541,7 +2553,7 @@ var Choices = /** @class */ (function () {
         if (!items.length || !this.config.removeItems || !this.config.removeItemButton) {
             return;
         }
-        var id = element && parseDataSetId(element.parentNode);
+        var id = element && parseDataSetId(element.parentElement);
         var itemToRemove = id && items.find(function (item) { return item.id === id; });
         if (!itemToRemove) {
             return;
@@ -2774,7 +2786,7 @@ var Choices = /** @class */ (function () {
             if (!results.length) {
                 this._displayNotice(resolveStringFunction(this.config.noResultsText), NoticeTypes.noResults);
             }
-            else if (noticeType === NoticeTypes.noResults) {
+            else {
                 this._clearNotice();
             }
         }
@@ -2782,10 +2794,10 @@ var Choices = /** @class */ (function () {
         return results.length;
     };
     Choices.prototype._stopSearch = function () {
-        var wasSearching = this._isSearching;
-        this._currentValue = '';
-        this._isSearching = false;
-        if (wasSearching) {
+        if (this._isSearching) {
+            this._currentValue = '';
+            this._isSearching = false;
+            this._clearNotice();
             this._store.dispatch(activateChoices(true));
             this.passedElement.triggerEvent(EventType.search, {
                 value: '',
@@ -2937,7 +2949,6 @@ var Choices = /** @class */ (function () {
             else {
                 this._stopSearch();
             }
-            this._clearNotice();
             return;
         }
         if (!this._canAddItems()) {
@@ -3309,11 +3320,16 @@ var Choices = /** @class */ (function () {
         if (choice.id) {
             throw new TypeError('Can not re-add a choice which has already been added');
         }
+        var config = this.config;
+        if ((this._isSelectElement || !config.duplicateItemsAllowed) &&
+            this._store.choices.find(function (c) { return config.valueComparer(c.value, choice.value); })) {
+            return;
+        }
         // Generate unique id, in-place update is required so chaining _addItem works as expected
         this._lastAddedChoiceId++;
         choice.id = this._lastAddedChoiceId;
         choice.elementId = "".concat(this._baseId, "-").concat(this._idNames.itemChoice, "-").concat(choice.id);
-        var _a = this.config, prependValue = _a.prependValue, appendValue = _a.appendValue;
+        var prependValue = config.prependValue, appendValue = config.appendValue;
         if (prependValue) {
             choice.value = prependValue + choice.value;
         }
@@ -3323,6 +3339,7 @@ var Choices = /** @class */ (function () {
         if ((prependValue || appendValue) && choice.element) {
             choice.element.value = choice.value;
         }
+        this._clearNotice();
         this._store.dispatch(addChoice(choice));
         if (choice.selected) {
             this._addItem(choice, withEvents, userTriggered);
@@ -3342,7 +3359,7 @@ var Choices = /** @class */ (function () {
         this._lastAddedGroupId++;
         group.id = this._lastAddedGroupId;
         group.choices.forEach(function (item) {
-            item.groupId = group.id;
+            item.group = group;
             if (group.disabled) {
                 item.disabled = true;
             }
@@ -3354,7 +3371,7 @@ var Choices = /** @class */ (function () {
         var callbackOnCreateTemplates = this.config.callbackOnCreateTemplates;
         var userTemplates = {};
         if (typeof callbackOnCreateTemplates === 'function') {
-            userTemplates = callbackOnCreateTemplates.call(this, strToEl, escapeForTemplate);
+            userTemplates = callbackOnCreateTemplates.call(this, strToEl, escapeForTemplate, getClassNames);
         }
         var templating = {};
         Object.keys(this._templates).forEach(function (name) {
@@ -3435,12 +3452,11 @@ var Choices = /** @class */ (function () {
     };
     Choices.prototype._initStore = function () {
         var _this = this;
-        this._store.subscribe(this._render);
-        this._store.withTxn(function () {
+        this._store.subscribe(this._render).withTxn(function () {
             _this._addPredefinedChoices(_this._presetChoices, _this._isSelectOneElement && !_this._hasNonChoicePlaceholder, false);
         });
-        if (this._isSelectOneElement && this._hasNonChoicePlaceholder) {
-            this._render({ choices: false, groups: false, items: true });
+        if (!this._store.choices.length || (this._isSelectOneElement && this._hasNonChoicePlaceholder)) {
+            this._render();
         }
     };
     Choices.prototype._addPredefinedChoices = function (choices, selectFirstOption, withEvents) {
@@ -3512,7 +3528,7 @@ var Choices = /** @class */ (function () {
             throw new TypeError("".concat(caller, " called for an element which has multiple instances of Choices initialised on it"));
         }
     };
-    Choices.version = '11.0.1';
+    Choices.version = '11.0.2';
     return Choices;
 }());
 

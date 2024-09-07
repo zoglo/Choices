@@ -3,6 +3,7 @@ import { InputChoice } from './input-choice';
 import { ClassNames } from './class-names';
 import { PositionOptionsType } from './position-options-type';
 import { Types } from './types';
+import { CallbackOnCreateTemplatesFn } from './templates';
 export declare const ObjectsInConfig: string[];
 /**
  * Choices options interface
@@ -447,9 +448,9 @@ export interface Options {
      */
     noResultsText: string | Types.StringFunction;
     /**
-     * The text that is shown when a user has selected all possible choices. Optionally pass a function returning a string.
+     * The text that is shown when a user has selected all possible choices, or no choices exist. Optionally pass a function returning a string.
      *
-     * **Input types affected:** select-multiple
+     * **Input types affected:** select-multiple, select-one
      *
      * @default 'No choices to choose from'
      */
@@ -536,7 +537,7 @@ export interface Options {
      * @example
      * ```
      * const example = new Choices(element, {
-     *   callbackOnCreateTemplates: function (template, originalTemplates) {
+     *   callbackOnCreateTemplates: function (template, originalTemplates, getClassNames) {
      *     var classNames = this.config.classNames;
      *     return {
      *       item: (data) => {
@@ -560,6 +561,6 @@ export interface Options {
      *
      * @default null
      */
-    callbackOnCreateTemplates: ((template: Types.StrToEl, escapeForTemplate: Types.EscapeForTemplateFn) => void) | null;
+    callbackOnCreateTemplates: CallbackOnCreateTemplatesFn | null;
     appendGroupInSearch: false;
 }

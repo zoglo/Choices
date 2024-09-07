@@ -1,5 +1,6 @@
 import { StringUntrusted } from './string-untrusted';
-export type CustomProperties = Record<string, any> | string;
+import { Types } from './types';
+import { GroupFull } from './group-full';
 export interface ChoiceFull {
     id: number;
     highlighted: boolean;
@@ -8,11 +9,11 @@ export interface ChoiceFull {
     choiceEl?: HTMLElement;
     labelClass?: Array<string>;
     labelDescription?: string;
-    customProperties?: CustomProperties;
+    customProperties?: Types.CustomProperties;
     disabled: boolean;
     active: boolean;
     elementId?: string;
-    groupId: number;
+    group: GroupFull | null;
     label: StringUntrusted | string;
     placeholder: boolean;
     selected: boolean;

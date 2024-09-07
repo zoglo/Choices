@@ -12,7 +12,7 @@ export default class Store<T> implements IStore {
     get defaultState(): State;
     changeSet(init: boolean): StateChangeSet;
     reset(): void;
-    subscribe(onChange: StoreListener): void;
+    subscribe(onChange: StoreListener): this;
     dispatch(action: AnyAction): void;
     withTxn(func: () => void): void;
     /**
