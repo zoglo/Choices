@@ -737,7 +737,7 @@ class Choices {
             } as InputGroup;
           }
 
-          this._addGroup(mapInputToChoice(group, true));
+          this._addGroup(mapInputToChoice<InputGroup>(group, true));
         } else {
           let choice = groupOrChoice;
           if (!isDefaultLabel || !isDefaultValue) {
@@ -747,7 +747,7 @@ class Choices {
               label: choice[label],
             } as InputChoice;
           }
-          this._addChoice(mapInputToChoice(choice, false));
+          this._addChoice(mapInputToChoice<InputChoice>(choice, false));
         }
       });
 
@@ -1324,7 +1324,7 @@ class Choices {
       if (this.passedElement.value) {
         const elementItems: ChoiceFull[] = this.passedElement.value
           .split(config.delimiter)
-          .map((e: InputChoice | string) => mapInputToChoice(e, false));
+          .map((e: string) => mapInputToChoice<string>(e, false));
         this._presetChoices = this._presetChoices.concat(elementItems);
       }
       this._presetChoices.forEach((choice: ChoiceFull) => {
@@ -1744,12 +1744,12 @@ class Choices {
         const userValue =
           this.config.allowHtmlUserInput || sanitisedValue === value ? value : { escaped: sanitisedValue, raw: value };
         this._addChoice(
-          mapInputToChoice(
+          mapInputToChoice<InputChoice>(
             {
               value: userValue,
               label: userValue,
               selected: true,
-            } as InputChoice,
+            },
             false,
           ),
           true,

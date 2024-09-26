@@ -29,11 +29,11 @@ export const mapInputToChoice = <T extends string | InputChoice | InputGroup>(
   allowGroup: boolean,
 ): MappedInputTypeToChoiceType<T> => {
   if (typeof value === 'string') {
-    const result: ChoiceFull = mapInputToChoice(
+    const result: ChoiceFull = mapInputToChoice<InputChoice>(
       {
         value,
         label: value,
-      } as InputChoice,
+      },
       false,
     );
 
@@ -47,7 +47,7 @@ export const mapInputToChoice = <T extends string | InputChoice | InputGroup>(
       throw new TypeError(`optGroup is not allowed`);
     }
     const group = groupOrChoice;
-    const choices = group.choices.map((e) => mapInputToChoice(e, false));
+    const choices = group.choices.map((e) => mapInputToChoice<InputChoice>(e, false));
 
     const result: GroupFull = {
       id: 0, // actual ID will be assigned during _addGroup
