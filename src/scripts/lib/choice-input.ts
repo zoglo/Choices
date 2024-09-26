@@ -2,7 +2,7 @@ import { InputChoice } from '../interfaces/input-choice';
 import { InputGroup } from '../interfaces/input-group';
 import { GroupFull } from '../interfaces/group-full';
 import { ChoiceFull } from '../interfaces/choice-full';
-import { unwrapStringForRaw } from './utils';
+import { sanitise, unwrapStringForRaw } from './utils';
 
 type MappedInputTypeToChoiceType<T extends string | InputChoice | InputGroup> = T extends InputGroup
   ? GroupFull
@@ -27,12 +27,17 @@ export const stringToHtmlClass = (input: string | string[] | undefined): string[
 export const mapInputToChoice = <T extends string | InputChoice | InputGroup>(
   value: T,
   allowGroup: boolean,
+  allowRawString: boolean = true,
 ): MappedInputTypeToChoiceType<T> => {
   if (typeof value === 'string') {
+    const sanitisedValue = sanitise(value);
+    const userValue = allowRawString || sanitisedValue === value ? value : { escaped: sanitisedValue, raw: value };
+
     const result: ChoiceFull = mapInputToChoice<InputChoice>(
       {
         value,
-        label: value,
+        label: userValue,
+        selected: true,
       },
       false,
     );

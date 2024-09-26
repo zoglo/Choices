@@ -19,7 +19,6 @@ import {
   removeClassesFromElement,
   resolveNoticeFunction,
   resolveStringFunction,
-  sanitise,
   sortByRank,
   strToEl,
 } from './lib/utils';
@@ -1324,7 +1323,7 @@ class Choices {
       if (this.passedElement.value) {
         const elementItems: ChoiceFull[] = this.passedElement.value
           .split(config.delimiter)
-          .map((e: string) => mapInputToChoice<string>(e, false));
+          .map((e: string) => mapInputToChoice<string>(e, false, this.config.allowHtmlUserInput));
         this._presetChoices = this._presetChoices.concat(elementItems);
       }
       this._presetChoices.forEach((choice: ChoiceFull) => {
@@ -1740,21 +1739,7 @@ class Choices {
           return;
         }
 
-        const sanitisedValue = sanitise(value);
-        const userValue =
-          this.config.allowHtmlUserInput || sanitisedValue === value ? value : { escaped: sanitisedValue, raw: value };
-        this._addChoice(
-          mapInputToChoice<InputChoice>(
-            {
-              value: userValue,
-              label: userValue,
-              selected: true,
-            },
-            false,
-          ),
-          true,
-          true,
-        );
+        this._addChoice(mapInputToChoice<string>(value, false, this.config.allowHtmlUserInput), true, true);
         addedItem = true;
       }
 

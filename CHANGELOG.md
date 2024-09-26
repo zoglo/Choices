@@ -1,6 +1,11 @@
 # Changelog
 
-## [11.0.2]
+## [11.0.3]
+
+### Bug Fixes (from 11.0.0)
+* Fix input text - method setValue didn't work [#1207](https://github.com/Choices-js/Choices/issues/1207)
+
+## [11.0.2] (2024-09-05)
 
 ### Features (from 11.0.0)
 * Pass `getClassNames` as the 3rd argument to `callbackOnCreateTemplates` callback
