@@ -63,7 +63,7 @@ jobs:
     - uses: actions/upload-artifact@v4
       if: failure()
       with:
-        name: screenshot-${{ matrix.os }}
+        name: screenshot-${{ matrix.os }}-${{ matrix.browser }}
         path: test-results/**/*.png
     - uses: actions/upload-artifact@v4
       if: '!cancelled()'
