@@ -2,7 +2,7 @@ import { InputChoice } from '../interfaces/input-choice';
 import { InputGroup } from '../interfaces/input-group';
 import { GroupFull } from '../interfaces/group-full';
 import { ChoiceFull } from '../interfaces/choice-full';
-import { unwrapStringForRaw } from './utils';
+import { sanitise, unwrapStringForRaw } from './utils';
 
 type MappedInputTypeToChoiceType<T extends string | InputChoice | InputGroup> = T extends InputGroup
   ? GroupFull
@@ -27,13 +27,18 @@ export const stringToHtmlClass = (input: string | string[] | undefined): string[
 export const mapInputToChoice = <T extends string | InputChoice | InputGroup>(
   value: T,
   allowGroup: boolean,
+  allowRawString: boolean = true,
 ): MappedInputTypeToChoiceType<T> => {
   if (typeof value === 'string') {
-    const result: ChoiceFull = mapInputToChoice(
+    const sanitisedValue = sanitise(value);
+    const userValue = allowRawString || sanitisedValue === value ? value : { escaped: sanitisedValue, raw: value };
+
+    const result: ChoiceFull = mapInputToChoice<InputChoice>(
       {
         value,
-        label: value,
-      } as InputChoice,
+        label: userValue,
+        selected: true,
+      },
       false,
     );
 
@@ -47,7 +52,7 @@ export const mapInputToChoice = <T extends string | InputChoice | InputGroup>(
       throw new TypeError(`optGroup is not allowed`);
     }
     const group = groupOrChoice;
-    const choices = group.choices.map((e) => mapInputToChoice(e, false));
+    const choices = group.choices.map((e) => mapInputToChoice<InputChoice>(e, false));
 
     const result: GroupFull = {
       id: 0, // actual ID will be assigned during _addGroup
