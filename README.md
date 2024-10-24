@@ -917,7 +917,7 @@ example.passedElement.element.addEventListener(
 
 ### addItem
 
-**Payload:** `id, value, label, customProperties, groupValue, keyCode`
+**Payload:** `id, highlighted, labelClass, labelDescription, customProperties, disabled, active, label, placeholder, value, groupValue, element, keyCode`
 
 **Input types affected:** `text`, `select-one`, `select-multiple`
 
@@ -925,7 +925,7 @@ example.passedElement.element.addEventListener(
 
 ### removeItem
 
-**Payload:** `id, value, label, customProperties, groupValue`
+**Payload:** `id, highlighted, labelClass, labelDescription, customProperties, disabled, active, label, placeholder, value, groupValue, element, keyCode`
 
 **Input types affected:** `text`, `select-one`, `select-multiple`
 
@@ -933,7 +933,7 @@ example.passedElement.element.addEventListener(
 
 ### highlightItem
 
-**Payload:** `id, value, label, groupValue`
+**Payload:** `id, highlighted, labelClass, labelDescription, customProperties, disabled, active, label, placeholder, value, groupValue, element, keyCode`
 
 **Input types affected:** `text`, `select-multiple`
 
@@ -941,7 +941,7 @@ example.passedElement.element.addEventListener(
 
 ### unhighlightItem
 
-**Payload:** `id, value, label, groupValue`
+**Payload:** `id, highlighted, labelClass, labelDescription, customProperties, disabled, active, label, placeholder, value, groupValue, element, keyCode`
 
 **Input types affected:** `text`, `select-multiple`
 
@@ -949,7 +949,7 @@ example.passedElement.element.addEventListener(
 
 ### choice
 
-**Payload:** `choice`
+**Payload:** `id, highlighted, labelClass, labelDescription, customProperties, disabled, active, label, placeholder, value, groupValue, element, keyCode`
 
 **Input types affected:** `select-one`, `select-multiple`
 
