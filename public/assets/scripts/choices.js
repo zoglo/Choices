@@ -90,6 +90,7 @@
     };
 
     var KeyCodeMap = {
+        TAB_KEY: 9,
         BACK_KEY: 46,
         DELETE_KEY: 8,
         ENTER_KEY: 13,
@@ -757,11 +758,15 @@
         }
         return undefined;
     };
-    var mapInputToChoice = function (value, allowGroup) {
+    var mapInputToChoice = function (value, allowGroup, allowRawString) {
+        if (allowRawString === void 0) { allowRawString = true; }
         if (typeof value === 'string') {
+            var sanitisedValue = sanitise(value);
+            var userValue = allowRawString || sanitisedValue === value ? value : { escaped: sanitisedValue, raw: value };
             var result_1 = mapInputToChoice({
                 value: value,
-                label: value,
+                label: userValue,
+                selected: true,
             }, false);
             return result_1;
         }
@@ -4312,6 +4317,7 @@
         };
         Choices.prototype._loadChoices = function () {
             var _a;
+            var _this = this;
             var config = this.config;
             if (this._isTextElement) {
                 // Assign preset items from passed object first
@@ -4320,7 +4326,7 @@
                 if (this.passedElement.value) {
                     var elementItems = this.passedElement.value
                         .split(config.delimiter)
-                        .map(function (e) { return mapInputToChoice(e, false); });
+                        .map(function (e) { return mapInputToChoice(e, false, _this.config.allowHtmlUserInput); });
                     this._presetChoices = this._presetChoices.concat(elementItems);
                 }
                 this._presetChoices.forEach(function (choice) {
@@ -4563,7 +4569,15 @@
             var wasPrintableChar = event.key.length === 1 ||
                 (event.key.length === 2 && event.key.charCodeAt(0) >= 0xd800) ||
                 event.key === 'Unidentified';
-            if (!this._isTextElement && !hasActiveDropdown) {
+            /*
+              We do not show the dropdown if the keycode was tab or esc
+              as these one are used to focusOut of e.g. select choices.
+              An activated search can still be opened with any other key.
+             */
+            if (!this._isTextElement &&
+                !hasActiveDropdown &&
+                keyCode !== KeyCodeMap.ESC_KEY &&
+                keyCode !== KeyCodeMap.TAB_KEY) {
                 this.showDropdown();
                 if (!this.input.isFocussed && wasPrintableChar) {
                     /*
@@ -4672,13 +4686,7 @@
                     if (!_this._canCreateItem(value)) {
                         return;
                     }
-                    var sanitisedValue = sanitise(value);
-                    var userValue = _this.config.allowHtmlUserInput || sanitisedValue === value ? value : { escaped: sanitisedValue, raw: value };
-                    _this._addChoice(mapInputToChoice({
-                        value: userValue,
-                        label: userValue,
-                        selected: true,
-                    }, false), true, true);
+                    _this._addChoice(mapInputToChoice(value, false, _this.config.allowHtmlUserInput), true, true);
                     addedItem = true;
                 }
                 _this.clearInput();

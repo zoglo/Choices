@@ -1,4 +1,5 @@
 export declare const KeyCodeMap: {
+    readonly TAB_KEY: 9;
     readonly BACK_KEY: 46;
     readonly DELETE_KEY: 8;
     readonly ENTER_KEY: 13;
