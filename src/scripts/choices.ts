@@ -865,6 +865,7 @@ class Choices {
     }
     this.itemList.element.replaceChildren('');
     this.choiceList.element.replaceChildren('');
+    this._clearNotice();
     this._store.reset();
     this._lastAddedChoiceId = 0;
     this._lastAddedGroupId = 0;
@@ -1389,6 +1390,7 @@ class Choices {
 
     if (!config.singleModeForMultiSelect && maxItemCount > 0 && maxItemCount <= this._store.items.length) {
       this.choiceList.element.replaceChildren('');
+      this._notice = undefined;
       this._displayNotice(
         typeof maxItemText === 'function' ? maxItemText(maxItemCount) : maxItemText,
         NoticeTypes.addChoice,

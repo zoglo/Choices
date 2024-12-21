@@ -86,6 +86,20 @@
           </script>
         </div>
 
+        <div data-test-hook="single-item">
+          <label for="choices-basic">Single-item</label>
+          <select class="form-control" name="choices-single-item" id="choices-single-item">
+            <option value="Choice 1">Choice 1</option>
+          </select>
+          <script>
+            document.addEventListener('DOMContentLoaded', function() {
+              new Choices('#choices-single-item', {
+                allowHTML: true,
+              });
+            });
+          </script>
+        </div>
+
         <div data-test-hook="remove-button">
           <label for="choices-remove-button">Remove button</label>
           <select
