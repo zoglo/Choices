@@ -1603,7 +1603,17 @@ class Choices {
       (event.key.length === 2 && event.key.charCodeAt(0) >= 0xd800) ||
       event.key === 'Unidentified';
 
-    if (!this._isTextElement && !hasActiveDropdown) {
+    /*
+      We do not show the dropdown if the keycode was tab or esc
+      as these one are used to focusOut of e.g. select choices.
+      An activated search can still be opened with any other key.
+     */
+    if (
+      !this._isTextElement &&
+      !hasActiveDropdown &&
+      keyCode !== KeyCodeMap.ESC_KEY &&
+      keyCode !== KeyCodeMap.TAB_KEY
+    ) {
       this.showDropdown();
 
       if (!this.input.isFocussed && wasPrintableChar) {
