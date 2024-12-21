@@ -1390,6 +1390,7 @@ class Choices {
 
     if (!config.singleModeForMultiSelect && maxItemCount > 0 && maxItemCount <= this._store.items.length) {
       this.choiceList.element.replaceChildren('');
+      this._notice = undefined;
       this._displayNotice(
         typeof maxItemText === 'function' ? maxItemText(maxItemCount) : maxItemText,
         NoticeTypes.addChoice,
