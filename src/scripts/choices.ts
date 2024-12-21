@@ -865,6 +865,7 @@ class Choices {
     }
     this.itemList.element.replaceChildren('');
     this.choiceList.element.replaceChildren('');
+    this._clearNotice();
     this._store.reset();
     this._lastAddedChoiceId = 0;
     this._lastAddedGroupId = 0;
