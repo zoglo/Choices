@@ -1772,6 +1772,7 @@ class Choices {
     if (hasActiveDropdown) {
       event.stopPropagation();
       this.hideDropdown(true);
+      this._stopSearch();
       this.containerOuter.element.focus();
     }
   }
