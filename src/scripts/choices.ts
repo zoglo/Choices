@@ -1970,14 +1970,15 @@ class Choices {
     const blurWasWithinContainer = target && containerOuter.element.contains(target as Node);
 
     if (blurWasWithinContainer && !this._isScrollingOnIe) {
-      const targetIsInput = target === this.input.element;
-
-      if (targetIsInput) {
+      if (target === this.input.element) {
         containerOuter.removeFocusState();
         this.hideDropdown(true);
         if (this._isTextElement || this._isSelectMultipleElement) {
           this.unhighlightAll();
         }
+      } else if (target === this.containerOuter.element) {
+        // Remove the focus state when the past outerContainer was the target
+        containerOuter.removeFocusState();
       }
     } else {
       // On IE11, clicking the scollbar blurs our input and thus
