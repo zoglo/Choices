@@ -502,12 +502,17 @@ class Choices {
       return this;
     }
 
+    if (preventInputFocus === undefined) {
+      // eslint-disable-next-line no-param-reassign
+      preventInputFocus = !this._canSearch;
+    }
+
     requestAnimationFrame(() => {
       this.dropdown.show();
       const rect = this.dropdown.element.getBoundingClientRect();
       this.containerOuter.open(rect.bottom, rect.height);
 
-      if (!preventInputFocus && this._canSearch) {
+      if (!preventInputFocus) {
         this.input.focus();
       }
 
