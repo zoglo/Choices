@@ -85,6 +85,7 @@ var EventType = {
 
 var KeyCodeMap = {
     TAB_KEY: 9,
+    SHIFT_KEY: 16,
     BACK_KEY: 46,
     DELETE_KEY: 8,
     ENTER_KEY: 13,
@@ -4088,14 +4089,14 @@ var Choices = /** @class */ (function () {
             (event.key.length === 2 && event.key.charCodeAt(0) >= 0xd800) ||
             event.key === 'Unidentified';
         /*
-          We do not show the dropdown if the keycode was tab or esc
-          as these one are used to focusOut of e.g. select choices.
+          We do not show the dropdown if focusing out with esc or navigating through input fields.
           An activated search can still be opened with any other key.
          */
         if (!this._isTextElement &&
             !hasActiveDropdown &&
             keyCode !== KeyCodeMap.ESC_KEY &&
-            keyCode !== KeyCodeMap.TAB_KEY) {
+            keyCode !== KeyCodeMap.TAB_KEY &&
+            keyCode !== KeyCodeMap.SHIFT_KEY) {
             this.showDropdown();
             if (!this.input.isFocussed && wasPrintableChar) {
                 /*
@@ -4398,13 +4399,16 @@ var Choices = /** @class */ (function () {
         var containerOuter = this.containerOuter;
         var blurWasWithinContainer = target && containerOuter.element.contains(target);
         if (blurWasWithinContainer && !this._isScrollingOnIe) {
-            var targetIsInput = target === this.input.element;
-            if (targetIsInput) {
+            if (target === this.input.element) {
                 containerOuter.removeFocusState();
                 this.hideDropdown(true);
                 if (this._isTextElement || this._isSelectMultipleElement) {
                     this.unhighlightAll();
                 }
+            }
+            else if (target === this.containerOuter.element) {
+                // Remove the focus state when the past outerContainer was the target
+                containerOuter.removeFocusState();
             }
         }
         else {
