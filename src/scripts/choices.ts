@@ -2075,6 +2075,10 @@ class Choices {
     }
 
     this._store.dispatch(removeItem(item));
+    const notice = this._notice;
+    if (notice && notice.type === NoticeTypes.noChoices) {
+      this._clearNotice();
+    }
 
     this.passedElement.triggerEvent(EventType.removeItem, this._getChoiceForOutput(item));
   }
