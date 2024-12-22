@@ -871,7 +871,7 @@
                 score: 0,
                 rank: 0,
                 value: option.value,
-                label: option.innerHTML,
+                label: option.innerText, // HTML options do not support most html tags, but innerHtml will extract html comments...
                 element: option,
                 active: true,
                 // this returns true if nothing is selected on initial load, which will break placeholder support
@@ -3630,11 +3630,15 @@
             if (this.dropdown.isActive) {
                 return this;
             }
+            if (preventInputFocus === undefined) {
+                // eslint-disable-next-line no-param-reassign
+                preventInputFocus = !this._canSearch;
+            }
             requestAnimationFrame(function () {
                 _this.dropdown.show();
                 var rect = _this.dropdown.element.getBoundingClientRect();
                 _this.containerOuter.open(rect.bottom, rect.height);
-                if (!preventInputFocus && _this._canSearch) {
+                if (!preventInputFocus) {
                     _this.input.focus();
                 }
                 _this.passedElement.triggerEvent(EventType.showDropdown);
@@ -3936,6 +3940,7 @@
             }
             this.itemList.element.replaceChildren('');
             this.choiceList.element.replaceChildren('');
+            this._clearNotice();
             this._store.reset();
             this._lastAddedChoiceId = 0;
             this._lastAddedGroupId = 0;
@@ -4392,6 +4397,7 @@
             var maxItemCount = config.maxItemCount, maxItemText = config.maxItemText;
             if (!config.singleModeForMultiSelect && maxItemCount > 0 && maxItemCount <= this._store.items.length) {
                 this.choiceList.element.replaceChildren('');
+                this._notice = undefined;
                 this._displayNotice(typeof maxItemText === 'function' ? maxItemText(maxItemCount) : maxItemText, NoticeTypes.addChoice);
                 return false;
             }
@@ -4704,6 +4710,7 @@
             if (hasActiveDropdown) {
                 event.stopPropagation();
                 this.hideDropdown(true);
+                this._stopSearch();
                 this.containerOuter.element.focus();
             }
         };
@@ -4880,17 +4887,11 @@
             var blurWasWithinContainer = target && containerOuter.element.contains(target);
             if (blurWasWithinContainer && !this._isScrollingOnIe) {
                 var targetIsInput = target === this.input.element;
-                if (this._isTextElement || this._isSelectMultipleElement) {
-                    if (targetIsInput) {
-                        containerOuter.removeFocusState();
-                        this.hideDropdown(true);
-                        this.unhighlightAll();
-                    }
-                }
-                else {
+                if (targetIsInput) {
                     containerOuter.removeFocusState();
-                    if (targetIsInput || (target === containerOuter.element && !this._canSearch)) {
-                        this.hideDropdown(true);
+                    this.hideDropdown(true);
+                    if (this._isTextElement || this._isSelectMultipleElement) {
+                        this.unhighlightAll();
                     }
                 }
             }
@@ -4978,6 +4979,10 @@
                 return;
             }
             this._store.dispatch(removeItem$1(item));
+            var notice = this._notice;
+            if (notice && notice.type === NoticeTypes.noChoices) {
+                this._clearNotice();
+            }
             this.passedElement.triggerEvent(EventType.removeItem, this._getChoiceForOutput(item));
         };
         Choices.prototype._addChoice = function (choice, withEvents, userTriggered) {
