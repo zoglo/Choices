@@ -66,7 +66,7 @@
             id="choices-basic"
             multiple
           >
-            <option value="Choice 1">Choice 1</option>
+            <option value="Choice 1"><!-- html comment -->Choice 1</option>
             <option value="Choice 2">Choice 2</option>
             <option value="Find me">Choice 3</option>
             <option value="Choice 4">Choice 4</option>
@@ -74,7 +74,7 @@
           <script>
             document.addEventListener('DOMContentLoaded', function() {
               const choicesBasic = new Choices('#choices-basic', {
-                allowHTML: true,
+                allowHTML: false,
               });
               document
                 .querySelector('button.disable')
