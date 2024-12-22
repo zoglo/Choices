@@ -45,6 +45,7 @@ describe(`Choices - select one`, () => {
 
           await suite.choices.first().click();
           await expect(suite.items.last()).toHaveText(selectedChoiceText);
+          await expect(suite.items.last()).not.toHaveText('!--');
         });
 
         test('does not remove selected choice from dropdown list', async ({ page, bundle }) => {
