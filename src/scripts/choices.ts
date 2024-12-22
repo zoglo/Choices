@@ -1967,16 +1967,11 @@ class Choices {
     if (blurWasWithinContainer && !this._isScrollingOnIe) {
       const targetIsInput = target === this.input.element;
 
-      if (this._isTextElement || this._isSelectMultipleElement) {
-        if (targetIsInput) {
-          containerOuter.removeFocusState();
-          this.hideDropdown(true);
-          this.unhighlightAll();
-        }
-      } else {
+      if (targetIsInput) {
         containerOuter.removeFocusState();
-        if (targetIsInput || (target === containerOuter.element && !this._canSearch)) {
-          this.hideDropdown(true);
+        this.hideDropdown(true);
+        if (this._isTextElement || this._isSelectMultipleElement) {
+          this.unhighlightAll();
         }
       }
     } else {
