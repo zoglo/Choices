@@ -1979,6 +1979,11 @@ class Choices {
       } else if (target === this.containerOuter.element) {
         // Remove the focus state when the past outerContainer was the target
         containerOuter.removeFocusState();
+
+        // Also close the dropdown if search is disabled
+        if (!this._canSearch) {
+          this.hideDropdown(true);
+        }
       }
     } else {
       // On IE11, clicking the scollbar blurs our input and thus

@@ -1,4 +1,4 @@
-/*! choices.js v11.0.3 | © 2024 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
+/*! choices.js v11.0.3 | © 2025 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
 
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -4409,6 +4409,10 @@ var Choices = /** @class */ (function () {
             else if (target === this.containerOuter.element) {
                 // Remove the focus state when the past outerContainer was the target
                 containerOuter.removeFocusState();
+                // Also close the dropdown if search is disabled
+                if (!this._canSearch) {
+                    this.hideDropdown(true);
+                }
             }
         }
         else {
