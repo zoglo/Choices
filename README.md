@@ -1298,6 +1298,8 @@ e2e (End-to-end) tests are implemented using playwright, which requires installi
 `npx playwright install-deps `
 
 For JetBrain IDE's the `Test automation` plugin is recommended:
+https://plugins.jetbrains.com/plugin/20175-test-automation
+For usage see:
 https://www.jetbrains.com/help/phpstorm/playwright.html
 
 ### NPM tasks
