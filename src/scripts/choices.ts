@@ -1886,18 +1886,24 @@ class Choices {
       return;
     }
 
+    let preventDefault = true;
+
     const item = target.closest('[data-button],[data-item],[data-choice]');
     if (item instanceof HTMLElement) {
       if ('button' in item.dataset) {
         this._handleButtonAction(item);
       } else if ('item' in item.dataset) {
         this._handleItemAction(item, event.shiftKey);
+        // don't prevent default to support dragging
+        preventDefault = false;
       } else if ('choice' in item.dataset) {
         this._handleChoiceAction(item);
       }
     }
 
-    event.preventDefault();
+    if (preventDefault) {
+      event.preventDefault();
+    }
   }
 
   /**
