@@ -335,6 +335,31 @@
           </script>
         </div>
 
+        <div data-test-hook="selection-limit-note-after-unselecting-choice">
+          <label for="choices-selection-limit-note-after-unselecting-choice">Input limit note after unselecting choice</label>
+          <select
+            class="form-control"
+            name="choices-selection-limit-note-after-unselecting-choice"
+            id="choices-selection-limit-note-after-unselecting-choice"
+            multiple
+          >
+            <option value="Choice 1">Choice 1</option>
+            <option value="Choice 2">Choice 2</option>
+            <option value="Choice 3">Choice 3</option>
+            <option value="Choice 4">Choice 4</option>
+            <option value="Choice 5">Choice 5</option>
+          </select>
+          <script>
+            document.addEventListener('DOMContentLoaded', function() {
+              new Choices('#choices-selection-limit-note-after-unselecting-choice', {
+                allowHTML: true,
+                maxItemCount: 5,
+                removeItemButton: true
+              });
+            });
+          </script>
+        </div>
+
         <div data-test-hook="prepend-append">
           <label for="choices-prepend-append">Prepend/append</label>
           <select

@@ -1404,6 +1404,10 @@ class Choices {
       return false;
     }
 
+    if (this._notice && this._notice.type === NoticeTypes.addChoice) {
+      this._clearNotice();
+    }
+
     return true;
   }
 
