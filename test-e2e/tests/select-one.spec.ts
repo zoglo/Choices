@@ -533,6 +533,32 @@ describe(`Choices - select one`, () => {
         await expect(firstItem).toHaveText('I am a placeholder');
         await expect(suite.selectableChoices).toHaveCount(10);
       });
+
+      const testIdForDisabled = 'remote-disabled-data';
+      test('checking disabled items are shown in dropdown', async ({ page, bundle }) => {
+        const suite = new SelectTestSuit(page, bundle, testUrl, testIdForDisabled);
+
+        const jsonLoad = page.waitForResponse('**/disabled-data.json');
+        const stopJsonWaiting = await suite.delayDisaabledData();
+        await suite.start();
+
+        await expect(suite.itemList.first()).toHaveText('Loading...');
+
+        stopJsonWaiting();
+        await jsonLoad;
+        await suite.selectByClick();
+
+        const firstItem = suite.itemsWithPlaceholder.first();
+        await expect(firstItem).toHaveClass(/choices__placeholder/);
+        await expect(firstItem).toHaveText('I am a placeholder');
+
+        const lastChoice = suite.selectableChoices.last();
+        await expect(lastChoice).toHaveClass(/choices__item--disabled/);
+        await expect(lastChoice).toHaveText('Disabled Label 10');
+
+        await expect(suite.selectableChoices.locator(':not(.choices__item--disabled)')).toHaveCount(0);
+        await expect(suite.selectableChoices.locator('+ .choices__item--disabled')).toHaveCount(9);
+      });
     });
 
     describe('scrolling dropdown', () => {

@@ -974,7 +974,7 @@ class Choices {
           choice.choiceEl || this._templates.choice(config, choice, config.itemSelectText, groupLabel);
         choice.choiceEl = dropdownItem;
         fragment.appendChild(dropdownItem);
-        if (!choice.disabled && (isSearching || !choice.selected)) {
+        if (isSearching || !choice.selected) {
           selectableChoices = true;
         }
 
