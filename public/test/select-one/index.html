@@ -505,6 +505,33 @@
           </script>
         </div>
 
+        <div data-test-hook="remote-disabled-data">
+          <label for="choices-remote-disabled-data">Remote disabled data</label>
+          <select
+            class="form-control"
+            name="choices-remote-disabled-data"
+            id="choices-remote-disabled-data"
+          >
+            <option value="">I am a placeholder</option>
+          </select>
+          <script>
+            document.addEventListener('DOMContentLoaded', function() {
+              new Choices('#choices-remote-disabled-data', {
+                allowHTML: true,
+                shouldSort: false,
+              }).setChoices(async () => {
+                try {
+                  const data = await fetch('../disabled-data.json');
+                  return data.json();
+                } catch (e) {
+                  console.log(e);
+                  return [];
+                }
+              });
+            });
+          </script>
+        </div>
+
         <div data-test-hook="scrolling-dropdown">
           <label for="choices-scrolling-dropdown">Scrolling dropdown</label>
           <select
