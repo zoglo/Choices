@@ -2284,9 +2284,7 @@
             var _this = this;
             this._store.withTxn(function () {
                 _this._store.choices.forEach(function (choice) {
-                    if (!choice.placeholder) {
-                        _this._store.dispatch(removeChoice(choice));
-                    }
+                    _this._store.dispatch(removeChoice(choice));
                 });
             });
             // @todo integrate with Store
