@@ -21,6 +21,7 @@ import {
   resolveStringFunction,
   sortByRank,
   strToEl,
+  unwrapStringForEscaped,
 } from './lib/utils';
 import Store from './store/store';
 import { coerceBool, mapInputToChoice } from './lib/choice-input';
@@ -751,7 +752,11 @@ class Choices {
               label: choice[label],
             } as InputChoice;
           }
-          this._addChoice(mapInputToChoice<InputChoice>(choice, false));
+          const choiceFull = mapInputToChoice<InputChoice>(choice, false);
+          this._addChoice(choiceFull);
+          if (choiceFull.placeholder && !this._hasNonChoicePlaceholder) {
+            this._placeholderValue = unwrapStringForEscaped(choiceFull.label);
+          }
         }
       });
 
@@ -780,7 +785,7 @@ class Choices {
       const existingItems = {};
       if (!deselectAll) {
         this._store.items.forEach((choice) => {
-          if (choice.id && choice.active && choice.selected && !choice.disabled) {
+          if (choice.id && choice.active && choice.selected) {
             existingItems[choice.value] = true;
           }
         });
@@ -1063,22 +1068,22 @@ class Choices {
     // new items
     items.forEach(addItemToFragment);
 
-    let addItems = !!fragment.childNodes.length;
-    if (this._isSelectOneElement && this._hasNonChoicePlaceholder) {
+    let addedItems = !!fragment.childNodes.length;
+    if (this._isSelectOneElement) {
       const existingItems = itemList.children.length;
-      if (addItems || existingItems > 1) {
+      if (addedItems || existingItems > 1) {
         const placeholder = itemList.querySelector<HTMLElement>(getClassNamesSelector(config.classNames.placeholder));
         if (placeholder) {
           placeholder.remove();
         }
-      } else if (!existingItems) {
-        addItems = true;
+      } else if (!addedItems && !existingItems && this._placeholderValue) {
+        addedItems = true;
         addItemToFragment(
           mapInputToChoice<InputChoice>(
             {
               selected: true,
               value: '',
-              label: config.placeholderValue || '',
+              label: this._placeholderValue,
               placeholder: true,
             },
             false,
@@ -1087,7 +1092,7 @@ class Choices {
       }
     }
 
-    if (addItems) {
+    if (addedItems) {
       itemList.append(fragment);
 
       if (config.shouldSortItems && !this._isSelectOneElement) {
@@ -1218,7 +1223,7 @@ class Choices {
 
       if (this._isSelectOneElement && !this._hasNonChoicePlaceholder) {
         const placeholderChoice = (this.config.shouldSort ? this._store.choices.reverse() : this._store.choices).find(
-          (choice) => !choice.disabled && choice.placeholder,
+          (choice) => choice.placeholder,
         );
         if (placeholderChoice) {
           this._addItem(placeholderChoice);
