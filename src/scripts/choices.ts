@@ -850,7 +850,7 @@ class Choices {
   clearChoices(): this {
     this._store.withTxn(() => {
       this._store.choices.forEach((choice) => {
-        if (!choice.selected) {
+        if (!choice.placeholder) {
           this._store.dispatch(removeChoice(choice));
         }
       });
