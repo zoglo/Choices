@@ -2278,7 +2278,7 @@ var Choices = /** @class */ (function () {
         var _this = this;
         this._store.withTxn(function () {
             _this._store.choices.forEach(function (choice) {
-                if (!choice.selected) {
+                if (!choice.placeholder) {
                     _this._store.dispatch(removeChoice(choice));
                 }
             });
@@ -2289,7 +2289,6 @@ var Choices = /** @class */ (function () {
     };
     Choices.prototype.clearStore = function (clearOptions) {
         if (clearOptions === void 0) { clearOptions = true; }
-        this._stopSearch();
         if (clearOptions) {
             this.passedElement.element.replaceChildren('');
         }
@@ -2299,6 +2298,7 @@ var Choices = /** @class */ (function () {
         this._store.reset();
         this._lastAddedChoiceId = 0;
         this._lastAddedGroupId = 0;
+        this._stopSearch();
         // @todo integrate with Store
         this._searcher.reset();
         return this;
