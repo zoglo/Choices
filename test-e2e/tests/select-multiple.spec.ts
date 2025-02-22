@@ -295,7 +295,7 @@ describe(`Choices - select multiple`, () => {
               await expect(suite.getChoiceWithText(`Choice ${i}`)).toHaveClass(/is-selected/);
               await expect(suite.selectableChoices).toHaveCount(count);
             } else {
-              await suite.expectVisibleNoticeHtml('No choices to choose from', true);
+              await suite.expectHiddenNotice();
             }
           }
         });
@@ -388,6 +388,15 @@ describe(`Choices - select multiple`, () => {
         await suite.startWithClick();
 
         await expect(suite.selectableChoices).toHaveCount(3);
+      });
+    });
+
+    describe('Selected choices rendering', () => {
+      test('Render selected choices', async ({ page, bundle }) => {
+        const suite = new SelectTestSuit(page, bundle, testUrl, 'renderSelectedChoices-true');
+        await suite.startWithClick();
+
+        await expect(suite.selectableChoices).toHaveCount(1);
       });
     });
 
