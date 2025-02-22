@@ -852,12 +852,14 @@ class Choices {
     return this;
   }
 
-  clearChoices(): this {
-    this._store.withTxn(() => {
-      this._store.choices.forEach((choice) => {
-        this._store.dispatch(removeChoice(choice));
-      });
-    });
+  clearChoices(clearOptions: boolean = true): this {
+    if (clearOptions) {
+      this.passedElement.element.replaceChildren('');
+    }
+    this.itemList.element.replaceChildren('');
+    this.choiceList.element.replaceChildren('');
+    this._clearNotice();
+    this._store.reset();
 
     // @todo integrate with Store
     this._searcher.reset();
@@ -866,18 +868,10 @@ class Choices {
   }
 
   clearStore(clearOptions: boolean = true): this {
-    if (clearOptions) {
-      this.passedElement.element.replaceChildren('');
-    }
-    this.itemList.element.replaceChildren('');
-    this.choiceList.element.replaceChildren('');
-    this._clearNotice();
-    this._store.reset();
+    this.clearChoices(clearOptions);
+    this._stopSearch();
     this._lastAddedChoiceId = 0;
     this._lastAddedGroupId = 0;
-    this._stopSearch();
-    // @todo integrate with Store
-    this._searcher.reset();
 
     return this;
   }
