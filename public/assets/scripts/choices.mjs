@@ -4063,7 +4063,7 @@ var Choices = /** @class */ (function () {
                 renderChoices(renderableChoices(activeChoices), false, undefined);
             }
         }
-        if (!selectableChoices) {
+        if (!selectableChoices && (isSearching || !fragment.children.length || !config.renderSelectedChoices)) {
             if (!this._notice) {
                 this._notice = {
                     text: resolveStringFunction(isSearching ? config.noResultsText : config.noChoicesText),
