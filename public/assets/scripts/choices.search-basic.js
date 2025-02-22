@@ -1248,7 +1248,7 @@
              * Get highlighted items from store
              */
             get: function () {
-                return this.items.filter(function (item) { return !item.disabled && item.active && item.highlighted; });
+                return this.items.filter(function (item) { return item.active && item.highlighted; });
             },
             enumerable: false,
             configurable: true
@@ -1275,7 +1275,7 @@
         });
         Object.defineProperty(Store.prototype, "searchableChoices", {
             /**
-             * Get choices that can be searched (excluding placeholders)
+             * Get choices that can be searched (excluding placeholders or disabled choices)
              */
             get: function () {
                 return this.choices.filter(function (choice) { return !choice.disabled && !choice.placeholder; });
@@ -3356,7 +3356,11 @@
                         if (!isDefaultLabel || !isDefaultValue) {
                             choice = __assign(__assign({}, choice), { value: choice[value], label: choice[label] });
                         }
-                        _this._addChoice(mapInputToChoice(choice, false));
+                        var choiceFull = mapInputToChoice(choice, false);
+                        _this._addChoice(choiceFull);
+                        if (choiceFull.placeholder && !_this._hasNonChoicePlaceholder) {
+                            _this._placeholderValue = unwrapStringForEscaped(choiceFull.label);
+                        }
                     }
                 });
                 _this.unhighlightAll();
@@ -3382,7 +3386,7 @@
                 var existingItems = {};
                 if (!deselectAll) {
                     _this._store.items.forEach(function (choice) {
-                        if (choice.id && choice.active && choice.selected && !choice.disabled) {
+                        if (choice.id && choice.active && choice.selected) {
                             existingItems[choice.value] = true;
                         }
                     });
@@ -3618,26 +3622,26 @@
             };
             // new items
             items.forEach(addItemToFragment);
-            var addItems = !!fragment.childNodes.length;
-            if (this._isSelectOneElement && this._hasNonChoicePlaceholder) {
+            var addedItems = !!fragment.childNodes.length;
+            if (this._isSelectOneElement) {
                 var existingItems = itemList.children.length;
-                if (addItems || existingItems > 1) {
+                if (addedItems || existingItems > 1) {
                     var placeholder = itemList.querySelector(getClassNamesSelector(config.classNames.placeholder));
                     if (placeholder) {
                         placeholder.remove();
                     }
                 }
-                else if (!existingItems) {
-                    addItems = true;
+                else if (!addedItems && !existingItems && this._placeholderValue) {
+                    addedItems = true;
                     addItemToFragment(mapInputToChoice({
                         selected: true,
                         value: '',
-                        label: config.placeholderValue || '',
+                        label: this._placeholderValue,
                         placeholder: true,
                     }, false));
                 }
             }
-            if (addItems) {
+            if (addedItems) {
                 itemList.append(fragment);
                 if (config.shouldSortItems && !this._isSelectOneElement) {
                     items.sort(config.sorter);
@@ -3748,7 +3752,7 @@
                 _this._removeItem(itemToRemove);
                 _this._triggerChange(itemToRemove.value);
                 if (_this._isSelectOneElement && !_this._hasNonChoicePlaceholder) {
-                    var placeholderChoice = (_this.config.shouldSort ? _this._store.choices.reverse() : _this._store.choices).find(function (choice) { return !choice.disabled && choice.placeholder; });
+                    var placeholderChoice = (_this.config.shouldSort ? _this._store.choices.reverse() : _this._store.choices).find(function (choice) { return choice.placeholder; });
                     if (placeholderChoice) {
                         _this._addItem(placeholderChoice);
                         _this.unhighlightAll();
