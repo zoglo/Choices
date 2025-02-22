@@ -1,6 +1,20 @@
 # Changelog
 
-## [11.0.3]
+## [11.0.4]
+
+### Features
+- Do not preventDefault on item to support dragging @joeworkman (#1266)
+
+### Bug Fixes (from 11.0.0)
+* Fix v11 regression where `clearChoices` (and `setChoices` with `replaceChoices:true`) did not remove selected items when preserving placeholders @Xon (#1272)
+* Fix v11 regression where `duplicateItemsAllowed` option did not work with `select-one`/`select-multiple` @Xon (#1271)
+* Fix: Reached maximum item limit notice is not cleared after removing selections @ticktackk (#1270)
+* Fix: Disabled options are not visible (#1257) @ticktackk (#1269)
+* Fix: Clear button reverses items order @ticktackk (#1265)
+* Fix `tab` => direction keys handling with disabled search @zoglo (#1260)
+* Improve cjs compatibility by removing pinned "module" type in package.json @roma-formio (#1254)
+
+## [11.0.3] (2024-12-22)
 
 ### Bug Fixes (from 11.0.0)
 * Fix input text - method setValue didn't work [#1207](https://github.com/Choices-js/Choices/issues/1207)
