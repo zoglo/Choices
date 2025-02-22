@@ -444,7 +444,7 @@ Pass an array of objects:
 
 **Type:** `Boolean` **Default:** `true`
 
-**Input types affected:** `text`
+**Input types affected:** `text`, `select-multiple`, `select-one`
 
 **Usage:** Whether duplicate inputted/chosen items are allowed
 

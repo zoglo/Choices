@@ -1423,15 +1423,14 @@ class Choices {
 
     if (canAddItem) {
       const foundChoice = this._store.choices.find((choice) => config.valueComparer(choice.value, value));
-      if (this._isSelectElement) {
-        // for exact matches, do not prompt to add it as a custom choice
-        if (foundChoice) {
+      if (foundChoice) {
+        if (this._isSelectElement) {
+          // for exact matches, do not prompt to add it as a custom choice
           this._displayNotice('', NoticeTypes.addChoice);
 
           return false;
         }
-      } else if (this._isTextElement && !config.duplicateItemsAllowed) {
-        if (foundChoice) {
+        if (!config.duplicateItemsAllowed) {
           canAddItem = false;
           notice = resolveNoticeFunction(config.uniqueItemText, value);
         }
@@ -2105,10 +2104,7 @@ class Choices {
     }
 
     const { config } = this;
-    if (
-      (this._isSelectElement || !config.duplicateItemsAllowed) &&
-      this._store.choices.find((c) => config.valueComparer(c.value, choice.value))
-    ) {
+    if (!config.duplicateItemsAllowed && this._store.choices.find((c) => config.valueComparer(c.value, choice.value))) {
       return;
     }
 

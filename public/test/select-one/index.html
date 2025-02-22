@@ -192,6 +192,42 @@
           </script>
         </div>
 
+        <div data-test-hook="duplicate-items-allowed">
+          <label for="duplicate-items-allowed">Duplicate items allowed</label>
+          <select class="form-control" name="no-choices" id="duplicate-items-allowed">
+            <option value="call1">Service 1</option>
+            <option value="call2">Service 2</option>
+            <option value="call2">Service 3</option>
+            <option value="call1">Service 4</option>
+            <option value="call5">Service 5</option>
+          </select>
+          <script>
+            document.addEventListener('DOMContentLoaded', function() {
+              new Choices('#duplicate-items-allowed', {
+                duplicateItemsAllowed: true,
+              });
+            });
+          </script>
+        </div>
+
+        <div data-test-hook="duplicate-items-disallowed">
+          <label for="duplicate-items-disallowed">Duplicate items disallowed</label>
+          <select class="form-control" name="no-choices" id="duplicate-items-disallowed">
+            <option value="call1">Service 1</option>
+            <option value="call2">Service 2</option>
+            <option value="call2">Service 3</option>
+            <option value="call1">Service 4</option>
+            <option value="call5">Service 5</option>
+          </select>
+          <script>
+            document.addEventListener('DOMContentLoaded', function() {
+              new Choices('#duplicate-items-disallowed', {
+                duplicateItemsAllowed: false,
+              });
+            });
+          </script>
+        </div>
+
         <div data-test-hook="no-choices">
           <label for="no-choices">No choices</label>
           <select class="form-control" name="no-choices" id="no-choices">
