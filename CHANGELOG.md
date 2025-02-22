@@ -23,8 +23,8 @@
 * Fix `tab` and `esc` keys handling [#1234](https://github.com/Choices-js/Choices/issues/1234) [#1209](https://github.com/Choices-js/Choices/issues/1209)
 * Fix Notice for max item limit is removed permanently if you keep typing [#1201](https://github.com/Choices-js/Choices/issues/1201)
 * Fix search was not stopped when leaving focus with esc key [#1240](https://github.com/Choices-js/Choices/issues/1240)
-* Fix single-select mode disabling search when `tab` => arrow keys are pressed [#1230]https://github.com/Choices-js/Choices/issues/1230)
-* Fix HTML comments were copied from backing `<option>` and were rendered as text [#1231]https://github.com/Choices-js/Choices/issues/1231)
+* Fix single-select mode disabling search when `tab` => arrow keys are pressed [#1230](https://github.com/Choices-js/Choices/issues/1230)
+* Fix HTML comments were copied from backing `<option>` and were rendered as text [#1231](https://github.com/Choices-js/Choices/issues/1231)
 
 ## [11.0.2] (2024-09-05)
 
