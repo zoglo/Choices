@@ -376,6 +376,21 @@ describe(`Choices - select multiple`, () => {
       });
     });
 
+    describe('duplicate-items', () => {
+      test('shows all duplicate items', async ({ page, bundle }) => {
+        const suite = new SelectTestSuit(page, bundle, testUrl, 'duplicate-items-allowed');
+        await suite.startWithClick();
+
+        await expect(suite.selectableChoices).toHaveCount(5);
+      });
+      test('shows unique items', async ({ page, bundle }) => {
+        const suite = new SelectTestSuit(page, bundle, testUrl, 'duplicate-items-disallowed');
+        await suite.startWithClick();
+
+        await expect(suite.selectableChoices).toHaveCount(3);
+      });
+    });
+
     describe('no choices', () => {
       const testId = 'no-choices';
       test('shows no choices banner', async ({ page, bundle }) => {

@@ -4415,15 +4415,13 @@
             }
             if (canAddItem) {
                 var foundChoice = this._store.choices.find(function (choice) { return config.valueComparer(choice.value, value); });
-                if (this._isSelectElement) {
-                    // for exact matches, do not prompt to add it as a custom choice
-                    if (foundChoice) {
+                if (foundChoice) {
+                    if (this._isSelectElement) {
+                        // for exact matches, do not prompt to add it as a custom choice
                         this._displayNotice('', NoticeTypes.addChoice);
                         return false;
                     }
-                }
-                else if (this._isTextElement && !config.duplicateItemsAllowed) {
-                    if (foundChoice) {
+                    if (!config.duplicateItemsAllowed) {
                         canAddItem = false;
                         notice = resolveNoticeFunction(config.uniqueItemText, value);
                     }
@@ -5006,8 +5004,7 @@
                 throw new TypeError('Can not re-add a choice which has already been added');
             }
             var config = this.config;
-            if ((this._isSelectElement || !config.duplicateItemsAllowed) &&
-                this._store.choices.find(function (c) { return config.valueComparer(c.value, choice.value); })) {
+            if (!config.duplicateItemsAllowed && this._store.choices.find(function (c) { return config.valueComparer(c.value, choice.value); })) {
                 return;
             }
             // Generate unique id, in-place update is required so chaining _addItem works as expected
