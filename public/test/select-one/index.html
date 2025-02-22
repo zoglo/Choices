@@ -228,6 +228,20 @@
           </script>
         </div>
 
+        <div data-test-hook="renderSelectedChoices-true">
+          <label for="renderSelectedChoices-true">Render selected choices (single option)</label>
+          <select class="form-control" name="no-choices" id="renderSelectedChoices-true">
+            <option value="Choice 1" selected>Choice 1</option>
+          </select>
+          <script>
+            document.addEventListener('DOMContentLoaded', function() {
+              new Choices('#renderSelectedChoices-true', {
+                renderSelectedChoices: true,
+              });
+            });
+          </script>
+        </div>
+
         <div data-test-hook="no-choices">
           <label for="no-choices">No choices</label>
           <select class="form-control" name="no-choices" id="no-choices">
@@ -236,6 +250,7 @@
             document.addEventListener('DOMContentLoaded', function() {
               new Choices('#no-choices', {
                 allowHTML: true,
+                renderSelectedChoices: false,
               });
             });
           </script>
@@ -250,6 +265,7 @@
             document.addEventListener('DOMContentLoaded', function() {
               new Choices('#no-choices2', {
                 allowHTML: true,
+                renderSelectedChoices: false,
               });
             });
           </script>
@@ -1063,6 +1079,7 @@
           document.addEventListener('DOMContentLoaded', function() {
             const choices = new Choices('#choices-autocomplete', {
               shouldSort: false,
+              renderSelectedChoices: false,
             });
             choices.passedElement.element.addEventListener(
               'search',

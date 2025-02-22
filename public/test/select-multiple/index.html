@@ -212,6 +212,20 @@
           </script>
         </div>
 
+        <div data-test-hook="renderSelectedChoices-true">
+          <label for="renderSelectedChoices-true">Render selected choices (single option)</label>
+          <select class="form-control" name="no-choices" id="renderSelectedChoices-true" multiple>
+            <option value="Choice 1" selected>Choice 1</option>
+          </select>
+          <script>
+            document.addEventListener('DOMContentLoaded', function() {
+              new Choices('#renderSelectedChoices-true', {
+                renderSelectedChoices: true,
+              });
+            });
+          </script>
+        </div>
+
         <div data-test-hook="no-choices">
           <label for="no-choices">No choices</label>
           <select class="form-control" name="no-choices" id="no-choices" multiple>
@@ -227,8 +241,8 @@
 
         <div data-test-hook="no-choices2">
           <label for="no-choices2">No choices (besides selected)</label>
-          <select class="form-control" name="no-choices" id="no-choices2">
-            <option value="Choice 1" selected="selected" multiple>Choice 1</option>
+          <select class="form-control" name="no-choices" id="no-choices2" multiple>
+            <option value="Choice 1" selected="selected">Choice 1</option>
           </select>
           <script>
             document.addEventListener('DOMContentLoaded', function() {

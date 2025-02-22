@@ -295,6 +295,15 @@ describe(`Choices - select one`, () => {
       });
     });
 
+    describe('Selected choices rendering', () => {
+      test('Skip render selected choices', async ({ page, bundle }) => {
+        const suite = new SelectTestSuit(page, bundle, testUrl, 'renderSelectedChoices-true');
+        await suite.startWithClick();
+
+        await expect(suite.selectableChoices).toHaveCount(1);
+      });
+    });
+
     describe('No choices (besides selected)', () => {
       const testId = 'no-choices2';
       test('shows no choices banner', async ({ page, bundle }) => {
