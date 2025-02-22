@@ -850,7 +850,7 @@ class Choices {
   clearChoices(): this {
     this._store.withTxn(() => {
       this._store.choices.forEach((choice) => {
-        if (!choice.selected) {
+        if (!choice.placeholder) {
           this._store.dispatch(removeChoice(choice));
         }
       });
@@ -863,8 +863,6 @@ class Choices {
   }
 
   clearStore(clearOptions: boolean = true): this {
-    this._stopSearch();
-
     if (clearOptions) {
       this.passedElement.element.replaceChildren('');
     }
@@ -874,6 +872,7 @@ class Choices {
     this._store.reset();
     this._lastAddedChoiceId = 0;
     this._lastAddedGroupId = 0;
+    this._stopSearch();
     // @todo integrate with Store
     this._searcher.reset();
 
