@@ -3540,7 +3540,7 @@ var Choices = /** @class */ (function () {
                 var dropdownItem = choice.choiceEl || _this._templates.choice(config, choice, config.itemSelectText, groupLabel);
                 choice.choiceEl = dropdownItem;
                 fragment.appendChild(dropdownItem);
-                if (!choice.disabled && (isSearching || !choice.selected)) {
+                if (isSearching || !choice.selected) {
                     selectableChoices = true;
                 }
                 return index < choiceLimit;
@@ -3911,6 +3911,9 @@ var Choices = /** @class */ (function () {
             this._notice = undefined;
             this._displayNotice(typeof maxItemText === 'function' ? maxItemText(maxItemCount) : maxItemText, NoticeTypes.addChoice);
             return false;
+        }
+        if (this._notice && this._notice.type === NoticeTypes.addChoice) {
+            this._clearNotice();
         }
         return true;
     };
@@ -4312,6 +4315,7 @@ var Choices = /** @class */ (function () {
         if (target === this.input.element) {
             return;
         }
+        var preventDefault = true;
         var item = target.closest('[data-button],[data-item],[data-choice]');
         if (item instanceof HTMLElement) {
             if ('button' in item.dataset) {
@@ -4319,12 +4323,16 @@ var Choices = /** @class */ (function () {
             }
             else if ('item' in item.dataset) {
                 this._handleItemAction(item, event.shiftKey);
+                // don't prevent default to support dragging
+                preventDefault = false;
             }
             else if ('choice' in item.dataset) {
                 this._handleChoiceAction(item);
             }
         }
-        event.preventDefault();
+        if (preventDefault) {
+            event.preventDefault();
+        }
     };
     /**
      * Handles mouseover event over this.dropdown

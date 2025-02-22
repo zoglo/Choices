@@ -478,11 +478,11 @@ describe(`Choices - select multiple`, () => {
     });
 
     describe('selection limit', () => {
-      const testId = 'selection-limit';
+      const displaysTestId = 'selection-limit';
       const selectionLimit = 5;
 
       test('displays "limit reached" prompt', async ({ page, bundle }) => {
-        const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+        const suite = new SelectTestSuit(page, bundle, testUrl, displaysTestId);
         await suite.startWithClick();
 
         for (let index = 0; index < selectionLimit; index++) {
@@ -491,6 +491,24 @@ describe(`Choices - select multiple`, () => {
         }
 
         await suite.expectVisibleNoticeHtml(`Only ${selectionLimit} values can be added`);
+      });
+
+      const hidesTestId = 'selection-limit-note-after-unselecting-choice';
+      test('hides "limit reached" prompt', async ({ page, bundle }) => {
+        const suite = new SelectTestSuit(page, bundle, testUrl, hidesTestId);
+        await suite.startWithClick();
+
+        for (let index = 0; index < selectionLimit; index++) {
+          await suite.selectableChoices.first().click();
+          await suite.advanceClock();
+        }
+
+        await suite.expectVisibleNoticeHtml(`Only ${selectionLimit} values can be added`);
+
+        await suite.items.getByRole('button', { name: 'Remove item' }).last().click();
+        await suite.advanceClock();
+
+        await suite.expectHiddenNotice();
       });
     });
 

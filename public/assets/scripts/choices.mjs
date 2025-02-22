@@ -4022,7 +4022,7 @@ var Choices = /** @class */ (function () {
                 var dropdownItem = choice.choiceEl || _this._templates.choice(config, choice, config.itemSelectText, groupLabel);
                 choice.choiceEl = dropdownItem;
                 fragment.appendChild(dropdownItem);
-                if (!choice.disabled && (isSearching || !choice.selected)) {
+                if (isSearching || !choice.selected) {
                     selectableChoices = true;
                 }
                 return index < choiceLimit;
@@ -4394,6 +4394,9 @@ var Choices = /** @class */ (function () {
             this._displayNotice(typeof maxItemText === 'function' ? maxItemText(maxItemCount) : maxItemText, NoticeTypes.addChoice);
             return false;
         }
+        if (this._notice && this._notice.type === NoticeTypes.addChoice) {
+            this._clearNotice();
+        }
         return true;
     };
     Choices.prototype._canCreateItem = function (value) {
@@ -4544,24 +4547,24 @@ var Choices = /** @class */ (function () {
         https://en.wikipedia.org/wiki/UTF-16#Code_points_from_U+010000_to_U+10FFFF - UTF-16 surrogate pairs
         https://stackoverflow.com/a/70866532 - "Unidentified" for mobile
         http://www.unicode.org/versions/Unicode5.2.0/ch16.pdf#G19635 - U+FFFF is reserved (Section 16.7)
-
+    
         Logic: when a key event is sent, `event.key` represents its printable value _or_ one
         of a large list of special values indicating meta keys/functionality. In addition,
         key events for compose functionality contain a value of `Dead` when mid-composition.
-
+    
         I can't quite verify it, but non-English IMEs may also be able to generate key codes
         for code points in the surrogate-pair range, which could potentially be seen as having
         key.length > 1. Since `Fn` is one of the special keys, we can't distinguish by that
         alone.
-
+    
         Here, key.length === 1 means we know for sure the input was printable and not a special
         `key` value. When the length is greater than 1, it could be either a printable surrogate
         pair or a special `key` value. We can tell the difference by checking if the _character
         code_ value (not code point!) is in the "surrogate pair" range or not.
-
+    
         We don't use .codePointAt because an invalid code point would return 65535, which wouldn't
         pass the >= 0x10000 check we would otherwise use.
-
+    
         > ...The Unicode Standard sets aside 66 noncharacter code points. The last two code points
         > of each plane are noncharacters: U+FFFE and U+FFFF on the BMP...
         */
@@ -4794,6 +4797,7 @@ var Choices = /** @class */ (function () {
         if (target === this.input.element) {
             return;
         }
+        var preventDefault = true;
         var item = target.closest('[data-button],[data-item],[data-choice]');
         if (item instanceof HTMLElement) {
             if ('button' in item.dataset) {
@@ -4801,12 +4805,16 @@ var Choices = /** @class */ (function () {
             }
             else if ('item' in item.dataset) {
                 this._handleItemAction(item, event.shiftKey);
+                // don't prevent default to support dragging
+                preventDefault = false;
             }
             else if ('choice' in item.dataset) {
                 this._handleChoiceAction(item);
             }
         }
-        event.preventDefault();
+        if (preventDefault) {
+            event.preventDefault();
+        }
     };
     /**
      * Handles mouseover event over this.dropdown

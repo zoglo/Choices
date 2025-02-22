@@ -4400,6 +4400,9 @@
                 this._displayNotice(typeof maxItemText === 'function' ? maxItemText(maxItemCount) : maxItemText, NoticeTypes.addChoice);
                 return false;
             }
+            if (this._notice && this._notice.type === NoticeTypes.addChoice) {
+                this._clearNotice();
+            }
             return true;
         };
         Choices.prototype._canCreateItem = function (value) {
@@ -4800,6 +4803,7 @@
             if (target === this.input.element) {
                 return;
             }
+            var preventDefault = true;
             var item = target.closest('[data-button],[data-item],[data-choice]');
             if (item instanceof HTMLElement) {
                 if ('button' in item.dataset) {
@@ -4807,12 +4811,16 @@
                 }
                 else if ('item' in item.dataset) {
                     this._handleItemAction(item, event.shiftKey);
+                    // don't prevent default to support dragging
+                    preventDefault = false;
                 }
                 else if ('choice' in item.dataset) {
                     this._handleChoiceAction(item);
                 }
             }
-            event.preventDefault();
+            if (preventDefault) {
+                event.preventDefault();
+            }
         };
         /**
          * Handles mouseover event over this.dropdown
