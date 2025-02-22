@@ -3,16 +3,18 @@
 ## [11.0.4]
 
 ### Features
-- Do not preventDefault on item to support dragging @joeworkman (#1266)
+- Do not preventDefault on item to support dragging [#417](https://github.com/Choices-js/Choices/issues/417) [#1094](https://github.com/Choices-js/Choices/issues/1094) [#920](https://github.com/Choices-js/Choices/issues/920)
 
 ### Bug Fixes (from 11.0.0)
-* Fix v11 regression where `clearChoices` (and `setChoices` with `replaceChoices:true`) did not remove selected items when preserving placeholders @Xon (#1272)
-* Fix v11 regression where `duplicateItemsAllowed` option did not work with `select-one`/`select-multiple` @Xon (#1271)
-* Fix: Reached maximum item limit notice is not cleared after removing selections @ticktackk (#1270)
-* Fix: Disabled options are not visible (#1257) @ticktackk (#1269)
-* Fix: Clear button reverses items order @ticktackk (#1265)
-* Fix `tab` => direction keys handling with disabled search @zoglo (#1260)
-* Improve cjs compatibility by removing pinned "module" type in package.json @roma-formio (#1254)
+* Fix `renderSelectedChoices` option when all choices are selected [#1274](https://github.com/Choices-js/Choices/issues/1274)
+* Fix v11 regression for disabled placeholder option handling [#1203](https://github.com/Choices-js/Choices/issues/1203)
+* Fix v11 regression where `clearChoices` (and `setChoices` with `replaceChoices:true`) did not remove selected items when preserving placeholders [#1261](https://github.com/Choices-js/Choices/issues/1261)
+* Fix v11 regression where `duplicateItemsAllowed` option did not work with `select-one`/`select-multiple` [#1271](https://github.com/Choices-js/Choices/issues/1271)
+* Fix: Reached maximum item limit notice is not cleared after removing selections [#1249](https://github.com/Choices-js/Choices/issues/1249)
+* Fix: Disabled options are not visible [#1257](https://github.com/Choices-js/Choices/issues/1257) [#1269](https://github.com/Choices-js/Choices/issues/1257)
+* Fix: Clear button reverses items order [#1251](https://github.com/Choices-js/Choices/issues/1251)
+* Fix `tab` => direction keys handling with disabled search [#1260](https://github.com/Choices-js/Choices/issues/1260)
+* Improve cjs compatibility by removing pinned "module" type in package.json [#1250](https://github.com/Choices-js/Choices/issues/1250)
 
 ## [11.0.3] (2024-12-22)
 
