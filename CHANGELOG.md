@@ -6,6 +6,7 @@
 - Do not preventDefault on item to support dragging [#417](https://github.com/Choices-js/Choices/issues/417) [#1094](https://github.com/Choices-js/Choices/issues/1094) [#920](https://github.com/Choices-js/Choices/issues/920)
 
 ### Bug Fixes (from 11.0.0)
+- Fix performance regression when calling setChoices [#1275](https://github.com/Choices-js/Choices/issues/1275)
 * Fix `renderSelectedChoices` option when all choices are selected [#1274](https://github.com/Choices-js/Choices/issues/1274)
 * Fix v11 regression for disabled placeholder option handling [#1203](https://github.com/Choices-js/Choices/issues/1203)
 * Fix v11 regression where `clearChoices` (and `setChoices` with `replaceChoices:true`) did not remove selected items when preserving placeholders [#1261](https://github.com/Choices-js/Choices/issues/1261)
