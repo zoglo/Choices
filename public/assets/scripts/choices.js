@@ -4809,7 +4809,6 @@
             if (target === this.input.element) {
                 return;
             }
-            var preventDefault = true;
             var item = target.closest('[data-button],[data-item],[data-choice]');
             if (item instanceof HTMLElement) {
                 if ('button' in item.dataset) {
@@ -4817,16 +4816,12 @@
                 }
                 else if ('item' in item.dataset) {
                     this._handleItemAction(item, event.shiftKey);
-                    // don't prevent default to support dragging
-                    preventDefault = false;
                 }
                 else if ('choice' in item.dataset) {
                     this._handleChoiceAction(item);
                 }
             }
-            if (preventDefault) {
-                event.preventDefault();
-            }
+            event.preventDefault();
         };
         /**
          * Handles mouseover event over this.dropdown
