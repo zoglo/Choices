@@ -104,7 +104,7 @@ describe('search', () => {
   describe('kmp', () => {
     let searcher: SearchByKMP<SearchableShape>;
     beforeEach(() => {
-      process.env.CHOICES_SEARCH_KMP = undefined;
+      process.env.CHOICES_SEARCH_KMP = '1';
       searcher = new SearchByKMP<SearchableShape>(options);
       searcher.index(haystack);
     });
@@ -118,7 +118,7 @@ describe('search', () => {
     });
     it('label suffix', () => {
       const results = searcher.search(`${haystack.length - 1}`);
-      expect(results.length).eq(0);
+      expect(results.length).eq(2);
     });
   });
 
