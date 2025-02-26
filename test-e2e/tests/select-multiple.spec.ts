@@ -1034,5 +1034,27 @@ describe(`Choices - select multiple`, () => {
         await suite.expectVisibleNoticeHtml('No choices to choose from');
       });
     });
+
+    describe('Clear choices on add item', () => {
+      const testId = 'clear-on-add';
+      test('Expected items', async ({ page, bundle }) => {
+        const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+        await suite.startWithClick();
+        await suite.expectChoiceCount(2);
+
+        await suite.choices.first().click();
+        await suite.advanceClock();
+        await suite.expectHiddenDropdown();
+        await suite.expectedItemCount(1);
+
+        await suite.wrapper.click();
+        await suite.advanceClock();
+        await suite.expectVisibleNoticeHtml('No choices to choose from', false);
+
+        await suite.keyPress('Backspace');
+        await suite.expectedItemCount(0);
+        await suite.expectChoiceCount(1);
+      });
+    });
   });
 });

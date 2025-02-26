@@ -977,5 +977,19 @@ describe(`Choices - select one`, () => {
         await suite.expectVisibleNoticeHtml('No choices to choose from');
       });
     });
+
+    describe('Clear choices on add item', () => {
+      const testId = 'clear-on-add';
+      test('Expected items', async ({ page, bundle }) => {
+        const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+        await suite.startWithClick();
+        await suite.expectChoiceCount(2);
+
+        await suite.choices.last().click();
+        await suite.advanceClock();
+        await suite.expectedItemCount(1);
+        await suite.expectChoiceCount(1);
+      });
+    });
   });
 });

@@ -1107,6 +1107,27 @@
           </script>
         </div>
 
+        <div data-test-hook="clear-on-add">
+          <label for="choices-clear-on-add">Clear choices on add item</label>
+          <select
+            class="form-control"
+            name="choices-clear-on-add"
+            id="choices-clear-on-add"
+            multiple
+          >
+            <option value="Choice 1">Choice 1</option>
+            <option value="Choice 2">Choice 2</option>
+          </select>
+          <script>
+            document.addEventListener('DOMContentLoaded', function() {
+              const choices = new Choices('#choices-clear-on-add', {});
+              choices.passedElement.element.addEventListener("addItem", function () {
+                choices.clearChoices()
+                choices.hideDropdown()
+              })
+            });
+          </script>
+        </div>
 
       </div>
     </div>
