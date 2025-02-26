@@ -1,6 +1,11 @@
 # Changelog
 
-## [11.0.4]
+## [11.0.5]
+
+### Bug Fixes
+- Fix regression when calling setChoices [#1278](https://github.com/Choices-js/Choices/issues/1278)
+
+## [11.0.4] (2025-02-23)
 
 ### Features
 - Do not preventDefault on item to support dragging [#417](https://github.com/Choices-js/Choices/issues/417) [#1094](https://github.com/Choices-js/Choices/issues/1094) [#920](https://github.com/Choices-js/Choices/issues/920)
