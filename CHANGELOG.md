@@ -1,5 +1,13 @@
 # Changelog
 
+## [11.0.6]
+
+### Bug Fixes
+- Revert "Do not preventDefault on item to support dragging" [#1266](https://github.com/Choices-js/Choices/issues/1266) @Xon ([#1282](https://github.com/Choices-js/Choices/issues/1282))
+
+### Chore
+- Add e2e test for dropdown behavior on item mouse down/click
+
 ## [11.0.5] (2025-02-26)
 
 ### Bug Fixes
