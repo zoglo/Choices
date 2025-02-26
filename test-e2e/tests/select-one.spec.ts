@@ -26,6 +26,31 @@ describe(`Choices - select one`, () => {
           });
         });
 
+        describe('click selected element', () => {
+          test('toggles the dropdown', async ({ page, bundle }) => {
+            const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+            await suite.startWithClick();
+
+            const box = (await suite.itemList.locator('[data-item]').boundingBox())!;
+            await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+            await page.mouse.down();
+            await suite.advanceClock();
+            await suite.expectVisibleDropdown();
+
+            await page.mouse.up();
+            await suite.advanceClock();
+            await suite.expectHiddenDropdown();
+
+            await page.mouse.down();
+            await suite.advanceClock();
+            await suite.expectHiddenDropdown();
+
+            await page.mouse.up();
+            await suite.advanceClock();
+            await suite.expectVisibleDropdown();
+          });
+        });
+
         describe('pressing an alpha-numeric key', () => {
           test('opens the dropdown and the input value', async ({ page, bundle }) => {
             const suite = new SelectTestSuit(page, bundle, testUrl, testId);
