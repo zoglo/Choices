@@ -1129,6 +1129,32 @@
           </script>
         </div>
 
+        <div data-test-hook="set-choices-preserve">
+          <label for="choices-set-choices-preserve">setChoices example</label>
+          <select
+            class="form-control"
+            name="choices-set-choices-preserve"
+            id="choices-set-choices-preserve"
+          >
+            <option value="Choice 1">Choice 1</option>
+            <option value="Choice 2" selected>Choice 2</option>
+          </select>
+          <script>
+            document.addEventListener('DOMContentLoaded', function() {
+              const choices = new Choices('#choices-set-choices-preserve', {});
+              choices.setChoices(
+                [
+                  { value: 'Choice 1', label: 'Choice 1' },
+                  { value: 'Choice 2', label: 'Choice 2' }
+                ],
+                'value',
+                'label',
+                true,
+              );
+            });
+          </script>
+        </div>
+
       </div>
     </div>
   </body>

@@ -991,5 +991,18 @@ describe(`Choices - select one`, () => {
         await suite.expectChoiceCount(1);
       });
     });
+
+    describe('setChoices', () => {
+      const testId = 'set-choices-preserve';
+      test('Expected selected to be preserved', async ({ page, bundle }) => {
+        const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+        await suite.start();
+
+        await suite.expectHiddenDropdown();
+        await suite.expectedValue('Choice 2');
+        await suite.expectedItemCount(1);
+        await suite.expectChoiceCount(3);
+      });
+    });
   });
 });
