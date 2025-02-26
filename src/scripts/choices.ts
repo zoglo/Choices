@@ -692,7 +692,7 @@ class Choices {
         return new Promise((resolve) => requestAnimationFrame(resolve))
           .then(() => this._handleLoadingState(true))
           .then(() => fetcher)
-          .then((data: InputChoice[]) => this.setChoices(data, value, label, replaceChoices))
+          .then((data: InputChoice[]) => this.setChoices(data, value, label, replaceChoices, clearSearchFlag, replaceItems))
           .catch((err) => {
             if (!this.config.silent) {
               console.error(err);
