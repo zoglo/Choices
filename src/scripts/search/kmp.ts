@@ -39,13 +39,10 @@ function kmpSearch(pattern: string, text: string): number {
 export class SearchByKMP<T extends object> implements Searcher<T> {
   _fields: string[];
 
-  _limit: number;
-
   _haystack: T[] = [];
 
   constructor(config: Options) {
     this._fields = config.searchFields;
-    this._limit = config.searchResultLimit;
   }
 
   index(data: T[]): void {
@@ -80,9 +77,7 @@ export class SearchByKMP<T extends object> implements Searcher<T> {
             score: count,
             rank: count + 1,
           });
-          if (++count === this._limit) {
-            return results;
-          }
+          count++;
         }
       }
     }
