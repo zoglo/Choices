@@ -3763,13 +3763,14 @@ var Choices = /** @class */ (function () {
      * }], 'value', 'label', false);
      * ```
      */
-    Choices.prototype.setChoices = function (choicesArrayOrFetcher, value, label, replaceChoices, clearSearchFlag) {
+    Choices.prototype.setChoices = function (choicesArrayOrFetcher, value, label, replaceChoices, clearSearchFlag, replaceItems) {
         var _this = this;
         if (choicesArrayOrFetcher === void 0) { choicesArrayOrFetcher = []; }
         if (value === void 0) { value = 'value'; }
         if (label === void 0) { label = 'label'; }
         if (replaceChoices === void 0) { replaceChoices = false; }
         if (clearSearchFlag === void 0) { clearSearchFlag = true; }
+        if (replaceItems === void 0) { replaceItems = false; }
         if (!this.initialisedOK) {
             this._warnChoicesInitFailed('setChoices');
             return this;
@@ -3779,10 +3780,6 @@ var Choices = /** @class */ (function () {
         }
         if (typeof value !== 'string' || !value) {
             throw new TypeError("value parameter must be a name of 'value' field in passed objects");
-        }
-        // Clear choices if needed
-        if (replaceChoices) {
-            this.clearChoices();
         }
         if (typeof choicesArrayOrFetcher === 'function') {
             // it's a choices fetcher function
@@ -3817,6 +3814,16 @@ var Choices = /** @class */ (function () {
             if (clearSearchFlag) {
                 _this._isSearching = false;
             }
+            var items = {};
+            if (!replaceItems) {
+                _this._store.items.forEach(function (item) {
+                    items[item.value] = item;
+                });
+            }
+            // Clear choices if needed
+            if (replaceChoices) {
+                _this.clearChoices();
+            }
             var isDefaultValue = value === 'value';
             var isDefaultLabel = label === 'label';
             choicesArrayOrFetcher.forEach(function (groupOrChoice) {
@@ -3833,6 +3840,9 @@ var Choices = /** @class */ (function () {
                         choice = __assign(__assign({}, choice), { value: choice[value], label: choice[label] });
                     }
                     var choiceFull = mapInputToChoice(choice, false);
+                    if (!replaceItems && choiceFull.value in items) {
+                        choiceFull.selected = true;
+                    }
                     _this._addChoice(choiceFull);
                     if (choiceFull.placeholder && !_this._hasNonChoicePlaceholder) {
                         _this._placeholderValue = unwrapStringForEscaped(choiceFull.label);
