@@ -81,7 +81,7 @@ export class SearchByKMP<T extends object> implements Searcher<T> {
             rank: count + 1,
           });
           if (++count === this._limit) {
-            break;
+            return results;
           }
         }
       }
