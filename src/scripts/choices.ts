@@ -727,15 +727,9 @@ class Choices {
       if (clearSearchFlag) {
         this._isSearching = false;
       }
-      const items = {};
-      if (!replaceItems) {
-        this._store.items.forEach((item) => {
-          items[item.value] = item;
-        });
-      }
       // Clear choices if needed
       if (replaceChoices) {
-        this.clearChoices();
+        this.clearChoices(true, replaceItems);
       }
       const isDefaultValue = value === 'value';
       const isDefaultLabel = label === 'label';
@@ -761,9 +755,6 @@ class Choices {
             } as InputChoice;
           }
           const choiceFull = mapInputToChoice<InputChoice>(choice, false);
-          if (!replaceItems && choiceFull.value in items) {
-            choiceFull.selected = true;
-          }
           this._addChoice(choiceFull);
           if (choiceFull.placeholder && !this._hasNonChoicePlaceholder) {
             this._placeholderValue = unwrapStringForEscaped(choiceFull.label);
@@ -863,15 +854,27 @@ class Choices {
     return this;
   }
 
-  clearChoices(clearOptions: boolean = true): this {
+  clearChoices(clearOptions: boolean = true, clearItems: boolean = false): this {
     if (clearOptions) {
-      this.passedElement.element.replaceChildren('');
+      if (clearItems) {
+        this.passedElement.element.replaceChildren('');
+      } else {
+        this.passedElement.element.querySelectorAll(':not([selected])').forEach((el): void => {
+          el.remove();
+        });
+      }
     }
     this.itemList.element.replaceChildren('');
     this.choiceList.element.replaceChildren('');
     this._clearNotice();
-    this._store.reset();
-
+    this._store.withTxn(() => {
+      const items = clearItems ? [] : this._store.items;
+      this._store.reset();
+      items.forEach((item: ChoiceFull): void => {
+        this._store.dispatch(addChoice(item));
+        this._store.dispatch(addItem(item));
+      });
+    });
     // @todo integrate with Store
     this._searcher.reset();
 
@@ -879,7 +882,7 @@ class Choices {
   }
 
   clearStore(clearOptions: boolean = true): this {
-    this.clearChoices(clearOptions);
+    this.clearChoices(clearOptions, true);
     this._stopSearch();
     this._lastAddedChoiceId = 0;
     this._lastAddedGroupId = 0;
