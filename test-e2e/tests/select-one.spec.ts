@@ -993,15 +993,24 @@ describe(`Choices - select one`, () => {
     });
 
     describe('setChoices', () => {
-      const testId = 'set-choices-preserve';
       test('Expected selected to be preserved', async ({ page, bundle }) => {
-        const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+        const suite = new SelectTestSuit(page, bundle, testUrl, 'set-choices-preserve');
         await suite.start();
 
         await suite.expectHiddenDropdown();
         await suite.expectedValue('Choice 2');
         await suite.expectedItemCount(1);
         await suite.expectChoiceCount(3);
+      });
+
+      test('Expected selected to be preserved (no duplicates)', async ({ page, bundle }) => {
+        const suite = new SelectTestSuit(page, bundle, testUrl, 'set-choices-preserve-no-dupes');
+        await suite.start();
+
+        await suite.expectHiddenDropdown();
+        await suite.expectedValue('Choice 2');
+        await suite.expectedItemCount(1);
+        await suite.expectChoiceCount(2);
       });
     });
   });
