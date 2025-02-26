@@ -667,6 +667,7 @@ class Choices {
     label: string = 'label',
     replaceChoices: boolean = false,
     clearSearchFlag: boolean = true,
+    replaceItems: boolean = false,
   ): this | Promise<this> {
     if (!this.initialisedOK) {
       this._warnChoicesInitFailed('setChoices');
@@ -681,11 +682,6 @@ class Choices {
       throw new TypeError(`value parameter must be a name of 'value' field in passed objects`);
     }
 
-    // Clear choices if needed
-    if (replaceChoices) {
-      this.clearChoices();
-    }
-
     if (typeof choicesArrayOrFetcher === 'function') {
       // it's a choices fetcher function
       const fetcher = choicesArrayOrFetcher(this);
@@ -696,7 +692,9 @@ class Choices {
         return new Promise((resolve) => requestAnimationFrame(resolve))
           .then(() => this._handleLoadingState(true))
           .then(() => fetcher)
-          .then((data: InputChoice[]) => this.setChoices(data, value, label, replaceChoices))
+          .then((data: InputChoice[]) =>
+            this.setChoices(data, value, label, replaceChoices, clearSearchFlag, replaceItems),
+          )
           .catch((err) => {
             if (!this.config.silent) {
               console.error(err);
@@ -729,6 +727,16 @@ class Choices {
       if (clearSearchFlag) {
         this._isSearching = false;
       }
+      const items = {};
+      if (!replaceItems) {
+        this._store.items.forEach((item) => {
+          items[item.value] = item;
+        });
+      }
+      // Clear choices if needed
+      if (replaceChoices) {
+        this.clearChoices();
+      }
       const isDefaultValue = value === 'value';
       const isDefaultLabel = label === 'label';
 
@@ -753,6 +761,9 @@ class Choices {
             } as InputChoice;
           }
           const choiceFull = mapInputToChoice<InputChoice>(choice, false);
+          if (!replaceItems && choiceFull.value in items) {
+            choiceFull.selected = true;
+          }
           this._addChoice(choiceFull);
           if (choiceFull.placeholder && !this._hasNonChoicePlaceholder) {
             this._placeholderValue = unwrapStringForEscaped(choiceFull.label);
