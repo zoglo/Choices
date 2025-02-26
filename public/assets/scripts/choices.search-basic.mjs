@@ -3308,7 +3308,7 @@ var Choices = /** @class */ (function () {
                 return new Promise(function (resolve) { return requestAnimationFrame(resolve); })
                     .then(function () { return _this._handleLoadingState(true); })
                     .then(function () { return fetcher_1; })
-                    .then(function (data) { return _this.setChoices(data, value, label, replaceChoices); })
+                    .then(function (data) { return _this.setChoices(data, value, label, replaceChoices, clearSearchFlag, replaceItems); })
                     .catch(function (err) {
                     if (!_this.config.silent) {
                         console.error(err);
