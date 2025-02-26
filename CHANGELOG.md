@@ -1,6 +1,6 @@
 # Changelog
 
-## [11.0.5]
+## [11.0.5] (2025-02-26)
 
 ### Bug Fixes
 - Fix regression when calling setChoices [#1278](https://github.com/Choices-js/Choices/issues/1278)
