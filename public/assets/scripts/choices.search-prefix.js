@@ -2182,15 +2182,9 @@
                 if (clearSearchFlag) {
                     _this._isSearching = false;
                 }
-                var items = {};
-                if (!replaceItems) {
-                    _this._store.items.forEach(function (item) {
-                        items[item.value] = item;
-                    });
-                }
                 // Clear choices if needed
                 if (replaceChoices) {
-                    _this.clearChoices();
+                    _this.clearChoices(true, replaceItems);
                 }
                 var isDefaultValue = value === 'value';
                 var isDefaultLabel = label === 'label';
@@ -2208,9 +2202,6 @@
                             choice = __assign(__assign({}, choice), { value: choice[value], label: choice[label] });
                         }
                         var choiceFull = mapInputToChoice(choice, false);
-                        if (!replaceItems && choiceFull.value in items) {
-                            choiceFull.selected = true;
-                        }
                         _this._addChoice(choiceFull);
                         if (choiceFull.placeholder && !_this._hasNonChoicePlaceholder) {
                             _this._placeholderValue = unwrapStringForEscaped(choiceFull.label);
@@ -2296,22 +2287,38 @@
             }
             return this;
         };
-        Choices.prototype.clearChoices = function (clearOptions) {
+        Choices.prototype.clearChoices = function (clearOptions, clearItems) {
+            var _this = this;
             if (clearOptions === void 0) { clearOptions = true; }
+            if (clearItems === void 0) { clearItems = false; }
             if (clearOptions) {
-                this.passedElement.element.replaceChildren('');
+                if (clearItems) {
+                    this.passedElement.element.replaceChildren('');
+                }
+                else {
+                    this.passedElement.element.querySelectorAll(':not([selected])').forEach(function (el) {
+                        el.remove();
+                    });
+                }
             }
             this.itemList.element.replaceChildren('');
             this.choiceList.element.replaceChildren('');
             this._clearNotice();
-            this._store.reset();
+            this._store.withTxn(function () {
+                var items = clearItems ? [] : _this._store.items;
+                _this._store.reset();
+                items.forEach(function (item) {
+                    _this._store.dispatch(addChoice(item));
+                    _this._store.dispatch(addItem(item));
+                });
+            });
             // @todo integrate with Store
             this._searcher.reset();
             return this;
         };
         Choices.prototype.clearStore = function (clearOptions) {
             if (clearOptions === void 0) { clearOptions = true; }
-            this.clearChoices(clearOptions);
+            this.clearChoices(clearOptions, true);
             this._stopSearch();
             this._lastAddedChoiceId = 0;
             this._lastAddedGroupId = 0;
