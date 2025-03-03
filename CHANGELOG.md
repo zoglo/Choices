@@ -1,13 +1,18 @@
 # Changelog
 
-## [11.0.6]
+## [11.0.7]
+
+### Bug Fixes
+- Remove `role="textbox"` from search input, per a11y practices. [#941](https://github.com/Choices-js/Choices/issues/941) @mlinnetz ([#1285](https://github.com/Choices-js/Choices/issues/1285))
+
+## [11.0.6] (2025-02-27)
 
 ### Breaking changes
 - Changes to `setChoices` & `clearChoices` adjust how the selection and new choices combine when using `replaceChoices: true` is used to better match v10 and v11.0.3 behavior.
   - To remove duplication, consider `duplicateItemsAllowed: false` to be set, or use the new 6th argument `replaceItems:true`
 
 ### Bug Fixes
-- Fix `setChoices` & `clearChoices` related regressions @Xon ([#1278](https://github.com/Choices-js/Choices/issues/1278]) [#1283](https://github.com/Choices-js/Choices/issues/1283)
+- Fix `setChoices` & `clearChoices` related regressions @Xon ([#1278](https://github.com/Choices-js/Choices/issues/1278])) [#1283](https://github.com/Choices-js/Choices/issues/1283)
 - Revert "Do not preventDefault on item to support dragging" [#1266](https://github.com/Choices-js/Choices/issues/1266) @Xon ([#1282](https://github.com/Choices-js/Choices/issues/1282))
 
 ### Chore
