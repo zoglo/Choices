@@ -1601,7 +1601,6 @@ var templates = {
         inp.autocomplete = 'off';
         inp.autocapitalize = 'off';
         inp.spellcheck = false;
-        inp.setAttribute('role', 'textbox');
         inp.setAttribute('aria-autocomplete', 'list');
         if (placeholderValue) {
             inp.setAttribute('aria-label', placeholderValue);
