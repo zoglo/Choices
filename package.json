@@ -20,6 +20,16 @@
       "import": "./public/assets/scripts/choices.search-basic.mjs",
       "require": "./public/assets/scripts/choices.search-basic.min.js"
     },
+    "./search-prefix": {
+      "types": "./public/types/src/index.d.ts",
+      "import": "./public/assets/scripts/choices.search-prefix.mjs",
+      "require": "./public/assets/scripts/choices.search-prefix.min.js"
+    },
+    "./search-kmp": {
+      "types": "./public/types/src/index.d.ts",
+      "import": "./public/assets/scripts/choices.search-kmp.mjs",
+      "require": "./public/assets/scripts/choices.search-kmp.min.js"
+    },
     "./search-none": {
       "types": "./public/types/src/index.d.ts",
       "import": "./public/assets/scripts/choices.search-none.mjs",
