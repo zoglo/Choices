@@ -1,6 +1,10 @@
 # Changelog
 
-## [11.0.7]
+## [11.1.0]
+
+### Features
+- Support `<option>` label attribute [#1289](https://github.com/Choices-js/Choices/pull/1289)
+- Add KMP search algorithm (gated by build flag) [#1229](https://github.com/Choices-js/Choices/issue/1229) [#1277](https://github.com/Choices-js/Choices/pull/1277)
 
 ### Bug Fixes
 - Remove `role="textbox"` from search input, per a11y practices. [#941](https://github.com/Choices-js/Choices/issues/941) @mlinnetz ([#1285](https://github.com/Choices-js/Choices/issues/1285))
