@@ -6,7 +6,7 @@ import { SearchByKMP } from './kmp';
 import { searchFuse, searchKMP } from '../interfaces/build-flags';
 
 export function getSearcher<T extends object>(config: Options): Searcher<T> {
-  if (searchFuse) {
+  if (searchFuse && !searchKMP) {
     return new SearchByFuse<T>(config);
   }
   if (searchKMP) {
