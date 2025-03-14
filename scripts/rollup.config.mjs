@@ -41,6 +41,13 @@ const builds = [
       CHOICES_SEARCH_FUSE: "null"
     }
   },
+  {
+    name: "search-kmp",
+    features: {
+      ...buildFeatures,
+      CHOICES_SEARCH_KMP: "1"
+    }
+  },
 ];
 
 const outputTypes = {
