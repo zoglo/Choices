@@ -90,6 +90,6 @@ export const DEFAULT_CONFIG: Options = {
   callbackOnInit: null,
   callbackOnCreateTemplates: null,
   classNames: DEFAULT_CLASSNAMES,
-  wrapPassedElement: false,
+  wrapPassedElement: true,
   appendGroupInSearch: false,
 } as const;

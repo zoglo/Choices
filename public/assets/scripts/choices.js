@@ -998,7 +998,7 @@
         callbackOnInit: null,
         callbackOnCreateTemplates: null,
         classNames: DEFAULT_CLASSNAMES,
-        wrapPassedElement: false,
+        wrapPassedElement: true,
         appendGroupInSearch: false,
     };
 
