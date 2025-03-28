@@ -29,7 +29,7 @@ export default class Container {
     removeFocusState(): void;
     enable(): void;
     disable(): void;
-    wrap(element: HTMLElement): void;
+    wrap(element: HTMLElement, wrapElement?: boolean): void;
     unwrap(element: HTMLElement): void;
     addLoadingState(): void;
     removeLoadingState(): void;

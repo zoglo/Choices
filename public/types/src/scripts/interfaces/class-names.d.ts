@@ -34,6 +34,8 @@ export interface ClassNames {
     groupHeading: string | Array<string>;
     /** @default ['choices__button'] */
     button: string | Array<string>;
+    /** @default ['choices__hidden-input'] */
+    hiddenInput: string | Array<string>;
     /** @default ['is-active'] */
     activeState: string | Array<string>;
     /** @default ['is-focused'] */

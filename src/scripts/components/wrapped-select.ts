@@ -18,15 +18,18 @@ export default class WrappedSelect extends WrappedElement<HTMLSelectElement> {
     classNames,
     template,
     extractPlaceholder,
+    doWrap,
   }: {
     element: HTMLSelectElement;
     classNames: ClassNames;
     template: (data: object) => HTMLOptionElement;
     extractPlaceholder: boolean;
+    doWrap: boolean;
   }) {
     super({ element, classNames });
     this.template = template;
     this.extractPlaceholder = extractPlaceholder;
+    this.doWrap = doWrap;
   }
 
   get placeholderOption(): HTMLOptionElement | null {

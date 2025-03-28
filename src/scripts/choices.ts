@@ -244,6 +244,7 @@ class Choices {
       this.passedElement = new WrappedInput({
         element: passedElement as HTMLInputElement,
         classNames: config.classNames,
+        doWrap: this.config.wrapPassedElement,
       });
     } else {
       const selectEl = passedElement as HTMLSelectElement;
@@ -252,6 +253,7 @@ class Choices {
         classNames: config.classNames,
         template: (data: ChoiceFull): HTMLOptionElement => this._templates.option(data),
         extractPlaceholder: config.placeholder && !this._hasNonChoicePlaceholder,
+        doWrap: this.config.wrapPassedElement,
       });
     }
 
@@ -364,7 +366,10 @@ class Choices {
 
     this._removeEventListeners();
     this.passedElement.reveal();
-    this.containerOuter.unwrap(this.passedElement.element);
+
+    if (this.config.wrapPassedElement) {
+      this.containerOuter.unwrap(this.passedElement.element);
+    }
 
     this._store._listeners = []; // prevents select/input value being wiped
     this.clearStore(false);
@@ -2238,7 +2243,8 @@ class Choices {
     // Hide original element
     passedElement.conceal();
     // Wrap input in container preserving DOM ordering
-    containerInner.wrap(passedElement.element);
+    containerInner.wrap(passedElement.element, this.config.wrapPassedElement);
+
     // Wrapper inner container with outer container
     containerOuter.wrap(containerInner.element);
 

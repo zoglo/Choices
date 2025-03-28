@@ -10,9 +10,12 @@ export default class WrappedElement<T extends HTMLInputElement | HTMLSelectEleme
 
   isDisabled: boolean;
 
-  constructor({ element, classNames }) {
+  doWrap: boolean;
+
+  constructor({ element, classNames, doWrap = true }) {
     this.element = element;
     this.classNames = classNames;
+    this.doWrap = doWrap;
     this.isDisabled = false;
   }
 
@@ -38,6 +41,10 @@ export default class WrappedElement<T extends HTMLInputElement | HTMLSelectEleme
     // Hide passed input
     addClassesToElement(el, this.classNames.input);
     el.hidden = true;
+
+    if (!this.doWrap) {
+      addClassesToElement(el, this.classNames.hiddenInput);
+    }
 
     // Remove element from tab index
     el.tabIndex = -1;

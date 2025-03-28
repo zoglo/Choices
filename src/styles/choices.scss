@@ -55,7 +55,8 @@ $choices-z-index: 1 !default;
     }
   }
 
-  [hidden] {
+  [hidden],
+  &__hidden-input {
     display: none !important;
   }
 }

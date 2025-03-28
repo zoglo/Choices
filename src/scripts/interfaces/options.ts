@@ -615,5 +615,12 @@ export interface Options {
    */
   callbackOnCreateTemplates: CallbackOnCreateTemplatesFn | null;
 
+  /**
+   * Whether the original element is wrapped. This makes sure that the original DOM node is not manipulated, thus not triggering a disconnect in libraries such as hotwired turbo. Related issue: https://github.com/Choices-js/Choices/issues/18
+   *
+   * @default true
+   */
+  wrapPassedElement: boolean;
+
   appendGroupInSearch: false;
 }

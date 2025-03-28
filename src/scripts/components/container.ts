@@ -118,7 +118,7 @@ export default class Container {
     this.isDisabled = true;
   }
 
-  wrap(element: HTMLElement): void {
+  wrap(element: HTMLElement, wrapElement: boolean = true): void {
     const el = this.element;
     const { parentNode } = element;
     if (parentNode) {
@@ -129,7 +129,9 @@ export default class Container {
       }
     }
 
-    el.appendChild(element);
+    if (wrapElement) {
+      el.appendChild(element);
+    }
   }
 
   unwrap(element: HTMLElement): void {

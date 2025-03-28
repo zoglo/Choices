@@ -20,6 +20,7 @@ export const DEFAULT_CLASSNAMES: ClassNames = {
   group: ['choices__group'],
   groupHeading: ['choices__heading'],
   button: ['choices__button'],
+  hiddenInput: ['choices__hidden-input'],
   activeState: ['is-active'],
   focusState: ['is-focused'],
   openState: ['is-open'],
@@ -89,5 +90,6 @@ export const DEFAULT_CONFIG: Options = {
   callbackOnInit: null,
   callbackOnCreateTemplates: null,
   classNames: DEFAULT_CLASSNAMES,
+  wrapPassedElement: false,
   appendGroupInSearch: false,
 } as const;

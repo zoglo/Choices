@@ -5,9 +5,11 @@ export default class WrappedElement<T extends HTMLInputElement | HTMLSelectEleme
     element: T;
     classNames: ClassNames;
     isDisabled: boolean;
-    constructor({ element, classNames }: {
+    doWrap: boolean;
+    constructor({ element, classNames, doWrap }: {
         element: any;
         classNames: any;
+        doWrap?: boolean | undefined;
     });
     get isActive(): boolean;
     get dir(): string;
