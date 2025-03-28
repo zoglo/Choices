@@ -428,7 +428,8 @@ var Container = /** @class */ (function () {
         }
         this.isDisabled = true;
     };
-    Container.prototype.wrap = function (element) {
+    Container.prototype.wrap = function (element, wrapElement) {
+        if (wrapElement === void 0) { wrapElement = true; }
         var el = this.element;
         var parentNode = element.parentNode;
         if (parentNode) {
@@ -439,7 +440,9 @@ var Container = /** @class */ (function () {
                 parentNode.appendChild(el);
             }
         }
-        el.appendChild(element);
+        if (wrapElement) {
+            el.appendChild(element);
+        }
     };
     Container.prototype.unwrap = function (element) {
         var el = this.element;
@@ -654,9 +657,10 @@ var List = /** @class */ (function () {
 
 var WrappedElement = /** @class */ (function () {
     function WrappedElement(_a) {
-        var element = _a.element, classNames = _a.classNames;
+        var element = _a.element, classNames = _a.classNames, _b = _a.doWrap, doWrap = _b === void 0 ? true : _b;
         this.element = element;
         this.classNames = classNames;
+        this.doWrap = doWrap;
         this.isDisabled = false;
     }
     Object.defineProperty(WrappedElement.prototype, "isActive", {
@@ -689,6 +693,9 @@ var WrappedElement = /** @class */ (function () {
         // Hide passed input
         addClassesToElement(el, this.classNames.input);
         el.hidden = true;
+        if (!this.doWrap) {
+            addClassesToElement(el, this.classNames.hiddenInput);
+        }
         // Remove element from tab index
         el.tabIndex = -1;
         // Backup original styles if any
@@ -810,10 +817,11 @@ var isHtmlOptgroup = function (e) { return e.tagName === 'OPTGROUP'; };
 var WrappedSelect = /** @class */ (function (_super) {
     __extends(WrappedSelect, _super);
     function WrappedSelect(_a) {
-        var element = _a.element, classNames = _a.classNames, template = _a.template, extractPlaceholder = _a.extractPlaceholder;
+        var element = _a.element, classNames = _a.classNames, template = _a.template, extractPlaceholder = _a.extractPlaceholder, doWrap = _a.doWrap;
         var _this = _super.call(this, { element: element, classNames: classNames }) || this;
         _this.template = template;
         _this.extractPlaceholder = extractPlaceholder;
+        _this.doWrap = doWrap;
         return _this;
     }
     Object.defineProperty(WrappedSelect.prototype, "placeholderOption", {
@@ -915,6 +923,7 @@ var DEFAULT_CLASSNAMES = {
     group: ['choices__group'],
     groupHeading: ['choices__heading'],
     button: ['choices__button'],
+    hiddenInput: ['choices__hidden-input'],
     activeState: ['is-active'],
     focusState: ['is-focused'],
     openState: ['is-open'],
@@ -983,6 +992,7 @@ var DEFAULT_CONFIG = {
     callbackOnInit: null,
     callbackOnCreateTemplates: null,
     classNames: DEFAULT_CLASSNAMES,
+    wrapPassedElement: false,
     appendGroupInSearch: false,
 };
 
@@ -2904,6 +2914,7 @@ var Choices = /** @class */ (function () {
             this.passedElement = new WrappedInput({
                 element: passedElement,
                 classNames: config.classNames,
+                doWrap: this.config.wrapPassedElement,
             });
         }
         else {
@@ -2913,6 +2924,7 @@ var Choices = /** @class */ (function () {
                 classNames: config.classNames,
                 template: function (data) { return _this._templates.option(data); },
                 extractPlaceholder: config.placeholder && !this._hasNonChoicePlaceholder,
+                doWrap: this.config.wrapPassedElement,
             });
         }
         this.initialised = false;
@@ -3023,7 +3035,9 @@ var Choices = /** @class */ (function () {
         }
         this._removeEventListeners();
         this.passedElement.reveal();
-        this.containerOuter.unwrap(this.passedElement.element);
+        if (this.config.wrapPassedElement) {
+            this.containerOuter.unwrap(this.passedElement.element);
+        }
         this._store._listeners = []; // prevents select/input value being wiped
         this.clearStore(false);
         this._stopSearch();
@@ -4630,7 +4644,7 @@ var Choices = /** @class */ (function () {
         // Hide original element
         passedElement.conceal();
         // Wrap input in container preserving DOM ordering
-        containerInner.wrap(passedElement.element);
+        containerInner.wrap(passedElement.element, this.config.wrapPassedElement);
         // Wrapper inner container with outer container
         containerOuter.wrap(containerInner.element);
         if (this._isSelectOneElement) {
