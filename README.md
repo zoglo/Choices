@@ -180,11 +180,11 @@ import "choices.js/public/assets/styles/choices.css";
     itemSelectText: 'Press to select',
     uniqueItemText: 'Only unique values can be added',
     customAddItemText: 'Only values matching specific conditions can be added',
-    addItemText: (value) => {
+    addItemText: (value, rawValue) => {
       return `Press Enter to add <b>"${value}"</b>`;
     },
     removeItemIconText: () => `Remove item`,
-    removeItemLabelText: (value) => `Remove item: ${value}`,
+    removeItemLabelText: (value, rawValue) => `Remove item: ${value}`,
     maxItemText: (maxItemCount) => {
       return `Only ${maxItemCount} values can be added`;
     },
@@ -693,7 +693,7 @@ For backward compatibility, `<option value="">This is a placeholder</option>` an
 
 ### addItemText
 
-**Type:** `String/Function` **Default:** `Press Enter to add "${value}"`
+**Type:** `String/Function` **Default:** `Press Enter to add "${value}"` **Arguments:** `value`, `valueRaw`
 
 **Input types affected:** `text`, `select-one`, `select-multiple`
 
@@ -703,7 +703,7 @@ Return type must be safe to insert into HTML (ie use the 1st argument which is s
 
 ### removeItemIconText
 
-**Type:** `String/Function` **Default:** `Remove item"`
+**Type:** `String/Function` **Default:** `Remove item"` **Arguments:** `value`, `valueRaw`
 
 **Input types affected:** `text`, `select-one`, `select-multiple`
 
@@ -713,7 +713,7 @@ Return type must be safe to insert into HTML (ie use the 1st argument which is s
 
 ### removeItemLabelText
 
-**Type:** `String/Function` **Default:** `Remove item: ${value}"`
+**Type:** `String/Function` **Default:** `Remove item: ${value}"` **Arguments:** `value`, `valueRaw`
 
 **Input types affected:** `text`, `select-one`, `select-multiple`
 
@@ -723,7 +723,7 @@ Return type must be safe to insert into HTML (ie use the 1st argument which is s
 
 ### maxItemText
 
-**Type:** `String/Function` **Default:** `Only ${maxItemCount} values can be added`
+**Type:** `String/Function` **Default:** `Only ${maxItemCount} values can be added` **Arguments:** `maxItemCount`
 
 **Input types affected:** `text`
 
@@ -731,7 +731,7 @@ Return type must be safe to insert into HTML (ie use the 1st argument which is s
 
 ### valueComparer
 
-**Type:** `Function` **Default:** `strict equality`
+**Type:** `Function` **Default:** `strict equality` **Arguments:** `value1`, `value2`
 
 **Input types affected:** `select-one`, `select-multiple`
 
@@ -809,7 +809,7 @@ classNames: {
 
 ### callbackOnCreateTemplates(strToEl: (str: string) => HTMLElement, escapeForTemplate: (allowHTML: boolean, s: StringUntrusted | StringPreEscaped | string) => string, getClassNames: (s: Array<string> | string) => string)
 
-**Type:** `Function` **Default:** `null` **Arguments:** `strToEl`, `escapeForTemplate`
+**Type:** `Function` **Default:** `null` **Arguments:** `strToEl`, `escapeForTemplate`, `getClassNames`
 
 **Input types affected:** `text`, `select-one`, `select-multiple`
 
