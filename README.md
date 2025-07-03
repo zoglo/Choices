@@ -841,7 +841,7 @@ const example = new Choices(element, {
   callbackOnCreateTemplates: function(strToEl, escapeForTemplate, getClassNames) {
     return {
       item: ({ classNames }, data) => {
-        return template(`
+        return strToEl(`
           <div class="${getClassNames(classNames.item).join(' ')} ${
           getClassNames(data.highlighted
             ? classNames.highlightedState
@@ -856,7 +856,7 @@ const example = new Choices(element, {
         `);
       },
       choice: ({ classNames }, data) => {
-        return template(`
+        return strToEl(`
           <div class="${getClassNames(classNames.item).join(' ')} ${getClassNames(classNames.itemChoice).join(' ')} ${
           getClassNames(data.disabled ? classNames.itemDisabled : classNames.itemSelectable).join(' ')
         }" data-select-text="${this.config.itemSelectText}" data-choice ${
