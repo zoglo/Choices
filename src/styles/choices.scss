@@ -161,7 +161,7 @@ $choices-placeholder-opacity: 0.5 !default;
   .#{$choices-selector}__button {
     position: relative;
     display: inline-block;
-    margin: 0 -$choices-button-offset * 0.5 0 $choices-button-offset;
+    margin: 0 (-$choices-button-offset * 0.5) 0 $choices-button-offset;
     padding-left: $choices-button-offset * 2;
     border-left: 1px solid color.adjust($choices-primary-color, $lightness: -10%);
     background-image: $choices-icon-cross;
