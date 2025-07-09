@@ -186,7 +186,7 @@ export interface Options {
      *
      * @default
      * ```
-     * (value, valueRaw) => `Remove item`;
+     * (value, valueRaw, item) => `Remove item`;
      * ```
      */
     removeItemIconText: string | Types.NoticeStringFunction;
@@ -200,7 +200,7 @@ export interface Options {
      *
      * @default
      * ```
-     * (value, valueRaw) => `Remove item: ${value}`;
+     * (value, valueRaw, item) => `Remove item: ${value}`;
      * ```
      */
     removeItemLabelText: string | Types.NoticeStringFunction;

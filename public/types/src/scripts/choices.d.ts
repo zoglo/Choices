@@ -155,6 +155,9 @@ declare class Choices {
     _displayNotice(text: string, type: NoticeType, openDropdown?: boolean): void;
     _clearNotice(): void;
     _renderNotice(fragment?: DocumentFragment): void;
+    /**
+     * @deprecated Use utils.getChoiceForOutput
+     */
     _getChoiceForOutput(choice: ChoiceFull, keyCode?: number): EventChoice;
     _triggerChange(value: any): void;
     _handleButtonAction(element: HTMLElement): void;

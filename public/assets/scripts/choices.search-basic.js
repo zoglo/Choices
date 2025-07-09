@@ -217,9 +217,6 @@
             return firstChild;
         };
     })();
-    var resolveNoticeFunction = function (fn, value) {
-        return typeof fn === 'function' ? fn(sanitise(value), value) : fn;
-    };
     var resolveStringFunction = function (fn) {
         return typeof fn === 'function' ? fn() : fn;
     };
@@ -250,6 +247,26 @@
             }
         }
         return '';
+    };
+    var getChoiceForOutput = function (choice, keyCode) {
+        return {
+            id: choice.id,
+            highlighted: choice.highlighted,
+            labelClass: choice.labelClass,
+            labelDescription: choice.labelDescription,
+            customProperties: choice.customProperties,
+            disabled: choice.disabled,
+            active: choice.active,
+            label: choice.label,
+            placeholder: choice.placeholder,
+            value: choice.value,
+            groupValue: choice.group ? choice.group.label : undefined,
+            element: choice.element,
+            keyCode: keyCode,
+        };
+    };
+    var resolveNoticeFunction = function (fn, value, item) {
+        return typeof fn === 'function' ? fn(sanitise(value), unwrapStringForRaw(value), item) : fn;
     };
     var escapeForTemplate = function (allowHTML, s) {
         return allowHTML ? unwrapStringForEscaped(s) : sanitise(s);
@@ -979,7 +996,9 @@
         customAddItemText: 'Only values matching specific conditions can be added',
         addItemText: function (value) { return "Press Enter to add <b>\"".concat(value, "\"</b>"); },
         removeItemIconText: function () { return "Remove item"; },
-        removeItemLabelText: function (value) { return "Remove item: ".concat(value); },
+        removeItemLabelText: function (value, _valueRaw, i) {
+            return "Remove item: ".concat(i ? sanitise(i.label) : value);
+        },
         maxItemText: function (maxItemCount) { return "Only ".concat(maxItemCount, " values can be added"); },
         valueComparer: function (value1, value2) { return value1 === value2; },
         fuseOptions: {
@@ -2646,8 +2665,9 @@
                 var removeButton = document.createElement('button');
                 removeButton.type = 'button';
                 addClassesToElement(removeButton, button);
-                setElementHtml(removeButton, true, resolveNoticeFunction(removeItemIconText, choice.value));
-                var REMOVE_ITEM_LABEL = resolveNoticeFunction(removeItemLabelText, choice.value);
+                var eventChoice = getChoiceForOutput(choice);
+                setElementHtml(removeButton, true, resolveNoticeFunction(removeItemIconText, choice.value, eventChoice));
+                var REMOVE_ITEM_LABEL = resolveNoticeFunction(removeItemLabelText, choice.value, eventChoice);
                 if (REMOVE_ITEM_LABEL) {
                     removeButton.setAttribute('aria-label', REMOVE_ITEM_LABEL);
                 }
@@ -3067,7 +3087,7 @@
             }
             this._store.dispatch(highlightItem(choice, true));
             if (runEvent) {
-                this.passedElement.triggerEvent(EventType.highlightItem, this._getChoiceForOutput(choice));
+                this.passedElement.triggerEvent(EventType.highlightItem, getChoiceForOutput(choice));
             }
             return this;
         };
@@ -3082,7 +3102,7 @@
             }
             this._store.dispatch(highlightItem(choice, false));
             if (runEvent) {
-                this.passedElement.triggerEvent(EventType.unhighlightItem, this._getChoiceForOutput(choice));
+                this.passedElement.triggerEvent(EventType.unhighlightItem, getChoiceForOutput(choice));
             }
             return this;
         };
@@ -3092,7 +3112,7 @@
                 _this._store.items.forEach(function (item) {
                     if (!item.highlighted) {
                         _this._store.dispatch(highlightItem(item, true));
-                        _this.passedElement.triggerEvent(EventType.highlightItem, _this._getChoiceForOutput(item));
+                        _this.passedElement.triggerEvent(EventType.highlightItem, getChoiceForOutput(item));
                     }
                 });
             });
@@ -3104,7 +3124,7 @@
                 _this._store.items.forEach(function (item) {
                     if (item.highlighted) {
                         _this._store.dispatch(highlightItem(item, false));
-                        _this.passedElement.triggerEvent(EventType.highlightItem, _this._getChoiceForOutput(item));
+                        _this.passedElement.triggerEvent(EventType.highlightItem, getChoiceForOutput(item));
                     }
                 });
             });
@@ -3179,9 +3199,8 @@
             return this;
         };
         Choices.prototype.getValue = function (valueOnly) {
-            var _this = this;
             var values = this._store.items.map(function (item) {
-                return (valueOnly ? item.value : _this._getChoiceForOutput(item));
+                return (valueOnly ? item.value : getChoiceForOutput(item));
             });
             return this._isSelectOneElement || this.config.singleModeForMultiSelect ? values[0] : values;
         };
@@ -3439,7 +3458,7 @@
             // @todo integrate with Store
             this._searcher.reset();
             if (choice.selected) {
-                this.passedElement.triggerEvent(EventType.removeItem, this._getChoiceForOutput(choice));
+                this.passedElement.triggerEvent(EventType.removeItem, getChoiceForOutput(choice));
             }
             return this;
         };
@@ -3522,13 +3541,7 @@
             }
             var _a = this, config = _a.config, isSearching = _a._isSearching;
             var _b = this._store, activeGroups = _b.activeGroups, activeChoices = _b.activeChoices;
-            var renderLimit = 0;
-            if (isSearching && config.searchResultLimit > 0) {
-                renderLimit = config.searchResultLimit;
-            }
-            else if (config.renderChoiceLimit > 0) {
-                renderLimit = config.renderChoiceLimit;
-            }
+            var renderLimit = isSearching ? config.searchResultLimit : config.renderChoiceLimit;
             if (this._isSelectElement) {
                 var backingOptions = activeChoices.filter(function (choice) { return !choice.element; });
                 if (backingOptions.length) {
@@ -3541,8 +3554,9 @@
                     return !choice.placeholder && (isSearching ? !!choice.rank : config.renderSelectedChoices || !choice.selected);
                 });
             };
+            var showLabel = config.appendGroupInSearch && isSearching;
             var selectableChoices = false;
-            var renderChoices = function (choices, withinGroup, groupLabel) {
+            var renderChoices = function (choices, withinGroup) {
                 if (isSearching) {
                     // sortByRank is used to ensure stable sorting, as scores are non-unique
                     // this additionally ensures fuseOptions.sortFn is not ignored
@@ -3552,11 +3566,12 @@
                     choices.sort(config.sorter);
                 }
                 var choiceLimit = choices.length;
-                choiceLimit = !withinGroup && renderLimit && choiceLimit > renderLimit ? renderLimit : choiceLimit;
+                choiceLimit = !withinGroup && renderLimit > 0 && choiceLimit > renderLimit ? renderLimit : choiceLimit;
                 choiceLimit--;
                 choices.every(function (choice, index) {
                     // choiceEl being empty signals the contents has probably significantly changed
-                    var dropdownItem = choice.choiceEl || _this._templates.choice(config, choice, config.itemSelectText, groupLabel);
+                    var dropdownItem = choice.choiceEl ||
+                        _this._templates.choice(config, choice, config.itemSelectText, showLabel && choice.group ? choice.group.label : undefined);
                     choice.choiceEl = dropdownItem;
                     fragment.appendChild(dropdownItem);
                     if (isSearching || !choice.selected) {
@@ -3571,7 +3586,7 @@
                 }
                 if (!this._hasNonChoicePlaceholder && !isSearching && this._isSelectOneElement) {
                     // If we have a placeholder choice along with groups
-                    renderChoices(activeChoices.filter(function (choice) { return choice.placeholder && !choice.group; }), false, undefined);
+                    renderChoices(activeChoices.filter(function (choice) { return choice.placeholder && !choice.group; }), false);
                 }
                 // If we have grouped options
                 if (activeGroups.length && !isSearching) {
@@ -3580,7 +3595,7 @@
                     }
                     // render Choices without group first, regardless of sort, otherwise they won't be distinguishable
                     // from the last group
-                    renderChoices(activeChoices.filter(function (choice) { return !choice.placeholder && !choice.group; }), false, undefined);
+                    renderChoices(activeChoices.filter(function (choice) { return !choice.placeholder && !choice.group; }), false);
                     activeGroups.forEach(function (group) {
                         var groupChoices = renderableChoices(group.choices);
                         if (groupChoices.length) {
@@ -3590,12 +3605,12 @@
                                 dropdownGroup.remove();
                                 fragment.appendChild(dropdownGroup);
                             }
-                            renderChoices(groupChoices, true, config.appendGroupInSearch && isSearching ? group.label : undefined);
+                            renderChoices(groupChoices, true);
                         }
                     });
                 }
                 else {
-                    renderChoices(renderableChoices(activeChoices), false, undefined);
+                    renderChoices(renderableChoices(activeChoices), false);
                 }
             }
             if (!selectableChoices && (isSearching || !fragment.children.length || !config.renderSelectedChoices)) {
@@ -3721,23 +3736,12 @@
                 }
             }
         };
+        /**
+         * @deprecated Use utils.getChoiceForOutput
+         */
         // eslint-disable-next-line class-methods-use-this
         Choices.prototype._getChoiceForOutput = function (choice, keyCode) {
-            return {
-                id: choice.id,
-                highlighted: choice.highlighted,
-                labelClass: choice.labelClass,
-                labelDescription: choice.labelDescription,
-                customProperties: choice.customProperties,
-                disabled: choice.disabled,
-                active: choice.active,
-                label: choice.label,
-                placeholder: choice.placeholder,
-                value: choice.value,
-                groupValue: choice.group ? choice.group.label : undefined,
-                element: choice.element,
-                keyCode: keyCode,
-            };
+            return getChoiceForOutput(choice, keyCode);
         };
         Choices.prototype._triggerChange = function (value) {
             if (value === undefined || value === null) {
@@ -3942,7 +3946,7 @@
             var notice = '';
             if (canAddItem && typeof config.addItemFilter === 'function' && !config.addItemFilter(value)) {
                 canAddItem = false;
-                notice = resolveNoticeFunction(config.customAddItemText, value);
+                notice = resolveNoticeFunction(config.customAddItemText, value, undefined);
             }
             if (canAddItem) {
                 var foundChoice = this._store.choices.find(function (choice) { return config.valueComparer(choice.value, value); });
@@ -3954,12 +3958,12 @@
                     }
                     if (!config.duplicateItemsAllowed) {
                         canAddItem = false;
-                        notice = resolveNoticeFunction(config.uniqueItemText, value);
+                        notice = resolveNoticeFunction(config.uniqueItemText, value, undefined);
                     }
                 }
             }
             if (canAddItem) {
-                notice = resolveNoticeFunction(config.addItemText, value);
+                notice = resolveNoticeFunction(config.addItemText, value, undefined);
             }
             if (notice) {
                 this._displayNotice(notice, NoticeTypes.addChoice);
@@ -4506,9 +4510,10 @@
             }
             this._store.dispatch(addItem(item));
             if (withEvents) {
-                this.passedElement.triggerEvent(EventType.addItem, this._getChoiceForOutput(item));
+                var eventChoice = getChoiceForOutput(item);
+                this.passedElement.triggerEvent(EventType.addItem, eventChoice);
                 if (userTriggered) {
-                    this.passedElement.triggerEvent(EventType.choice, this._getChoiceForOutput(item));
+                    this.passedElement.triggerEvent(EventType.choice, eventChoice);
                 }
             }
         };
@@ -4521,7 +4526,7 @@
             if (notice && notice.type === NoticeTypes.noChoices) {
                 this._clearNotice();
             }
-            this.passedElement.triggerEvent(EventType.removeItem, this._getChoiceForOutput(item));
+            this.passedElement.triggerEvent(EventType.removeItem, getChoiceForOutput(item));
         };
         Choices.prototype._addChoice = function (choice, withEvents, userTriggered) {
             if (withEvents === void 0) { withEvents = true; }
