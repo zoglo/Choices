@@ -1994,7 +1994,7 @@ class Choices {
         containerOuter.removeFocusState();
 
         // Also close the dropdown if search is disabled
-        if (!this._canSearch) {
+        if (!this.config.searchEnabled) {
           this.hideDropdown(true);
         }
       }
