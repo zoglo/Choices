@@ -943,12 +943,7 @@ class Choices {
     const { config, _isSearching: isSearching } = this;
     const { activeGroups, activeChoices } = this._store;
 
-    let renderLimit = 0;
-    if (isSearching && config.searchResultLimit > 0) {
-      renderLimit = config.searchResultLimit;
-    } else if (config.renderChoiceLimit > 0) {
-      renderLimit = config.renderChoiceLimit;
-    }
+    const renderLimit = isSearching ? config.searchResultLimit : config.renderChoiceLimit;
 
     if (this._isSelectElement) {
       const backingOptions = activeChoices.filter((choice) => !choice.element);
@@ -975,7 +970,7 @@ class Choices {
       }
 
       let choiceLimit = choices.length;
-      choiceLimit = !withinGroup && renderLimit && choiceLimit > renderLimit ? renderLimit : choiceLimit;
+      choiceLimit = !withinGroup && renderLimit > 0 && choiceLimit > renderLimit ? renderLimit : choiceLimit;
       choiceLimit--;
 
       choices.every((choice, index) => {
