@@ -1,6 +1,7 @@
 import { ClassNames } from './interfaces/class-names';
 import { Options } from './interfaces/options';
-import { sortByAlpha } from './lib/utils';
+import { sanitise, sortByAlpha } from './lib/utils';
+import { EventChoice } from './interfaces';
 
 export const DEFAULT_CLASSNAMES: ClassNames = {
   containerOuter: ['choices'],
@@ -79,7 +80,8 @@ export const DEFAULT_CONFIG: Options = {
   customAddItemText: 'Only values matching specific conditions can be added',
   addItemText: (value: string) => `Press Enter to add <b>"${value}"</b>`,
   removeItemIconText: (): string => `Remove item`,
-  removeItemLabelText: (value: string): string => `Remove item: ${value}`,
+  removeItemLabelText: (value: string, _valueRaw: string, i?: EventChoice): string =>
+    `Remove item: ${i ? sanitise<string>(i.label) : value}`,
   maxItemText: (maxItemCount: number): string => `Only ${maxItemCount} values can be added`,
   valueComparer: (value1: string, value2: string): boolean => value1 === value2,
   fuseOptions: {

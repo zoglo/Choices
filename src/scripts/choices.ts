@@ -13,6 +13,7 @@ import {
   escapeForTemplate,
   generateId,
   getAdjacentEl,
+  getChoiceForOutput,
   getClassNames,
   getClassNamesSelector,
   isScrolledIntoView,
@@ -415,7 +416,7 @@ class Choices {
     this._store.dispatch(highlightItem(choice, true));
 
     if (runEvent) {
-      this.passedElement.triggerEvent(EventType.highlightItem, this._getChoiceForOutput(choice));
+      this.passedElement.triggerEvent(EventType.highlightItem, getChoiceForOutput(choice));
     }
 
     return this;
@@ -433,7 +434,7 @@ class Choices {
     this._store.dispatch(highlightItem(choice, false));
 
     if (runEvent) {
-      this.passedElement.triggerEvent(EventType.unhighlightItem, this._getChoiceForOutput(choice));
+      this.passedElement.triggerEvent(EventType.unhighlightItem, getChoiceForOutput(choice));
     }
 
     return this;
@@ -445,7 +446,7 @@ class Choices {
         if (!item.highlighted) {
           this._store.dispatch(highlightItem(item, true));
 
-          this.passedElement.triggerEvent(EventType.highlightItem, this._getChoiceForOutput(item));
+          this.passedElement.triggerEvent(EventType.highlightItem, getChoiceForOutput(item));
         }
       });
     });
@@ -459,7 +460,7 @@ class Choices {
         if (item.highlighted) {
           this._store.dispatch(highlightItem(item, false));
 
-          this.passedElement.triggerEvent(EventType.highlightItem, this._getChoiceForOutput(item));
+          this.passedElement.triggerEvent(EventType.highlightItem, getChoiceForOutput(item));
         }
       });
     });
@@ -545,7 +546,7 @@ class Choices {
 
   getValue<B extends boolean = false>(valueOnly?: B): EventChoiceValueType<B> | EventChoiceValueType<B>[] {
     const values = this._store.items.map((item) => {
-      return (valueOnly ? item.value : this._getChoiceForOutput(item)) as EventChoiceValueType<B>;
+      return (valueOnly ? item.value : getChoiceForOutput(item)) as EventChoiceValueType<B>;
     });
 
     return this._isSelectOneElement || this.config.singleModeForMultiSelect ? values[0] : values;
@@ -848,7 +849,7 @@ class Choices {
     this._searcher.reset();
 
     if (choice.selected) {
-      this.passedElement.triggerEvent(EventType.removeItem, this._getChoiceForOutput(choice));
+      this.passedElement.triggerEvent(EventType.removeItem, getChoiceForOutput(choice));
     }
 
     return this;
@@ -1178,23 +1179,12 @@ class Choices {
     }
   }
 
+  /**
+   * @deprecated Use utils.getChoiceForOutput
+   */
   // eslint-disable-next-line class-methods-use-this
   _getChoiceForOutput(choice: ChoiceFull, keyCode?: number): EventChoice {
-    return {
-      id: choice.id,
-      highlighted: choice.highlighted,
-      labelClass: choice.labelClass,
-      labelDescription: choice.labelDescription,
-      customProperties: choice.customProperties,
-      disabled: choice.disabled,
-      active: choice.active,
-      label: choice.label,
-      placeholder: choice.placeholder,
-      value: choice.value,
-      groupValue: choice.group ? choice.group.label : undefined,
-      element: choice.element,
-      keyCode,
-    };
+    return getChoiceForOutput(choice, keyCode);
   }
 
   _triggerChange(value): void {
@@ -1423,7 +1413,7 @@ class Choices {
 
     if (canAddItem && typeof config.addItemFilter === 'function' && !config.addItemFilter(value)) {
       canAddItem = false;
-      notice = resolveNoticeFunction(config.customAddItemText, value);
+      notice = resolveNoticeFunction(config.customAddItemText, value, undefined);
     }
 
     if (canAddItem) {
@@ -1437,13 +1427,13 @@ class Choices {
         }
         if (!config.duplicateItemsAllowed) {
           canAddItem = false;
-          notice = resolveNoticeFunction(config.uniqueItemText, value);
+          notice = resolveNoticeFunction(config.uniqueItemText, value, undefined);
         }
       }
     }
 
     if (canAddItem) {
-      notice = resolveNoticeFunction(config.addItemText, value);
+      notice = resolveNoticeFunction(config.addItemText, value, undefined);
     }
 
     if (notice) {
@@ -2075,10 +2065,11 @@ class Choices {
     this._store.dispatch(addItem(item));
 
     if (withEvents) {
-      this.passedElement.triggerEvent(EventType.addItem, this._getChoiceForOutput(item));
+      const eventChoice = getChoiceForOutput(item);
+      this.passedElement.triggerEvent(EventType.addItem, eventChoice);
 
       if (userTriggered) {
-        this.passedElement.triggerEvent(EventType.choice, this._getChoiceForOutput(item));
+        this.passedElement.triggerEvent(EventType.choice, eventChoice);
       }
     }
   }
@@ -2094,7 +2085,7 @@ class Choices {
       this._clearNotice();
     }
 
-    this.passedElement.triggerEvent(EventType.removeItem, this._getChoiceForOutput(item));
+    this.passedElement.triggerEvent(EventType.removeItem, getChoiceForOutput(item));
   }
 
   _addChoice(choice: ChoiceFull, withEvents: boolean = true, userTriggered = false): void {
