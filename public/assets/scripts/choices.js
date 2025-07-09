@@ -4907,7 +4907,7 @@
                     // Remove the focus state when the past outerContainer was the target
                     containerOuter.removeFocusState();
                     // Also close the dropdown if search is disabled
-                    if (!this._canSearch) {
+                    if (!this.config.searchEnabled) {
                         this.hideDropdown(true);
                     }
                 }
