@@ -43,10 +43,10 @@ $choices-button-opacity-hover: 1 !default;
 $choices-placeholder-opacity: 0.5 !default;
 
 .#{$choices-selector} {
-  font-size: $choices-font-size-lg;
-  margin-bottom: $choices-guttering;
-  overflow: hidden;
   position: relative;
+  overflow: hidden;
+  margin-bottom: $choices-guttering;
+  font-size: $choices-font-size-lg;
 
   &:focus {
     outline: none;
@@ -83,26 +83,26 @@ $choices-placeholder-opacity: 0.5 !default;
     padding-bottom: $choices-inner-one-padding;
   }
   .#{$choices-selector}__input {
-    background-color: $choices-bg-color-dropdown;
-    border-bottom: $choices-base-border;
     display: block;
-    margin: 0;
-    padding: $choices-dropdown-item-padding;
     width: $choices-width;
+    padding: $choices-dropdown-item-padding;
+    border-bottom: $choices-base-border;
+    background-color: $choices-bg-color-dropdown;
+    margin: 0;
   }
   .#{$choices-selector}__button {
     background-image: $choices-icon-cross-inverse;
-    background-size: 8px;
-    border-radius: 10em;
-    height: 20px;
-    margin-right: 25px;
-    margin-top: -10px;
-    opacity: 0.25;
     padding: 0;
+    background-size: 8px;
     position: absolute;
-    right: 0;
     top: 50%;
+    right: 0;
+    margin-top: -10px;
+    margin-right: 25px;
+    height: 20px;
     width: 20px;
+    border-radius: 10em;
+    opacity: 0.25;
 
     &:hover,
     &:focus {
@@ -119,16 +119,16 @@ $choices-placeholder-opacity: 0.5 !default;
 
   &::after {
     content: "";
-    border-color: $choices-text-color transparent transparent transparent;
-    border-style: solid;
-    border-width: $choices-arrow-size;
     height: 0;
-    margin-top: $choices-arrow-margin-top;
-    pointer-events: none;
+    width: 0;
+    border-style: solid;
+    border-color: $choices-text-color transparent transparent transparent;
+    border-width: $choices-arrow-size;
     position: absolute;
     right: $choices-arrow-right;
     top: 50%;
-    width: 0;
+    margin-top: $choices-arrow-margin-top;
+    pointer-events: none;
   }
 
   &.is-open::after {
@@ -156,18 +156,18 @@ $choices-placeholder-opacity: 0.5 !default;
     cursor: text;
   }
   .#{$choices-selector}__button {
-    background-image: $choices-icon-cross;
-    background-size: $choices-button-dimension;
-    border-left: 1px solid color.adjust($choices-primary-color, $lightness: -10%);
+    position: relative;
     display: inline-block;
     margin-top: 0;
     margin-right: -$choices-button-offset * 0.5;
     margin-bottom: 0;
     margin-left: $choices-button-offset;
     padding-left: $choices-button-offset * 2;
-    position: relative;
-    opacity: $choices-button-opacity;
+    border-left: 1px solid color.adjust($choices-primary-color, $lightness: -10%);
+    background-image: $choices-icon-cross;
+    background-size: $choices-button-dimension;
     width: $choices-button-dimension;
+    opacity: $choices-button-opacity;
 
     &:hover,
     &:focus {
@@ -178,15 +178,15 @@ $choices-placeholder-opacity: 0.5 !default;
 
 .#{$choices-selector}__inner {
   display: inline-block;
+  vertical-align: top;
+  width: $choices-width;
   background-color: $choices-bg-color;
+  padding: $choices-inner-padding;
   border: $choices-base-border;
   border-radius: $choices-border-radius;
   font-size: $choices-font-size-md;
   min-height: $choices-input-height;
   overflow: hidden;
-  padding: $choices-inner-padding;
-  vertical-align: top;
-  width: $choices-width;
 
   .is-focused &,
   .is-open & {
@@ -229,19 +229,19 @@ $choices-placeholder-opacity: 0.5 !default;
 .#{$choices-selector}__list--multiple {
   display: inline;
   .#{$choices-selector}__item {
-    background-color: $choices-primary-color;
-    border: 1px solid color.adjust($choices-primary-color, $lightness: -5%);
-    border-radius: $choices-border-radius-item;
-    box-sizing: border-box;
-    color: #fff;
     display: inline-block;
+    vertical-align: middle;
+    border-radius: $choices-border-radius-item;
+    padding: $choices-multiple-item-padding;
     font-size: $choices-font-size-sm;
     font-weight: 500;
     margin-right: $choices-multiple-item-margin;
     margin-bottom: $choices-multiple-item-margin;
-    padding: $choices-multiple-item-padding;
+    background-color: $choices-primary-color;
+    border: 1px solid color.adjust($choices-primary-color, $lightness: -5%);
+    color: #fff;
     word-break: break-all;
-    vertical-align: middle;
+    box-sizing: border-box;
 
     &[data-deletable] {
       padding-right: 5px;
@@ -265,18 +265,18 @@ $choices-placeholder-opacity: 0.5 !default;
 }
 
 %choices-dropdown {
+  display: none;
+  z-index: $choices-z-index;
+  position: absolute;
+  width: $choices-width;
   background-color: $choices-bg-color-dropdown;
   border: $choices-base-border;
+  top: 100%;
+  margin-top: -1px;
   border-bottom-left-radius: $choices-border-radius;
   border-bottom-right-radius: $choices-border-radius;
-  display: none;
-  margin-top: -1px;
   overflow: hidden;
-  position: absolute;
-  top: 100%;
-  width: $choices-width;
   word-break: break-all;
-  z-index: $choices-z-index;
 
   &.is-active {
     display: block;
@@ -287,23 +287,23 @@ $choices-placeholder-opacity: 0.5 !default;
   }
 
   .is-flipped & {
-    border-radius: 0.25rem 0.25rem 0 0;
+    top: auto;
     bottom: 100%;
     margin-top: 0;
     margin-bottom: -1px;
-    top: auto;
+    border-radius: 0.25rem 0.25rem 0 0;
   }
   .#{$choices-selector}__list {
-    max-height: 300px;
     position: relative;
+    max-height: 300px;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
     will-change: scroll-position;
   }
   .#{$choices-selector}__item {
-    font-size: $choices-font-size-md;
-    padding: $choices-dropdown-item-padding;
     position: relative;
+    padding: $choices-dropdown-item-padding;
+    font-size: $choices-font-size-md;
 
     [dir="rtl"] & {
       text-align: right;
@@ -361,26 +361,26 @@ $choices-placeholder-opacity: 0.5 !default;
 
 .#{$choices-selector}__item--disabled {
   cursor: not-allowed;
-  opacity: 0.5;
   user-select: none;
+  opacity: 0.5;
 }
 
 .#{$choices-selector}__heading {
-  border-bottom: 1px solid color.adjust($choices-keyline-color, $lightness: 10%);
-  color: color.adjust(#333, $lightness: 30%);
   font-weight: 600;
   font-size: $choices-font-size-sm;
   padding: 10px;
+  border-bottom: 1px solid color.adjust($choices-keyline-color, $lightness: 10%);
+  color: color.adjust(#333, $lightness: 30%);
 }
 
 .#{$choices-selector}__button {
+  text-indent: -9999px;
   appearance: none;
+  border: 0;
   background-color: transparent;
   background-repeat: no-repeat;
   background-position: center;
-  border: 0;
   cursor: pointer;
-  text-indent: -9999px;
 
   &:focus {
     outline: none;
@@ -388,14 +388,14 @@ $choices-placeholder-opacity: 0.5 !default;
 }
 
 .#{$choices-selector}__input {
-  background-color: $choices-bg-color;
-  border: 0;
   display: inline-block;
+  vertical-align: baseline;
+  background-color: $choices-bg-color;
   font-size: $choices-font-size-md;
   margin-bottom: 0;
+  border: 0;
   max-width: $choices-width;
   padding: $choices-input-padding;
-  vertical-align: baseline;
 
   &:focus {
     outline: 0;
