@@ -960,8 +960,9 @@ class Choices {
           !choice.placeholder && (isSearching ? !!choice.rank : config.renderSelectedChoices || !choice.selected),
       );
 
+    const showLabel = config.appendGroupInSearch && isSearching;
     let selectableChoices = false;
-    const renderChoices = (choices: ChoiceFull[], withinGroup: boolean, groupLabel?: string): void => {
+    const renderChoices = (choices: ChoiceFull[], withinGroup: boolean): void => {
       if (isSearching) {
         // sortByRank is used to ensure stable sorting, as scores are non-unique
         // this additionally ensures fuseOptions.sortFn is not ignored
@@ -977,7 +978,13 @@ class Choices {
       choices.every((choice, index) => {
         // choiceEl being empty signals the contents has probably significantly changed
         const dropdownItem =
-          choice.choiceEl || this._templates.choice(config, choice, config.itemSelectText, groupLabel);
+          choice.choiceEl ||
+          this._templates.choice(
+            config,
+            choice,
+            config.itemSelectText,
+            showLabel && choice.group ? choice.group.label : undefined,
+          );
         choice.choiceEl = dropdownItem;
         fragment.appendChild(dropdownItem);
         if (isSearching || !choice.selected) {
@@ -998,7 +1005,6 @@ class Choices {
         renderChoices(
           activeChoices.filter((choice) => choice.placeholder && !choice.group),
           false,
-          undefined,
         );
       }
 
@@ -1012,7 +1018,6 @@ class Choices {
         renderChoices(
           activeChoices.filter((choice) => !choice.placeholder && !choice.group),
           false,
-          undefined,
         );
 
         activeGroups.forEach((group) => {
@@ -1024,11 +1029,11 @@ class Choices {
               dropdownGroup.remove();
               fragment.appendChild(dropdownGroup);
             }
-            renderChoices(groupChoices, true, config.appendGroupInSearch && isSearching ? group.label : undefined);
+            renderChoices(groupChoices, true);
           }
         });
       } else {
-        renderChoices(renderableChoices(activeChoices), false, undefined);
+        renderChoices(renderableChoices(activeChoices), false);
       }
     }
 
