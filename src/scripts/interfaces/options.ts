@@ -615,5 +615,5 @@ export interface Options {
    */
   callbackOnCreateTemplates: CallbackOnCreateTemplatesFn | null;
 
-  appendGroupInSearch: false;
+  appendGroupInSearch: boolean;
 }
