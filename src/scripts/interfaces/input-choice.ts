@@ -1,4 +1,5 @@
 import { StringUntrusted } from './string-untrusted';
+// eslint-disable-next-line
 import { Types } from './types';
 
 export interface InputChoice {
@@ -13,5 +14,5 @@ export interface InputChoice {
   placeholder?: boolean;
   selected?: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  value: any;
+  value: any; // string;
 }

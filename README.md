@@ -703,21 +703,23 @@ Return type must be safe to insert into HTML (ie use the 1st argument which is s
 
 ### removeItemIconText
 
-**Type:** `String/Function` **Default:** `Remove item"` **Arguments:** `value`, `valueRaw`
+**Type:** `String/Function` **Default:** `Remove item"` **Arguments:** `value`, `valueRaw`, `item`
 
 **Input types affected:** `text`, `select-one`, `select-multiple`
 
 **Usage:** The text/icon for the remove button. To access the item's value, pass a function with a `value` argument (see the **default config** [https://github.com/jshjohnson/Choices#setup] for an example), otherwise pass a string.
+To access the item's label, use the 3rd argument. *Note*; this label is not escaped.
 
 Return type must be safe to insert into HTML (ie use the 1st argument which is sanitised)
 
 ### removeItemLabelText
 
-**Type:** `String/Function` **Default:** `Remove item: ${value}"` **Arguments:** `value`, `valueRaw`
+**Type:** `String/Function` **Default:** `Remove item: ${value}"` **Arguments:** `value`, `valueRaw`, `item`
 
 **Input types affected:** `text`, `select-one`, `select-multiple`
 
 **Usage:** The text for the remove button's aria label. To access the item's value, pass a function with a `value` argument (see the **default config** [https://github.com/jshjohnson/Choices#setup] for an example), otherwise pass a string.
+To access the item's label, use the 3rd argument. *Note*; this label is not escaped.
 
 Return type must be safe to insert into HTML (ie use the 1st argument which is sanitised)
 
