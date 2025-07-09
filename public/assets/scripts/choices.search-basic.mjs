@@ -1332,9 +1332,9 @@ var NoticeTypes = {
 function _defineProperty(e, r, t) {
   return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, {
     value: t,
-    enumerable: !0,
-    configurable: !0,
-    writable: !0
+    enumerable: true,
+    configurable: true,
+    writable: true
   }) : e[r] = t, e;
 }
 function ownKeys(e, r) {
@@ -1350,7 +1350,7 @@ function ownKeys(e, r) {
 function _objectSpread2(e) {
   for (var r = 1; r < arguments.length; r++) {
     var t = null != arguments[r] ? arguments[r] : {};
-    r % 2 ? ownKeys(Object(t), !0).forEach(function (r) {
+    r % 2 ? ownKeys(Object(t), true).forEach(function (r) {
       _defineProperty(e, r, t[r]);
     }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) {
       Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r));
@@ -1362,7 +1362,7 @@ function _toPrimitive(t, r) {
   if ("object" != typeof t || !t) return t;
   var e = t[Symbol.toPrimitive];
   if (void 0 !== e) {
-    var i = e.call(t, r || "default");
+    var i = e.call(t, r);
     if ("object" != typeof i) return i;
     throw new TypeError("@@toPrimitive must return a primitive value.");
   }
@@ -1385,16 +1385,13 @@ function _toPropertyKey(t) {
 function isArray(value) {
   return !Array.isArray ? getTag(value) === '[object Array]' : Array.isArray(value);
 }
-
-// Adapted from: https://github.com/lodash/lodash/blob/master/.internal/baseToString.js
-const INFINITY = 1 / 0;
 function baseToString(value) {
   // Exit early for strings to avoid a performance hit in some environments.
   if (typeof value == 'string') {
     return value;
   }
   let result = value + '';
-  return result == '0' && 1 / value == -INFINITY ? '-0' : result;
+  return result == '0' && 1 / value == -Infinity ? '-0' : result;
 }
 function toString(value) {
   return value == null ? '' : baseToString(value);
@@ -2263,7 +2260,7 @@ function format(results, docs, {
 class Fuse {
   constructor(docs, options = {}, index) {
     this.options = _objectSpread2(_objectSpread2({}, Config), options);
-    if (this.options.useExtendedSearch && !false) {
+    if (this.options.useExtendedSearch && true) {
       throw new Error(EXTENDED_SEARCH_UNAVAILABLE);
     }
     this._keyStore = new KeyStore(this.options.keys);
