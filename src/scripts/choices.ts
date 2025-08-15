@@ -1550,11 +1550,11 @@ class Choices {
     if (passedElement.hasAttribute('required')) {
       passedElement.addEventListener('change', this._onChange, {
         passive: true,
-      })
+      });
 
       passedElement.addEventListener('invalid', this._onInvalid, {
         passive: true,
-      })
+      });
     }
 
     this.input.addEventListeners();
@@ -2029,7 +2029,7 @@ class Choices {
 
   _onChange(event: Event & { target: HTMLInputElement | HTMLSelectElement }): void {
     if (!event.target.checkValidity()) {
-      return
+      return;
     }
 
     this.containerOuter.removeInvalidState();
