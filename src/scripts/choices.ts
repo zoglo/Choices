@@ -304,6 +304,8 @@ class Choices {
     this._onEscapeKey = this._onEscapeKey.bind(this);
     this._onDirectionKey = this._onDirectionKey.bind(this);
     this._onDeleteKey = this._onDeleteKey.bind(this);
+    this._onChange = this._onChange.bind(this);
+    this._onInvalid = this._onInvalid.bind(this);
 
     // If element has already been initialised with Choices, fail silently
     if (this.passedElement.isActive) {
@@ -1500,6 +1502,7 @@ class Choices {
     const documentElement = this._docRoot;
     const outerElement = this.containerOuter.element;
     const inputElement = this.input.element;
+    const passedElement = this.passedElement.element;
 
     // capture events - can cancel event processing or propagation
     documentElement.addEventListener('touchend', this._onTouchEnd, true);
@@ -1544,6 +1547,16 @@ class Choices {
       });
     }
 
+    if (passedElement.hasAttribute('required')) {
+      passedElement.addEventListener('change', this._onChange, {
+        passive: true,
+      })
+
+      passedElement.addEventListener('invalid', this._onInvalid, {
+        passive: true,
+      })
+    }
+
     this.input.addEventListeners();
   }
 
@@ -1551,6 +1564,7 @@ class Choices {
     const documentElement = this._docRoot;
     const outerElement = this.containerOuter.element;
     const inputElement = this.input.element;
+    const passedElement = this.passedElement.element;
 
     documentElement.removeEventListener('touchend', this._onTouchEnd, true);
     outerElement.removeEventListener('keydown', this._onKeyDown, true);
@@ -1572,6 +1586,11 @@ class Choices {
 
     if (inputElement.form) {
       inputElement.form.removeEventListener('reset', this._onFormReset);
+    }
+
+    if (passedElement.hasAttribute('required')) {
+      passedElement.removeEventListener('change', this._onChange);
+      passedElement.removeEventListener('invalid', this._onInvalid);
     }
 
     this.input.removeEventListeners();
@@ -2006,6 +2025,18 @@ class Choices {
         this.setChoiceByValue(this._initialItems);
       }
     });
+  }
+
+  _onChange(event: Event & { target: HTMLInputElement | HTMLSelectElement }): void {
+    if (!event.target.checkValidity()) {
+      return
+    }
+
+    this.containerOuter.removeInvalidState();
+  }
+
+  _onInvalid(): void {
+    this.containerOuter.addInvalidState();
   }
 
   _highlightChoice(el: HTMLElement | null = null): void {
