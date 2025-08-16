@@ -196,6 +196,10 @@ declare class Choices {
     _onFocus({ target }: Pick<FocusEvent, 'target'>): void;
     _onBlur({ target }: Pick<FocusEvent, 'target'>): void;
     _onFormReset(): void;
+    _onChange(event: Event & {
+        target: HTMLInputElement | HTMLSelectElement;
+    }): void;
+    _onInvalid(): void;
     _highlightChoice(el?: HTMLElement | null): void;
     _addItem(item: ChoiceFull, withEvents?: boolean, userTriggered?: boolean): void;
     _removeItem(item: ChoiceFull): void;
