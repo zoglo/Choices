@@ -3,7 +3,8 @@
 ## [11.2.0]
 
 ### Features
--
+- Add support for ``required` html attribute [#1332](https://github.com/Choices-js/Choices/pull/1332)
+   - Note; This feature requires updating any css targeting the `.choices [hidden]` selector
 
 ### Bugfixes
 - Define `[aria-selected]` for selectable choices per WAI-ARIA 1.2 spec, and avoid triple state with aria-selected [#1330](https://github.com/Choices-js/Choices/pull/1330)
