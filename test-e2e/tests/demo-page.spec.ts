@@ -65,6 +65,8 @@ describe(`Choices`, () => {
         .getByRole('button', { name: /submit/i })
         .click();
 
+      await suite.advanceClock();
+
       await expect(suite.getWrapper()).toHaveClass(
         `${DEFAULT_CLASSNAMES.containerOuter} ${DEFAULT_CLASSNAMES.invalidState}`,
       );
