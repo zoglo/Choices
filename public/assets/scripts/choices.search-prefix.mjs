@@ -1611,6 +1611,7 @@ var templates = {
         else {
             addClassesToElement(div, itemSelectable);
             div.dataset.choiceSelectable = '';
+            div.setAttribute('aria-selected', choice.selected ? 'true' : 'false');
         }
         return div;
     },
