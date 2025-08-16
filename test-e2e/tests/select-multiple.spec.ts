@@ -147,26 +147,6 @@ describe(`Choices - select multiple`, () => {
         });
       });
 
-      describe('aria attributes', () => {
-        const testId = 'disabled-choice';
-        test('aria-selected', async ({ page, bundle }) => {
-          const suite = new SelectTestSuit(page, bundle, testUrl, testId);
-          await suite.startWithClick();
-
-          await suite.input.press('ArrowDown');
-          await expect(suite.choices.first()).toHaveAttribute("aria-selected", "false");
-          await expect(suite.choices.nth(1)).toHaveAttribute("aria-selected", "true");
-          await expect(suite.choices.nth(2)).toHaveAttribute("aria-selected", "false");
-          await expect(suite.choices.nth(3)).not.toHaveAttribute("aria-selected");
-
-          await suite.input.press('ArrowUp');
-          await expect(suite.choices.first()).toHaveAttribute("aria-selected", "true");
-          await expect(suite.choices.nth(1)).toHaveAttribute("aria-selected", "false");
-          await expect(suite.choices.nth(2)).toHaveAttribute("aria-selected", "false");
-          await expect(suite.choices.nth(3)).not.toHaveAttribute("aria-selected");
-        });
-      });
-
       describe('searching choices', () => {
         const validValue = 'item2';
         const validLabelForValue = 'Choice 2';
@@ -267,6 +247,26 @@ describe(`Choices - select multiple`, () => {
             await expect(suite.input).toBeEnabled();
           });
         });
+      });
+    });
+
+    describe('aria attributes', () => {
+      const testId = 'disabled-choice';
+      test('aria-selected', async ({ page, bundle }) => {
+        const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+        await suite.startWithClick();
+
+        await suite.input.press('ArrowDown');
+        await expect(suite.choices.first()).toHaveAttribute('aria-selected', 'false');
+        await expect(suite.choices.nth(1)).toHaveAttribute('aria-selected', 'true');
+        await expect(suite.choices.nth(2)).toHaveAttribute('aria-selected', 'false');
+        await expect(suite.choices.nth(3)).not.toHaveAttribute('aria-selected');
+
+        await suite.input.press('ArrowUp');
+        await expect(suite.choices.first()).toHaveAttribute('aria-selected', 'true');
+        await expect(suite.choices.nth(1)).toHaveAttribute('aria-selected', 'false');
+        await expect(suite.choices.nth(2)).toHaveAttribute('aria-selected', 'false');
+        await expect(suite.choices.nth(3)).not.toHaveAttribute('aria-selected');
       });
     });
 
