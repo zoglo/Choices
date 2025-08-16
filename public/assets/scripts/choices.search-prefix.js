@@ -426,6 +426,12 @@
         Container.prototype.removeFocusState = function () {
             removeClassesFromElement(this.element, this.classNames.focusState);
         };
+        Container.prototype.addInvalidState = function () {
+            addClassesToElement(this.element, this.classNames.invalidState);
+        };
+        Container.prototype.removeInvalidState = function () {
+            removeClassesFromElement(this.element, this.classNames.invalidState);
+        };
         Container.prototype.enable = function () {
             removeClassesFromElement(this.element, this.classNames.disabledState);
             this.element.removeAttribute('aria-disabled');
@@ -937,6 +943,7 @@
         selectedState: ['is-selected'],
         flippedState: ['is-flipped'],
         loadingState: ['is-loading'],
+        invalidState: ['is-invalid'],
         notice: ['choices__notice'],
         addChoice: ['choices__item--selectable', 'add-choice'],
         noResults: ['has-no-results'],
@@ -1827,6 +1834,8 @@
             this._onEscapeKey = this._onEscapeKey.bind(this);
             this._onDirectionKey = this._onDirectionKey.bind(this);
             this._onDeleteKey = this._onDeleteKey.bind(this);
+            this._onChange = this._onChange.bind(this);
+            this._onInvalid = this._onInvalid.bind(this);
             // If element has already been initialised with Choices, fail silently
             if (this.passedElement.isActive) {
                 if (!config.silent) {
@@ -2860,6 +2869,7 @@
             var documentElement = this._docRoot;
             var outerElement = this.containerOuter.element;
             var inputElement = this.input.element;
+            var passedElement = this.passedElement.element;
             // capture events - can cancel event processing or propagation
             documentElement.addEventListener('touchend', this._onTouchEnd, true);
             outerElement.addEventListener('keydown', this._onKeyDown, true);
@@ -2897,12 +2907,21 @@
                     passive: true,
                 });
             }
+            if (passedElement.hasAttribute('required')) {
+                passedElement.addEventListener('change', this._onChange, {
+                    passive: true,
+                });
+                passedElement.addEventListener('invalid', this._onInvalid, {
+                    passive: true,
+                });
+            }
             this.input.addEventListeners();
         };
         Choices.prototype._removeEventListeners = function () {
             var documentElement = this._docRoot;
             var outerElement = this.containerOuter.element;
             var inputElement = this.input.element;
+            var passedElement = this.passedElement.element;
             documentElement.removeEventListener('touchend', this._onTouchEnd, true);
             outerElement.removeEventListener('keydown', this._onKeyDown, true);
             outerElement.removeEventListener('mousedown', this._onMouseDown, true);
@@ -2919,6 +2938,10 @@
             inputElement.removeEventListener('blur', this._onBlur);
             if (inputElement.form) {
                 inputElement.form.removeEventListener('reset', this._onFormReset);
+            }
+            if (passedElement.hasAttribute('required')) {
+                passedElement.removeEventListener('change', this._onChange);
+                passedElement.removeEventListener('invalid', this._onInvalid);
             }
             this.input.removeEventListeners();
         };
@@ -3301,6 +3324,15 @@
                     _this.setChoiceByValue(_this._initialItems);
                 }
             });
+        };
+        Choices.prototype._onChange = function (event) {
+            if (!event.target.checkValidity()) {
+                return;
+            }
+            this.containerOuter.removeInvalidState();
+        };
+        Choices.prototype._onInvalid = function () {
+            this.containerOuter.addInvalidState();
         };
         Choices.prototype._highlightChoice = function (el) {
             if (el === void 0) { el = null; }
