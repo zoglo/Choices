@@ -250,6 +250,26 @@ describe(`Choices - select multiple`, () => {
       });
     });
 
+    describe('aria attributes', () => {
+      const testId = 'disabled-choice';
+      test('aria-selected', async ({ page, bundle }) => {
+        const suite = new SelectTestSuit(page, bundle, testUrl, testId);
+        await suite.startWithClick();
+
+        await suite.input.press('ArrowDown');
+        await expect(suite.choices.first()).toHaveAttribute('aria-selected', 'false');
+        await expect(suite.choices.nth(1)).toHaveAttribute('aria-selected', 'true');
+        await expect(suite.choices.nth(2)).toHaveAttribute('aria-selected', 'false');
+        await expect(suite.choices.nth(3)).not.toHaveAttribute('aria-selected');
+
+        await suite.input.press('ArrowUp');
+        await expect(suite.choices.first()).toHaveAttribute('aria-selected', 'true');
+        await expect(suite.choices.nth(1)).toHaveAttribute('aria-selected', 'false');
+        await expect(suite.choices.nth(2)).toHaveAttribute('aria-selected', 'false');
+        await expect(suite.choices.nth(3)).not.toHaveAttribute('aria-selected');
+      });
+    });
+
     describe('render selected choices', () => {
       const testId = 'render-selected-choices';
       describe('selecting choices', () => {
