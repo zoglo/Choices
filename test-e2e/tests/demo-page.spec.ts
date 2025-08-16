@@ -60,9 +60,14 @@ describe(`Choices`, () => {
       const suite = new SelectTestSuit(page, bundle, testUrl, testId);
       await suite.startWithClick();
 
-      await page.getByTestId('invalid-form').getByRole('button', { name: /submit/i }).click();
+      await page
+        .getByTestId('invalid-form')
+        .getByRole('button', { name: /submit/i })
+        .click();
 
-      await expect(suite.getWrapper()).toHaveClass(DEFAULT_CLASSNAMES.containerOuter + ' ' + DEFAULT_CLASSNAMES.invalidState);
+      await expect(suite.getWrapper()).toHaveClass(
+        `${DEFAULT_CLASSNAMES.containerOuter} ${DEFAULT_CLASSNAMES.invalidState}`,
+      );
     });
   });
 });
