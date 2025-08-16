@@ -17,6 +17,7 @@
   --choices-keyline-color: #ddd;
   --choices-primary-color: #005F75;
   --choices-disabled-color: #eaeaea;
+  --choices-invalid-color: #d33141;
   --choices-highlight-color: var(--choices-primary-color);
   --choices-button-dimension: 8px;
   --choices-button-offset: 8px;
@@ -70,7 +71,10 @@
   cursor: not-allowed;
 }
 .choices [hidden] {
-  display: none !important;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
 }
 
 .choices[data-type*="select-one"] {
@@ -180,6 +184,9 @@
 }
 .is-open .choices__inner {
   border-radius: var(--choices-border-radius) var(--choices-border-radius) 0 0;
+}
+.is-invalid .choices__inner {
+  border-color: var(--choices-invalid-color);
 }
 .is-flipped.is-open .choices__inner {
   border-radius: 0 0 var(--choices-border-radius) var(--choices-border-radius);
