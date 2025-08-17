@@ -54,28 +54,17 @@
     <link rel="stylesheet" href="assets/styles/choices.min.css" />
     <script src="assets/scripts/choices.js"></script>
     <!-- End Choices includes -->
-
-    <!--[if lt IE 9]>
-      <style>
-        .hidden-ie {
-          display: none;
-        }
-        .visible-ie {
-          display: block;
-        }
-      </style>
-    <![endif]-->
   </head>
 
   <body>
     <div class="container">
       <div class="section">
         <a href="https://github.com/jshjohnson/Choices" class="logo">
-          <img
-            src="assets/images/logo.svg"
-            alt="Choices.js logo"
-            class="logo-img hidden-ie"
-          />
+          <picture>
+            <source media="(prefers-color-scheme: dark)" srcset="assets/images/logo--dark.svg" class="logo-img source-dark">
+            <source media="(prefers-color-scheme: light)" srcset="assets/images/logo.svg" class="logo-img source-light">
+            <img src="assets/images/logo.svg" alt="Choices.js logo" class="logo-img">
+          </picture>
           <h1 class="visible-ie">Choices.js</h1>
         </a>
         <p>
