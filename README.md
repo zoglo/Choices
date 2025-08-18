@@ -64,8 +64,9 @@ yarn add choices.js
 
 From a [CDN](https://www.jsdelivr.com/package/npm/choices.js):
 
-**Note:** There is sometimes a delay before the latest version of Choices is reflected on the CDN.
-
+**Notes:** 
+* There is sometimes a delay before the latest version of Choices is reflected on the CDN.
+* Examples below pin a version (v11.0.6). Check [latest release](https://www.jsdelivr.com/package/npm/choices.js) and update v11.0.6 to the latest tag before using.
 ```html
 <!-- Include base CSS (optional) -->
 <link
