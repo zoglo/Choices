@@ -75,7 +75,7 @@ From a [CDN](https://www.jsdelivr.com/package/npm/choices.js):
 <!-- Or versioned -->
 <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/choices.js@9.0.1/public/assets/styles/base.min.css"
+  href="https://cdn.jsdelivr.net/npm/choices.js@11.0.6/public/assets/styles/base.min.css"
 />
 
 <!-- Include Choices CSS -->
@@ -86,13 +86,13 @@ From a [CDN](https://www.jsdelivr.com/package/npm/choices.js):
 <!-- Or versioned -->
 <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/choices.js@9.0.1/public/assets/styles/choices.min.css"
+  href="https://cdn.jsdelivr.net/npm/choices.js@11.0.6/public/assets/styles/choices.min.css"
 />
 
 <!-- Include Choices JavaScript (latest) -->
 <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 <!-- Or versioned -->
-<script src="https://cdn.jsdelivr.net/npm/choices.js@9.0.1/public/assets/scripts/choices.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/choices.js@11.0.6/public/assets/scripts/choices.min.js"></script>
 ```
 
 Or include Choices directly:
