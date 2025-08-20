@@ -1891,7 +1891,7 @@ class Choices {
    */
   _onMouseDown(event: MouseEvent): void {
     const { target } = event;
-    if (!(target instanceof HTMLElement)) {
+    if (!(target instanceof Element)) {
       return;
     }
 
