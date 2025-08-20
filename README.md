@@ -64,9 +64,9 @@ yarn add choices.js
 
 From a [CDN](https://www.jsdelivr.com/package/npm/choices.js):
 
-**Notes:** 
+**Notes:**
 * There is sometimes a delay before the latest version of Choices is reflected on the CDN.
-* Examples below pin a version (v11.0.6). Check [latest release](https://www.jsdelivr.com/package/npm/choices.js) and update v11.0.6 to the latest tag before using.
+* Examples below pin a version (v11.1.0). Check [latest release](https://www.jsdelivr.com/package/npm/choices.js) and update v11.1.0 to the latest tag before using.
 ```html
 <!-- Include base CSS (optional) -->
 <link
@@ -76,7 +76,7 @@ From a [CDN](https://www.jsdelivr.com/package/npm/choices.js):
 <!-- Or versioned -->
 <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/choices.js@11.0.6/public/assets/styles/base.min.css"
+  href="https://cdn.jsdelivr.net/npm/choices.js@11.1.0/public/assets/styles/base.min.css"
 />
 
 <!-- Include Choices CSS -->
@@ -87,13 +87,13 @@ From a [CDN](https://www.jsdelivr.com/package/npm/choices.js):
 <!-- Or versioned -->
 <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/choices.js@11.0.6/public/assets/styles/choices.min.css"
+  href="https://cdn.jsdelivr.net/npm/choices.js@11.1.0/public/assets/styles/choices.min.css"
 />
 
 <!-- Include Choices JavaScript (latest) -->
 <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 <!-- Or versioned -->
-<script src="https://cdn.jsdelivr.net/npm/choices.js@11.0.6/public/assets/scripts/choices.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/choices.js@11.1.0/public/assets/scripts/choices.min.js"></script>
 ```
 
 Or include Choices directly:
