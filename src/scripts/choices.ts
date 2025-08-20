@@ -1210,7 +1210,7 @@ class Choices {
       return;
     }
 
-    const id = element && parseDataSetId(element.parentElement);
+    const id = element && parseDataSetId(element.closest('[data-id]');
     const itemToRemove = id && items.find((item) => item.id === id);
     if (!itemToRemove) {
       return;
