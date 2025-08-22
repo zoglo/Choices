@@ -1063,6 +1063,11 @@ class Choices {
     const { config } = this;
     const fragment: DocumentFragment = document.createDocumentFragment();
 
+    // Highlight the first option from the items list
+    if (items[0]?.choiceEl) {
+      this._highlightChoice(items[0].choiceEl);
+    }
+
     const itemFromList = (item: ChoiceFull): HTMLElement | null =>
       itemList.querySelector<HTMLElement>(`[data-item][data-id="${item.id}"]`);
 

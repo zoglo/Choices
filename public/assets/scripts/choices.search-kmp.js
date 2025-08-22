@@ -2526,10 +2526,15 @@
         };
         Choices.prototype._renderItems = function () {
             var _this = this;
+            var _a;
             var items = this._store.items || [];
             var itemList = this.itemList.element;
             var config = this.config;
             var fragment = document.createDocumentFragment();
+            // Highlight the first option from the items list
+            if ((_a = items[0]) === null || _a === void 0 ? void 0 : _a.choiceEl) {
+                this._highlightChoice(items[0].choiceEl);
+            }
             var itemFromList = function (item) {
                 return itemList.querySelector("[data-item][data-id=\"".concat(item.id, "\"]"));
             };
