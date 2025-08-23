@@ -240,7 +240,7 @@ $choices-placeholder-opacity: 0.5 !default;
     display: inline-block;
     vertical-align: middle;
     border-radius: var(--choices-border-radius-item, #{$choices-border-radius-item});
-    padding: var(--choices-multiple-item-margin, #{$choices-multiple-item-padding});
+    padding: var(--choices-multiple-item-padding, #{$choices-multiple-item-padding});
     font-size: var(--choices-font-size-sm, #{$choices-font-size-sm});
     font-weight: 500;
     margin-right: var(--choices-multiple-item-margin, #{$choices-multiple-item-margin});

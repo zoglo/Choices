@@ -168,7 +168,7 @@
   display: inline-block;
   vertical-align: middle;
   border-radius: var(--choices-border-radius-item, 20px);
-  padding: var(--choices-multiple-item-margin, 4px 10px);
+  padding: var(--choices-multiple-item-padding, 4px 10px);
   font-size: var(--choices-font-size-sm, 12px);
   font-weight: 500;
   margin-right: var(--choices-multiple-item-margin, 3.75px);
