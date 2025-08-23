@@ -1056,9 +1056,7 @@ class Choices {
     this._renderNotice(fragment);
     this.choiceList.element.replaceChildren(fragment);
 
-    if (selectableChoices) {
-      this._highlightChoice(highlightedEl);
-    }
+    this._highlightChoice(highlightedEl);
   }
 
   _renderItems(): void {
