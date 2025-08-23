@@ -992,8 +992,7 @@ class Choices {
         fragment.appendChild(dropdownItem);
         if (isSearching || !choice.selected) {
           selectableChoices = true;
-        }
-        if (choice.selected && !highlightedEl) {
+        } else if (!highlightedEl) {
           highlightedEl = dropdownItem;
         }
 
