@@ -963,6 +963,7 @@ class Choices {
       );
 
     const showLabel = config.appendGroupInSearch && isSearching;
+    let selectableChoices = false;
     let highlightedEl: HTMLElement | null = null;
     const renderChoices = (choices: ChoiceFull[], withinGroup: boolean): void => {
       if (isSearching) {
@@ -989,7 +990,10 @@ class Choices {
           );
         choice.choiceEl = dropdownItem;
         fragment.appendChild(dropdownItem);
-        if ((isSearching || !choice.disabled) && !highlightedEl) {
+        if (isSearching || !choice.selected) {
+          selectableChoices = true;
+        }
+        if (choice.selected && !highlightedEl) {
           highlightedEl = dropdownItem;
         }
 
@@ -1039,7 +1043,7 @@ class Choices {
       }
     }
 
-    if (!highlightedEl && (isSearching || !fragment.children.length || !config.renderSelectedChoices)) {
+    if (!selectableChoices && (isSearching || !fragment.children.length || !config.renderSelectedChoices)) {
       if (!this._notice) {
         this._notice = {
           text: resolveStringFunction(isSearching ? config.noResultsText : config.noChoicesText),
@@ -1052,7 +1056,7 @@ class Choices {
     this._renderNotice(fragment);
     this.choiceList.element.replaceChildren(fragment);
 
-    if (highlightedEl) {
+    if (selectableChoices) {
       this._highlightChoice(highlightedEl);
     }
   }
